@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.service;
 
 import org.b3log.latke.FwkStatusCodes;
@@ -71,14 +70,11 @@ public final class LangPropsService implements Serializable {
      */
     public Map<String, String> getAll(final Locale locale) throws
             ServiceException {
-        @SuppressWarnings("unchecked")
         final Cache<String, HashMap<String, String>> cache =
-                (Cache<String, HashMap<String, String>>) injector.getInstance(Key.
-                get(new TypeLiteral<LruMemoryCache<String, ?>>() {
+                injector.getInstance(Key.get(new TypeLiteral<LruMemoryCache<String, HashMap<String, String>>>() {
         }));
 
-        @SuppressWarnings("unchecked")
-        HashMap<String, String> ret = cache.get(Keys.LANGUAGE);
+        HashMap<String, String> ret = cache.get(Keys.LOCALE);
         if (null != ret) {
             LOGGER.trace("Got language configurations from cache");
 
@@ -91,7 +87,7 @@ public final class LangPropsService implements Serializable {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
         } catch (final MissingResourceException e) {
             LOGGER.warn(e.getMessage() + ", using default locale["
-                        + Keys.getDefaultLocale() + "]  instead");
+                    + Keys.getDefaultLocale() + "]  instead");
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
                                                   Keys.getDefaultLocale());
@@ -104,7 +100,7 @@ public final class LangPropsService implements Serializable {
             ret.put(key, value);
         }
 
-        cache.put(Keys.LANGUAGE, ret);
+        cache.put(Keys.LOCALE, ret);
 
         return ret;
     }
@@ -148,7 +144,7 @@ public final class LangPropsService implements Serializable {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
         } catch (final MissingResourceException e) {
             LOGGER.warn(e.getMessage() + ", using default locale["
-                        + Keys.getDefaultLocale() + "]  instead");
+                    + Keys.getDefaultLocale() + "]  instead");
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
                                                   Keys.getDefaultLocale());
@@ -213,7 +209,7 @@ public final class LangPropsService implements Serializable {
         if (!Keys.LANGUAGE.equals(baseName) && !Keys.MESSAGES.equals(baseName)) {
             final RuntimeException e =
                     new RuntimeException("i18n resource[baseName="
-                                         + baseName + "] not found");
+                    + baseName + "] not found");
             LOGGER.error(e.getMessage(), e);
 
             throw e;
@@ -224,7 +220,7 @@ public final class LangPropsService implements Serializable {
                     getString(key);
         } catch (final MissingResourceException e) {
             LOGGER.warn(e.getMessage() + ", get it from default locale["
-                        + Keys.getDefaultLocale() + "]");
+                    + Keys.getDefaultLocale() + "]");
 
             return ResourceBundle.getBundle(
                     baseName, Keys.getDefaultLocale()).getString(key);
