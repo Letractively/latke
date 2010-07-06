@@ -42,7 +42,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jun 24, 2010
+ * @version 1.0.0.3, Jul 6, 2010
  */
 public final class LangPropsService implements Serializable {
 
