@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * String utilities.
@@ -28,6 +33,33 @@ public final class Strings {
      * Private default constructor.
      */
     private Strings() {
+    }
+
+    /**
+     * Converts the specified string into a string list line by line.
+     *
+     * @param string the specified string
+     * @return a list of string lines
+     * @throws IOException io exception
+     */
+    public static List<String> toLines(final String string)
+            throws IOException {
+        final BufferedReader bufferedReader =
+                new BufferedReader(new StringReader(string));
+        final List<String> ret = new ArrayList<String>();
+
+        try {
+            String line = bufferedReader.readLine();
+            while (null != line) {
+                ret.add(line);
+
+                line = bufferedReader.readLine();
+            }
+        } finally {
+            bufferedReader.close();
+        }
+
+        return ret;
     }
 
     /**
