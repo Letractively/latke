@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache.memory;
 
 import org.b3log.latke.util.cache.util.DoubleLinkedMap;
-import org.b3log.latke.util.cache.util.Serializer;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This is a Least Recently Used (LRU) pure memory cache. This cache use a 
@@ -32,10 +26,9 @@ import java.util.logging.Logger;
  * @param <K> the type of the key of the cacheable object
  * @param <V> the type of the cacheable objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Jun 12, 2009
+ * @version 1.0.2.0, Jul 8, 2010
  */
-public final class LruMemoryCache<K, V extends Serializable>
-        extends AbstractMemoryCache<K, V> {
+public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V> {
 
     /**
      * a thread-safe double linked list is used to hold all cacheable objects.
@@ -55,26 +48,15 @@ public final class LruMemoryCache<K, V extends Serializable>
     @Override
     public void put(final K key, final V cacheableObject) {
         putCountInc();
-        synchronized (this) {
-            int newSize = 0;
-            try {
-                newSize =
-                        Serializer.getInstance().serialize(cacheableObject).length;
-            } catch (final IOException e) {
-                Logger.getLogger(LruMemoryCache.class.getName()).log(
-                        Level.SEVERE, null, e);
-                return;
-            }
 
-            if ((getCurrentSize() + newSize) > getMaxSize()
-                || getCachedCount() > getMaxCount()) {
+        synchronized (this) {
+            if (getCachedCount() > getMaxCount()) {
                 collect();
             }
 
             map.addFirst(key, cacheableObject);
 
             cachedCountInc();
-            setCurrentSize(newSize + getCurrentSize());
         }
     }
 
@@ -108,16 +90,7 @@ public final class LruMemoryCache<K, V extends Serializable>
      */
     @Override
     public synchronized void collect() {
-        final V v = map.removeLast();
+        map.removeLast();
         cachedCountDec();
-        int sizeOfOld = 0;
-        
-        try {
-            sizeOfOld = Serializer.getInstance().serialize(v).length;
-            setCurrentSize(getCurrentSize() - sizeOfOld);
-        } catch (final IOException e) {
-            Logger.getLogger(LruMemoryCache.class.getName()).log(Level.SEVERE,
-                                                                 null, e);
-        }
     }
 }

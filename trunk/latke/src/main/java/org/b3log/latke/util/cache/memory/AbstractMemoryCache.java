@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache.memory;
 
 import org.b3log.latke.util.cache.Cache;
-import java.io.Serializable;
 
 /**
  * The abstract memory cache. 
@@ -25,23 +23,14 @@ import java.io.Serializable;
  * @param <K> the type of the key of a cacheable objects
  * @param <V> the type of cacheable objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jun 12, 2009
+ * @version 1.0.2.0, Jul 8, 2010
  */
-public abstract class AbstractMemoryCache<K, V extends Serializable>
-        implements Cache<K, V> {
+public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
 
-    /**
-     * Maximum size of this cache, measured in bytes.
-     */
-    private long maxSize;
     /**
      * Maximum cacheable objects count of this cache.
      */
     private int maxCount;
-    /**
-     * Current size of this cache, measured in bytes.
-     */
-    private long currentSize;
     /**
      * Hit count of this cache.
      */
@@ -58,22 +47,6 @@ public abstract class AbstractMemoryCache<K, V extends Serializable>
      * Cached object count of this cache.
      */
     private int cachedCount;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void setMaxSize(final long size) {
-        this.maxSize = size;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long getMaxSize() {
-        return maxSize;
-    }
 
     /**
      * {@inheritDoc}
@@ -149,23 +122,6 @@ public abstract class AbstractMemoryCache<K, V extends Serializable>
      */
     protected final void cachedCountDec() {
         cachedCount--;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final long getCurrentSize() {
-        return currentSize;
-    }
-
-    /**
-     * Sets the current size by the specified current size.
-     *
-     * @param currentSize the specified current size
-     */
-    protected final void setCurrentSize(final long currentSize) {
-        this.currentSize = currentSize;
     }
 
     /**
