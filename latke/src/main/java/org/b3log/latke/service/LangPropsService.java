@@ -21,7 +21,6 @@ import org.b3log.latke.model.AbstractLang;
 import org.b3log.latke.model.AbstractMessage;
 import org.b3log.latke.model.Label;
 import org.b3log.latke.util.cache.Cache;
-import org.b3log.latke.util.cache.memory.LruMemoryCache;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -34,6 +33,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.b3log.latke.util.cache.qualifier.LruMemory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +42,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Jul 6, 2010
+ * @version 1.0.0.4, Jul 8, 2010
  */
 public final class LangPropsService implements Serializable {
 
@@ -70,9 +70,11 @@ public final class LangPropsService implements Serializable {
      */
     public Map<String, String> getAll(final Locale locale) throws
             ServiceException {
+        @SuppressWarnings("unchecked")
         final Cache<String, HashMap<String, String>> cache =
-                injector.getInstance(Key.get(new TypeLiteral<LruMemoryCache<String, HashMap<String, String>>>() {
-        }));
+                (Cache<String, HashMap<String, String>>) injector.getInstance(Key.
+                get(new TypeLiteral<Cache<String, ?>>() {
+        }, LruMemory.class));
 
         HashMap<String, String> ret = cache.get(Keys.LOCALE);
         if (null != ret) {
