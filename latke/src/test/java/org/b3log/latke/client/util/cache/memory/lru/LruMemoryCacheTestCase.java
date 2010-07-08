@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.util.cache.memory.lru;
 
 import org.b3log.latke.util.cache.Cache;
 import org.b3log.latke.util.cache.memory.LruMemoryCache;
 import org.testng.annotations.Test;
-import java.io.Serializable;
 import static org.testng.Assert.*;
 
 /**
  * {@link LruMemoryCache} unit test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jun 12, 2009
+ * @version 1.0.2.0, Jul 8, 2010
  */
 public class LruMemoryCacheTestCase {
 
@@ -34,10 +32,6 @@ public class LruMemoryCacheTestCase {
      * Test cacheable object sum.
      */
     public static final int CACHEABLE_OBJECT_SUM = 1024;
-    /**
-     * Cache size.
-     */
-    public static final long CACHE_SIZE = 1024 * 1024 * 2;
 
     /**
      * Constructs a {@code LruMemoryCacheTestCase} instance.
@@ -54,7 +48,6 @@ public class LruMemoryCacheTestCase {
     public void lruMemoryCache() {
         final Cache<String, ObjectToCache> cache =
                 new LruMemoryCache<String, ObjectToCache>();
-        cache.setMaxSize(CACHE_SIZE);
         cache.setMaxCount(CACHEABLE_OBJECT_SUM);
 
         printStat(cache);
@@ -85,8 +78,6 @@ public class LruMemoryCacheTestCase {
     private void printStat(final Cache<?, ?> cache) {
         System.out.println("----");
         System.out.println("Cached object: " + cache.getCachedCount());
-        System.out.println("Maximum size: " + cache.getMaxSize());
-        System.out.println("Current size: " + cache.getCurrentSize());
         System.out.println("Put count: " + cache.getPutCount());
         System.out.println("Hit count: " + cache.getHitCount());
         System.out.println("Miss count: " + cache.getMissCount());
@@ -97,9 +88,9 @@ public class LruMemoryCacheTestCase {
  * An dummy object to test cache.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jun 12, 2009
+ * @version 1.0.2.0, Jul 8, 2010
  */
-final class ObjectToCache implements Serializable {
+final class ObjectToCache {
 
     /**
      * Generated serial version uid.

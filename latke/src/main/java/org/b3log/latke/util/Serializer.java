@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.b3log.latke.util.cache.util;
+package org.b3log.latke.util;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.servlet;
 
 import org.b3log.latke.Keys;
@@ -43,7 +42,7 @@ import org.jabsorb.JSONRPCBridge;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jun 16, 2010
+ * @version 1.0.1.2, Jul 8, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -78,13 +77,9 @@ public abstract class AbstractServletListener
      */
     private static String clientRemoteServicePackage;
     /**
-     * Cacheable object sum.
+     * Maximum count of cacheable objects.
      */
-    private static final int CACHEABLE_OBJECT_SUM = 1024;
-    /**
-     * Cache size.
-     */
-    private static final long CACHE_SIZE = 1024 * 1024 * 2;
+    private static final int MAX_CACHEABLE_OBJECT_CNT = 1024;
 
     /**
      * Initializes context, {@linkplain #webRoot web root},
@@ -116,7 +111,8 @@ public abstract class AbstractServletListener
                 servletContext.getInitParameter("postfixExceptionPaths");
         final String[] paths = Strings.trimAll(
                 postfixExceptionPathsString.split(","));
-        postfixExceptionPaths = org.b3log.latke.util.Collections.arrayToSet(paths);
+        postfixExceptionPaths = org.b3log.latke.util.Collections.arrayToSet(
+                paths);
         LOGGER.info("[postfixExceptionPath=" + postfixExceptionPaths + "]");
 
         initCache();
@@ -131,11 +127,10 @@ public abstract class AbstractServletListener
                 new TypeLiteral<LruMemoryCache<String, ?>>() {
                 }));
 
-        cache.setMaxCount(CACHEABLE_OBJECT_SUM);
-        cache.setMaxSize(CACHE_SIZE);
+        cache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
 
-        LOGGER.info("Initialized cache[maxCount=" + CACHEABLE_OBJECT_SUM
-                    + ", maxSize=" + CACHE_SIZE + "bytes]");
+        LOGGER.info("Initialized cache[maxCount="
+                + MAX_CACHEABLE_OBJECT_CNT + "]");
     }
 
     /**

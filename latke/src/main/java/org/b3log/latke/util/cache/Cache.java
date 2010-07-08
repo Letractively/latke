@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache;
-
-import java.io.Serializable;
 
 /**
  * This is the top interface of cache like structures.
  *
  * @param <K> the key of a cacheable object
- * @param <V> the type of cacheable objects that extend
- *            <code>java.io.Serializable</code>
+ * @param <V> the type of cacheable objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jun 11, 2009
+ * @version 1.0.2.0, Jul 8, 2010
  */
-public interface Cache<K, V extends Serializable> {
+public interface Cache<K, V> {
 
     /**
      * Puts the specified cacheable object into this cache.
@@ -40,7 +36,7 @@ public interface Cache<K, V extends Serializable> {
     /**
      * Gets a cacheable object by the specified key.
      *
-     * @param key the specfieid key
+     * @param key the specified key
      * @return if found, returns the cacheable object, otherwise returns
      * <code>null</code>
      */
@@ -52,27 +48,6 @@ public interface Cache<K, V extends Serializable> {
      * @param key the specified key
      */
     void remove(final K key);
-
-    /**
-     * Gets the current size of thie cache. 
-     *
-     * @return current size of this cache, measured in bytes
-     */
-    long getCurrentSize();
-
-    /**
-     * Sets the maximum size of this cache.
-     *
-     * @param size maximum size of this cache, measured in bytes
-     */
-    void setMaxSize(final long size);
-
-    /**
-     * Gets the maximum size of this cache.
-     * 
-     * @return maximum size of this cache, measured in bytes
-     */
-    long getMaxSize();
 
     /**
      * Sets the maximum cacheable objects count of this cache.

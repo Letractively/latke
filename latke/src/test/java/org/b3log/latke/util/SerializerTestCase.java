@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.b3log.latke.client.util.cache.util;
+package org.b3log.latke.util;
 
-import org.b3log.latke.util.cache.util.Serializer;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
