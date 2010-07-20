@@ -37,7 +37,7 @@
     Most Checks are configurable, be sure to consult the documentation.
     To completely disable a check, just comment it out or delete it from the file.
     Finally, it is worth reading the documentation.
-    Version: 1.0.1.4, May 31, 2010
+    Version: 1.0.1.5, Jul 20, 2010
     Author: Liang Ding
 -->
 <!DOCTYPE module PUBLIC
@@ -65,7 +65,10 @@
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <module name="JavadocMethod"/>
-        <module name="JavadocType"/>
+        <module name="JavadocType">
+            <property name="authorFormat" value="\S"/>
+            <property name="versionFormat" value="\d\.\d\.\d\.\d, [A-Z]+[a-z]{2,2} \d{1,2}, \d\d\d\d"/>
+        </module>
         <module name="JavadocVariable"/>
         <module name="JavadocStyle">
             <property name="checkFirstSentence" value="true"/>
