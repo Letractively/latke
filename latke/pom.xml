@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.2.5, Jul 8, 2010
+    Version: 1.0.3.0, Jul 21, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <name>Latke</name>
     <url>http://latke.googlecode.com</url>
     <description>Yet another simple web framework based on Java servlet technology.</description>
@@ -19,7 +19,6 @@
 
     <!-- Version -->
     <properties>
-        <!-- IoC -->
         <guice.version>2.0.1</guice.version>
         <aop.version>1.0</aop.version>
         <servlet.version>2.5</servlet.version>
@@ -29,6 +28,7 @@
         <jabsorb.version>1.3.1</jabsorb.version>
         <slf4j.version>1.5.8</slf4j.version>
         <javax.mail.version>1.4</javax.mail.version>
+        <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.6.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
@@ -173,6 +173,12 @@
                 <version>${javax.mail.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.sleepycat</groupId>
+                <artifactId>je</artifactId>
+                <version>${com.sleepycat.je.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -231,6 +237,11 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
         </dependency>
 
     </dependencies>

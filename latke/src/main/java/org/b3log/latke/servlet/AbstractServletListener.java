@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.servlet;
 
-import org.b3log.latke.Keys;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.cache.Cache;
 import org.b3log.latke.util.cache.memory.LruMemoryCache;
@@ -36,13 +35,14 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.apache.log4j.Logger;
+import org.b3log.latke.Latkes;
 import org.jabsorb.JSONRPCBridge;
 
 /**
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Jul 8, 2010
+ * @version 1.0.1.3, Jul 21, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -94,8 +94,8 @@ public abstract class AbstractServletListener
         LOGGER.info("Initializing the context....");
         super.contextInitialized(servletContextEvent);
 
-        Keys.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        LOGGER.info("Default locale[" + Keys.getDefaultLocale() + "]");
+        Latkes.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        LOGGER.info("Default locale[" + Latkes.getDefaultLocale() + "]");
 
         final ServletContext servletContext =
                 servletContextEvent.getServletContext();

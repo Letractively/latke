@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.util.cache.qualifier.LruMemory;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +43,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jul 8, 2010
+ * @version 1.0.0.5, Jul 21, 2010
  */
 public final class LangPropsService implements Serializable {
 
@@ -89,10 +90,10 @@ public final class LangPropsService implements Serializable {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
         } catch (final MissingResourceException e) {
             LOGGER.warn(e.getMessage() + ", using default locale["
-                    + Keys.getDefaultLocale() + "]  instead");
+                    + Latkes.getDefaultLocale() + "]  instead");
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
-                                                  Keys.getDefaultLocale());
+                                                  Latkes.getDefaultLocale());
         }
 
         final Enumeration<String> keys = langBundle.getKeys();
@@ -139,17 +140,17 @@ public final class LangPropsService implements Serializable {
             messageBundle = ResourceBundle.getBundle(Keys.MESSAGES, locale);
         } catch (final MissingResourceException e) {
             messageBundle = ResourceBundle.getBundle(Keys.MESSAGES,
-                                                     Keys.getDefaultLocale());
+                                                     Latkes.getDefaultLocale());
         }
 
         try {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
         } catch (final MissingResourceException e) {
             LOGGER.warn(e.getMessage() + ", using default locale["
-                    + Keys.getDefaultLocale() + "]  instead");
+                    + Latkes.getDefaultLocale() + "]  instead");
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
-                                                  Keys.getDefaultLocale());
+                                                  Latkes.getDefaultLocale());
             try {
                 ret.put(Keys.STATUS_CODE,
                         FwkStatusCodes.CHANGE_LOCALE_FAIL_NOT_FOUND);
@@ -222,10 +223,10 @@ public final class LangPropsService implements Serializable {
                     getString(key);
         } catch (final MissingResourceException e) {
             LOGGER.warn(e.getMessage() + ", get it from default locale["
-                    + Keys.getDefaultLocale() + "]");
+                    + Latkes.getDefaultLocale() + "]");
 
             return ResourceBundle.getBundle(
-                    baseName, Keys.getDefaultLocale()).getString(key);
+                    baseName, Latkes.getDefaultLocale()).getString(key);
         }
     }
 }
