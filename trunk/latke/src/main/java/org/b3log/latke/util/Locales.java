@@ -23,12 +23,13 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
+import org.b3log.latke.Latkes;
 
 /**
  * Locale utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jun 15, 2010
+ * @version 1.0.0.7, Jul 21, 2010
  */
 public final class Locales {
 
@@ -96,7 +97,7 @@ public final class Locales {
 
             if (!hasLocale(locale)) {
                 // using default
-                locale = Keys.getDefaultLocale();
+                locale = Latkes.getDefaultLocale();
                 LOGGER.debug("Using the default locale["
                         + locale.toString() + "]");
             } else {

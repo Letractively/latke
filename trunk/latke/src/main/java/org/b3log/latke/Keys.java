@@ -18,7 +18,6 @@ package org.b3log.latke;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 /**
  * This class defines framework(non-functional) keys.
@@ -28,11 +27,6 @@ import java.util.Locale;
  */
 public final class Keys {
 
-    /**
-     * Default locale. Initializes this by
-     * {@link #setDefaultLocale(java.util.Locale)}.
-     */
-    private static Locale defaultLocale;
     /**
      * Key of action status code.
      */
@@ -62,30 +56,6 @@ public final class Keys {
      */
     public static final DateFormat SIMPLE_DATE_FORMAT =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    /**
-     * Sets the default locale.
-     *
-     * @param locale a new default locale
-     */
-    public static void setDefaultLocale(final Locale locale) {
-        defaultLocale = locale;
-    }
-
-    /**
-     * Gets the default locale. If the {@link #defaultLocale} has not been
-     * initialized, invoking this method will throw {@link RuntimeException}.
-     *
-     * @return the default locale
-     */
-    public static Locale getDefaultLocale() {
-        if (null == defaultLocale) {
-            throw new RuntimeException(
-                    "Default locale has not been initialized!");
-        }
-        
-        return defaultLocale;
-    }
 
     /**
      * Private constructor.
