@@ -21,8 +21,10 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Latkes;
 
@@ -30,7 +32,7 @@ import org.b3log.latke.Latkes;
  * Sleepycat.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jul 23, 2010
+ * @version 1.0.0.2, Jul 23, 2010
  */
 public final class Sleepycat {
 
@@ -53,8 +55,8 @@ public final class Sleepycat {
     /**
      * Database cache.
      */
-    private static final Map<String, SleepycatDatabase> DATABASES =
-            new HashMap<String, SleepycatDatabase>();
+    private static final Map<String, Set<SleepycatDatabase>> DATABASES =
+            new HashMap<String, Set<SleepycatDatabase>>();
     /**
      * Default database configurations. Set the following options explicitly:
      * <ul>
@@ -96,15 +98,12 @@ public final class Sleepycat {
     public static synchronized Database get(final String repositoryName,
                                             final DatabaseConfig databaseConfig) {
         if (DATABASES.containsKey(repositoryName)) {
-            final SleepycatDatabase sleepycatDatabase = DATABASES.get(
+            final Set<SleepycatDatabase> sleepycatDatabases = DATABASES.get(
                     repositoryName);
-
-            if (sleepycatDatabase.getDatabaseConfig().equals(databaseConfig)) {
-                return sleepycatDatabase.getDatabase();
-            } else {
-                throw new RuntimeException(
-                        "Occurs different database config "
-                        + "for database[name=" + repositoryName + "]");
+            for (SleepycatDatabase sleepycatDatabase : sleepycatDatabases) {
+                if (sleepycatDatabase.getDatabaseConfig().equals(databaseConfig)) {
+                    return sleepycatDatabase.getDatabase();
+                }
             }
         }
 
@@ -113,7 +112,10 @@ public final class Sleepycat {
                                                       databaseConfig);
         LOGGER.info("Created database[repositoryName=" + repositoryName + "]");
 
-        DATABASES.put(repositoryName, new SleepycatDatabase(ret, databaseConfig));
+        final Set<SleepycatDatabase> sleepycatDatabases =
+                new HashSet<SleepycatDatabase>();
+        sleepycatDatabases.add(new SleepycatDatabase(ret, databaseConfig));
+        DATABASES.put(repositoryName, sleepycatDatabases);
 
         return ret;
     }
@@ -122,10 +124,13 @@ public final class Sleepycat {
      * Shutdowns databases and default environment.
      */
     public static synchronized void shutdown() {
-        for (Entry<String, SleepycatDatabase> entry : DATABASES.entrySet()) {
-            final Database database = entry.getValue().getDatabase();
-            database.close();
-            LOGGER.info("Closed database[name=" + entry.getKey() + "]");
+        for (Entry<String, Set<SleepycatDatabase>> entry : DATABASES.entrySet()) {
+            final Set<SleepycatDatabase> sleepycatDatabases = entry.getValue();
+            for (final SleepycatDatabase sleepycatDatabase : sleepycatDatabases) {
+                final Database database = sleepycatDatabase.getDatabase();
+                database.close();
+                LOGGER.info("Closed database[name=" + entry.getKey() + "]");
+            }
         }
 
         DEFAULT_ENV.close();
