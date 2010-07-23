@@ -22,7 +22,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 21, 2010
+ * @version 1.0.0.0, Jul 23, 2010
  */
 public interface Repository {
 
@@ -81,7 +81,7 @@ public interface Repository {
      *   {
      *     "objectId": "...."
      *   }, ....
-     * ], if not found any articles by the specified current page number and
+     * ], if not found any objects by the specified current page number and
      * page size, returns pagination info as the only element of the returned
      * list
      * </pre>
