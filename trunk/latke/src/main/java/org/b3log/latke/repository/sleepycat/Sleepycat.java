@@ -39,7 +39,15 @@ public final class Sleepycat {
      */
     private static final Logger LOGGER = Logger.getLogger(Sleepycat.class);
     /**
-     * Default sleepycat environment.
+     * Default environment configurations. Set the following options explicitly: 
+     * <ul>
+     *   <li>allowCreate=true</li>
+     * </ul>
+     */
+    public static final EnvironmentConfig DEFAULT_ENV_CONFIG =
+            new EnvironmentConfig();
+    /**
+     * Default environment.
      */
     public static final Environment DEFAULT_ENV;
     /**
@@ -56,20 +64,19 @@ public final class Sleepycat {
      */
     public static final DatabaseConfig DEFAULT_DB_CONFIG = new DatabaseConfig();
     /**
-     *
+     * Environment path.
      */
     private static final String ENV_PATH;
 
     static {
         try {
             ENV_PATH = Latkes.getRepositoryPath();
-            final EnvironmentConfig envConfig = new EnvironmentConfig();
-            envConfig.setAllowCreate(true);
+            DEFAULT_ENV_CONFIG.setAllowCreate(true);
 
-            DEFAULT_ENV = new Environment(new File(ENV_PATH), envConfig);
+            DEFAULT_ENV = new Environment(new File(ENV_PATH),
+                                          DEFAULT_ENV_CONFIG);
 
-            DEFAULT_DB_CONFIG.setAllowCreate(true);
-            DEFAULT_DB_CONFIG.setDeferredWrite(true);
+            DEFAULT_DB_CONFIG.setAllowCreate(true).setDeferredWrite(true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -89,7 +96,8 @@ public final class Sleepycat {
     public static synchronized Database get(final String repositoryName,
                                             final DatabaseConfig databaseConfig) {
         if (DATABASES.containsKey(repositoryName)) {
-            final SleepycatDatabase sleepycatDatabase = DATABASES.get(repositoryName);
+            final SleepycatDatabase sleepycatDatabase = DATABASES.get(
+                    repositoryName);
 
             if (sleepycatDatabase.getDatabaseConfig().equals(databaseConfig)) {
                 return sleepycatDatabase.getDatabase();
@@ -97,7 +105,8 @@ public final class Sleepycat {
         }
 
         final Database ret = DEFAULT_ENV.openDatabase(null,
-                                                      repositoryName, databaseConfig);
+                                                      repositoryName,
+                                                      databaseConfig);
         LOGGER.info("Created database[repositoryName=" + repositoryName + "]");
 
         DATABASES.put(repositoryName, new SleepycatDatabase(ret, databaseConfig));
