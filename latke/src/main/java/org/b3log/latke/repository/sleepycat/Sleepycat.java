@@ -30,7 +30,7 @@ import org.b3log.latke.Latkes;
  * Sleepycat.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 21, 2010
+ * @version 1.0.0.1, Jul 23, 2010
  */
 public final class Sleepycat {
 
