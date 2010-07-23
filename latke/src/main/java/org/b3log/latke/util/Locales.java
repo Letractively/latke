@@ -29,7 +29,7 @@ import org.b3log.latke.Latkes;
  * Locale utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jul 21, 2010
+ * @version 1.0.0.8, Jul 23, 2010
  */
 public final class Locales {
 
@@ -71,7 +71,7 @@ public final class Locales {
      * <ol>
      *     <li>Gets from session of the specified request</li>
      *     <li>Gets from the specified request header</li>
-     *     <li>Using {@link Keys#getDefaultLocale() server configuration}</li>
+     *     <li>Using {@link Latkes#getDefaultLocale() server configuration}</li>
      * </ol>
      *
      * @param request the specified request
