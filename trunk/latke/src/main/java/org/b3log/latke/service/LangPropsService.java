@@ -43,7 +43,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Jul 21, 2010
+ * @version 1.0.0.6, Jul 23, 2010
  */
 public final class LangPropsService implements Serializable {
 
@@ -111,7 +111,7 @@ public final class LangPropsService implements Serializable {
     /**
      * Gets all language properties as labels from lang_(by the specified
      * locale).properties file. If not found lang_(locale).properties
-     * configurations, using {@link Keys#getDefaultLocale()} instead.
+     * configurations, using {@link Latkes#getDefaultLocale()} instead.
      *
      * @param locale the specified locale
      * @return for example:
@@ -196,7 +196,7 @@ public final class LangPropsService implements Serializable {
     /**
      * Gets a value from baseName_locale.properties file with the specified key.
      * If not found baseName_(locale).properties configurations, using
-     * {@link Keys#getDefaultLocale()} instead.
+     * {@link Latkes#getDefaultLocale()} instead.
      *
      * @param baseName base name of resource bundle, options as the following:
      * <ul>
