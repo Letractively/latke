@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.model;
 
 /**
  * This class defines all user model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Jun 24, 2010
+ * @version 1.0.0.6, Jul 23, 2010
  */
 public final class User {
 
@@ -33,63 +32,21 @@ public final class User {
      */
     public static final String USERS = "users";
     /**
-     * User id.
-     */
-    public static final String USER_ID = "userId";
-    /**
-     * User id SQL type.
-     */
-    public static final String USER_ID_SQL_TYPE = "CHAR";
-    /**
-     * User id SQL type length.
-     */
-    public static final String USER_ID_SQL_TYPE_LENGTH = "32";
-    /**
      * User name.
      */
     public static final String USER_NAME = "userName";
-    /**
-     * User name SQL type.
-     */
-    public static final String USER_NAME_SQL_TYPE = "VARCHAR";
-    /**
-     * User name SQL type length.
-     */
-    public static final String USER_NAME_SQL_TYPE_LENGTH = "20";
     /**
      * User password.
      */
     public static final String USER_PASSWORD = "userPassword";
     /**
-     * User password SQL type.
-     */
-    public static final String USER_PASSWORD_SQL_TYPE = "CHAR";
-    /**
-     * User password SQL type length.
-     */
-    public static final String USER_PASSWORD_SQL_TYPE_LENGTH = "32";
-    /**
      * User new password.
      */
     public static final String USER_NEW_PASSWORD = "userNewPassword";
     /**
-     * User new password SQL type.
-     */
-    public static final String USER_NEW_PASSWORD_SQL_TYPE =
-            USER_PASSWORD_SQL_TYPE;
-    /**
-     * User new password SQL type length.
-     */
-    public static final String USER_NEW_PASSWORD_SQL_TYPE_LENGTH =
-            USER_PASSWORD_SQL_TYPE_LENGTH;
-    /**
      * Update time of this user.
      */
     public static final String USER_UPDATE_TIME = "userUpdateTime";
-    /**
-     * User update time SQL type.
-     */
-    public static final String USER_UPDATE_TIME_SQL_TYPE = "DATETIME";
     /**
      * User role.
      */
@@ -99,16 +56,6 @@ public final class User {
      * {@linkplain Role#ROLE_ID Role id} of this user.
      */
     public static final String USER_ROLE_ID = "userRoleId";
-    /**
-     * User role id SQL type.
-     */
-    public static final String USER_ROLE_ID_SQL_TYPE =
-            Role.ROLE_ID_SQL_TYPE;
-    /**
-     * User role id SQL type length.
-     */
-    public static final String USER_ROLE_ID_SQL_TYPE_LEGNTH =
-            Role.ROLE_ID_SQL_TYPE_LENGTH;
     // End of Relations ////////////////////////////////////////////////////////
 
     /**

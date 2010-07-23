@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke;
 
 import java.text.DateFormat;
@@ -23,7 +22,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, May 15, 2010
+ * @version 1.0.1.0, Jul 23, 2010
  */
 public final class Keys {
 
@@ -34,11 +33,15 @@ public final class Keys {
     /**
      * Key of session id.
      */
-    public static final String SESSION_ID = "sid";
+    public static final String SESSION_ID = "sId";
     /**
      * Key of data model(domain entity model).
      */
     public static final String DATA = "dt";
+    /**
+     * Key of id of an entity json object.
+     */
+    public static final String OBJECT_ID = "oId";
     /**
      * Key of locale.
      */

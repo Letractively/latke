@@ -101,6 +101,10 @@ public final class Sleepycat {
 
             if (sleepycatDatabase.getDatabaseConfig().equals(databaseConfig)) {
                 return sleepycatDatabase.getDatabase();
+            } else {
+                throw new RuntimeException(
+                        "Occurs different database config "
+                        + "for database[name=" + repositoryName + "]");
             }
         }
 
@@ -115,15 +119,17 @@ public final class Sleepycat {
     }
 
     /**
-     * Shutdowns sleepycat databases and default environment.
+     * Shutdowns databases and default environment.
      */
     public static synchronized void shutdown() {
         for (Entry<String, SleepycatDatabase> entry : DATABASES.entrySet()) {
-            entry.getValue().getDatabase().close();
+            final Database database = entry.getValue().getDatabase();
+            database.close();
+            LOGGER.info("Closed database[name=" + entry.getKey() + "]");
         }
 
         DEFAULT_ENV.close();
-
+        LOGGER.info("Closed data store envionment");
         LOGGER.info("SleepCat has been shutdown");
     }
 

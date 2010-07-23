@@ -25,7 +25,7 @@ import java.util.List;
  * String utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Jun 22, 2010
+ * @version 1.0.0.6, Jul 23, 2010
  */
 public final class Strings {
 
@@ -33,6 +33,20 @@ public final class Strings {
      * Private default constructor.
      */
     private Strings() {
+    }
+
+    /**
+     * Gets a string for the specified string with first character is lower
+     * case.
+     *
+     * @param string the specified string
+     * @return a string
+     */
+    public static String firstCharToLowerCase(final String string) {
+        final String part1 = string.substring(0, 1).toLowerCase();
+        final String part2 = string.substring(1);
+
+        return part1 + part2;
     }
 
     /**
