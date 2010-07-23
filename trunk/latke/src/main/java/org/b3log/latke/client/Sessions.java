@@ -21,6 +21,7 @@ import org.b3log.latke.util.Strings;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
+import org.b3log.latke.Keys;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,7 +71,7 @@ public final class Sessions {
             if (null != session) {
                 final JSONObject user = (JSONObject) session.getAttribute(
                         User.USER);
-                userId = user.optString(User.USER_ID);
+                userId = user.optString(Keys.OBJECT_ID);
                 userId = Strings.isEmptyOrNull(userId)
                         ? user.getString(User.USER_NAME) : userId;
             }

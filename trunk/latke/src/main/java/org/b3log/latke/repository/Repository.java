@@ -27,7 +27,7 @@ import org.json.JSONObject;
 public interface Repository {
 
     /**
-     * Adds the specified object.
+     * Adds the specified json object.
      *
      * @param jsonObject the specified json object
      * @return the generated object id
@@ -89,4 +89,11 @@ public interface Repository {
      */
     List<JSONObject> get(final int currentPageNum,
                          final int pageSize) throws RepositoryException;
+
+    /**
+     * Gets the name of this repository.
+     *
+     * @return the name of this repository
+     */
+    String getName();
 }
