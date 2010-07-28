@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.sleepycat;
 
+import com.sleepycat.je.Cursor;
+import com.sleepycat.je.CursorConfig;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
+import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.service.ServiceException;
@@ -33,7 +38,7 @@ import org.json.JSONObject;
  * Abstract repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 23, 2010
+ * @version 1.0.0.1, Jul 28, 2010
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -136,6 +141,200 @@ public abstract class AbstractRepository implements Repository {
         } finally {
             database.sync();
         }
+
+        return ret;
+    }
+
+    /**
+     * Updates a certain json object by the specified id and the specified new
+     * json object.
+     *
+     * <p>
+     *   Update algorithm steps:
+     *   <ol>
+     *     <li>Finds the old record by the id stored in database value entry</li>
+     *     O(n)
+     *     <li>Removes the found old record if exists</li>
+     *     <li>Sets id of the old one into the specified new json object</li>
+     *     <li>Invokes {@linkplain #add(org.json.JSONObject)} with the
+     *         new json object as argument
+     *     </li>
+     *   </ol>
+     * </p>
+     *
+     * <p>
+     *   <b>Note</b>: the specified id is NOT the key of a database record, but
+     *   the value of "oId" stored in database value entry of a record.
+     * </p>
+     *
+     * @param id the specified id
+     * @param jsonObject the specified new json object
+     * @throws RepositoryException repository exception
+     * @see Keys#OBJECT_ID
+     */
+    @Override
+    public void update(final String id, final JSONObject jsonObject)
+            throws RepositoryException {
+        try {
+            LOGGER.debug("Updating object[id=" + id + "] in repository[name="
+                         + getName() + "]");
+            // step 1, 2:
+            remove(id);
+            // step 3:
+            jsonObject.put(Keys.OBJECT_ID, id);
+            // step 4:
+            add(jsonObject);
+            LOGGER.debug("Updated object[id=" + id + "] in repository[name="
+                         + getName() + "]");
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+    }
+
+    /**
+     * Removes a json object by the specified id.
+     *
+     * <p>
+     *   <b>Note</b>: the specified id is NOT the key of a database record, but
+     *   the value of "oId" stored in database value entry of a record.
+     * </p>
+     *
+     * @param id the specified id
+     * @throws RepositoryException repository exception
+     * @see Keys#OBJECT_ID
+     */
+    @Override
+    public void remove(final String id) throws RepositoryException {
+        final Database database = Sleepycat.get(getName(),
+                                                getDatabaseConfig());
+        final Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);
+
+        final DatabaseEntry foundKey = new DatabaseEntry();
+        final DatabaseEntry foundData = new DatabaseEntry();
+
+        try {
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
+                   == OperationStatus.SUCCESS) {
+                final JSONObject jsonObject =
+                        new JSONObject(new String(foundData.getData(), "UTF-8"));
+                if (jsonObject.getString(Keys.OBJECT_ID).equals(id)) {
+                    if (cursor.delete().equals(OperationStatus.SUCCESS)) {
+                        LOGGER.debug("Removed object[id=" + id + "] from "
+                                     + "repository[name=" + getName() + "]");
+                    }
+
+                    return;
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        } finally {
+            cursor.close();
+            database.sync();
+        }
+
+        LOGGER.warn("Not found object[id="
+                    + id + "] in repository[name=" + getName()
+                    + "], ignores remove object operation");
+    }
+
+    /**
+     * Gets a json object by the specified id.
+     *
+     * <p>
+     *   <b>Note</b>: the specified id is NOT the key of a database record, but
+     *   the value of "oId" stored in database value entry of a record.
+     * </p>
+     *
+     * @param id the specified id
+     * @return a json object, {@code null} if not found
+     * @throws RepositoryException repository exception
+     * @see Keys#OBJECT_ID 
+     */
+    @Override
+    public JSONObject get(final String id) throws RepositoryException {
+        final Cursor cursor = Sleepycat.get(getName(),
+                                            Sleepycat.DEFAULT_DB_CONFIG).
+                openCursor(null, CursorConfig.DEFAULT);
+
+        final DatabaseEntry foundKey = new DatabaseEntry();
+        final DatabaseEntry foundData = new DatabaseEntry();
+
+        try {
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
+                   == OperationStatus.SUCCESS) {
+                final JSONObject ret =
+                        new JSONObject(new String(foundData.getData(), "UTF-8"));
+                if (ret.getString(Keys.OBJECT_ID).equals(id)) {
+                    LOGGER.debug("Got an object[id=" + id + "] from "
+                                 + "repository[name=" + getName() + "]");
+
+                    return ret;
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        } finally {
+            cursor.close();
+        }
+
+        LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
+                    + getName() + "]");
+
+        return null;
+    }
+
+    @Override
+    public List<JSONObject> get(final int currentPageNum,
+                                final int pageSize)
+            throws RepositoryException {
+        final Database database = Sleepycat.get(getName(),
+                                                getDatabaseConfig());
+        final Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);
+
+        final List<JSONObject> ret = new ArrayList<JSONObject>();
+        final JSONObject pagination = new JSONObject();
+        ret.add(pagination);
+
+        final long count = database.count();
+        final int pageCount =
+                (int) Math.ceil((double) count / (double) pageSize);
+
+        final DatabaseEntry foundKey = new DatabaseEntry();
+        final DatabaseEntry foundData = new DatabaseEntry();
+        try {
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+            final int passCount = pageSize * (currentPageNum - 1);
+            int cnt = 0;
+            while (cnt < passCount) {
+                cursor.getNext(foundKey, foundData, LockMode.RMW);
+
+                cnt++;
+            }
+
+            cnt = 0;
+            while (cnt < pageSize
+                   && cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
+                      == OperationStatus.SUCCESS) {
+                final JSONObject jsonObject =
+                        new JSONObject(new String(foundData.getData(), "UTF-8"));
+                ret.add(jsonObject);
+
+                cnt++;
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        } finally {
+            cursor.close();
+        }
+
+        LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
+                     + "[currentPageNum=" + currentPageNum + ", pageSize="
+                     + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
     }
