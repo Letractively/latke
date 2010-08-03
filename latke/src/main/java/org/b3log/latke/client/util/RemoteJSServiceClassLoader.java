@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  * Loads the services for JavaScript client.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, May 4, 2010
+ * @version 1.0.1.0, Aug 3, 2010
  */
 public final class RemoteJSServiceClassLoader {
 
@@ -117,6 +117,7 @@ public final class RemoteJSServiceClassLoader {
                         File.separator.equals("\\") ? "\\\\" : // for windows
                         File.separator, // others OS
                         ".");
+                className = className.replace("/", ".");
                 // removes the .class extension of filename
                 className = className.substring(0, className.lastIndexOf("."));
 
