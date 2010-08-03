@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.6</version>
+    <version>0.1.7</version>
     <name>Latke</name>
     <url>http://latke.googlecode.com</url>
     <description>Yet another simple web framework based on Java servlet technology.</description>
@@ -28,7 +28,6 @@
         <jabsorb.version>1.3.1</jabsorb.version>
         <slf4j.version>1.5.8</slf4j.version>
         <javax.mail.version>1.4</javax.mail.version>
-        <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.6.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
@@ -70,15 +69,14 @@
         <url>http://code.google.com/p/latke/issues/list</url>
     </issueManagement>
 
- <!-- TODO: mailing lists
     <mailingLists>
         <mailingList>
-            <name>co-soft-dev</name>
-            <archive>https://groups.google.com/group/co-soft-dev</archive>
-            <post>co-soft-dev@googlegroups.com</post>
+            <name>b3log-latke-dev</name>
+            <archive>https://groups.google.com/group/b3log-latke-dev</archive>
+            <post>b3log-latke-dev@googlegroups.com</post>
         </mailingList>
     </mailingLists>
--->
+    
     <scm>
         <connection>scm:svn:http://latke.googlecode.com/svn/trunk/latke</connection>
         <developerConnection>scm:svn:https://latke.googlecode.com/svn/trunk/latke</developerConnection>
@@ -173,12 +171,6 @@
                 <version>${javax.mail.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.sleepycat</groupId>
-                <artifactId>je</artifactId>
-                <version>${com.sleepycat.je.version}</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -237,11 +229,6 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sleepycat</groupId>
-            <artifactId>je</artifactId>
         </dependency>
 
     </dependencies>
