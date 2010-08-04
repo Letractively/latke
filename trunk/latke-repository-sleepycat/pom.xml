@@ -19,7 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.1.7</org.b3log.latke.version>
+        <org.b3log.latke.version>0.1.9</org.b3log.latke.version>
         <log4j.version>1.2.14</log4j.version>
         <json.version>2010-06-24</json.version>
         <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
