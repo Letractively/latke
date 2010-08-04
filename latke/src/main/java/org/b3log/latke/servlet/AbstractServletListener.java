@@ -79,7 +79,6 @@ public abstract class AbstractServletListener
 
     /**
      * Initializes context, {@linkplain #webRoot web root},
-     * {@linkplain #welcomePage welcome page},
      * {@linkplain #postfixExceptionPaths postfix exception paths}, registers
      * remote JavaScript services and remote JavaScript service serializers.
      * 
