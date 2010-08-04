@@ -167,7 +167,6 @@ public final class PagePostfixFilter implements Filter {
                 pw.print(
                         "<html><head><title>Error</title></head><body>");
 
-                // TODO: Localize this for next official release
                 pw.print(
                         "<h1>The resource did not process correctly</h1><pre>");
                 pw.print(stackTrace);
