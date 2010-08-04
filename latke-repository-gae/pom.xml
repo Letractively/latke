@@ -316,16 +316,11 @@
         </repository>
 
         <repository>
-            <id>m2-snapshot</id>
-            <name>88250 at Google Maven repository of snapshots</name>
-            <url>http://m2-repos.googlecode.com/svn/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
+            <id>maven-gae-plugin-repo</id>
+            <name>Maven Google App Engine Repository</name>
+            <url>http://maven-gae-plugin.googlecode.com/svn/repository</url>
         </repository>
+        
     </repositories>
 
     <pluginRepositories>
@@ -341,16 +336,5 @@
             </releases>
         </pluginRepository>
 
-        <pluginRepository>
-            <id>m2-snapshot</id>
-            <name>88250 at Google Maven repository of snapshots</name>
-            <url>http://m2-repos.googlecode.com/svn/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
     </pluginRepositories>
 </project>
