@@ -98,6 +98,9 @@ public abstract class AbstractGAERepository implements Repository {
             throw new RepositoryException(e);
         }
 
+        LOGGER.debug("Added object[id=" + ret + "] in repository["
+                + getName() + "]");
+
         return ret;
     }
 
@@ -132,21 +135,23 @@ public abstract class AbstractGAERepository implements Repository {
                 (int) Math.ceil((double) count / (double) pageSize);
         try {
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+
+
+            final int offset = pageSize * (currentPageNum - 1);
+            final QueryResultList<Entity> queryResultList =
+                    preparedQuery.asQueryResultList(
+                    withOffset(offset).limit(pageSize));
+
+            for (final Entity entity : queryResultList) {
+                final String jsonObjectString =
+                        (String) entity.getProperty(Keys.DATA);
+                final JSONObject jsonObject = new JSONObject(jsonObjectString);
+
+                ret.add(jsonObject);
+            }
         } catch (final JSONException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
-        }
-
-        final int offset = pageSize * (currentPageNum - 1);
-        final QueryResultList<Entity> queryResultList =
-                preparedQuery.asQueryResultList(
-                withOffset(offset).limit(pageSize));
-
-        for (final Entity entity : queryResultList) {
-            final JSONObject jsonObject =
-                    (JSONObject) entity.getProperty(Keys.DATA);
-
-            ret.add(jsonObject);
         }
 
         LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
