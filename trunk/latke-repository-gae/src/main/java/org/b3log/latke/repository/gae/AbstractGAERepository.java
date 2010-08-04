@@ -15,16 +15,24 @@
  */
 package org.b3log.latke.repository.gae;
 
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
+import com.google.appengine.api.datastore.QueryResultList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
+import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -113,6 +121,39 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public List<JSONObject> get(final int currentPageNum, final int pageSize)
             throws RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final List<JSONObject> ret = new ArrayList<JSONObject>();
+        final JSONObject pagination = new JSONObject();
+        ret.add(pagination);
+
+        final Query query = new Query(getName());
+        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
+
+        final int count = preparedQuery.countEntities();
+        final int pageCount =
+                (int) Math.ceil((double) count / (double) pageSize);
+        try {
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+        } catch (final JSONException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        int offset = pageSize * (currentPageNum - 1);
+        final QueryResultList<Entity> queryResultList =
+                preparedQuery.asQueryResultList(
+                withOffset(offset).limit(pageSize));
+
+        for (final Entity entity : queryResultList) {
+            final JSONObject jsonObject =
+                    (JSONObject) entity.getProperty(Keys.DATA);
+
+            ret.add(jsonObject);
+        }
+
+        LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
+                + "[currentPageNum=" + currentPageNum + ", pageSize="
+                + pageSize + "] in repository[" + getName() + "]");
+
+        return ret;
     }
 }
