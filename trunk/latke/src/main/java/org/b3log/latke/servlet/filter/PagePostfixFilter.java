@@ -103,6 +103,7 @@ public final class PagePostfixFilter implements Filter {
         final boolean isGIF = uri.endsWith(".gif");
         final boolean isPNG = uri.endsWith(".png");
         final boolean isJS = uri.endsWith(".js");
+        final boolean isIco = uri.endsWith(".ico");
         final int idx = uri.lastIndexOf(".");
         String postfix = null;
         if (idx != -1) { // all resource URL MUST has a postfix
@@ -113,7 +114,7 @@ public final class PagePostfixFilter implements Filter {
             return;
         }
 
-        if (!isDo && !isCSS && !isJPG && !isGIF && !isPNG && !isJS) {
+        if (!isDo && !isCSS && !isJPG && !isGIF && !isPNG && !isJS && !isIco) {
             problem = new Exception("The resource[postfix="
                                     + postfix + "] you requested is "
                                     + "illegal.");
