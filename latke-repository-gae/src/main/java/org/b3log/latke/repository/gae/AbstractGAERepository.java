@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.repository.gae;
 
-import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -91,7 +90,7 @@ public abstract class AbstractGAERepository implements Repository {
 
             final String kind = getName();
             final Entity entity = new Entity(kind, ret);
-            entity.setProperty(Keys.DATA, jsonObject);
+            entity.setProperty(Keys.DATA, jsonObject.toString());
 
             DATASTORE_SERVICE.put(entity);
         } catch (final Exception e) {
@@ -138,7 +137,7 @@ public abstract class AbstractGAERepository implements Repository {
             throw new RepositoryException(e);
         }
 
-        int offset = pageSize * (currentPageNum - 1);
+        final int offset = pageSize * (currentPageNum - 1);
         final QueryResultList<Entity> queryResultList =
                 preparedQuery.asQueryResultList(
                 withOffset(offset).limit(pageSize));
