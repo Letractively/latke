@@ -157,7 +157,7 @@ public abstract class AbstractRepository implements Repository {
      *     O(n)
      *     <li>Removes the found old record if exists</li>
      *     <li>Sets id of the old one into the specified new json object</li>
-     *     <li>Invokes {@linkplain #add(org.json.JSONObject)} with the
+     *     <li>Invokes {@linkplain #add(org.json.JSONObject) add} with the
      *         new json object as argument
      *     </li>
      *   </ol>
