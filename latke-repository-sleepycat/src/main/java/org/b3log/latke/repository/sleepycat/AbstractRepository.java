@@ -126,7 +126,7 @@ public abstract class AbstractRepository implements Repository {
                 case KEYEXIST:
                     LOGGER.warn("Found duplicated object[id=" + ret
                             + "] in repository[name=" + getName()
-                            + "] , ignores add object operation");
+                            + "], ignores add object operation");
                     break;
                 case SUCCESS:
                     LOGGER.debug("Added object[id=" + ret
