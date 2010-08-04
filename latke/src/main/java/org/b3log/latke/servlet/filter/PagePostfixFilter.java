@@ -91,6 +91,12 @@ public final class PagePostfixFilter implements Filter {
         Exception problem = null;
 
         final String uri = requestURI.toLowerCase();
+        if ("/".equals(uri)) {
+            chain.doFilter(request, response);
+
+            return;
+        }
+
         final boolean isDo = uri.endsWith(".do");
         final boolean isCSS = uri.endsWith(".css");
         final boolean isJPG = uri.endsWith(".jpg");
@@ -99,7 +105,7 @@ public final class PagePostfixFilter implements Filter {
         final boolean isJS = uri.endsWith(".js");
         final int idx = uri.lastIndexOf(".");
         String postfix = null;
-        if (idx != -1) { // all resource URL has a postfix
+        if (idx != -1) { // all resource URL MUST has a postfix
             postfix = requestURI.substring(idx, requestURI.length());
         } else {
             httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -118,41 +124,26 @@ public final class PagePostfixFilter implements Filter {
             return;
         }
 
-        chain.doFilter(request, response); // TODO: error-page in web.xml [404] has no effect
+        chain.doFilter(request, response);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void destroy() {
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param filterConfig filter config
-     */
     @Override
     public void init(final FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
-        if (filterConfig != null) {
-            LOGGER.trace("Initializing filter " + toString());
+
+        if (null != filterConfig) {
+            LOGGER.trace("Initializing filter[classSimpleName="
+                         + toString() + "]");
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @return filter config
-     */
     @Override
     public String toString() {
-        if (filterConfig == null) {
-            return getClass().getSimpleName();
-        }
-
-        return filterConfig.toString();
+        return getClass().getSimpleName();
     }
 
     /**

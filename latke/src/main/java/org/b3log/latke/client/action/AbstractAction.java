@@ -301,14 +301,15 @@ public abstract class AbstractAction extends HttpServlet {
      *
      * @param requestURI the specified request URI
      * @return the name of FreeMarker template corresponding to request URI,
-     *         returns {@code null} if not exists such FreeMarker template
+     *         returns {@literal index.html} if not exists such a FreeMarker
+     *         template
      */
     private String getPageName(final String requestURI) {
         int idx = requestURI.lastIndexOf("/");
 
         String ret = requestURI.substring(idx + 1, requestURI.length());
         if (Strings.isEmptyOrNull(ret)) {
-            ret = null;
+            ret = "index.html";
         } else {
             idx = ret.lastIndexOf(".do");
             ret = ret.substring(0, idx);
@@ -387,6 +388,7 @@ public abstract class AbstractAction extends HttpServlet {
             final HttpServletRequest request, final HttpServletResponse response)
             throws ActionException {
         final String pageName = getPageName(request.getRequestURI());
+
         try {
             final String requestJSONString = toJSONString(request);
             final JSONObject requestJSONObject = toJSONObject(requestJSONString);
