@@ -16,7 +16,6 @@
 package org.b3log.latke.servlet.filter;
 
 import org.b3log.latke.client.Sessions;
-import org.b3log.latke.servlet.AbstractServletListener;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,15 +47,14 @@ public final class AuthenticationFilter implements Filter {
     }
 
     /**
-     * Filters the has not logged in user for the specified request. Redirects
-     * it to welcome page.
+     * Filters the has not logged in user for the specified request. Send error
+     * {@linkplain HttpServletResponse#SC_FORBIDDEN}.
      *
      * @param request the specified request
      * @param response the specified response
      * @param chain filter chain
      * @throws IOException io exception
      * @throws ServletException servlet exception
-     * @see AbstractServletListener#getWelcomePage() 
      */
     @Override
     public void doFilter(final ServletRequest request,
