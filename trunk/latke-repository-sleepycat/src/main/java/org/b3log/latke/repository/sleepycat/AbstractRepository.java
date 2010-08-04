@@ -38,7 +38,7 @@ import org.json.JSONObject;
  * Abstract repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jul 28, 2010
+ * @version 1.0.0.2, Aug 4, 2010
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -50,7 +50,7 @@ public abstract class AbstractRepository implements Repository {
     /**
      * Lock for unique key generation.
      */
-    private static Lock keyGenLock = new ReentrantLock();
+    private static final Lock KEY_GEN_LOCK = new ReentrantLock();
     /**
      * Sleep millisecond. 
      */
@@ -89,7 +89,7 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
         String ret = null;
-        keyGenLock.lock();
+        KEY_GEN_LOCK.lock();
         try {
             ret = String.valueOf(System.currentTimeMillis());
 
@@ -99,7 +99,7 @@ public abstract class AbstractRepository implements Repository {
                 LOGGER.warn(e.getMessage(), e);
             }
         } finally {
-            keyGenLock.unlock();
+            KEY_GEN_LOCK.unlock();
         }
 
         if (null == ret) {
