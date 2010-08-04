@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.servlet.filter;
 
 import org.b3log.latke.client.Sessions;
@@ -34,7 +33,7 @@ import org.json.JSONObject;
  * Authentication filter.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jun 23, 2010
+ * @version 1.0.1.0, Aug 4, 2010
  */
 public final class AuthenticationFilter implements Filter {
 
@@ -70,10 +69,9 @@ public final class AuthenticationFilter implements Filter {
                 (HttpServletResponse) response;
 
         if (!hasLoggedIn(httpServletRequest)) {
-            LOGGER.info("Authenticate fail, redirect to welcome page");
-            sendRedirectToWelcomePage(httpServletResponse);
+            LOGGER.info("Authenticate fail for request[" + request + "]");
 
-            return;
+            httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
 
         chain.doFilter(request, response);
@@ -95,29 +93,10 @@ public final class AuthenticationFilter implements Filter {
         LOGGER.trace("Request[URI=" + requestURI + ", URL=" + requestURL + "]");
 
         JSONObject user = null;
-        final String welcomePage = AbstractServletListener.getWelcomePage();
 
         user = Sessions.currentUser(request);
         LOGGER.debug("Session[user=" + user + "]");
 
-        if (null == user && !requestURI.endsWith(welcomePage)) {
-            LOGGER.debug("Redirect to welcome page");
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Sends redirect to welcome page for the specified response.
-     *
-     * @param response the specified response
-     * @throws IOException io exception
-     */
-    private void sendRedirectToWelcomePage(final HttpServletResponse response)
-            throws IOException {
-        final String welcomePage = AbstractServletListener.getWelcomePage();
-
-        response.sendRedirect(welcomePage);
+        return null != user ? true : false;
     }
 }

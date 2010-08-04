@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.action;
 
 import org.b3log.latke.Keys;
@@ -46,7 +45,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Jun 27, 2010
+ * @version 1.0.2.0, Aug 4, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -302,14 +301,14 @@ public abstract class AbstractAction extends HttpServlet {
      *
      * @param requestURI the specified request URI
      * @return the name of FreeMarker template corresponding to request URI,
-     *         returns the first welcome page name indicated in web.xml
+     *         returns {@code null} if not exists such FreeMarker template
      */
     private String getPageName(final String requestURI) {
         int idx = requestURI.lastIndexOf("/");
 
         String ret = requestURI.substring(idx + 1, requestURI.length());
-        if (ret.equals("")) {
-            ret = AbstractServletListener.getWelcomePage();
+        if (Strings.isEmptyOrNull(ret)) {
+            ret = null;
         } else {
             idx = ret.lastIndexOf(".do");
             ret = ret.substring(0, idx);
