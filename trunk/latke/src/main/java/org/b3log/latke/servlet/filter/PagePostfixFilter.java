@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.servlet.filter;
 
 import org.b3log.latke.servlet.AbstractServletListener;
@@ -36,7 +35,7 @@ import org.apache.log4j.Logger;
  * *.do!
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jun 22, 2010
+ * @version 1.0.1.0, Aug 4, 2010
  */
 public final class PagePostfixFilter implements Filter {
 
@@ -77,19 +76,18 @@ public final class PagePostfixFilter implements Filter {
         final String requestLocalName =
                 httpServletRequest.getLocalName();
         LOGGER.trace("Request[URI=" + requestURI + ", localName="
-                + requestLocalName + "]");
+                     + requestLocalName + "]");
 
         final Set<String> postfixExceptionPaths =
                 AbstractServletListener.getPostfixExceptionPaths();
         if (postfixExceptionPaths.contains(requestURI)) {
             LOGGER.trace("Excepts request[URI=" + requestURI + "] from "
-                    + getClass().getSimpleName());
+                         + getClass().getSimpleName());
             chain.doFilter(request, response);
 
             return;
         }
 
-        final String welcomePage = AbstractServletListener.getWelcomePage();
         Exception problem = null;
 
         final String uri = requestURI.toLowerCase();
@@ -101,22 +99,21 @@ public final class PagePostfixFilter implements Filter {
         final boolean isJS = uri.endsWith(".js");
         final int idx = uri.lastIndexOf(".");
         String postfix = null;
-        if (idx != -1) {
+        if (idx != -1) { // all resource URL has a postfix
             postfix = requestURI.substring(idx, requestURI.length());
         } else {
-
-            httpServletResponse.sendRedirect(welcomePage);
+            httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
 
             return;
         }
 
         if (!isDo && !isCSS && !isJPG && !isGIF && !isPNG && !isJS) {
             problem = new Exception("The resource[postfix="
-                    + postfix + "] you requested is "
-                    + "illegal.");
+                                    + postfix + "] you requested is "
+                                    + "illegal.");
             //sendProcessingError(problem, response);
             LOGGER.trace(problem.getMessage());
-            httpServletResponse.sendRedirect(welcomePage);
+            httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             return;
         }

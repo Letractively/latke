@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.servlet;
 
 import org.b3log.latke.util.Strings;
@@ -43,7 +42,7 @@ import org.jabsorb.JSONRPCBridge;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Jul 21, 2010
+ * @version 1.0.2.0, Aug 4, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -60,10 +59,6 @@ public abstract class AbstractServletListener
      * Web root.
      */
     private static String webRoot;
-    /**
-     * Welcome page.
-     */
-    private static String welcomePage;
     /**
      * Postfix exception paths.
      */
@@ -103,10 +98,7 @@ public abstract class AbstractServletListener
         webRoot = servletContext.getRealPath("") + File.separator;
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.info("[Web root[path=" + webRoot + ", catalina.base="
-                + catalinaBase + "]");
-
-        welcomePage = servletContext.getInitParameter("welcomePage");
-        LOGGER.info("[welcomePage=" + welcomePage + "]");
+                    + catalinaBase + "]");
 
         final String postfixExceptionPathsString =
                 servletContext.getInitParameter("postfixExceptionPaths");
@@ -131,7 +123,7 @@ public abstract class AbstractServletListener
         cache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
 
         LOGGER.info("Initialized cache[maxCount="
-                + MAX_CACHEABLE_OBJECT_CNT + "]");
+                    + MAX_CACHEABLE_OBJECT_CNT + "]");
     }
 
     /**
@@ -161,15 +153,6 @@ public abstract class AbstractServletListener
             final HttpSessionEvent httpSessionEvent);
 
     /**
-     * Gets welcome page configured in web.xml.
-     *
-     * @return welcome page
-     */
-    public static String getWelcomePage() {
-        return welcomePage;
-    }
-
-    /**
      * Gets postfix exception paths configured in web.xml.
      *
      * @return a set of postfix exception paths
@@ -185,7 +168,7 @@ public abstract class AbstractServletListener
     public static String getClientRemoteServicePackage() {
         if (Strings.isEmptyOrNull(clientRemoteServicePackage)) {
             throw new RuntimeException("Please override "
-                    + "clientRemoteServicePackage field!");
+                                       + "clientRemoteServicePackage field!");
         }
 
         return clientRemoteServicePackage;
