@@ -17,6 +17,7 @@
 package org.b3log.latke.repository;
 
 import java.util.List;
+import org.b3log.latke.model.Pagination;
 import org.json.JSONObject;
 
 /**
@@ -80,13 +81,14 @@ public interface Repository {
      *       "paginationPageCount": 88250}
      *   },
      *   {
-     *     "objectId": "...."
+     *     "oId": "...."
      *   }, ....
      * ], if not found any objects by the specified current page number and
      * page size, returns pagination info as the only element of the returned
      * list
      * </pre>
      * @throws RepositoryException repository exception
+     * @see Pagination
      */
     List<JSONObject> get(final int currentPageNum,
                          final int pageSize) throws RepositoryException;
