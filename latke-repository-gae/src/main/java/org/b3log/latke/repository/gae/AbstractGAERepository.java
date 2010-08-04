@@ -47,7 +47,7 @@ public abstract class AbstractGAERepository implements Repository {
     /**
      * Lock for unique key generation.
      */
-    private static Lock keyGenLock = new ReentrantLock();
+    private static final Lock KEY_GEN_LOCK = new ReentrantLock();
     /**
      * Sleep millisecond.
      */
@@ -61,7 +61,7 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
         String ret = null;
-        keyGenLock.lock();
+        KEY_GEN_LOCK.lock();
         try {
             ret = String.valueOf(System.currentTimeMillis());
 
@@ -71,18 +71,25 @@ public abstract class AbstractGAERepository implements Repository {
                 LOGGER.warn(e.getMessage(), e);
             }
         } finally {
-            keyGenLock.unlock();
+            KEY_GEN_LOCK.unlock();
         }
 
         if (null == ret) {
             throw new RuntimeException("Time millis key generation fail!");
         }
 
-        final String kind = getName();
-        final Entity entity = new Entity(kind, ret);
-        entity.setProperty(Keys.DATA, jsonObject);
+        try {
+            jsonObject.put(Keys.OBJECT_ID, ret);
 
-        DATASTORE_SERVICE.put(entity);
+            final String kind = getName();
+            final Entity entity = new Entity(kind, ret);
+            entity.setProperty(Keys.DATA, jsonObject);
+
+            DATASTORE_SERVICE.put(entity);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
 
         return ret;
     }
