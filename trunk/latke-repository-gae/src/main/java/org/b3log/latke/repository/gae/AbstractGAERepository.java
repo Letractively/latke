@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jun 24, 2010
+ * @version 1.0.0.0, Aug 4, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
