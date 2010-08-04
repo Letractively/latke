@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Description: Latke repository implemented by Sleepycat.
+    Description: Latke repository implementation by Sleepycat.
     Version: 1.0.0.0, Aug 3, 2010
     Author: Liang Ding
 -->
@@ -14,7 +14,7 @@
     <version>0.1.0</version>
     <name>Latke Repository(Sleepycat)</name>
     <url>http://latke.googlecode.com</url>
-    <description>Yet another simple web framework based on Java servlet technology.</description>
+    <description>Latke repository implemented by Sleepycat.</description>
     <inceptionYear>2009</inceptionYear>
 
     <!-- Version -->
@@ -73,9 +73,9 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:svn:http://latke.googlecode.com/svn/trunk/latke</connection>
-        <developerConnection>scm:svn:https://latke.googlecode.com/svn/trunk/latke</developerConnection>
-        <url>http://code.google.com/p/latke/source/browse/#svn/trunk/latke</url>
+        <connection>scm:svn:http://latke.googlecode.com/svn/trunk/latke-repository-sleepycat</connection>
+        <developerConnection>scm:svn:https://latke.googlecode.com/svn/trunk/latke-repository-sleepycat</developerConnection>
+        <url>http://code.google.com/p/latke/source/browse/#svn/trunk/latke-repository-sleepycat</url>
     </scm>
 
     <reporting>
