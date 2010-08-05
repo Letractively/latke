@@ -37,7 +37,6 @@ import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.util.Ids;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -240,32 +239,19 @@ public abstract class AbstractGAERepository implements Repository {
      * @param jsonObject the specified json object
      * @throws JSONException json exception
      */
-    private void setProperties(final Entity entity, final JSONObject jsonObject)
+    public final void setProperties(final Entity entity,
+                                    final JSONObject jsonObject)
             throws JSONException {
         @SuppressWarnings("unchecked")
         final Iterator<String> keys = jsonObject.keys();
         while (keys.hasNext()) {
             final String key = keys.next();
             final Object value = jsonObject.get(key);
-            if (SUPPORTED_TYPES.contains(value.getClass())) {
+            if (value instanceof String) {
                 entity.setProperty(key, value);
-            } else { // JSONObject, JSONArray
-                LOGGER.debug("Type[class=" + value.getClass() + "] need to "
-                             + "transform for datastore");
-                String stringValue = null;
-                if (value instanceof JSONArray) {
-                    stringValue = ((JSONArray) value).toString();
-                } else if (value instanceof JSONObject) {
-                    stringValue = ((JSONArray) value).toString();
-                } else {
-                    throw new RuntimeException("Unsupported type[class=" + value.
-                            getClass() + "] in latke GAE repository");
-                }
-
-                LOGGER.debug("Type[class=" + value.getClass() + "] transformed "
-                             + "string[" + stringValue + "]");
-
-                entity.setProperty(key, stringValue);
+            } else { // TODO: add supported types
+                throw new RuntimeException("Unsupported type[class=" + value.
+                        getClass() + "] in Latke GAE repository");
             }
         }
     }
