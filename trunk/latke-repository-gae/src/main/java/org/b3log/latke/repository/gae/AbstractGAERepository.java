@@ -27,13 +27,12 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
+import org.b3log.latke.util.Ids;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,14 +53,6 @@ public abstract class AbstractGAERepository implements Repository {
      */
     private static final Logger LOGGER =
             Logger.getLogger(AbstractGAERepository.class);
-    /**
-     * Lock for unique key generation.
-     */
-    private static final Lock KEY_GEN_LOCK = new ReentrantLock();
-    /**
-     * Sleep millisecond.
-     */
-    private static final long KEY_GEN_SLEEP_MILLIS = 5;
     /**
      * GAE datastore service.
      */
@@ -93,23 +84,7 @@ public abstract class AbstractGAERepository implements Repository {
      */
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-        String ret = null;
-        KEY_GEN_LOCK.lock();
-        try {
-            ret = String.valueOf(System.currentTimeMillis());
-
-            try {
-                Thread.sleep(KEY_GEN_SLEEP_MILLIS);
-            } catch (final InterruptedException e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-        } finally {
-            KEY_GEN_LOCK.unlock();
-        }
-
-        if (null == ret) {
-            throw new RuntimeException("Time millis key generation fail!");
-        }
+        final String ret = Ids.genTimeMillisId();
 
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
@@ -127,7 +102,7 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         LOGGER.debug("Added object[id=" + ret + "] in repository["
-                + getName() + "]");
+                     + getName() + "]");
 
         return ret;
     }
@@ -164,7 +139,7 @@ public abstract class AbstractGAERepository implements Repository {
             throws RepositoryException {
         try {
             LOGGER.debug("Updating object[id=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
             // step 1, 2:
             remove(id);
             // step 3:
@@ -172,7 +147,7 @@ public abstract class AbstractGAERepository implements Repository {
             // step 4:
             add(jsonObject);
             LOGGER.debug("Updated object[id=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -184,7 +159,7 @@ public abstract class AbstractGAERepository implements Repository {
         final Key key = KeyFactory.createKey(getName(), id);
         DATASTORE_SERVICE.delete(key);
         LOGGER.debug("Removed object[id=" + id + "] from "
-                + "repository[name=" + getName() + "]");
+                     + "repository[name=" + getName() + "]");
     }
 
     @Override
@@ -199,10 +174,10 @@ public abstract class AbstractGAERepository implements Repository {
             ret = new JSONObject(jsonObjectString);
 
             LOGGER.debug("Got an object[id=" + id + "] from "
-                    + "repository[name=" + getName() + "]");
+                         + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
             LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
-                    + getName() + "]");
+                        + getName() + "]");
         } catch (final JSONException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -246,8 +221,8 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
-                + "[currentPageNum=" + currentPageNum + ", pageSize="
-                + pageSize + "] in repository[" + getName() + "]");
+                     + "[currentPageNum=" + currentPageNum + ", pageSize="
+                     + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
     }
