@@ -183,7 +183,7 @@ public abstract class AbstractGAERepository implements Repository {
             final Map<String, Object> properties = entity.getProperties();
             ret = new JSONObject(properties);
 
-            LOGGER.debug("Got an object[id=" + id + "] from "
+            LOGGER.debug("Got an object[oId=" + id + "] from "
                          + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
             LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
