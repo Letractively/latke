@@ -60,7 +60,7 @@ public abstract class AbstractGAERepository implements Repository {
     /**
      * GAE datastore service.
      */
-    private static final DatastoreService DATASTORE_SERVICE =
+    public static final DatastoreService DATASTORE_SERVICE =
             DatastoreServiceFactory.getDatastoreService();
     /**
      * GAE datastore supported types.
@@ -187,7 +187,8 @@ public abstract class AbstractGAERepository implements Repository {
             LOGGER.debug("Got an object[oId=" + id + "] from "
                     + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
-            LOGGER.warn("Not found an object[OId=" + id + "] in repository[name="
+            LOGGER.warn("Not found an object[OId=" + id
+                    + "] in repository[name="
                     + getName() + "]");
         }
 
