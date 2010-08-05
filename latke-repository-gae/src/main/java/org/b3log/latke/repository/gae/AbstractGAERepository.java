@@ -262,6 +262,9 @@ public abstract class AbstractGAERepository implements Repository {
                             getClass() + "] in latke GAE repository");
                 }
 
+                LOGGER.debug("Type[class=" + value.getClass() + "] transformed "
+                             + "string[" + stringValue + "]");
+
                 entity.setProperty(key, stringValue);
             }
         }
