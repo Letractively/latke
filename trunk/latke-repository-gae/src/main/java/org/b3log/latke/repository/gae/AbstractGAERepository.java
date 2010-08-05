@@ -113,7 +113,7 @@ public abstract class AbstractGAERepository implements Repository {
             final Entity entity = new Entity(kind, ret);
             setProperties(entity, jsonObject);
 
-            DATASTORE_SERVICE.put(transaction, entity);
+            DATASTORE_SERVICE.put(entity);
             transaction.commit();
         } catch (final Exception e) {
             transaction.rollback();
@@ -179,7 +179,7 @@ public abstract class AbstractGAERepository implements Repository {
         final Key key = KeyFactory.createKey(getName(), id);
         final Transaction transactoin =
                 DATASTORE_SERVICE.beginTransaction();
-        DATASTORE_SERVICE.delete(transactoin, key);
+        DATASTORE_SERVICE.delete(key);
         transactoin.commit();
         LOGGER.debug("Removed object[oId=" + id + "] from "
                 + "repository[name=" + getName() + "]");
