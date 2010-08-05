@@ -24,21 +24,20 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.service.ServiceException;
+import org.b3log.latke.util.Ids;
 import org.json.JSONObject;
 
 /**
  * Abstract repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Aug 4, 2010
+ * @version 1.0.0.3, Aug 5, 2010
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -47,14 +46,6 @@ public abstract class AbstractRepository implements Repository {
      */
     private static final Logger LOGGER =
             Logger.getLogger(AbstractRepository.class);
-    /**
-     * Lock for unique key generation.
-     */
-    private static final Lock KEY_GEN_LOCK = new ReentrantLock();
-    /**
-     * Sleep millisecond. 
-     */
-    private static final long KEY_GEN_SLEEP_MILLIS = 5;
 
     /**
      * Gets database configuration of this repository.
@@ -88,23 +79,7 @@ public abstract class AbstractRepository implements Repository {
      */
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-        String ret = null;
-        KEY_GEN_LOCK.lock();
-        try {
-            ret = String.valueOf(System.currentTimeMillis());
-
-            try {
-                Thread.sleep(KEY_GEN_SLEEP_MILLIS);
-            } catch (final InterruptedException e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-        } finally {
-            KEY_GEN_LOCK.unlock();
-        }
-
-        if (null == ret) {
-            throw new RuntimeException("Time millis key generation fail!");
-        }
+        final String ret = Ids.genTimeMillisId();
 
         final Database database = Sleepycat.get(getName(), getDatabaseConfig());
 
@@ -125,16 +100,16 @@ public abstract class AbstractRepository implements Repository {
             switch (operationStatus) {
                 case KEYEXIST:
                     LOGGER.warn("Found duplicated object[id=" + ret
-                            + "] in repository[name=" + getName()
-                            + "], ignores add object operation");
+                                + "] in repository[name=" + getName()
+                                + "], ignores add object operation");
                     break;
                 case SUCCESS:
                     LOGGER.debug("Added object[id=" + ret
-                            + "] in repository[name=" + getName() + "]");
+                                 + "] in repository[name=" + getName() + "]");
                     break;
                 default:
                     throw new ServiceException("Add object[id="
-                            + ret + "] fail");
+                                               + ret + "] fail");
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -178,7 +153,7 @@ public abstract class AbstractRepository implements Repository {
             throws RepositoryException {
         try {
             LOGGER.debug("Updating object[id=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
             // step 1, 2:
             remove(id);
             // step 3:
@@ -186,7 +161,7 @@ public abstract class AbstractRepository implements Repository {
             // step 4:
             add(jsonObject);
             LOGGER.debug("Updated object[id=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -216,13 +191,13 @@ public abstract class AbstractRepository implements Repository {
 
         try {
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
-                    == OperationStatus.SUCCESS) {
+                   == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 if (jsonObject.getString(Keys.OBJECT_ID).equals(id)) {
                     if (cursor.delete().equals(OperationStatus.SUCCESS)) {
                         LOGGER.debug("Removed object[id=" + id + "] from "
-                                + "repository[name=" + getName() + "]");
+                                     + "repository[name=" + getName() + "]");
                     }
 
                     return;
@@ -237,8 +212,8 @@ public abstract class AbstractRepository implements Repository {
         }
 
         LOGGER.warn("Not found object[id="
-                + id + "] in repository[name=" + getName()
-                + "], ignores remove object operation");
+                    + id + "] in repository[name=" + getName()
+                    + "], ignores remove object operation");
     }
 
     /**
@@ -265,12 +240,12 @@ public abstract class AbstractRepository implements Repository {
 
         try {
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
-                    == OperationStatus.SUCCESS) {
+                   == OperationStatus.SUCCESS) {
                 final JSONObject ret =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 if (ret.getString(Keys.OBJECT_ID).equals(id)) {
                     LOGGER.debug("Got an object[id=" + id + "] from "
-                            + "repository[name=" + getName() + "]");
+                                 + "repository[name=" + getName() + "]");
 
                     return ret;
                 }
@@ -283,7 +258,7 @@ public abstract class AbstractRepository implements Repository {
         }
 
         LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
-                + getName() + "]");
+                    + getName() + "]");
 
         return null;
     }
@@ -318,8 +293,8 @@ public abstract class AbstractRepository implements Repository {
 
             cnt = 0;
             while (cnt < pageSize
-                    && cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
-                    == OperationStatus.SUCCESS) {
+                   && cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
+                      == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 ret.add(jsonObject);
@@ -334,8 +309,8 @@ public abstract class AbstractRepository implements Repository {
         }
 
         LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
-                + "[currentPageNum=" + currentPageNum + ", pageSize="
-                + pageSize + "] in repository[" + getName() + "]");
+                     + "[currentPageNum=" + currentPageNum + ", pageSize="
+                     + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
     }
