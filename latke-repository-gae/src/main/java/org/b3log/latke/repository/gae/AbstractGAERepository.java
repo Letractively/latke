@@ -18,19 +18,14 @@ package org.b3log.latke.repository.gae;
 import com.google.appengine.api.datastore.DataTypeUtils;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceConfig;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.ImplicitTransactionManagementPolicy;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
-import static com.google.appengine.api.datastore.DatastoreServiceConfig.Builder.*;
-import com.google.appengine.api.datastore.ReadPolicy.Consistency;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.appengine.api.datastore.ReadPolicy;
 import com.google.appengine.api.datastore.Transaction;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -78,11 +73,7 @@ public abstract class AbstractGAERepository implements Repository {
     private static final double EVENTUAL_DEADLINE = 5.0;
 
     static {
-        final DatastoreServiceConfig config = withImplicitTransactionManagementPolicy(
-                ImplicitTransactionManagementPolicy.AUTO);
-        config.readPolicy(new ReadPolicy(Consistency.EVENTUAL)).deadline(
-                EVENTUAL_DEADLINE);
-        DATASTORE_SERVICE = DatastoreServiceFactory.getDatastoreService(config);
+        DATASTORE_SERVICE = DatastoreServiceFactory.getDatastoreService();
     }
 
     /**
