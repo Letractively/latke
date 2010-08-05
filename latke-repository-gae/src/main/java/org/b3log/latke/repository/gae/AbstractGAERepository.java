@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.gae;
 
+import com.google.appengine.api.datastore.DataTypeUtils;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -26,13 +27,17 @@ import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.util.Ids;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,6 +63,11 @@ public abstract class AbstractGAERepository implements Repository {
      */
     private static final DatastoreService DATASTORE_SERVICE =
             DatastoreServiceFactory.getDatastoreService();
+    /**
+     * GAE datastore supported types.
+     */
+    private static final Set<Class<?>> SUPPORTED_TYPES =
+            DataTypeUtils.getSupportedTypes();
 
     /**
      * Adds the specified json object.
@@ -93,7 +103,7 @@ public abstract class AbstractGAERepository implements Repository {
 
             final String kind = getName();
             final Entity entity = new Entity(kind, ret);
-            entity.setProperty(Keys.DATA, jsonObject.toString());
+            setProperties(entity, jsonObject);
 
             DATASTORE_SERVICE.put(entity);
         } catch (final Exception e) {
@@ -167,20 +177,17 @@ public abstract class AbstractGAERepository implements Repository {
         JSONObject ret = null;
 
         final Key key = KeyFactory.createKey(getName(), id);
+
         try {
             final Entity entity = DATASTORE_SERVICE.get(key);
-            final String jsonObjectString =
-                    (String) entity.getProperty(Keys.DATA);
-            ret = new JSONObject(jsonObjectString);
+            final Map<String, Object> properties = entity.getProperties();
+            ret = new JSONObject(properties);
 
             LOGGER.debug("Got an object[id=" + id + "] from "
                          + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
             LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
                         + getName() + "]");
-        } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RepositoryException(e);
         }
 
         return ret;
@@ -209,9 +216,8 @@ public abstract class AbstractGAERepository implements Repository {
                     withOffset(offset).limit(pageSize));
 
             for (final Entity entity : queryResultList) {
-                final String jsonObjectString =
-                        (String) entity.getProperty(Keys.DATA);
-                final JSONObject jsonObject = new JSONObject(jsonObjectString);
+                final Map<String, Object> properties = entity.getProperties();
+                final JSONObject jsonObject = new JSONObject(properties);
 
                 ret.add(jsonObject);
             }
@@ -225,5 +231,39 @@ public abstract class AbstractGAERepository implements Repository {
                      + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
+    }
+
+    /**
+     * Sets the properties of the specified entity by the specified json object.
+     *
+     * @param entity the specified entity
+     * @param jsonObject the specified json object
+     * @throws JSONException json exception
+     */
+    private void setProperties(final Entity entity, final JSONObject jsonObject)
+            throws JSONException {
+        @SuppressWarnings("unchecked")
+        final Iterator<String> keys = jsonObject.keys();
+        while (keys.hasNext()) {
+            final String key = keys.next();
+            final Object value = jsonObject.get(key);
+            if (SUPPORTED_TYPES.contains(value.getClass())) {
+                entity.setProperty(key, value);
+            } else { // JSONObject, JSONArray
+                LOGGER.debug("Type[class=" + value.getClass() + "] need to "
+                             + "transform for datastore");
+                String stringValue = null;
+                if (value instanceof JSONArray) {
+                    stringValue = ((JSONArray) value).toString();
+                } else if (value instanceof JSONObject) {
+                    stringValue = ((JSONArray) value).toString();
+                } else {
+                    throw new RuntimeException("Unsupported type[class=" + value.
+                            getClass() + "] in latke GAE repository");
+                }
+
+                entity.setProperty(key, stringValue);
+            }
+        }
     }
 }
