@@ -17,7 +17,6 @@
 package org.b3log.latke.repository;
 
 import java.util.List;
-import org.b3log.latke.model.Pagination;
 import org.json.JSONObject;
 
 /**
@@ -69,10 +68,11 @@ public interface Repository {
      * Gets json objects by the specified current page number and page size.
      *
      * @param currentPageNum the specified current page number, MUST grater
-     *         then 0
+     * then 0
      * @param pageSize the specified page size(count of a page contains objects),
-     *         MUST grater then 0
-     * @return the first element depicts the pagination info, the rest of
+     * MUST grater then 0
+     * @return the first element depicts the 
+     * {@link org.b3log.latke.model.Pagination pagination info}, the rest of
      * elements are objects, for example:
      * <pre>
      * [
@@ -88,7 +88,7 @@ public interface Repository {
      * list
      * </pre>
      * @throws RepositoryException repository exception
-     * @see Pagination
+     * @see org.b3log.latke.model.Pagination
      */
     List<JSONObject> get(final int currentPageNum,
                          final int pageSize) throws RepositoryException;
