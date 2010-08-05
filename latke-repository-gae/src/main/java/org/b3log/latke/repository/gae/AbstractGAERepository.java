@@ -182,7 +182,7 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public void remove(final String id) throws RepositoryException {
         final Key key = KeyFactory.createKey(getName(), id);
-        LOGGER.debug("Removing object[oId=" + id + "] from"
+        LOGGER.debug("Removing object[oId=" + id + "] from "
                 + "repository[name=" + getName() + "]");
         DATASTORE_SERVICE.delete(key);
         LOGGER.debug("Removed object[oId=" + id + "] from "
