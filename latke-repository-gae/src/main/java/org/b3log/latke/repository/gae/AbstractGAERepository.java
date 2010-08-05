@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.ReadPolicy.Consistency;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.ReadPolicy;
+import com.google.appengine.api.datastore.Transaction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -111,6 +112,7 @@ public abstract class AbstractGAERepository implements Repository {
     public String add(final JSONObject jsonObject) throws RepositoryException {
         final String ret = Ids.genTimeMillisId();
 
+        final Transaction transaction = DATASTORE_SERVICE.beginTransaction();
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
                 jsonObject.put(Keys.OBJECT_ID, ret);
@@ -120,8 +122,10 @@ public abstract class AbstractGAERepository implements Repository {
             final Entity entity = new Entity(kind, ret);
             setProperties(entity, jsonObject);
 
-            DATASTORE_SERVICE.put(entity);
+            DATASTORE_SERVICE.put(transaction, entity);
+            transaction.commit();
         } catch (final Exception e) {
+            transaction.rollback();
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
         }
@@ -182,9 +186,10 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public void remove(final String id) throws RepositoryException {
         final Key key = KeyFactory.createKey(getName(), id);
-        LOGGER.debug("Removing object[oId=" + id + "] from "
-                + "repository[name=" + getName() + "]");
-        DATASTORE_SERVICE.delete(key);
+        final Transaction transactoin =
+                DATASTORE_SERVICE.beginTransaction();
+        DATASTORE_SERVICE.delete(transactoin, key);
+        transactoin.commit();
         LOGGER.debug("Removed object[oId=" + id + "] from "
                 + "repository[name=" + getName() + "]");
     }
