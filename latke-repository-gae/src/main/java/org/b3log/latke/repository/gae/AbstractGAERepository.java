@@ -48,7 +48,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 4, 2010
+ * @version 1.0.0.1, Aug 5, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -110,8 +110,8 @@ public abstract class AbstractGAERepository implements Repository {
             throw new RepositoryException(e);
         }
 
-        LOGGER.debug("Added object[id=" + ret + "] in repository["
-                     + getName() + "]");
+        LOGGER.debug("Added object[oId=" + ret + "] in repository["
+                + getName() + "]");
 
         return ret;
     }
@@ -147,16 +147,16 @@ public abstract class AbstractGAERepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.debug("Updating object[id=" + id + "] in repository[name="
-                         + getName() + "]");
+            LOGGER.debug("Updating object[oId=" + id + "] in repository[name="
+                    + getName() + "]");
             // step 1, 2:
             remove(id);
             // step 3:
             jsonObject.put(Keys.OBJECT_ID, id);
             // step 4:
             add(jsonObject);
-            LOGGER.debug("Updated object[id=" + id + "] in repository[name="
-                         + getName() + "]");
+            LOGGER.debug("Updated object[oId=" + id + "] in repository[name="
+                    + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -166,9 +166,11 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public void remove(final String id) throws RepositoryException {
         final Key key = KeyFactory.createKey(getName(), id);
+        LOGGER.debug("Removing object[oId=" + id + "] from"
+                + "repository[name=" + getName() + "]");
         DATASTORE_SERVICE.delete(key);
-        LOGGER.debug("Removed object[id=" + id + "] from "
-                     + "repository[name=" + getName() + "]");
+        LOGGER.debug("Removed object[oId=" + id + "] from "
+                + "repository[name=" + getName() + "]");
     }
 
     @Override
@@ -183,10 +185,10 @@ public abstract class AbstractGAERepository implements Repository {
             ret = new JSONObject(properties);
 
             LOGGER.debug("Got an object[oId=" + id + "] from "
-                         + "repository[name=" + getName() + "]");
+                    + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
-            LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
-                        + getName() + "]");
+            LOGGER.warn("Not found an object[OId=" + id + "] in repository[name="
+                    + getName() + "]");
         }
 
         return ret;
@@ -226,8 +228,8 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
-                     + "[currentPageNum=" + currentPageNum + ", pageSize="
-                     + pageSize + "] in repository[" + getName() + "]");
+                + "[currentPageNum=" + currentPageNum + ", pageSize="
+                + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
     }
