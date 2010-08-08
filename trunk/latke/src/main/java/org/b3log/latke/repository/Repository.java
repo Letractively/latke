@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository;
 
-import java.util.List;
+import org.b3log.latke.Keys;
+import org.b3log.latke.model.Pagination;
 import org.json.JSONObject;
 
 /**
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 23, 2010
+ * @version 1.0.1.0, Aug 8, 2010
  */
 public interface Repository {
 
@@ -71,27 +71,23 @@ public interface Repository {
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
      * MUST grater then 0
-     * @return the first element depicts the 
-     * {@link org.b3log.latke.model.Pagination pagination info}, the rest of
-     * elements are objects, for example:
+     * @return a for example:
      * <pre>
-     * [
-     *   {
+     * {
      *     "pagination": {
-     *       "paginationPageCount": 88250}
-     *   },
-     *   {
-     *     "oId": "...."
-     *   }, ....
-     * ], if not found any objects by the specified current page number and
-     * page size, returns pagination info as the only element of the returned
-     * list
+     *       "paginationPageCount": 88250
+     *     },
+     *     "rslts": [{
+     *         "oId": "...."
+     *     }, ....]
+     * }, if not found any objects by the specified current page number and
+     * page size, returns pagination info as the only attribute of the returned
+     * json object
      * </pre>
      * @throws RepositoryException repository exception
-     * @see org.b3log.latke.model.Pagination
      */
-    List<JSONObject> get(final int currentPageNum,
-                         final int pageSize) throws RepositoryException;
+    JSONObject get(final int currentPageNum,
+                   final int pageSize) throws RepositoryException;
 
     /**
      * Gets the name of this repository.
