@@ -48,7 +48,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 5, 2010
+ * @version 1.0.0.2, Aug 8, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -225,14 +225,16 @@ public abstract class AbstractGAERepository implements Repository {
                     withOffset(offset).limit(pageSize));
 
             final JSONArray results = new JSONArray();
-            ret.put(Keys.RESULTS, queryResultList);
 
             for (final Entity entity : queryResultList) {
                 final Map<String, Object> properties = entity.getProperties();
+
                 final JSONObject jsonObject = new JSONObject(properties);
 
                 results.put(jsonObject);
             }
+
+            ret.put(Keys.RESULTS, results);
 
             LOGGER.debug("Found objects[size=" + results.length() + "] at page"
                          + "[currentPageNum=" + currentPageNum + ", pageSize="
