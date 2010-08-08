@@ -15,8 +15,6 @@
  */
 package org.b3log.latke.repository;
 
-import org.b3log.latke.Keys;
-import org.b3log.latke.model.Pagination;
 import org.json.JSONObject;
 
 /**
