@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.client.action;
 
-import org.b3log.latke.Keys;
 import org.b3log.latke.client.remote.impl.LanguageService;
 import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
 import org.b3log.latke.servlet.AbstractServletListener;
@@ -45,7 +44,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Aug 4, 2010
+ * @version 1.0.2.1, Aug 8, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -432,7 +431,7 @@ public abstract class AbstractAction extends HttpServlet {
     }
 
     /**
-     * Gets the request data with the specified request.
+     * Gets the request json object with the specified request.
      *
      * @param request the specified request
      * @param response response
@@ -448,9 +447,8 @@ public abstract class AbstractAction extends HttpServlet {
 
         final String requestJSONString = toJSONString(request);
         LOGGER.debug("AJAX request[string=" + requestJSONString + "]");
-        final JSONObject requestJSONObject = toJSONObject(requestJSONString);
-
-        return requestJSONObject.getJSONObject(Keys.DATA);
+        
+        return toJSONObject(requestJSONString);
     }
 
     /**
