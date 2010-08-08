@@ -27,9 +27,7 @@ import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
@@ -38,6 +36,7 @@ import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.util.Ids;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,7 +60,8 @@ public abstract class AbstractGAERepository implements Repository {
     /**
      * GAE datastore service.
      */
-    public static final DatastoreService DATASTORE_SERVICE;
+    private DatastoreService datastoreService =
+            DatastoreServiceFactory.getDatastoreService();
     /**
      * GAE datastore supported types.
      */
@@ -71,10 +71,6 @@ public abstract class AbstractGAERepository implements Repository {
      * Eventual deadline time(seconds) used by read policy.
      */
     private static final double EVENTUAL_DEADLINE = 5.0;
-
-    static {
-        DATASTORE_SERVICE = DatastoreServiceFactory.getDatastoreService();
-    }
 
     /**
      * Adds the specified json object.
@@ -103,7 +99,7 @@ public abstract class AbstractGAERepository implements Repository {
     public String add(final JSONObject jsonObject) throws RepositoryException {
         final String ret = Ids.genTimeMillisId();
 
-        final Transaction transaction = DATASTORE_SERVICE.beginTransaction();
+        final Transaction transaction = datastoreService.beginTransaction();
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
                 jsonObject.put(Keys.OBJECT_ID, ret);
@@ -113,7 +109,7 @@ public abstract class AbstractGAERepository implements Repository {
             final Entity entity = new Entity(kind, ret);
             setProperties(entity, jsonObject);
 
-            DATASTORE_SERVICE.put(entity);
+            datastoreService.put(entity);
             transaction.commit();
         } catch (final Exception e) {
             transaction.rollback();
@@ -122,7 +118,7 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         LOGGER.debug("Added object[oId=" + ret + "] in repository["
-                + getName() + "]");
+                     + getName() + "]");
 
         return ret;
     }
@@ -159,7 +155,7 @@ public abstract class AbstractGAERepository implements Repository {
             throws RepositoryException {
         try {
             LOGGER.debug("Updating object[oId=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
             // step 1, 2:
             remove(id);
             // step 3:
@@ -167,7 +163,7 @@ public abstract class AbstractGAERepository implements Repository {
             // step 4:
             add(jsonObject);
             LOGGER.debug("Updated object[oId=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -178,11 +174,11 @@ public abstract class AbstractGAERepository implements Repository {
     public void remove(final String id) throws RepositoryException {
         final Key key = KeyFactory.createKey(getName(), id);
         final Transaction transactoin =
-                DATASTORE_SERVICE.beginTransaction();
-        DATASTORE_SERVICE.delete(key);
+                datastoreService.beginTransaction();
+        datastoreService.delete(key);
         transactoin.commit();
         LOGGER.debug("Removed object[oId=" + id + "] from "
-                + "repository[name=" + getName() + "]");
+                     + "repository[name=" + getName() + "]");
     }
 
     @Override
@@ -192,57 +188,59 @@ public abstract class AbstractGAERepository implements Repository {
         final Key key = KeyFactory.createKey(getName(), id);
 
         try {
-            final Entity entity = DATASTORE_SERVICE.get(key);
+            final Entity entity = datastoreService.get(key);
             final Map<String, Object> properties = entity.getProperties();
             ret = new JSONObject(properties);
 
             LOGGER.debug("Got an object[oId=" + id + "] from "
-                    + "repository[name=" + getName() + "]");
+                         + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
             LOGGER.warn("Not found an object[OId=" + id
-                    + "] in repository[name="
-                    + getName() + "]");
+                        + "] in repository[name="
+                        + getName() + "]");
         }
 
         return ret;
     }
 
     @Override
-    public List<JSONObject> get(final int currentPageNum, final int pageSize)
+    public JSONObject get(final int currentPageNum, final int pageSize)
             throws RepositoryException {
-        final List<JSONObject> ret = new ArrayList<JSONObject>();
-        final JSONObject pagination = new JSONObject();
-        ret.add(pagination);
-
         final Query query = new Query(getName());
-        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
+        final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
         final int count = preparedQuery.countEntities();
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
-        try {
-            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
+        final JSONObject ret = new JSONObject();
+        try {
+            final JSONObject pagination = new JSONObject();
+            ret.put(Pagination.PAGINATION, pagination);
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
             final int offset = pageSize * (currentPageNum - 1);
             final QueryResultList<Entity> queryResultList =
                     preparedQuery.asQueryResultList(
                     withOffset(offset).limit(pageSize));
 
+            final JSONArray results = new JSONArray();
+            ret.put(Keys.RESULTS, queryResultList);
+
             for (final Entity entity : queryResultList) {
                 final Map<String, Object> properties = entity.getProperties();
                 final JSONObject jsonObject = new JSONObject(properties);
 
-                ret.add(jsonObject);
+                results.put(jsonObject);
             }
+
+            LOGGER.debug("Found objects[size=" + results.length() + "] at page"
+                         + "[currentPageNum=" + currentPageNum + ", pageSize="
+                         + pageSize + "] in repository[" + getName() + "]");
         } catch (final JSONException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
         }
-
-        LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
-                + "[currentPageNum=" + currentPageNum + ", pageSize="
-                + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
     }
@@ -269,5 +267,14 @@ public abstract class AbstractGAERepository implements Repository {
                         getClass() + "] in Latke GAE repository");
             }
         }
+    }
+
+    /**
+     * Gets the datastore service.
+     *
+     * @return datastore service
+     */
+    public DatastoreService getDatastoreService() {
+        return datastoreService;
     }
 }
