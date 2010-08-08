@@ -22,8 +22,6 @@ import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
@@ -31,6 +29,7 @@ import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Ids;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -264,24 +263,25 @@ public abstract class AbstractRepository implements Repository {
     }
 
     @Override
-    public List<JSONObject> get(final int currentPageNum,
-                                final int pageSize)
+    public JSONObject get(final int currentPageNum,
+                          final int pageSize)
             throws RepositoryException {
         final Database database = Sleepycat.get(getName(),
                                                 getDatabaseConfig());
         final Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);
 
-        final List<JSONObject> ret = new ArrayList<JSONObject>();
-        final JSONObject pagination = new JSONObject();
-        ret.add(pagination);
-
         final long count = database.count();
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
 
+        final JSONObject ret = new JSONObject();
+
         final DatabaseEntry foundKey = new DatabaseEntry();
         final DatabaseEntry foundData = new DatabaseEntry();
         try {
+            final JSONObject pagination = new JSONObject();
+            ret.put(Pagination.PAGINATION, pagination);
+
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
             final int passCount = pageSize * (currentPageNum - 1);
             int cnt = 0;
@@ -292,25 +292,27 @@ public abstract class AbstractRepository implements Repository {
             }
 
             cnt = 0;
+            final JSONArray resultList = new JSONArray();
+            ret.put("d", resultList);
             while (cnt < pageSize
                    && cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                       == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
-                ret.add(jsonObject);
+                resultList.put(jsonObject);
 
                 cnt++;
             }
+
+            LOGGER.debug("Found objects[size=" + cnt + "] at page"
+                         + "[currentPageNum=" + currentPageNum + ", pageSize="
+                         + pageSize + "] in repository[" + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             cursor.close();
         }
-
-        LOGGER.debug("Found objects[size=" + (ret.size() - 1) + "] at page"
-                     + "[currentPageNum=" + currentPageNum + ", pageSize="
-                     + pageSize + "] in repository[" + getName() + "]");
 
         return ret;
     }
