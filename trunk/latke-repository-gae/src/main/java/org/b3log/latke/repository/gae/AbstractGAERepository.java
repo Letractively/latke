@@ -117,7 +117,7 @@ public abstract class AbstractGAERepository implements Repository {
             throw new RepositoryException(e);
         }
 
-        LOGGER.debug("Added object[oId=" + ret + "] in repository["
+        LOGGER.debug("Added an object[oId=" + ret + "] in repository["
                      + getName() + "]");
 
         return ret;
@@ -162,7 +162,7 @@ public abstract class AbstractGAERepository implements Repository {
             jsonObject.put(Keys.OBJECT_ID, id);
             // step 4:
             add(jsonObject);
-            LOGGER.debug("Updated object[oId=" + id + "] in repository[name="
+            LOGGER.debug("Updated an object[oId=" + id + "] in repository[name="
                          + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -177,7 +177,7 @@ public abstract class AbstractGAERepository implements Repository {
                 datastoreService.beginTransaction();
         datastoreService.delete(key);
         transactoin.commit();
-        LOGGER.debug("Removed object[oId=" + id + "] from "
+        LOGGER.debug("Removed an object[oId=" + id + "] from "
                      + "repository[name=" + getName() + "]");
     }
 
