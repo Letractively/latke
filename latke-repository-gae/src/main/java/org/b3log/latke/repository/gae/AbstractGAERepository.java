@@ -225,7 +225,6 @@ public abstract class AbstractGAERepository implements Repository {
                     withOffset(offset).limit(pageSize));
 
             final JSONArray results = new JSONArray();
-
             for (final Entity entity : queryResultList) {
                 final Map<String, Object> properties = entity.getProperties();
 
