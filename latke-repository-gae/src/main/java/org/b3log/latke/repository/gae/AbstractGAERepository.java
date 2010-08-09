@@ -27,6 +27,7 @@ import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Transaction;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Aug 8, 2010
+ * @version 1.0.0.3, Aug 9, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -190,7 +191,7 @@ public abstract class AbstractGAERepository implements Repository {
         try {
             final Entity entity = datastoreService.get(key);
             final Map<String, Object> properties = entity.getProperties();
-            ret = new JSONObject(properties);
+            ret = new JSONObject(new HashMap<String, Object>(properties));
 
             LOGGER.debug("Got an object[oId=" + id + "] from "
                          + "repository[name=" + getName() + "]");
@@ -227,8 +228,8 @@ public abstract class AbstractGAERepository implements Repository {
             final JSONArray results = new JSONArray();
             for (final Entity entity : queryResultList) {
                 final Map<String, Object> properties = entity.getProperties();
-
-                final JSONObject jsonObject = new JSONObject(properties);
+                final JSONObject jsonObject =
+                        new JSONObject(new HashMap<String, Object>(properties));
 
                 results.put(jsonObject);
             }
