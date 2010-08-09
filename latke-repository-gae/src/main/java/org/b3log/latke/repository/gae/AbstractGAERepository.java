@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.Query;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.datastore.Transaction;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -263,7 +264,13 @@ public abstract class AbstractGAERepository implements Repository {
             final String key = keys.next();
             final Object value = jsonObject.get(key);
             if (value instanceof String) {
-                entity.setProperty(key, value);
+                final String valueString = (String) value;
+                if (valueString.length() > 500) {
+                    final Text text = new Text(valueString);
+                    entity.setProperty(key, text);
+                } else {
+                    entity.setProperty(key, value);
+                }
             } else { // TODO: add supported types
                 throw new RuntimeException("Unsupported type[class=" + value.
                         getClass() + "] in Latke GAE repository");
