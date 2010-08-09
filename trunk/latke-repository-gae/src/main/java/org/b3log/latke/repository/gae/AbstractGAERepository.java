@@ -265,8 +265,10 @@ public abstract class AbstractGAERepository implements Repository {
             final Object value = jsonObject.get(key);
             if (value instanceof String) {
                 final String valueString = (String) value;
-                if (valueString.length() > 500) {
+                if (valueString.length()
+                    > DataTypeUtils.MAX_STRING_PROPERTY_LENGTH) {
                     final Text text = new Text(valueString);
+
                     entity.setProperty(key, text);
                 } else {
                     entity.setProperty(key, value);
