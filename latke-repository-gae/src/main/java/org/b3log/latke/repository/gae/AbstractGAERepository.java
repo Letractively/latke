@@ -261,8 +261,7 @@ public abstract class AbstractGAERepository implements Repository {
             final Object v = property.getValue();
             if (v instanceof Text) {
                 final Text valueText = (Text) v;
-                valueText.getValue();
-                jsonMap.put(k, valueText);
+                jsonMap.put(k, valueText.getValue());
             } else {
                 jsonMap.put(k, v);
             }
