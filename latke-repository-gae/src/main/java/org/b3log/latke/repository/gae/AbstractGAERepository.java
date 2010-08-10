@@ -50,7 +50,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Aug 9, 2010
+ * @version 1.0.0.4, Aug 10, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -191,8 +191,7 @@ public abstract class AbstractGAERepository implements Repository {
 
         try {
             final Entity entity = datastoreService.get(key);
-            final Map<String, Object> properties = entity.getProperties();
-            ret = new JSONObject(new HashMap<String, Object>(properties));
+            ret = entity2JSONObject(entity);
 
             LOGGER.debug("Got an object[oId=" + id + "] from "
                          + "repository[name=" + getName() + "]");
@@ -228,9 +227,7 @@ public abstract class AbstractGAERepository implements Repository {
 
             final JSONArray results = new JSONArray();
             for (final Entity entity : queryResultList) {
-                final Map<String, Object> properties = entity.getProperties();
-                final JSONObject jsonObject =
-                        new JSONObject(new HashMap<String, Object>(properties));
+                final JSONObject jsonObject = entity2JSONObject(entity);
 
                 results.put(jsonObject);
             }
@@ -246,6 +243,32 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         return ret;
+    }
+
+    /**
+     * Converts the specified {@link Entity entity} to a {@link JSONObject
+     * json object}.
+     *
+     * @param entity the specified entity
+     * @return converted json object
+     */
+    public JSONObject entity2JSONObject(final Entity entity) {
+        final Map<String, Object> properties = entity.getProperties();
+        final Map<String, Object> jsonMap = new HashMap<String, Object>();
+
+        for (Map.Entry<String, Object> property : properties.entrySet()) {
+            final String k = property.getKey();
+            final Object v = property.getValue();
+            if (v instanceof Text) {
+                final Text valueText = (Text) v;
+                valueText.getValue();
+                jsonMap.put(k, valueText);
+            } else {
+                jsonMap.put(k, v);
+            }
+        }
+
+        return new JSONObject(jsonMap);
     }
 
     /**
