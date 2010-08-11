@@ -50,7 +50,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Aug 10, 2010
+ * @version 1.0.0.5, Aug 11, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -99,12 +99,14 @@ public abstract class AbstractGAERepository implements Repository {
      */
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-        final String ret = Ids.genTimeMillisId();
-
+        String ret = null;
         final Transaction transaction = datastoreService.beginTransaction();
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
+                ret = Ids.genTimeMillisId();
                 jsonObject.put(Keys.OBJECT_ID, ret);
+            } else {
+                ret = jsonObject.getString(Keys.OBJECT_ID);
             }
 
             final String kind = getName();
