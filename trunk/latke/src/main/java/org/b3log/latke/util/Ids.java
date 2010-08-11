@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Id utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 8, 2010
+ * @version 1.0.0.2, Aug 11, 2010
  */
 public final class Ids {
 
@@ -33,7 +33,7 @@ public final class Ids {
     /**
      * Sleep millisecond.
      */
-    private static final long ID_GEN_SLEEP_MILLIS = 500;
+    private static final long ID_GEN_SLEEP_MILLIS = 50;
 
     /**
      * Private default constructor.
