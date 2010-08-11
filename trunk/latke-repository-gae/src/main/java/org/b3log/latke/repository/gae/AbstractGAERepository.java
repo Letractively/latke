@@ -198,9 +198,8 @@ public abstract class AbstractGAERepository implements Repository {
             LOGGER.debug("Got an object[oId=" + id + "] from "
                          + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
-            LOGGER.warn("Not found an object[OId=" + id
-                        + "] in repository[name="
-                        + getName() + "]");
+            LOGGER.warn("Not found an object[oId=" + id
+                        + "] in repository[name=" + getName() + "]");
         }
 
         return ret;
