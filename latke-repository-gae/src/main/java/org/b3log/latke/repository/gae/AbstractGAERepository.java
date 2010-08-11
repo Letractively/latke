@@ -37,6 +37,7 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
+import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.Ids;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -160,11 +161,11 @@ public abstract class AbstractGAERepository implements Repository {
         try {
             LOGGER.debug("Updating object[oId=" + id + "] in repository[name="
                          + getName() + "]");
-            // step 1, 2:
+            // Step 1, 2:
             remove(id);
-            // step 3:
+            // Step 3:
             jsonObject.put(Keys.OBJECT_ID, id);
-            // step 4:
+            // Step 4:
             add(jsonObject);
             LOGGER.debug("Updated an object[oId=" + id + "] in repository[name="
                          + getName() + "]");
@@ -211,6 +212,57 @@ public abstract class AbstractGAERepository implements Repository {
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
+        final int count = preparedQuery.countEntities();
+        final int pageCount =
+                (int) Math.ceil((double) count / (double) pageSize);
+
+        final JSONObject ret = new JSONObject();
+        try {
+            final JSONObject pagination = new JSONObject();
+            ret.put(Pagination.PAGINATION, pagination);
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+
+            final int offset = pageSize * (currentPageNum - 1);
+            final QueryResultList<Entity> queryResultList =
+                    preparedQuery.asQueryResultList(
+                    withOffset(offset).limit(pageSize));
+
+            final JSONArray results = new JSONArray();
+            for (final Entity entity : queryResultList) {
+                final JSONObject jsonObject = entity2JSONObject(entity);
+
+                results.put(jsonObject);
+            }
+
+            ret.put(Keys.RESULTS, results);
+
+            LOGGER.debug("Found objects[size=" + results.length() + "] at page"
+                         + "[currentPageNum=" + currentPageNum + ", pageSize="
+                         + pageSize + "] in repository[" + getName() + "]");
+        } catch (final JSONException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return ret;
+    }
+
+    @Override
+    public JSONObject get(final int currentPageNum,
+                          final int pageSize,
+                          final String sortPropertyName,
+                          final SortDirection sortDirection)
+            throws RepositoryException {
+        final Query query = new Query(getName());
+        Query.SortDirection querySortDirection = null;
+        if (sortDirection.equals(SortDirection.ASCENDING)) {
+            querySortDirection = Query.SortDirection.ASCENDING;
+        } else {
+            querySortDirection = Query.SortDirection.DESCENDING;
+        }
+        query.addSort(sortPropertyName, querySortDirection);
+
+        final PreparedQuery preparedQuery = datastoreService.prepare(query);
         final int count = preparedQuery.countEntities();
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
