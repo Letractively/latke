@@ -65,11 +65,16 @@ public interface Repository {
     /**
      * Gets json objects by the specified current page number and page size.
      *
+     * <p>
+     *   <b>Note</b>:the order of elements of the returned result list is
+     *   decided by datastore implementation.
+     * </p>
+     *
      * @param currentPageNum the specified current page number, MUST greater
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
      * MUST greater then 0
-     * @return a for example:
+     * @return for example:
      * <pre>
      * {
      *     "pagination": {
@@ -86,6 +91,37 @@ public interface Repository {
      */
     JSONObject get(final int currentPageNum,
                    final int pageSize) throws RepositoryException;
+
+    /**
+     * Gets json objects by the specified current page number, page size, sort
+     * property name and {@link SortDirection sort direction}.
+     *
+     * @param currentPageNum the specified current page number, MUST greater
+     * then 0
+     * @param pageSize the specified page size(count of a page contains objects),
+     * MUST greater then 0
+     * @param sortPopertyName the specified sort property name
+     * @param sortDirection the sort direction
+     * @return a for example:
+     * <pre>
+     * {
+     *     "pagination": {
+     *       "paginationPageCount": 88250
+     *     },
+     *     "rslts": [{
+     *         "oId": "...."
+     *     }, ....]
+     * }, if not found any objects by the specified current page number and
+     * page size, returns pagination info as the only attribute of the returned
+     * json object
+     * </pre>
+     * @throws RepositoryException repository exception
+     */
+    JSONObject get(final int currentPageNum,
+                   final int pageSize,
+                   final String sortPopertyName,
+                   final SortDirection sortDirection)
+            throws RepositoryException;
 
     /**
      * Gets the name of this repository.
