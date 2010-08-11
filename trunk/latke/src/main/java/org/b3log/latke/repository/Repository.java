@@ -65,10 +65,10 @@ public interface Repository {
     /**
      * Gets json objects by the specified current page number and page size.
      *
-     * @param currentPageNum the specified current page number, MUST grater
+     * @param currentPageNum the specified current page number, MUST greater
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
-     * MUST grater then 0
+     * MUST greater then 0
      * @return a for example:
      * <pre>
      * {
