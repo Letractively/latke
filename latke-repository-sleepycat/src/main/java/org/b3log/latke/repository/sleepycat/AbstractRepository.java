@@ -98,16 +98,16 @@ public abstract class AbstractRepository implements Repository {
 
             switch (operationStatus) {
                 case KEYEXIST:
-                    LOGGER.warn("Found duplicated object[id=" + ret
+                    LOGGER.warn("Found duplicated object[oId=" + ret
                                 + "] in repository[name=" + getName()
                                 + "], ignores add object operation");
                     break;
                 case SUCCESS:
-                    LOGGER.debug("Added object[id=" + ret
+                    LOGGER.debug("Added object[oId=" + ret
                                  + "] in repository[name=" + getName() + "]");
                     break;
                 default:
-                    throw new ServiceException("Add object[id="
+                    throw new ServiceException("Add object[oId="
                                                + ret + "] fail");
             }
         } catch (final Exception e) {
@@ -151,15 +151,16 @@ public abstract class AbstractRepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.debug("Updating object[id=" + id + "] in repository[name="
+            LOGGER.debug("Updating an object[oId=" + id
+                         + "] in repository[name="
                          + getName() + "]");
-            // step 1, 2:
+            // Step 1, 2:
             remove(id);
-            // step 3:
+            // Step 3:
             jsonObject.put(Keys.OBJECT_ID, id);
-            // step 4:
+            // Step 4:
             add(jsonObject);
-            LOGGER.debug("Updated object[id=" + id + "] in repository[name="
+            LOGGER.debug("Updated an object[oId=" + id + "] in repository[name="
                          + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -195,7 +196,7 @@ public abstract class AbstractRepository implements Repository {
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 if (jsonObject.getString(Keys.OBJECT_ID).equals(id)) {
                     if (cursor.delete().equals(OperationStatus.SUCCESS)) {
-                        LOGGER.debug("Removed object[id=" + id + "] from "
+                        LOGGER.debug("Removed an object[oId=" + id + "] from "
                                      + "repository[name=" + getName() + "]");
                     }
 
@@ -210,7 +211,7 @@ public abstract class AbstractRepository implements Repository {
             database.sync();
         }
 
-        LOGGER.warn("Not found object[id="
+        LOGGER.warn("Not found object[oId="
                     + id + "] in repository[name=" + getName()
                     + "], ignores remove object operation");
     }
@@ -243,7 +244,7 @@ public abstract class AbstractRepository implements Repository {
                 final JSONObject ret =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 if (ret.getString(Keys.OBJECT_ID).equals(id)) {
-                    LOGGER.debug("Got an object[id=" + id + "] from "
+                    LOGGER.debug("Got an object[oId=" + id + "] from "
                                  + "repository[name=" + getName() + "]");
 
                     return ret;
@@ -256,7 +257,7 @@ public abstract class AbstractRepository implements Repository {
             cursor.close();
         }
 
-        LOGGER.warn("Not found an object[id=" + id + "] in repository[name="
+        LOGGER.warn("Not found an object[oId=" + id + "] in repository[name="
                     + getName() + "]");
 
         return null;
