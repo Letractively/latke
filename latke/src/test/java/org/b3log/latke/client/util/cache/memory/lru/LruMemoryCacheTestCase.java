@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 /**
- * {@link LruMemoryCache} unit test case.
+ * {@link LruMemoryCache} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.2.0, Jul 8, 2010
