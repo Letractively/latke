@@ -113,7 +113,7 @@ public final class EventListenerClassLoader {
             for (final File classFile : classFiles) {
                 final String fullPath = classFile.getPath();
                 final String packageAndClassPath =
-                        AbstractServletListener.getClientRemoteServicePackage()
+                        AbstractServletListener.getEventListenerPackage()
                         + fullPath.substring(
                         fullPath.lastIndexOf(File.separator));
                 String className = packageAndClassPath.replaceAll(
