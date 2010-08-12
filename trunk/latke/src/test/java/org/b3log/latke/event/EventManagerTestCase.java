@@ -33,8 +33,8 @@ public final class EventManagerTestCase {
     @Test
     public void test() throws Exception {
         final EventManager eventManager = EventManager.getInstance();
-        eventManager.registerListener(new TestEventListener1());
-        eventManager.registerListener(new TestEventListener2());
+        eventManager.registerListener(new TestEventListener1(eventManager));
+        eventManager.registerListener(new TestEventListener2(eventManager));
 
         final JSONObject eventData = new JSONObject();
         eventData.put("prop1", 1);
@@ -52,6 +52,16 @@ public final class EventManagerTestCase {
     private final class TestEventListener1
             extends AbstractEventListener<JSONObject> {
 
+        /**
+         * Constructs a {@link TestEventListener1} object with the specified
+         * event manager.
+         *
+         * @param eventManager the specified event manager
+         */
+        public TestEventListener1(final EventManager eventManager) {
+            super(eventManager);
+        }
+
         @Override
         public void process(final Event<JSONObject> event) {
             System.out.println("Listener1 is processing a event[type="
@@ -68,6 +78,16 @@ public final class EventManagerTestCase {
      */
     private final class TestEventListener2
             extends AbstractEventListener<JSONObject> {
+
+        /**
+         * Constructs a {@link TestEventListener2} object with the specified
+         * event manager.
+         *
+         * @param eventManager the specified event manager
+         */
+        public TestEventListener2(final EventManager eventManager) {
+            super(eventManager);
+        }
 
         @Override
         public void process(final Event<JSONObject> event) {
