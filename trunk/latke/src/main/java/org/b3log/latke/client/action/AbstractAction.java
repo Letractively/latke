@@ -143,7 +143,7 @@ public abstract class AbstractAction extends HttpServlet {
 
             serviceClasses.add(LanguageService.class); // XXX: one by one manually?
 
-            // create just-in-time constructor bindings for remote JavaScript
+            // Create just-in-time constructor bindings for remote JavaScript
             // services initialization.
             for (Class<?> clazz : serviceClasses) {
                 injector.getInstance(clazz);
