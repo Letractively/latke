@@ -27,6 +27,23 @@ import java.util.Observer;
  */
 public abstract class AbstractEventListener<T> implements Observer {
 
+    /**
+     * Event manager.
+     */
+    private EventManager eventManager;
+
+    /**
+     * Constructs an {@link AbstractEventListener} object and register it with
+     * the specified event manager.
+     *
+     * @param eventManager the specified event manager
+     */
+    public AbstractEventListener(final EventManager eventManager) {
+        this.eventManager = eventManager;
+        
+        register();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void update(final Observable eventQueue,
@@ -49,4 +66,11 @@ public abstract class AbstractEventListener<T> implements Observer {
      * @param event the specified event
      */
     public abstract void process(final Event<T> event);
+
+    /**
+     * Registers this listener to event manager.
+     */
+    private void register() {
+        eventManager.registerListener(this);
+    }
 }

@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.servlet;
 
-import java.util.List;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.cache.Cache;
 import org.b3log.latke.util.cache.memory.LruMemoryCache;
@@ -25,7 +24,6 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceServletContextListener;
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
@@ -38,16 +36,13 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.event.AbstractEventListener;
-import org.b3log.latke.event.EventManager;
-import org.b3log.latke.event.util.EventListenerClassLoader;
 import org.jabsorb.JSONRPCBridge;
 
 /**
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Aug 12, 2010
+ * @version 1.0.2.2, Aug 12, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -73,18 +68,10 @@ public abstract class AbstractServletListener
      */
     private Injector injector;
     /**
-     * Event manager.
-     */
-    private EventManager eventManager = EventManager.getInstance();
-    /**
      * The directory of client remote service(via JSON-RPC) implementation
      * package.
      */
     private static String clientRemoteServicePackage;
-    /**
-     * The directory of event listener implementation package.
-     */
-    private static String eventListenerPackage;
     /**
      * Maximum count of cacheable objects.
      */
@@ -122,8 +109,6 @@ public abstract class AbstractServletListener
 
         initCache();
         registerRemoteJSServiceSerializers();
-
-        initEventManagement();
     }
 
     /**
@@ -190,20 +175,6 @@ public abstract class AbstractServletListener
     }
 
     /**
-     * Gets event listener package.
-     *
-     * @return the event listener package
-     */
-    public static String getEventListenerPackage() {
-        if (Strings.isEmptyOrNull(eventListenerPackage)) {
-            throw new RuntimeException("Please override "
-                                       + "eventListenerPackage field!");
-        }
-
-        return eventListenerPackage;
-    }
-
-    /**
      * Sets client remote JavaScript service package.
      *
      * @param clientRemoteServicePackage the specified client remote service
@@ -213,17 +184,6 @@ public abstract class AbstractServletListener
             final String clientRemoteServicePackage) {
         AbstractServletListener.clientRemoteServicePackage =
                 clientRemoteServicePackage;
-    }
-
-    /**
-     * Sets event listener package.
-     *
-     * @param eventListenerPackage the specified event listener package
-     */
-    public static void setEventListenerPackage(
-            final String eventListenerPackage) {
-        AbstractServletListener.eventListenerPackage =
-                eventListenerPackage;
     }
 
     /**
@@ -266,42 +226,6 @@ public abstract class AbstractServletListener
         } catch (final Exception e) {
             LOGGER.fatal(e.getMessage(), e);
             throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Initializes event management.
-     */
-    private void initEventManagement() {
-        String eventListenerDirPath = null;
-        try {
-            final ClassLoader classLoader = getClass().getClassLoader();
-            eventListenerDirPath =
-                    classLoader.getResource(
-                    getEventListenerPackage()).toURI().getPath();
-            LOGGER.debug("Event listeners path " + "of application is ["
-                         + eventListenerDirPath + "]");
-        } catch (final URISyntaxException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(
-                    "Event listeners package path configure error!");
-        }
-
-        try {
-            final List<Class<AbstractEventListener<?>>> loadEventListenerClasses =
-                    EventListenerClassLoader.loadEventListenerClasses(
-                    eventListenerDirPath);
-            for (final Class<AbstractEventListener<?>> listenerClass
-                    : loadEventListenerClasses) {
-                final AbstractEventListener<?> eventListener =
-                        listenerClass.newInstance();
-                eventManager.registerListener(eventListener);
-                LOGGER.info("Registered an event listener[className=" + listenerClass.
-                        getName() + "]");
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Event listeners load error!");
         }
     }
 }
