@@ -51,7 +51,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Aug 11, 2010
+ * @version 1.0.0.6, Aug 12, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -338,6 +338,11 @@ public abstract class AbstractGAERepository implements Repository {
         while (keys.hasNext()) {
             final String key = keys.next();
             final Object value = jsonObject.get(key);
+            if (!SUPPORTED_TYPES.contains(value.getClass())) {
+                throw new RuntimeException("Unsupported type[class=" + value.
+                        getClass() + "] in Latke GAE repository");
+            }
+
             if (value instanceof String) {
                 final String valueString = (String) value;
                 if (valueString.length()
@@ -348,9 +353,8 @@ public abstract class AbstractGAERepository implements Repository {
                 } else {
                     entity.setProperty(key, value);
                 }
-            } else { // TODO: add supported types
-                throw new RuntimeException("Unsupported type[class=" + value.
-                        getClass() + "] in Latke GAE repository");
+            } else if (value instanceof Number) {
+                entity.setProperty(key, value);
             }
         }
     }
