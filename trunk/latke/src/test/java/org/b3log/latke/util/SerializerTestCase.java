@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 /**
- * {@link Serializer} unit test case.
+ * {@link Serializer} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, May 12, 2009
