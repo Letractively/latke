@@ -40,14 +40,14 @@ public abstract class AbstractEventListener<T> implements Observer {
      */
     public AbstractEventListener(final EventManager eventManager) {
         this.eventManager = eventManager;
-        
+
         register();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void update(final Observable eventQueue,
                        final Object event) {
+        @SuppressWarnings("unchecked")
         final Event<T> eventObject = (Event<T>) event;
         try {
             process(eventObject);
