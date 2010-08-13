@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
 import java.io.BufferedInputStream;
@@ -29,36 +28,10 @@ import java.io.Serializable;
  * implemented {@link java.io.Serializable}.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, May 12, 2009
+ * @version 1.0.0.2, Aug 13, 2010
  * @see Serializable
  */
 public final class Serializer {
-
-    /**
-     * Serializer singleton holder.
-     */
-    private static final class SerializerHolder {
-
-        /**
-         * Singleton.
-         */
-        private static Serializer instance = new Serializer();
-
-        /**
-         * Private default constructor.
-         */
-        private SerializerHolder() {
-        }
-    }
-
-    /**
-     * Gets the singleton of {@code Serializer}.
-     *
-     * @return the singleton
-     */
-    public static Serializer getInstance() {
-        return SerializerHolder.instance;
-    }
 
     /**
      * Serializes an object using default serialization.
@@ -67,7 +40,7 @@ public final class Serializer {
      * @return the byte array of the serialized object
      * @throws IOException io exception
      */
-    public byte[] serialize(final Serializable obj) throws IOException {
+    public static byte[] serialize(final Serializable obj) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final ObjectOutputStream oos = new ObjectOutputStream(baos);
 
@@ -87,7 +60,7 @@ public final class Serializer {
      * @throws IOException io exception
      * @throws ClassNotFoundException class not found exception
      */
-    public Object deSerialize(final byte[] data)
+    public static Object deSerialize(final byte[] data)
             throws IOException, ClassNotFoundException {
         final ByteArrayInputStream bais = new ByteArrayInputStream(data);
         final BufferedInputStream bis = new BufferedInputStream(bais);

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
 import org.testng.annotations.Test;
@@ -23,14 +22,10 @@ import static org.testng.Assert.*;
  * {@link Serializer} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, May 12, 2009
+ * @version 1.0.0.1, Aug 13, 2010
  */
 public class SerializerTestCase {
 
-    /**
-     * Serializer.
-     */
-    private Serializer serializer = Serializer.getInstance();
     /**
      * Length of an integer object in bytes.
      */
@@ -42,7 +37,7 @@ public class SerializerTestCase {
      */
     @Test
     public void serialize() throws Exception {
-        final byte[] bytes = serializer.serialize(new Integer(0));
+        final byte[] bytes = Serializer.serialize(new Integer(0));
         assertEquals(bytes.length, INTEGER_LENGTH);
     }
 }
