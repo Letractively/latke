@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * File utilities.
+ * IO utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jun 15, 2010
+ * @version 1.0.0.2, Aug 13, 2010
  */
-public final class Files {
+public final class IOs {
 
     /**
      * Generated serial version uid.
@@ -76,8 +80,57 @@ public final class Files {
     }
 
     /**
+     * Gets a byte array from the specified input stream.
+     *
+     * @param inputStream the specified input stream
+     * @param bufferSize buffer size for input stream reading
+     * @return a byte array
+     * @throws IOException io exception
+     */
+    public static byte[] getBytes(final InputStream inputStream,
+                                  final int bufferSize)
+            throws IOException {
+        byte[] ret = null;
+        final Collection chunks = new ArrayList<Byte[]>();
+        final byte[] buffer = new byte[bufferSize];
+        int read = -1;
+        int size = 0;
+
+        read = inputStream.read(buffer);
+        while (-1 != read) {
+            if (read > 0) {
+                final Byte[] chunk = new Byte[read];
+                System.arraycopy(buffer, 0, chunk, 0, read);
+                chunks.add(chunk);
+                size += chunk.length;
+            }
+        }
+
+        if (size > 0) {
+            ByteArrayOutputStream bos = null;
+            try {
+                bos = new ByteArrayOutputStream(size);
+
+                final Iterator i = chunks.iterator();
+                while (i.hasNext()) {
+                    final byte[] chunk = (byte[]) i.next();
+                    bos.write(chunk);
+                }
+
+                ret = bos.toByteArray();
+            } finally {
+                if (bos != null) {
+                    bos.close();
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    /**
      * Private default constructor.
      */
-    private Files() {
+    private IOs() {
     }
 }
