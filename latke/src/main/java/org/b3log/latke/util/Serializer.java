@@ -60,7 +60,7 @@ public final class Serializer {
      * @throws IOException io exception
      * @throws ClassNotFoundException class not found exception
      */
-    public static Object deSerialize(final byte[] data)
+    public static Object deserialize(final byte[] data)
             throws IOException, ClassNotFoundException {
         final ByteArrayInputStream bais = new ByteArrayInputStream(data);
         final BufferedInputStream bis = new BufferedInputStream(bais);
