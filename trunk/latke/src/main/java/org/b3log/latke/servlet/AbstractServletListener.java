@@ -103,7 +103,7 @@ public abstract class AbstractServletListener
                 servletContext.getInitParameter("postfixExceptionPaths");
         final String[] paths = Strings.trimAll(
                 postfixExceptionPathsString.split(","));
-        postfixExceptionPaths = org.b3log.latke.util.Collections.arrayToSet(
+        postfixExceptionPaths = org.b3log.latke.util.CollectionUtils.arrayToSet(
                 paths);
         LOGGER.info("[postfixExceptionPath=" + postfixExceptionPaths + "]");
 
