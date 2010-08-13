@@ -38,7 +38,7 @@ public abstract class AbstractI18nModel {
      */
     public AbstractI18nModel() {
         final Field[] fieldsArray = getClass().getFields();
-        fields = org.b3log.latke.util.Collections.arrayToSet(fieldsArray);
+        fields = org.b3log.latke.util.CollectionUtils.arrayToSet(fieldsArray);
     }
 
     
