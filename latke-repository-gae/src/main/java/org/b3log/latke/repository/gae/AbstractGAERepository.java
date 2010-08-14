@@ -28,6 +28,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.datastore.Transaction;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +52,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Aug 12, 2010
+ * @version 1.0.0.6, Aug 15, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -353,7 +354,7 @@ public abstract class AbstractGAERepository implements Repository {
                 } else {
                     entity.setProperty(key, value);
                 }
-            } else if (value instanceof Number) {
+            } else if (value instanceof Number || value instanceof Date) {
                 entity.setProperty(key, value);
             }
         }
