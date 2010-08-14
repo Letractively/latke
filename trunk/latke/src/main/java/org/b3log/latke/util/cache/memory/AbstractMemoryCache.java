@@ -21,15 +21,15 @@ import org.b3log.latke.util.cache.Cache;
 /**
  * The abstract memory cache. 
  *
- * @param <K> the type of the key of a cacheable objects
- * @param <V> the type of cacheable objects
+ * @param <K> the type of the key of objects
+ * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.2.0, Jul 8, 2010
  */
 public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
 
     /**
-     * Maximum cacheable objects count of this cache.
+     * Maximum objects count of this cache.
      */
     private int maxCount;
     /**
