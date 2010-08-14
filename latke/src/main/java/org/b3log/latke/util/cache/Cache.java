@@ -19,48 +19,48 @@ package org.b3log.latke.util.cache;
 /**
  * This is the top interface of cache like structures.
  *
- * @param <K> the key of a cacheable object
- * @param <V> the type of cacheable objects
+ * @param <K> the key of a object
+ * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.2.0, Jul 8, 2010
  */
 public interface Cache<K, V> {
 
     /**
-     * Puts the specified cacheable object into this cache.
+     * Puts the specified object into this cache.
      *
-     * @param key the key of the specified cacheable object
-     * @param cacheableObject the specified cacheable object
+     * @param key the key of the specified object
+     * @param value the specified object
      */
-    void put(final K key, final V cacheableObject);
+    void put(final K key, final V value);
 
     /**
-     * Gets a cacheable object by the specified key.
+     * Gets a object by the specified key.
      *
      * @param key the specified key
-     * @return if found, returns the cacheable object, otherwise returns
+     * @return if found, returns the object, otherwise returns
      * <code>null</code>
      */
     V get(final K key);
 
     /**
-     * Removes a cacheable object by the specified key.
+     * Removes a object by the specified key.
      *
      * @param key the specified key
      */
     void remove(final K key);
 
     /**
-     * Sets the maximum cacheable objects count of this cache.
+     * Sets the maximum objects count of this cache.
      *
      * @param maxCount the maximum count of this cache
      */
     void setMaxCount(final int maxCount);
 
     /**
-     * Gets the maximum cacheable objects count of this cache.
+     * Gets the maximum objects count of this cache.
      *
-     * @return the maximum cacheable objects count of this cache 
+     * @return the maximum objects count of this cache 
      */
     int getMaxCount();
 

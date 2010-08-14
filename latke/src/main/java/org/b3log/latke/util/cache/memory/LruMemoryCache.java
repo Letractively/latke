@@ -20,19 +20,19 @@ import org.b3log.latke.util.cache.util.DoubleLinkedMap;
 
 /**
  * This is a Least Recently Used (LRU) pure memory cache. This cache use a 
- * thread-safe <code>DoubleLinkedList</code> to hold the cacheable objects, and 
+ * thread-safe <code>DoubleLinkedList</code> to hold the objects, and 
  * the least recently used objects will be moved to the end of the list and to
  * remove by invoking {@linkplain #collect()} method. 
  *
- * @param <K> the type of the key of the cacheable object
- * @param <V> the type of the cacheable objects
+ * @param <K> the type of the key of the object
+ * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Jul 8, 2010
+ * @version 1.0.2.1, Aug 14, 2010
  */
 public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V> {
 
     /**
-     * a thread-safe double linked list is used to hold all cacheable objects.
+     * a thread-safe double linked list is used to hold all objects.
      */
     private DoubleLinkedMap<K, V> map;
 
@@ -47,7 +47,7 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public void put(final K key, final V cacheableObject) {
+    public void put(final K key, final V value) {
         putCountInc();
 
         synchronized (this) {
@@ -55,7 +55,7 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V> {
                 collect();
             }
 
-            map.addFirst(key, cacheableObject);
+            map.addFirst(key, value);
 
             cachedCountInc();
         }
