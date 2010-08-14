@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.remote;
 
+import java.io.IOException;
 import java.io.Serializable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.b3log.latke.client.Sessions;
 import org.jabsorb.JSONRPCBridge;
+import org.json.JSONObject;
 
 /**
  * Abstract remote service.
@@ -83,7 +87,8 @@ public abstract class AbstractRemoteService implements Serializable {
         }
 
         LOGGER.info("Remote JavaScirpt service[serviceObjectName="
-                + serviceObjectName + "] has been registered with json rpc bridge "
+                + serviceObjectName
+                + "] has been registered with json rpc bridge "
                 + "[" + jsonRpcBridge + "] successfully");
     }
 
@@ -135,5 +140,28 @@ public abstract class AbstractRemoteService implements Serializable {
         final char firstChar = simpleName.charAt(0);
 
         return Character.toLowerCase(firstChar) + simpleName.substring(1);
+    }
+
+    /**
+     * Checks the specified request authorized or not(Http Status Code:
+     * 401).
+     * <p>
+     * If the specified request is authorized, send an error with status code
+     * 401.
+     * </p>
+     *
+     * @param request the specified http servlet request
+     * @param response the specified http servlet response
+     * @throws IOException io exception
+     * @see Sessions#currentUser(javax.servlet.http.HttpServletRequest) 
+     */
+    public void checkAuthorized(final HttpServletRequest request,
+                                final HttpServletResponse response)
+            throws IOException {
+        final JSONObject currentUser = Sessions.currentUser(request);
+        
+        if (null == currentUser) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 }
