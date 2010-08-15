@@ -89,8 +89,8 @@ public final class AuthenticationFilter implements Filter {
         final String requestURL = request.getRequestURL().toString();
         LOGGER.trace("Request[URI=" + requestURI + ", URL=" + requestURL + "]");
 
-        String userName = Sessions.currentUserName(request);
-        LOGGER.debug("Session[userName=" + userName + "]");
+        final String userName = Sessions.currentUserName(request);
+        LOGGER.trace("Session[userName=" + userName + "]");
 
         return null != userName ? true : false;
     }
