@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.service;
 
 import org.b3log.latke.FwkStatusCodes;
@@ -26,7 +25,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -44,14 +42,10 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jul 23, 2010
+ * @version 1.0.0.7, Aug 15, 2010
  */
-public final class LangPropsService implements Serializable {
+public final class LangPropsService {
 
-    /**
-     * Default serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
     /**
      * Logger.
      */
