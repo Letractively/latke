@@ -26,13 +26,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * Authentication filter.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Aug 4, 2010
+ * @version 1.0.1.1, Aug 15, 2010
  */
 public final class AuthenticationFilter implements Filter {
 
@@ -90,11 +89,9 @@ public final class AuthenticationFilter implements Filter {
         final String requestURL = request.getRequestURL().toString();
         LOGGER.trace("Request[URI=" + requestURI + ", URL=" + requestURL + "]");
 
-        JSONObject user = null;
+        String userName = Sessions.currentUserName(request);
+        LOGGER.debug("Session[userName=" + userName + "]");
 
-        user = Sessions.currentUser(request);
-        LOGGER.debug("Session[user=" + user + "]");
-
-        return null != user ? true : false;
+        return null != userName ? true : false;
     }
 }
