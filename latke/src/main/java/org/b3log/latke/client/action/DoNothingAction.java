@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.action;
 
+import com.google.inject.Inject;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.b3log.latke.service.LangPropsService;
+import org.b3log.latke.service.ServiceException;
+import org.b3log.latke.util.Locales;
 import org.json.JSONObject;
 
 /**
  * Do nothing action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jun 22, 2010
+ * @version 1.0.0.1, Aug 15, 2010
  */
 public final class DoNothingAction extends AbstractAction {
 
@@ -39,6 +43,11 @@ public final class DoNothingAction extends AbstractAction {
      * Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(DoNothingAction.class);
+    /**
+     * Language service.
+     */
+    @Inject
+    private LangPropsService langPropsService;
 
     @Override
     protected Map<?, ?> doFreeMarkerAction(
@@ -46,7 +55,20 @@ public final class DoNothingAction extends AbstractAction {
             final HttpServletRequest request,
             final HttpServletResponse response) throws ActionException {
         LOGGER.trace("Do nothing action[FreeMarker action]");
-        return new HashMap<String, Object>();
+        final Map<String, Object> ret = new HashMap<String, Object>();
+
+        try {
+            final Locale locale = Locales.getLocale(request);
+            Locales.setLocale(request, locale);
+
+            final Map<String, String> langs = langPropsService.getAll(locale);
+            ret.putAll(langs);
+        } catch (final ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ActionException("Language model fill error");
+        }
+
+        return ret;
     }
 
     @Override
