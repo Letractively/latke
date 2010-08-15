@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.remote.impl;
 
 import org.b3log.latke.Keys;
@@ -26,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.util.Locales;
 import org.apache.log4j.Logger;
-import org.jabsorb.JSONRPCBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +32,7 @@ import org.json.JSONObject;
  * Language service for JavaScript client.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jun 16, 2010
+ * @version 1.0.0.7, Aug 15, 2010
  */
 public final class LanguageService extends AbstractRemoteService {
 
@@ -51,16 +49,6 @@ public final class LanguageService extends AbstractRemoteService {
      */
     @Inject
     private LangPropsService langPropsService;
-
-    /**
-     * Public constructor with parameter. Invokes constructor of superclass.
-     *
-     * @param jsonRpcBridge the specified json rpc bridge.
-     */
-    @Inject
-    public LanguageService(final JSONRPCBridge jsonRpcBridge) {
-        super(jsonRpcBridge);
-    }
 
     /**
      * Gets locale of the specified request.
@@ -83,12 +71,13 @@ public final class LanguageService extends AbstractRemoteService {
             ret.put(Keys.LOCALE, locale);
         } catch (final JSONException e) {
             LOGGER.error(e.getMessage(), e);
-            
+
             throw new ActionException(e);
         }
 
         return ret;
     }
+
     /**
      * Gets all labels for multi-languages by locale of the specified request
      * json object.
@@ -116,14 +105,14 @@ public final class LanguageService extends AbstractRemoteService {
      * @throws ActionException action exception
      */
     public JSONObject getLabels(final JSONObject requestJSONObject,
-                                   final HttpServletRequest request)
+                                final HttpServletRequest request)
             throws ActionException {
         try {
             final String localeString = requestJSONObject.getString(Keys.LOCALE);
             final Locale locale = new Locale(
                     Locales.getLanguage(localeString),
                     Locales.getCountry(localeString));
-            
+
             Locales.setLocale(request, locale);
 
             final JSONObject ret = langPropsService.getLabels(locale);

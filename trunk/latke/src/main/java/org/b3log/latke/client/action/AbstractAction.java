@@ -15,9 +15,6 @@
  */
 package org.b3log.latke.client.action;
 
-import org.b3log.latke.client.remote.impl.LanguageService;
-import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
-import org.b3log.latke.servlet.AbstractServletListener;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
 import com.google.inject.Inject;
@@ -28,14 +25,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +38,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Aug 8, 2010
+ * @version 1.0.2.2, Aug 15, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -62,11 +56,6 @@ public abstract class AbstractAction extends HttpServlet {
      */
     @Inject
     private Injector injector;
-    /**
-     * Indicates whether the remote JavaScirpt services is initialized.
-     */
-    private static final String IS_REMOTE_JS_SERVICES_INITED =
-            "remoteJSServicesInit";
 
     /**
      * Performs the FreeMarker template action.
@@ -114,43 +103,6 @@ public abstract class AbstractAction extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
-
-        final HttpSession httpSession = request.getSession();
-        final boolean isInitialized =
-                httpSession.getAttribute(IS_REMOTE_JS_SERVICES_INITED)
-                == null ? false : true;
-        if (!isInitialized) {
-            LOGGER.debug("Initializing remote JavaScirpt services "
-                         + "for session[id=" + httpSession.getId() + "]....");
-            String clientRemoteServicesPath = null;
-            try {
-                final ClassLoader classLoader = AbstractAction.class.
-                        getClassLoader();
-                clientRemoteServicesPath = classLoader.getResource(AbstractServletListener.
-                        getClientRemoteServicePackage()).
-                        toURI().getPath();
-                LOGGER.debug("Client remote JavaScirpt services path "
-                             + "of application is [" + clientRemoteServicesPath
-                             + "]");
-            } catch (final URISyntaxException e) {
-                LOGGER.fatal(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-
-            final List<Class<?>> serviceClasses =
-                    RemoteJSServiceClassLoader.loadServiceClasses(
-                    clientRemoteServicesPath);
-
-            serviceClasses.add(LanguageService.class); // XXX: one by one manually?
-
-            // Create just-in-time constructor bindings for remote JavaScript
-            // services initialization.
-            for (Class<?> clazz : serviceClasses) {
-                injector.getInstance(clazz);
-            }
-
-            httpSession.setAttribute(IS_REMOTE_JS_SERVICES_INITED, true);
-        }
     }
 
     /**
