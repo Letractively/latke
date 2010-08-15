@@ -20,7 +20,6 @@ import org.b3log.latke.util.Strings;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * Session utilities.
