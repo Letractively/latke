@@ -55,7 +55,7 @@ public final class LangPropsService {
      * Injector.
      */
     @Inject
-    private transient Injector injector;
+    private Injector injector;
 
     /**
      * Gets all language properties as a map by the specified locale.
