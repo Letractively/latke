@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache.memory;
 
+import java.io.Serializable;
 import org.b3log.latke.util.cache.util.DoubleLinkedMap;
 
 /**
@@ -27,10 +27,15 @@ import org.b3log.latke.util.cache.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Aug 14, 2010
+ * @version 1.0.2.2, Aug 15, 2010
  */
-public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V> {
+public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
+        implements Serializable {
 
+    /**
+     * Default serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * a thread-safe double linked list is used to hold all objects.
      */
