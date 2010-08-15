@@ -19,7 +19,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.client.Sessions;
-import org.json.JSONObject;
 
 /**
  * Abstract remote service.
@@ -66,14 +65,14 @@ public abstract class AbstractRemoteService {
      * @param request the specified http servlet request
      * @param response the specified http servlet response
      * @throws IOException io exception
-     * @see Sessions#currentUser(javax.servlet.http.HttpServletRequest) 
+     * @see Sessions#currentUserName(javax.servlet.http.HttpServletRequest)
      */
     public void checkAuthorized(final HttpServletRequest request,
                                 final HttpServletResponse response)
             throws IOException {
-        final JSONObject currentUser = Sessions.currentUser(request);
+        final String currentUserName = Sessions.currentUserName(request);
 
-        if (null == currentUser) {
+        if (null == currentUserName) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
