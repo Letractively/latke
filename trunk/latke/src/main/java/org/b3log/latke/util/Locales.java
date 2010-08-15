@@ -29,14 +29,10 @@ import org.b3log.latke.Latkes;
  * Locale utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Jul 23, 2010
+ * @version 1.0.0.9, Aug 15, 2010
  */
 public final class Locales {
 
-    /**
-     * Generated serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
     /**
      * Logger.
      */
