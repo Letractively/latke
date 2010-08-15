@@ -25,6 +25,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceServletContextListener;
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import javax.servlet.ServletContext;
@@ -36,6 +37,9 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Latkes;
+import org.b3log.latke.client.remote.AbstractRemoteService;
+import org.b3log.latke.client.remote.impl.LanguageService;
+import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
 import org.jabsorb.JSONRPCBridge;
 
 /**
@@ -97,7 +101,7 @@ public abstract class AbstractServletListener
         webRoot = servletContext.getRealPath("") + File.separator;
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.info("[Web root[path=" + webRoot + ", catalina.base="
-                    + catalinaBase + "]");
+                + catalinaBase + "]");
 
         final String postfixExceptionPathsString =
                 servletContext.getInitParameter("postfixExceptionPaths");
@@ -108,7 +112,36 @@ public abstract class AbstractServletListener
         LOGGER.info("[postfixExceptionPath=" + postfixExceptionPaths + "]");
 
         initCache();
+        registerRemoteJSServices();
         registerRemoteJSServiceSerializers();
+    }
+
+    /**
+     * Registers remote JavaScript services.
+     */
+    private void registerRemoteJSServices() {
+        try {
+            final ClassLoader classLoader = AbstractServletListener.class.
+                    getClassLoader();
+            final String clientRemoteServicesPath =
+                    classLoader.getResource(AbstractServletListener.
+                    getClientRemoteServicePackage()).toURI().getPath();
+            final List<Class<?>> serviceClasses =
+                    RemoteJSServiceClassLoader.loadServiceClasses(
+                    clientRemoteServicesPath);
+            serviceClasses.add(LanguageService.class); // XXX: one by one manually?
+
+            for (final Class<?> serviceClass : serviceClasses) {
+                final AbstractRemoteService serviceObject =
+                        (AbstractRemoteService) injector.getInstance(
+                        serviceClass);
+                JSONRPCBridge.getGlobalBridge().registerObject(serviceObject.
+                        getServiceObjectName(), serviceObject);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Register remote JavaScript service error");
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -122,7 +155,7 @@ public abstract class AbstractServletListener
         cache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
 
         LOGGER.info("Initialized cache[maxCount=" + MAX_CACHEABLE_OBJECT_CNT
-                    + "]");
+                + "]");
     }
 
     /**
@@ -168,7 +201,7 @@ public abstract class AbstractServletListener
     public static String getClientRemoteServicePackage() {
         if (Strings.isEmptyOrNull(clientRemoteServicePackage)) {
             throw new RuntimeException("Please override "
-                                       + "clientRemoteServicePackage field!");
+                    + "clientRemoteServicePackage field!");
         }
 
         return clientRemoteServicePackage;

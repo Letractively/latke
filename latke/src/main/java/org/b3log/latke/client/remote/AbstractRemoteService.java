@@ -16,101 +16,23 @@
 package org.b3log.latke.client.remote;
 
 import java.io.IOException;
-import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.b3log.latke.client.Sessions;
-import org.jabsorb.JSONRPCBridge;
 import org.json.JSONObject;
 
 /**
  * Abstract remote service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jun 16, 2010
+ * @version 1.0.0.8, Aug 15, 2010
  */
-public abstract class AbstractRemoteService implements Serializable {
+public abstract class AbstractRemoteService {
 
-    /**
-     * Default serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER =
-            Logger.getLogger(AbstractRemoteService.class);
-    /**
-     * JSON rpc bridge.
-     */
-    private JSONRPCBridge jsonRpcBridge;
     /**
      * JavaScirpt client service object name.
      */
-    private String serviceObjectName;
-    /**
-     * Registered with json rpc bridge?
-     */
-    private boolean registered;
-
-    /**
-     * Public constructor with parameter. 
-     *
-     * <p>
-     * Registers this constructing object as a remote JavaScirpt service object
-     * with the specified json rpc bridge.
-     * </p>
-     *
-     * @param jsonRpcBridge the specified json rpc bridge. 
-     */
-    public AbstractRemoteService(final JSONRPCBridge jsonRpcBridge) {
-        this.jsonRpcBridge = jsonRpcBridge;
-        serviceObjectName = genServiceObjectName();
-
-        register();
-    }
-
-    /**
-     * Registers this object as a remote JavaScript service object with json
-     * rpc bridge.
-     */
-    public final void register() {
-        synchronized (this) {
-            if (!registered) {
-                jsonRpcBridge.registerObject(serviceObjectName, this);
-                registered = true;
-
-                LOGGER.info("Remote JavaScirpt service[serviceObjectName="
-                        + serviceObjectName + "] register successfully");
-            }
-        }
-
-        LOGGER.info("Remote JavaScirpt service[serviceObjectName="
-                + serviceObjectName
-                + "] has been registered with json rpc bridge "
-                + "[" + jsonRpcBridge + "] successfully");
-    }
-
-    /**
-     * Unregisters this object as a remote JavaScript service object with json
-     * rpc bridge.
-     */
-    public final void unregister() {
-        synchronized (this) {
-            if (registered) {
-                jsonRpcBridge.unregisterObject(this);
-                registered = false;
-
-                LOGGER.info("Remote JavaScirpt service[serviceObjectName="
-                        + serviceObjectName + "] unregister successfully");
-            }
-        }
-
-        LOGGER.info("Remote JavaScirpt service[serviceObjectName="
-                + serviceObjectName + "] has been unregistered with json rpc "
-                + "bridge [" + jsonRpcBridge + "] successfully");
-    }
+    private String serviceObjectName = genServiceObjectName();
 
     /**
      * Gets the JavaScirpt client service object name.
@@ -119,15 +41,6 @@ public abstract class AbstractRemoteService implements Serializable {
      */
     public final String getServiceObjectName() {
         return serviceObjectName;
-    }
-
-    /**
-     * Determines whether this object is registered with json rpc bridge.
-     *
-     * @return {@code true} as registered, {@code false} otherwise
-     */
-    public final boolean isRegistered() {
-        return registered;
     }
 
     /**
@@ -159,7 +72,7 @@ public abstract class AbstractRemoteService implements Serializable {
                                 final HttpServletResponse response)
             throws IOException {
         final JSONObject currentUser = Sessions.currentUser(request);
-        
+
         if (null == currentUser) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }

@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client;
 
 import org.b3log.latke.servlet.filter.PagePostfixFilter;
-import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import org.jabsorb.JSONRPCBridge;
+import org.b3log.latke.client.remote.RemoteServiceModule;
 import org.jabsorb.JSONRPCServlet;
 
 /**
@@ -33,9 +30,8 @@ import org.jabsorb.JSONRPCServlet;
  * configurations in servlet container.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jun 22, 2010
+ * @version 1.0.0.8, Aug 15, 2010
  * @see AbstractClientModule#configureServlets() 
- * @see AbstractClientModule#provideJSONRPCBridge(javax.servlet.http.HttpSession) 
  */
 public abstract class AbstractClientModule extends ServletModule {
 
@@ -59,7 +55,7 @@ public abstract class AbstractClientModule extends ServletModule {
     }
 
     /**
-     * Configures some filters, servlets for
+     * Configures some filters, servlets, remote JavaScript module for
      * <a href="http://code.google.com/p/google-guice/">Guice</a>.
      *
      * Filters:
@@ -69,6 +65,10 @@ public abstract class AbstractClientModule extends ServletModule {
      * Servlets:
      * <ul>
      *   <li>{@link JSONRPCServlet}</li>
+     * </ul>
+     * Remote JavaScript Module:
+     * <ul>
+     *   <li>{@link RemoteServiceModule}</li>
      * </ul>
      */
     @Override
@@ -80,30 +80,8 @@ public abstract class AbstractClientModule extends ServletModule {
         // servlets
         bind(JSONRPCServlet.class).in(Scopes.SINGLETON);
         serve("/json-rpc.do").with(JSONRPCServlet.class, jabsorbInitParam);
-    }
 
-    /**
-     * Provides json rpc bridge for the specified http session.
-     *
-     * @param httpSession the specified http session
-     * @return json rpc bridge
-     */
-    @Provides
-    private JSONRPCBridge provideJSONRPCBridge(final HttpSession httpSession) {
-        LOGGER.debug("Provides json rpc bridge for session[id=" + httpSession.
-                getId() + "]");
-
-        JSONRPCBridge ret =
-                (JSONRPCBridge) httpSession.getAttribute("JSONRPCBridge");
-
-        if (null == ret) {
-            LOGGER.debug("No json rpc bridge created in this session[id="
-                    + httpSession.getId() + "], creates one now");
-            ret = new JSONRPCBridge();
-            httpSession.setAttribute("JSONRPCBridge", ret);
-        }
-
-        return ret;
-
+        // remote JS module
+        install(new RemoteServiceModule());
     }
 }
