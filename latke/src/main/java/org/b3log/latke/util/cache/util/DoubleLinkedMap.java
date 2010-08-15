@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache.util;
+
+import java.io.Serializable;
 
 /**
  * This is a generic thread safe double linked map. It's very simple and all
@@ -24,10 +25,14 @@ package org.b3log.latke.util.cache.util;
  * @param <K> the type of the key of this map's elements
  * @param <V> the type of the nodes of this map
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Jun 12, 2009
+ * @version 1.0.1.3, Aug 15, 2009
  */
-public final class DoubleLinkedMap<K, V> {
+public final class DoubleLinkedMap<K, V> implements Serializable {
 
+    /**
+     * Default serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
     /** 
      * record size to avoid having to iterate.
      */
@@ -295,9 +300,9 @@ public final class DoubleLinkedMap<K, V> {
  * @param <K> the type of the key of this node's element
  * @param <V> the type of this node
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Jul 8, 2010
+ * @version 1.0.2.1, Aug 15, 2010
  */
-final class DoubleLinkedMapNode<K, V> {
+final class DoubleLinkedMapNode<K, V> implements Serializable {
 
     /**
      * Generated serial version id.
