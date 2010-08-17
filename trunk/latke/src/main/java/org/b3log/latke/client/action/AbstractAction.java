@@ -207,7 +207,7 @@ public abstract class AbstractAction extends HttpServlet {
      * query string, returns an empty json object;
      * @throws JSONException json exception
      */
-    protected JSONObject getQueryStringJSONObject(
+    protected final JSONObject getQueryStringJSONObject(
             final HttpServletRequest request) throws JSONException {
         JSONObject ret = null;
         final String tmp = request.getQueryString();
