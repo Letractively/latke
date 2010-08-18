@@ -160,7 +160,7 @@ public abstract class AbstractGAERepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.debug("Updating object[oId=" + id + "] in repository[name="
+            LOGGER.debug("Updating an object[oId=" + id + "] in repository[name="
                          + getName() + "]");
             // Step 1, 2:
             remove(id);
