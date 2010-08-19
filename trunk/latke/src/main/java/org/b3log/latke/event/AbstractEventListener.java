@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.event;
 
-import java.util.Observable;
-import java.util.Observer;
+import org.apache.log4j.Logger;
 
 /**
- * Abstract event listener.
+ * Abstract event listener(Observer).
  *
  * @param <T> the type of event data
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 12, 2010
+ * @version 1.0.0.1, Aug 16, 2010
  */
-public abstract class AbstractEventListener<T> implements Observer {
+public abstract class AbstractEventListener<T> {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(AbstractEventListener.class);
     /**
      * Event manager.
      */
@@ -44,14 +49,22 @@ public abstract class AbstractEventListener<T> implements Observer {
         register();
     }
 
-    @Override
-    public void update(final Observable eventQueue,
-                       final Object event) {
+    /**
+     * Performs the listener {@code action} method with the specified event
+     * queue and event.
+     *
+     * @param eventQueue the specified event
+     * @param event the specified event
+     * @throws EventException event exception
+     * @see #action(com.ecooe.msglist.event.Event) 
+     */
+    final void performAction(final AbstractEventQueue eventQueue,
+                             final Event event) throws EventException {
         @SuppressWarnings("unchecked")
         final Event<T> eventObject = (Event<T>) event;
         try {
-            process(eventObject);
-        } finally {
+            action(eventObject);
+        } finally { // remove event from event queue
             if (eventQueue instanceof SynchronizedEventQueue) {
                 final SynchronizedEventQueue synchronizedEventQueue =
                         (SynchronizedEventQueue) eventQueue;
@@ -64,8 +77,9 @@ public abstract class AbstractEventListener<T> implements Observer {
      * Processes the specified event.
      *
      * @param event the specified event
+     * @throws EventException event exception
      */
-    public abstract void process(final Event<T> event);
+    public abstract void action(final Event<T> event) throws EventException;
 
     /**
      * Registers this listener to event manager.

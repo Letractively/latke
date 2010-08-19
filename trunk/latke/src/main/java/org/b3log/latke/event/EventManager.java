@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.event;
 
 /**
  * Event manager.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 12, 2010
+ * @version 1.0.0.1, Aug 16, 2010
  */
 public final class EventManager {
 
@@ -33,8 +34,10 @@ public final class EventManager {
      * Fire the specified event synchronously.
      *
      * @param event the specified event
+     * @throws EventException event exception
      */
-    public void fireEventSynchronously(final Event<?> event) {
+    public void fireEventSynchronously(final Event<?> event)
+            throws EventException {
         synchronizedEventQueue.fireEvent(event);
     }
 
@@ -44,7 +47,7 @@ public final class EventManager {
      * @param eventListener the specified event listener
      */
     public void registerListener(final AbstractEventListener<?> eventListener) {
-        synchronizedEventQueue.addObserver(eventListener);
+        synchronizedEventQueue.addListener(eventListener);
     }
 
     /**

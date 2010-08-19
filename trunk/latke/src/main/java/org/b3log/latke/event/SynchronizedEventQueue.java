@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 
 /**
  * Synchronized event queue.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 12, 2010
+ * @version 1.0.0.1, Aug 16, 2010
  */
-final class SynchronizedEventQueue extends Observable {
+final class SynchronizedEventQueue extends AbstractEventQueue {
 
     /**
      * Synchronized event queue.
@@ -53,8 +53,9 @@ final class SynchronizedEventQueue extends Observable {
      * Fires the specified event.
      *
      * @param event the specified event
+     * @throws EventException event exception
      */
-    synchronized void fireEvent(final Event<?> event) {
+    synchronized void fireEvent(final Event<?> event) throws EventException {
         final String eventType = event.getType();
         List<Event<?>> events = synchronizedEvents.get(eventType);
         if (null == events) {
@@ -64,7 +65,7 @@ final class SynchronizedEventQueue extends Observable {
 
         events.add(event);
         setChanged();
-        notifyObservers(event);
+        notifyListeners(event);
     }
 
     /**

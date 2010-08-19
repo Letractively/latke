@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
  * {@link EventManager} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 12, 2010
+ * @version 1.0.0.1, Aug 19, 2010
  */
 public final class EventManagerTestCase {
 
@@ -63,7 +63,7 @@ public final class EventManagerTestCase {
         }
 
         @Override
-        public void process(final Event<JSONObject> event) {
+        public void action(final Event<JSONObject> event) {
             System.out.println("Listener1 is processing a event[type="
                                + event.getType() + ", data=" + event.getData()
                                + "]");
@@ -90,7 +90,7 @@ public final class EventManagerTestCase {
         }
 
         @Override
-        public void process(final Event<JSONObject> event) {
+        public void action(final Event<JSONObject> event) {
             System.out.println("Listener2 is processing a event[type="
                                + event.getType() + ", data=" + event.getData()
                                + "]");
