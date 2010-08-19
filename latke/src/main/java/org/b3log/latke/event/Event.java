@@ -21,7 +21,7 @@ package org.b3log.latke.event;
  *
  * @param <T> the type of the event data
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 12, 2010
+ * @version 1.0.0.1, Aug 16, 2010
  */
 public final class Event<T> {
 
