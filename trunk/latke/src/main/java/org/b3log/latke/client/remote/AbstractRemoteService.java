@@ -58,7 +58,7 @@ public abstract class AbstractRemoteService {
      * Checks the specified request authorized or not(Http Status Code:
      * 401).
      * <p>
-     * If the specified request is authorized, send an error with status code
+     * If the specified request is unauthorized, sends an error with status code
      * 401.
      * </p>
      *
