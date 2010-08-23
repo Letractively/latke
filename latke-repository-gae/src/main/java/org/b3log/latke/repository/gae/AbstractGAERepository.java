@@ -52,7 +52,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Aug 15, 2010
+ * @version 1.0.0.7, Aug 23, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -124,7 +124,7 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         LOGGER.debug("Added an object[oId=" + ret + "] in repository["
-                + getName() + "]");
+                     + getName() + "]");
 
         return ret;
     }
@@ -160,7 +160,8 @@ public abstract class AbstractGAERepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.debug("Updating an object[oId=" + id + "] in repository[name="
+            LOGGER.debug("Updating an object[oId=" + id
+                         + "] in repository[name="
                          + getName() + "]");
             // Step 1, 2:
             remove(id);
@@ -169,7 +170,7 @@ public abstract class AbstractGAERepository implements Repository {
             // Step 4:
             add(jsonObject);
             LOGGER.debug("Updated an object[oId=" + id + "] in repository[name="
-                    + getName() + "]");
+                         + getName() + "]");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -184,7 +185,7 @@ public abstract class AbstractGAERepository implements Repository {
         datastoreService.delete(key);
         transactoin.commit();
         LOGGER.debug("Removed an object[oId=" + id + "] from "
-                + "repository[name=" + getName() + "]");
+                     + "repository[name=" + getName() + "]");
     }
 
     @Override
@@ -198,13 +199,22 @@ public abstract class AbstractGAERepository implements Repository {
             ret = entity2JSONObject(entity);
 
             LOGGER.debug("Got an object[oId=" + id + "] from "
-                    + "repository[name=" + getName() + "]");
+                         + "repository[name=" + getName() + "]");
         } catch (final EntityNotFoundException e) {
             LOGGER.warn("Not found an object[oId=" + id
-                    + "] in repository[name=" + getName() + "]");
+                        + "] in repository[name=" + getName() + "]");
         }
 
         return ret;
+    }
+
+    @Override
+    public boolean has(final String id) throws RepositoryException {
+        final Query query = new Query(getName());
+        query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.EQUAL, id);
+        final PreparedQuery preparedQuery = datastoreService.prepare(query);
+
+        return 0 == preparedQuery.countEntities() ? false : true;
     }
 
     @Override
@@ -238,8 +248,8 @@ public abstract class AbstractGAERepository implements Repository {
             ret.put(Keys.RESULTS, results);
 
             LOGGER.debug("Found objects[size=" + results.length() + "] at page"
-                    + "[currentPageNum=" + currentPageNum + ", pageSize="
-                    + pageSize + "] in repository[" + getName() + "]");
+                         + "[currentPageNum=" + currentPageNum + ", pageSize="
+                         + pageSize + "] in repository[" + getName() + "]");
         } catch (final JSONException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -289,8 +299,8 @@ public abstract class AbstractGAERepository implements Repository {
             ret.put(Keys.RESULTS, results);
 
             LOGGER.debug("Found objects[size=" + results.length() + "] at page"
-                    + "[currentPageNum=" + currentPageNum + ", pageSize="
-                    + pageSize + "] in repository[" + getName() + "]");
+                         + "[currentPageNum=" + currentPageNum + ", pageSize="
+                         + pageSize + "] in repository[" + getName() + "]");
         } catch (final JSONException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RepositoryException(e);
@@ -347,7 +357,7 @@ public abstract class AbstractGAERepository implements Repository {
             if (value instanceof String) {
                 final String valueString = (String) value;
                 if (valueString.length()
-                        > DataTypeUtils.MAX_STRING_PROPERTY_LENGTH) {
+                    > DataTypeUtils.MAX_STRING_PROPERTY_LENGTH) {
                     final Text text = new Text(valueString);
 
                     entity.setProperty(key, text);
