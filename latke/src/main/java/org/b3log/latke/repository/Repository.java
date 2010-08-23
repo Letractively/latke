@@ -21,7 +21,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Aug 8, 2010
+ * @version 1.0.1.1, Aug 23, 2010
  */
 public interface Repository {
 
@@ -61,6 +61,16 @@ public interface Repository {
      * @throws RepositoryException repository exception
      */
     JSONObject get(final String id) throws RepositoryException;
+
+    /**
+     * Determines a json object specified by the given id exists in this 
+     * repository.
+     * 
+     * @param id the given id
+     * @return {@code true} if it exists, otherwise {@code false}
+     * @throws RepositoryException repository exception
+     */
+    boolean has(final String id) throws RepositoryException;
 
     /**
      * Gets json objects by the specified current page number and page size.
