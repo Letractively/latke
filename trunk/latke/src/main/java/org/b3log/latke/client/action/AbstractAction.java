@@ -38,11 +38,11 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.2, Aug 15, 2010
+ * @version 1.0.2.3, Aug 23, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
- *                                  HttpServletRequest, HttpServletResponse)
+ *                     HttpServletRequest, HttpServletResponse)
  * @see Templates
  */
 public abstract class AbstractAction extends HttpServlet {
@@ -237,9 +237,8 @@ public abstract class AbstractAction extends HttpServlet {
             if (i < split.length - 1) {
                 sb.append(",");
             }
-
-            sb.append("}");
         }
+        sb.append("}");
 
         ret = new JSONObject(sb.toString());
 
@@ -399,7 +398,7 @@ public abstract class AbstractAction extends HttpServlet {
 
         final String requestJSONString = toJSONString(request);
         LOGGER.debug("AJAX request[string=" + requestJSONString + "]");
-        
+
         return toJSONObject(requestJSONString);
     }
 
