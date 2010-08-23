@@ -101,7 +101,7 @@ public abstract class AbstractServletListener
         webRoot = servletContext.getRealPath("") + File.separator;
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.info("[Web root[path=" + webRoot + ", catalina.base="
-                + catalinaBase + "]");
+                    + catalinaBase + "]");
 
         final String postfixExceptionPathsString =
                 servletContext.getInitParameter("postfixExceptionPaths");
@@ -155,7 +155,7 @@ public abstract class AbstractServletListener
         cache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
 
         LOGGER.info("Initialized cache[maxCount=" + MAX_CACHEABLE_OBJECT_CNT
-                + "]");
+                    + "]");
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class AbstractServletListener
     public static String getClientRemoteServicePackage() {
         if (Strings.isEmptyOrNull(clientRemoteServicePackage)) {
             throw new RuntimeException("Please override "
-                    + "clientRemoteServicePackage field!");
+                                       + "clientRemoteServicePackage field!");
         }
 
         return clientRemoteServicePackage;
