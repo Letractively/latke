@@ -112,7 +112,7 @@ public interface Repository {
      * MUST greater then 0
      * @param sortPopertyName the specified sort property name
      * @param sortDirection the sort direction
-     * @return a for example:
+     * @return for example:
      * <pre>
      * {
      *     "pagination": {
