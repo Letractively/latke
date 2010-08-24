@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.model;
 
 /**
  * This class defines all user model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jul 23, 2010
+ * @version 1.0.0.7, Aug 24, 2010
  */
 public final class User {
 
@@ -33,23 +32,27 @@ public final class User {
      */
     public static final String USERS = "users";
     /**
-     * User name.
+     * Key of user name.
      */
     public static final String USER_NAME = "userName";
     /**
-     * User password.
+     * Key of user email.
+     */
+    public static final String USER_EMAIL = "userEmail";
+    /**
+     * Key of user password.
      */
     public static final String USER_PASSWORD = "userPassword";
     /**
-     * User new password.
+     * Key of user new password.
      */
     public static final String USER_NEW_PASSWORD = "userNewPassword";
     /**
-     * Update time of this user.
+     * Key of update time of this user.
      */
     public static final String USER_UPDATE_TIME = "userUpdateTime";
     /**
-     * User role.
+     * Key of user role.
      */
     public static final String USER_ROLE = "userRole";
     // Relations ///////////////////////////////////////////////////////////////
