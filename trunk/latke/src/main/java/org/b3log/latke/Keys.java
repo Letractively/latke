@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Aug 8, 2010
+ * @version 1.0.1.2, Aug 24, 2010
  */
 public final class Keys {
 
@@ -43,6 +43,10 @@ public final class Keys {
      * Key of id of an entity json object.
      */
     public static final String OBJECT_ID = "oId";
+    /**
+     * Key of ids.
+     */
+    public static final String OBJECT_IDS = "oIds";
     /**
      * Key of locale.
      */
