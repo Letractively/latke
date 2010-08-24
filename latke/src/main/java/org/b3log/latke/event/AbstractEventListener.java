@@ -56,7 +56,7 @@ public abstract class AbstractEventListener<T> {
      * @param eventQueue the specified event
      * @param event the specified event
      * @throws EventException event exception
-     * @see #action(com.ecooe.msglist.event.Event) 
+     * @see #action(org.b3log.latke.event.Event) 
      */
     final void performAction(final AbstractEventQueue eventQueue,
                              final Event event) throws EventException {

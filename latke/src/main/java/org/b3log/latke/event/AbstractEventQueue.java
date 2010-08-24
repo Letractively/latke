@@ -72,7 +72,7 @@ public abstract class AbstractEventQueue {
      * changed.
      *
      * @throws EventException event exception
-     * @see AbstractEventListener#performAction(com.ecooe.msglist.event.AbstractEventQueue, java.lang.Object)
+     * @see AbstractEventListener#performAction(org.b3log.latke.event.AbstractEventQueue, org.b3log.latke.event.Event) 
      */
     public void notifyListeners() throws EventException {
         notifyListeners(null);
@@ -88,7 +88,7 @@ public abstract class AbstractEventQueue {
      *
      * @param event the specified event
      * @throws EventException event exception
-     * @see AbstractEventListener#performAction(com.ecooe.msglist.event.AbstractEventQueue, java.lang.Object)
+     * @see AbstractEventListener#performAction(org.b3log.latke.event.AbstractEventQueue, org.b3log.latke.event.Event) 
      */
     public void notifyListeners(final Event<?> event) throws EventException {
         /*
@@ -148,7 +148,7 @@ public abstract class AbstractEventQueue {
      * {@code notifyListeners} methods.
      *
      * @see #notifyListeners()
-     * @see #notifyListeners(com.ecooe.msglist.event.Event) 
+     * @see #notifyListeners(org.b3log.latke.event.Event) 
      */
     protected synchronized void clearChanged() {
         changed = false;
