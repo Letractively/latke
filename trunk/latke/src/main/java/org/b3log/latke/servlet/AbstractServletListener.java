@@ -147,6 +147,7 @@ public abstract class AbstractServletListener
     /**
      * Initializes cache.
      */
+    // TODO: cache
     private void initCache() {
         final Cache<?, ?> cache = getInjector().getInstance(Key.get(
                 new TypeLiteral<LruMemoryCache<String, ?>>() {
@@ -154,8 +155,12 @@ public abstract class AbstractServletListener
 
         cache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
 
-        LOGGER.info("Initialized cache[maxCount=" + MAX_CACHEABLE_OBJECT_CNT
-                    + "]");
+        final Cache<String, String> pageCache = getInjector().getInstance(
+                Key.get(new TypeLiteral<LruMemoryCache<String, String>>() {
+        }));
+        pageCache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
+        LOGGER.info("Initialized cache[maxCount="
+                    + MAX_CACHEABLE_OBJECT_CNT + "]");
     }
 
     /**

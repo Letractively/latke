@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
 import org.b3log.latke.util.cache.Cache;
@@ -27,7 +26,7 @@ import com.google.inject.TypeLiteral;
  * <a href="http://code.google.com/p/google-guice/">Guice</a> configurations.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jun 24, 2010
+ * @version 1.0.0.1, Aug 26, 2010
  */
 public class UtilModule extends AbstractModule {
 
@@ -40,9 +39,16 @@ public class UtilModule extends AbstractModule {
      */
     @Override
     protected void configure() {
+        // TODO: cache
         bind(new TypeLiteral<Cache<String, ?>>() {
         }).annotatedWith(LruMemory.class).to(
                 new TypeLiteral<LruMemoryCache<String, ?>>() {
+                }).asEagerSingleton();
+
+        // Page cache
+        bind(new TypeLiteral<Cache<String, String>>() {
+        }).annotatedWith(LruMemory.class).to(
+                new TypeLiteral<LruMemoryCache<String, String>>() {
                 }).asEagerSingleton();
     }
 }
