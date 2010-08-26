@@ -83,6 +83,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             throws ActionException {
         try {
             final StringWriter stringWriter = new StringWriter();
+            template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
             final PrintWriter writer = response.getWriter();
             final String cachedPageKey = request.getRequestURI()
@@ -94,8 +95,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             writer.write(pageContent);
             writer.close();
 
-            PAGE_CACHE.put(cachedPageKey, new String(pageContent.getBytes(),
-                                                     "UTF-8"));
+            PAGE_CACHE.put(cachedPageKey, pageContent);
             LOGGER.trace("Cached page[cachedPageKey=" + cachedPageKey + "]");
         } catch (final TemplateException e) {
             LOGGER.error(e.getMessage(), e);
