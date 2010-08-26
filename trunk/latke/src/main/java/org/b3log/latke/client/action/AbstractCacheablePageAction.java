@@ -120,10 +120,12 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             LOGGER.trace("Caching page[cachedPageKey=" + cachedPageKey + "]");
 
             final String pageContent = stringWriter.toString();
+
             writer.write(pageContent);
             writer.close();
 
-            PAGE_CACHE.put(cachedPageKey, pageContent);
+            PAGE_CACHE.put(cachedPageKey, new String(pageContent.getBytes(),
+                                                     "UTF-8"));
             LOGGER.trace("Cached page[cachedPageKey=" + cachedPageKey + "]");
         } catch (final TemplateException e) {
             LOGGER.error(e.getMessage(), e);
