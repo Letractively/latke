@@ -16,10 +16,7 @@
 package org.b3log.latke.util;
 
 import org.b3log.latke.util.cache.Cache;
-import org.b3log.latke.util.cache.memory.LruMemoryCache;
-import org.b3log.latke.util.cache.qualifier.LruMemory;
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
 
 /**
  * Abstract server-side module for
@@ -39,16 +36,5 @@ public class UtilModule extends AbstractModule {
      */
     @Override
     protected void configure() {
-        // TODO: cache
-        bind(new TypeLiteral<Cache<String, ?>>() {
-        }).annotatedWith(LruMemory.class).to(
-                new TypeLiteral<LruMemoryCache<String, ?>>() {
-                }).asEagerSingleton();
-
-        // Page cache
-        bind(new TypeLiteral<Cache<String, String>>() {
-        }).annotatedWith(LruMemory.class).to(
-                new TypeLiteral<LruMemoryCache<String, String>>() {
-                }).asEagerSingleton();
     }
 }

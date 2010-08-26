@@ -33,7 +33,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.util.cache.qualifier.LruMemory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +65,7 @@ public final class LangPropsService {
      */
     public Map<String, String> getAll(final Locale locale) throws
             ServiceException {
+        // TODO: cache
         @SuppressWarnings("unchecked")
         final Cache<String, HashMap<String, String>> cache =
                 (Cache<String, HashMap<String, String>>) injector.getInstance(Key.
