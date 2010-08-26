@@ -16,12 +16,8 @@
 package org.b3log.latke.servlet;
 
 import org.b3log.latke.util.Strings;
-import org.b3log.latke.util.cache.Cache;
-import org.b3log.latke.util.cache.memory.LruMemoryCache;
 import org.b3log.latke.util.jabsorb.serializer.FwkStatusCodesSerializer;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceServletContextListener;
 import java.io.File;
 import java.util.Collections;
@@ -46,7 +42,7 @@ import org.jabsorb.JSONRPCBridge;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.2, Aug 12, 2010
+ * @version 1.0.2.3, Aug 26, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -76,10 +72,6 @@ public abstract class AbstractServletListener
      * package.
      */
     private static String clientRemoteServicePackage;
-    /**
-     * Maximum count of cacheable objects.
-     */
-    private static final int MAX_CACHEABLE_OBJECT_CNT = 1024;
 
     /**
      * Initializes context, {@linkplain #webRoot web root},
@@ -101,7 +93,7 @@ public abstract class AbstractServletListener
         webRoot = servletContext.getRealPath("") + File.separator;
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.info("[Web root[path=" + webRoot + ", catalina.base="
-                    + catalinaBase + "]");
+                + catalinaBase + "]");
 
         final String postfixExceptionPathsString =
                 servletContext.getInitParameter("postfixExceptionPaths");
@@ -111,7 +103,6 @@ public abstract class AbstractServletListener
                 paths);
         LOGGER.info("[postfixExceptionPath=" + postfixExceptionPaths + "]");
 
-        initCache();
         registerRemoteJSServices();
         registerRemoteJSServiceSerializers();
     }
@@ -142,25 +133,6 @@ public abstract class AbstractServletListener
             LOGGER.error("Register remote JavaScript service error");
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Initializes cache.
-     */
-    // TODO: cache
-    private void initCache() {
-        final Cache<?, ?> cache = getInjector().getInstance(Key.get(
-                new TypeLiteral<LruMemoryCache<String, ?>>() {
-                }));
-
-        cache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
-
-        final Cache<String, String> pageCache = getInjector().getInstance(
-                Key.get(new TypeLiteral<LruMemoryCache<String, String>>() {
-        }));
-        pageCache.setMaxCount(MAX_CACHEABLE_OBJECT_CNT);
-        LOGGER.info("Initialized cache[maxCount="
-                    + MAX_CACHEABLE_OBJECT_CNT + "]");
     }
 
     /**
@@ -206,7 +178,7 @@ public abstract class AbstractServletListener
     public static String getClientRemoteServicePackage() {
         if (Strings.isEmptyOrNull(clientRemoteServicePackage)) {
             throw new RuntimeException("Please override "
-                                       + "clientRemoteServicePackage field!");
+                    + "clientRemoteServicePackage field!");
         }
 
         return clientRemoteServicePackage;
