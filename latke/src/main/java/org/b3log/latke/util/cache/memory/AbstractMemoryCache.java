@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache.memory;
 
 import org.b3log.latke.util.cache.Cache;
@@ -24,7 +23,7 @@ import org.b3log.latke.util.cache.Cache;
  * @param <K> the type of the key of objects
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Jul 8, 2010
+ * @version 1.0.2.1, Aug 26, 2010
  */
 public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
 
@@ -123,6 +122,15 @@ public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
      */
     protected final void cachedCountDec() {
         cachedCount--;
+    }
+
+    /**
+     * Sets the cached count with the specified cached count.
+     *
+     * @param cachedCount the specified cache count
+     */
+    protected final void setCachedCount(final int cachedCount) {
+        this.cachedCount = cachedCount;
     }
 
     /**
