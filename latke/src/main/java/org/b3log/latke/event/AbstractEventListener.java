@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.event;
 
 import org.apache.log4j.Logger;
@@ -58,14 +59,16 @@ public abstract class AbstractEventListener<T> {
      * @see #action(org.b3log.latke.event.Event) 
      */
     final void performAction(final AbstractEventQueue eventQueue,
-                             final Event<T> event) throws EventException {
+                             final Event event) throws EventException {
+        @SuppressWarnings("unchecked")
+        final Event<T> eventObject = (Event<T>) event;
         try {
-            action(event);
+            action(eventObject);
         } finally { // remove event from event queue
             if (eventQueue instanceof SynchronizedEventQueue) {
                 final SynchronizedEventQueue synchronizedEventQueue =
                         (SynchronizedEventQueue) eventQueue;
-                synchronizedEventQueue.removeEvent(event);
+                synchronizedEventQueue.removeEvent(eventObject);
             }
         }
     }
