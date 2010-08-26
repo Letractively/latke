@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -64,34 +63,6 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
         LOGGER.info("Initialized page cache[maxCount="
                 + MAX_CACHEABLE_PAGE_CNT + "]");
-    }
-
-    /**
-     * Processes FreeMarker request for the specified request and response.
-     *
-     * @param request the specified request
-     * @param response the specified response
-     * @throws ServletException servlet exception
-     * @throws IOException io exception
-     */
-    @Override
-    protected final void processFreemarkRequest(final HttpServletRequest request,
-                                                final HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            final Template template =
-                    beforeDoFreeMarkerAction(request, response);
-            final Map<?, ?> dataModel = doFreeMarkerAction(template,
-                                                           request, response);
-            afterDoFreeMarkerTemplateAction(request, response, dataModel,
-                                            template);
-        } catch (final ActionException e) {
-            LOGGER.trace(e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                               e.getMessage());
-
-            return;
-        }
     }
 
     /**
