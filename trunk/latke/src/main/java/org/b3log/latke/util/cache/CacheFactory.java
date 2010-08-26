@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.b3log.latke.util.cache.qualifier;
-
-import com.google.inject.BindingAnnotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.b3log.latke.util.cache;
 
 /**
- * LRU memory cache qualifier.
+ * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jun 24, 2010
+ * @version 1.0.0.0, Aug 26, 2010
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD})
-@BindingAnnotation
-public @interface LruMemory {
+public final class CacheFactory {
+    // TODO: cache
 }
