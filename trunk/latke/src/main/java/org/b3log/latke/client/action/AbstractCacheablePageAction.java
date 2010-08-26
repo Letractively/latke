@@ -58,9 +58,8 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * Initializes cache.
      */
     static {
-        PAGE_CACHE =
-                CacheFactory.getCache(CacheFactory.CACHE_LRU_MEMORY_CACHE);
-
+        PAGE_CACHE = CacheFactory.getCache(
+                CacheFactory.CACHE_LRU_MEMORY_CACHE);
         PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
 
         LOGGER.info("Initialized page cache[maxCount="
