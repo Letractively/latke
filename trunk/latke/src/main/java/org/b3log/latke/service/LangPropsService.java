@@ -20,11 +20,6 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.model.AbstractLang;
 import org.b3log.latke.model.AbstractMessage;
 import org.b3log.latke.model.Label;
-import org.b3log.latke.util.cache.Cache;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,7 +36,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Aug 15, 2010
+ * @version 1.0.0.8, Aug 26, 2010
  */
 public final class LangPropsService {
 
@@ -51,10 +46,10 @@ public final class LangPropsService {
     private static final Logger LOGGER =
             Logger.getLogger(LangPropsService.class);
     /**
-     * Injector.
+     * Language properties.
      */
-    @Inject
-    private Injector injector;
+    private static final Map<Locale, Map<String, String>> LANGS =
+            new HashMap<Locale, Map<String, String>>();
 
     /**
      * Gets all language properties as a map by the specified locale.
@@ -65,40 +60,31 @@ public final class LangPropsService {
      */
     public Map<String, String> getAll(final Locale locale) throws
             ServiceException {
-        // TODO: cache
-        @SuppressWarnings("unchecked")
-        final Cache<String, HashMap<String, String>> cache =
-                (Cache<String, HashMap<String, String>>) injector.getInstance(Key.
-                get(new TypeLiteral<Cache<String, ?>>() {
-        }, LruMemory.class));
+        Map<String, String> ret = LANGS.get(locale);
 
-        HashMap<String, String> ret = cache.get(Keys.LOCALE);
-        if (null != ret) {
-            LOGGER.trace("Got language configurations from cache");
+        if (null == ret) {
+            ret = new HashMap<String, String>();
+            ResourceBundle langBundle = null;
+            try {
 
-            return ret;
+                langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
+            } catch (final MissingResourceException e) {
+                LOGGER.warn(e.getMessage() + ", using default locale["
+                        + Latkes.getDefaultLocale() + "]  instead");
+
+                langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
+                                                      Latkes.getDefaultLocale());
+            }
+
+            final Enumeration<String> keys = langBundle.getKeys();
+            while (keys.hasMoreElements()) {
+                final String key = keys.nextElement();
+                final String value = langBundle.getString(key);
+                ret.put(key, value);
+            }
+
+            LANGS.put(locale, ret);
         }
-
-        ret = new HashMap<String, String>();
-        ResourceBundle langBundle = null;
-        try {
-            langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
-        } catch (final MissingResourceException e) {
-            LOGGER.warn(e.getMessage() + ", using default locale["
-                    + Latkes.getDefaultLocale() + "]  instead");
-
-            langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
-                                                  Latkes.getDefaultLocale());
-        }
-
-        final Enumeration<String> keys = langBundle.getKeys();
-        while (keys.hasMoreElements()) {
-            final String key = keys.nextElement();
-            final String value = langBundle.getString(key);
-            ret.put(key, value);
-        }
-
-        cache.put(Keys.LOCALE, ret);
 
         return ret;
     }

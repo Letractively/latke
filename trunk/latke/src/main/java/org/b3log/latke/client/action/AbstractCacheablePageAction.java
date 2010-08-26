@@ -15,10 +15,6 @@
  */
 package org.b3log.latke.client.action;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.IOException;
@@ -30,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.b3log.latke.util.cache.Cache;
-import org.b3log.latke.util.cache.memory.LruMemoryCache;
+import org.b3log.latke.util.cache.CacheFactory;
 
 /**
  * Abstract cacheable page action.
@@ -50,16 +46,26 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
     private static final Logger LOGGER = Logger.getLogger(
             AbstractCacheablePageAction.class);
     /**
+     * Maximum count of cacheable pages.
+     */
+    private static final int MAX_CACHEABLE_PAGE_CNT = 1024;
+    /**
      * Cache.
      */
-//    @Inject
-//    @LruMemory
-//    private Cache<String, String> pageCache;
+    public static final Cache<String, Object> PAGE_CACHE;
+
     /**
-     * Injector.
+     * Initializes cache.
      */
-    @Inject
-    private Injector injector;
+    static {
+        PAGE_CACHE =
+                CacheFactory.getCache(CacheFactory.CACHE_LRU_MEMORY_CACHE);
+
+        PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
+
+        LOGGER.info("Initialized page cache[maxCount="
+                + MAX_CACHEABLE_PAGE_CNT + "]");
+    }
 
     /**
      * Processes FreeMarker request for the specified request and response.
@@ -110,17 +116,14 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             template.process(dataModel, stringWriter);
             final PrintWriter writer = response.getWriter();
             final String cachedPageKey = request.getRequestURL().toString()
-                                         + request.getQueryString();
+                    + request.getQueryString();
             LOGGER.trace("Caching page[cachedPageKey=" + cachedPageKey + "]");
 
             final String pageContent = stringWriter.toString();
             writer.write(pageContent);
             writer.close();
-            // TODO: cache
-            final Cache<String, String> pageCache = injector.getInstance(
-                    Key.get(new TypeLiteral<LruMemoryCache<String, String>>() {
-            }));
-            pageCache.put(cachedPageKey, pageContent);
+
+            PAGE_CACHE.put(cachedPageKey, pageContent);
             LOGGER.trace("Cached page[cachedPageKey=" + cachedPageKey + "]");
         } catch (final TemplateException e) {
             LOGGER.error(e.getMessage(), e);

@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.util;
 
-import org.b3log.latke.util.cache.Cache;
 import com.google.inject.AbstractModule;
 
 /**
@@ -30,9 +29,6 @@ public class UtilModule extends AbstractModule {
     /**
      * Configures utilities for
      * <a href="http://code.google.com/p/google-guice/">Guice</a>.
-     * <ul>
-     *   <li>{@link Cache}</li>
-     * </ul>
      */
     @Override
     protected void configure() {

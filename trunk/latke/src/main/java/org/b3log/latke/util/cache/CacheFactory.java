@@ -15,6 +15,11 @@
  */
 package org.b3log.latke.util.cache;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.b3log.latke.util.cache.memory.LruMemoryCache;
+
 /**
  * Cache factory.
  *
@@ -22,5 +27,39 @@ package org.b3log.latke.util.cache;
  * @version 1.0.0.0, Aug 26, 2010
  */
 public final class CacheFactory {
-    // TODO: cache
+
+    /**
+     * LRU memory cache.
+     */
+    public static final String CACHE_LRU_MEMORY_CACHE =
+            "cacheLruMemoryCache";
+    /**
+     * Caches.
+     */
+    private static final Map<String, Cache<String, Object>> CACHES =
+            Collections.synchronizedMap(
+            new HashMap<String, Cache<String, Object>>());
+
+    /**
+     * Gets a cache specified by the given cache name.
+     *
+     * @param cacheName the given cache name
+     * @return a cache specified by the given cache name
+     */
+    public static Cache<String, Object> getCache(final String cacheName) {
+        Cache<String, Object> ret = CACHES.get(cacheName);
+        if (null == ret) {
+            ret = new LruMemoryCache<String, Object>();
+            CACHES.put(cacheName, ret);
+        }
+
+
+        return ret;
+    }
+
+    /**
+     * Private default constructor.
+     */
+    private CacheFactory() {
+    }
 }
