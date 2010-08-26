@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @param <K> the type of the key of this map's elements
  * @param <V> the type of the nodes of this map
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Aug 15, 2009
+ * @version 1.0.1.4, Aug 26, 2009
  */
 public final class DoubleLinkedMap<K, V> implements Serializable {
 
@@ -50,12 +50,17 @@ public final class DoubleLinkedMap<K, V> implements Serializable {
      * Removes a velue in the map by the specified key.
      *
      * @param key the specified key
+     * @return {@code true} if removed, {@code false} for not found
      */
-    public synchronized void remove(final K key) {
+    public synchronized boolean remove(final K key) {
         final DoubleLinkedMapNode<K, V> node = getNode(key);
         if (node != null) {
             removeNode(node);
+
+            return true;
         }
+
+        return false;
     }
 
     /**

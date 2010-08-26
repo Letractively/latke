@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.cache;
 
 /**
@@ -22,7 +21,7 @@ package org.b3log.latke.util.cache;
  * @param <K> the key of a object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Jul 8, 2010
+ * @version 1.0.2.1, Aug 26, 2010
  */
 public interface Cache<K, V> {
 
@@ -49,6 +48,11 @@ public interface Cache<K, V> {
      * @param key the specified key
      */
     void remove(final K key);
+
+    /**
+     * Removes all cached objects.
+     */
+    void removeAll();
 
     /**
      * Sets the maximum objects count of this cache.
