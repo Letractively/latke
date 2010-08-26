@@ -279,7 +279,7 @@ public abstract class AbstractAction extends HttpServlet {
      * @throws ServletException servlet exception
      * @throws IOException io exception
      */
-    private void processFreemarkRequest(final HttpServletRequest request,
+    protected void processFreemarkRequest(final HttpServletRequest request,
                                         final HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -334,7 +334,7 @@ public abstract class AbstractAction extends HttpServlet {
      * @return a FreeMarker template
      * @throws ActionException action exception
      */
-    private Template beforeDoFreeMarkerAction(
+    protected Template beforeDoFreeMarkerAction(
             final HttpServletRequest request, final HttpServletResponse response)
             throws ActionException {
         final String pageName = getPageName(request.getRequestURI());
@@ -365,7 +365,7 @@ public abstract class AbstractAction extends HttpServlet {
      * @param template the specified template
      * @throws ActionException action exception
      */
-    private void afterDoFreeMarkerTemplateAction(
+    protected void afterDoFreeMarkerTemplateAction(
             final HttpServletRequest request, final HttpServletResponse response,
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
