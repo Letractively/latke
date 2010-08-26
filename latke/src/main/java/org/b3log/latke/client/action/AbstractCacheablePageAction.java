@@ -114,7 +114,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final StringWriter stringWriter = new StringWriter();
             template.process(dataModel, stringWriter);
             final PrintWriter writer = response.getWriter();
-            final String cachedPageKey = request.getRequestURL().toString()
+            final String cachedPageKey = request.getRequestURI()
                     + request.getQueryString();
             LOGGER.trace("Caching page[cachedPageKey=" + cachedPageKey + "]");
 
