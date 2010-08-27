@@ -190,7 +190,7 @@ public abstract class AbstractGAERepository implements Repository {
     public JSONObject get(final String id) throws RepositoryException {
         JSONObject ret = null;
 
-        final Key key = KeyFactory.createKey(getName(), id);
+        final Key key = KeyFactory.createKey(parent, getName(), id);
 
         try {
             final Entity entity = DATASTORE_SERVICE.get(key);
