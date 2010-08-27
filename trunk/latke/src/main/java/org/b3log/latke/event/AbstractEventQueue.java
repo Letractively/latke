@@ -98,17 +98,14 @@ public abstract class AbstractEventQueue {
         AbstractEventListener<?>[] arrLocal;
 
         synchronized (this) {
-            /* We don't want the listener doing callbacks into
-             * arbitrary code while holding its own Monitor.
-             * The code where we extract each Observable from
-             * the Vector and store the state of the listener
-             * needs synchronization, but notifying listeners
-             * does not (should not).  The worst result of any
-             * potential race-condition here is that:
-             * 1) a newly-added listener will miss a
-             *   notification in progress
-             * 2) a recently unregistered listener will be
-             *   wrongly notified when it doesn't care
+            /* We don't want the listener doing callbacks into arbitrary code
+             * while holding its own Monitor. The code where we extract each
+             * Observable from the Vector and store the state of the listener
+             * needs synchronization, but notifying listeners does not (should not).
+             * The worst result of any potential race-condition here is that:
+             * 1) a newly-added listener will miss a notification in progress
+             * 2) a recently unregistered listener will be wrongly notified
+             *    when it doesn't care
              */
             if (!changed) {
                 return;
