@@ -15,7 +15,8 @@
  */
 package org.b3log.latke.event;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public abstract class AbstractEventQueue {
      * Listeners.
      */
     private Map<String, List<AbstractEventListener<?>>> listeners =
-            Collections.emptyMap();
+            new HashMap<String, List<AbstractEventListener<?>>>();
 
     /**
      * Adds the specified listener to the set of listeners for this object,
@@ -58,7 +59,7 @@ public abstract class AbstractEventQueue {
         List<AbstractEventListener<?>> listenerList = listeners.get(eventType);
 
         if (null == listenerList) {
-            listenerList = Collections.emptyList();
+            listenerList = new ArrayList<AbstractEventListener<?>>();
         }
 
         listenerList.add(listener);
