@@ -52,7 +52,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Aug 23, 2010
+ * @version 1.0.0.8, Aug 27, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -325,8 +325,10 @@ public abstract class AbstractGAERepository implements Repository {
             final Object v = property.getValue();
             if (v instanceof Text) {
                 final Text valueText = (Text) v;
+                LOGGER.trace("Put[key=" + k + ", value=" + valueText + "]");
                 jsonMap.put(k, valueText.getValue());
             } else {
+                LOGGER.trace("Put[key=" + k + ", value=" + v + "]");
                 jsonMap.put(k, v);
             }
         }
