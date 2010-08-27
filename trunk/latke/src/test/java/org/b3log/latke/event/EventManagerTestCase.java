@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
  * {@link EventManager} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 19, 2010
+ * @version 1.0.0.2, Aug 27, 2010
  */
 public final class EventManagerTestCase {
 
@@ -47,7 +47,7 @@ public final class EventManagerTestCase {
      * Test event listener 1.
      *
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
-     * @version 1.0.0.0, Aug 12, 2010
+     * @version 1.0.0.1, Aug 27, 2010
      */
     private final class TestEventListener1
             extends AbstractEventListener<JSONObject> {
@@ -59,7 +59,7 @@ public final class EventManagerTestCase {
          * @param eventManager the specified event manager
          */
         public TestEventListener1(final EventManager eventManager) {
-            super(eventManager);
+            super("event1", eventManager);
         }
 
         @Override
@@ -67,6 +67,11 @@ public final class EventManagerTestCase {
             System.out.println("Listener1 is processing a event[type="
                                + event.getType() + ", data=" + event.getData()
                                + "]");
+        }
+
+        @Override
+        public String getEventType() {
+            return "event1";
         }
     }
 
@@ -86,7 +91,7 @@ public final class EventManagerTestCase {
          * @param eventManager the specified event manager
          */
         public TestEventListener2(final EventManager eventManager) {
-            super(eventManager);
+            super("event2", eventManager);
         }
 
         @Override
@@ -94,6 +99,11 @@ public final class EventManagerTestCase {
             System.out.println("Listener2 is processing a event[type="
                                + event.getType() + ", data=" + event.getData()
                                + "]");
+        }
+
+        @Override
+        public String getEventType() {
+            return "event2";
         }
     }
 }
