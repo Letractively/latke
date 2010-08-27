@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.event;
 
 import org.apache.log4j.Logger;
@@ -23,7 +22,7 @@ import org.apache.log4j.Logger;
  *
  * @param <T> the type of event data
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 16, 2010
+ * @version 1.0.0.2, Aug 27, 2010
  */
 public abstract class AbstractEventListener<T> {
 
@@ -36,14 +35,28 @@ public abstract class AbstractEventListener<T> {
      * Event manager.
      */
     private EventManager eventManager;
+    /**
+     * Event type.
+     */
+    private String eventType;
+
+    /**
+     * Gets the event type of this listener could handle.
+     *
+     * @return event type
+     */
+    public abstract String getEventType();
 
     /**
      * Constructs an {@link AbstractEventListener} object and register it with
-     * the specified event manager.
+     * the specified event manager and type of event.
      *
+     * @param eventType the type of event this listener could handle
      * @param eventManager the specified event manager
      */
-    public AbstractEventListener(final EventManager eventManager) {
+    public AbstractEventListener(final String eventType,
+                                 final EventManager eventManager) {
+        this.eventType = eventType;
         this.eventManager = eventManager;
 
         register();

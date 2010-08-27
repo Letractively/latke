@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.event;
 
-import java.util.Vector;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract event queue(Observable).
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 16, 2010
+ * @version 1.0.0.2, Aug 27, 2010
  * @see AbstractEventListener
  */
 public abstract class AbstractEventQueue {
@@ -34,8 +35,8 @@ public abstract class AbstractEventQueue {
     /**
      * Listeners.
      */
-    private Vector<AbstractEventListener<?>> listeners =
-            new Vector<AbstractEventListener<?>>();
+    private Map<String, List<AbstractEventListener<?>>> listeners =
+            Collections.emptyMap();
 
     /**
      * Adds the specified listener to the set of listeners for this object,
@@ -49,9 +50,18 @@ public abstract class AbstractEventQueue {
             throw new NullPointerException();
         }
 
-        if (!listeners.contains(listener)) {
-            listeners.addElement(listener);
+        final String eventType = listener.getEventType();
+        if (null == eventType) {
+            throw new NullPointerException();
         }
+
+        List<AbstractEventListener<?>> listenerList = listeners.get(eventType);
+
+        if (null == listenerList) {
+            listenerList = Collections.emptyList();
+        }
+
+        listenerList.add(listener);
     }
 
     /**
@@ -62,7 +72,17 @@ public abstract class AbstractEventQueue {
      */
     synchronized void deleteListener(
             final AbstractEventListener<?> listener) {
-        listeners.removeElement(listener);
+        final String eventType = listener.getEventType();
+        if (null == eventType) {
+            throw new NullPointerException();
+        }
+
+        final List<AbstractEventListener<?>> listenerList =
+                listeners.get(eventType);
+
+        if (null != listenerList) {
+            listenerList.remove(listener);
+        }
     }
 
     /**
@@ -95,7 +115,7 @@ public abstract class AbstractEventQueue {
          * a temporary array buffer, used as a snapshot of the state of
          * current listeners.
          */
-        AbstractEventListener<?>[] arrLocal;
+        AbstractEventListener<?>[] arrLocal = null;
 
         synchronized (this) {
             /* We don't want the listener doing callbacks into arbitrary code
@@ -111,14 +131,22 @@ public abstract class AbstractEventQueue {
                 return;
             }
 
+            final String eventType = event.getType();
+            final List<AbstractEventListener<?>> listenerList =
+                    listeners.get(eventType);
+
             final AbstractEventListener<?>[] types =
                     new AbstractEventListener<?>[1];
-            arrLocal = listeners.<AbstractEventListener<?>>toArray(types);
-            clearChanged();
+            if (null != listenerList) {
+                arrLocal = listenerList.<AbstractEventListener<?>>toArray(types);
+                clearChanged();
+            }
         }
 
-        for (int i = arrLocal.length - 1; i >= 0; i--) {
-            arrLocal[i].performAction(this, event);
+        if (null != arrLocal) {
+            for (int i = arrLocal.length - 1; i >= 0; i--) {
+                arrLocal[i].performAction(this, event);
+            }
         }
     }
 
@@ -126,7 +154,7 @@ public abstract class AbstractEventQueue {
      * Clears the listener list so that this object no longer has any listeners..
      */
     public synchronized void deleteListeners() {
-        listeners.removeAllElements();
+        listeners.clear();
     }
 
     /**
