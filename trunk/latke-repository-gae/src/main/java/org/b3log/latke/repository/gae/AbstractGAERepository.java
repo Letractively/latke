@@ -369,6 +369,9 @@ public abstract class AbstractGAERepository implements Repository {
             } else if (value instanceof Number || value instanceof Date
                            || value instanceof Boolean) {
                 entity.setProperty(key, value);
+            } else {
+                throw new RuntimeException("Need to add known data type[" + value.
+                        getClass() + "]");
             }
         }
     }
