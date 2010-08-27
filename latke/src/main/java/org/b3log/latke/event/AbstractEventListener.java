@@ -99,5 +99,8 @@ public abstract class AbstractEventListener<T> {
      */
     private void register() {
         eventManager.registerListener(this);
+        LOGGER.debug("Registered an event listener[classSimpleName="
+                     + getClass().getSimpleName() + ", eventType=" + eventType
+                     + "]");
     }
 }
