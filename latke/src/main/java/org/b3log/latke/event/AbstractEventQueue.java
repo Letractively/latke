@@ -60,6 +60,7 @@ public abstract class AbstractEventQueue {
 
         if (null == listenerList) {
             listenerList = new ArrayList<AbstractEventListener<?>>();
+            listeners.put(eventType, listenerList);
         }
 
         listenerList.add(listener);
