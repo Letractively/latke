@@ -31,7 +31,7 @@ import org.b3log.latke.util.cache.CacheFactory;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 26, 2010
+ * @version 1.0.0.1, Aug 30, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -49,7 +49,10 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     private static final int MAX_CACHEABLE_PAGE_CNT = 1024;
     /**
-     * Cache.
+     * Page cache.
+     * <p>
+     * &lt;requestURI, page HTML content&gt;
+     * </p>
      */
     public static final Cache<String, Object> PAGE_CACHE;
 
