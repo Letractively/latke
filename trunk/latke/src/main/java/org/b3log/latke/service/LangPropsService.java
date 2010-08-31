@@ -17,7 +17,6 @@ package org.b3log.latke.service;
 
 import org.b3log.latke.FwkStatusCodes;
 import org.b3log.latke.Keys;
-import org.b3log.latke.model.AbstractLang;
 import org.b3log.latke.model.AbstractMessage;
 import org.b3log.latke.model.Label;
 import java.util.Enumeration;
@@ -36,7 +35,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Aug 26, 2010
+ * @version 1.0.0.9, Aug 30, 2010
  */
 public final class LangPropsService {
 
@@ -95,7 +94,7 @@ public final class LangPropsService {
      * configurations, using {@link Latkes#getDefaultLocale()} instead.
      *
      * @param locale the specified locale
-     * @return for example:
+     * @return for example,
      * <pre>
      * {
      *     "sc": "CHANGE_LOCALE_FAIL_NOT_FOUND",
@@ -103,7 +102,6 @@ public final class LangPropsService {
      *         "localeNotFound":
      *             "Unsupported locale, using default locale(zh_CN) instead."
      *     },
-     *     "htmlTitle": "B3log",
      *     "labels": [
      *         {"labelId": "projectName", "labelText": "B3log Web"},
      *         ....
@@ -160,9 +158,6 @@ public final class LangPropsService {
 
                 labels.put(label);
             }
-
-            ret.put(Label.HTML_TITLE,
-                    langBundle.getString(AbstractLang.HTML_TITLE));
 
             ret.put(Keys.STATUS_CODE, FwkStatusCodes.CHANGE_LOCALE_SUCC);
         } catch (final JSONException e) {
