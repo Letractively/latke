@@ -90,15 +90,13 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
             final PrintWriter writer = response.getWriter();
-            String cachedPageKey = null;
             final String requestURI = request.getRequestURI();
+            String cachedPageKey = requestURI;
             final String queryString = request.getQueryString();
-            if (Strings.isEmptyOrNull(queryString)) {
-                cachedPageKey = requestURI;
-            } else {
+            if (!Strings.isEmptyOrNull(queryString)) {
                 cachedPageKey += "?" + queryString;
             }
-            
+
             LOGGER.trace("Caching page[cachedPageKey=" + cachedPageKey + "]");
 
             final String pageContent = stringWriter.toString();
