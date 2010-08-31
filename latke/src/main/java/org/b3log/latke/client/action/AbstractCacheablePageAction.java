@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.cache.Cache;
 import org.b3log.latke.util.cache.CacheFactory;
 
@@ -31,7 +32,7 @@ import org.b3log.latke.util.cache.CacheFactory;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 30, 2010
+ * @version 1.0.0.2, Aug 31, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -65,7 +66,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
         PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
 
         LOGGER.info("Initialized page cache[maxCount="
-                + MAX_CACHEABLE_PAGE_CNT + "]");
+                    + MAX_CACHEABLE_PAGE_CNT + "]");
     }
 
     /**
@@ -89,8 +90,15 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
             final PrintWriter writer = response.getWriter();
-            final String cachedPageKey = request.getRequestURI()
-                    + request.getQueryString();
+            String cachedPageKey = null;
+            final String requestURI = request.getRequestURI();
+            final String queryString = request.getQueryString();
+            if (Strings.isEmptyOrNull(queryString)) {
+                cachedPageKey = requestURI;
+            } else {
+                cachedPageKey += "?" + queryString;
+            }
+            
             LOGGER.trace("Caching page[cachedPageKey=" + cachedPageKey + "]");
 
             final String pageContent = stringWriter.toString();
