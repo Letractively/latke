@@ -17,7 +17,7 @@ package org.b3log.latke.jsonrpc.impl;
 
 import java.util.logging.Level;
 import org.b3log.latke.Keys;
-import org.b3log.latke.client.action.ActionException;
+import org.b3log.latke.action.ActionException;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.service.ServiceException;
 import com.google.inject.Inject;

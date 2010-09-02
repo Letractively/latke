@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client.action;
+package org.b3log.latke.action;
 
 import java.util.logging.Level;
 import org.b3log.latke.util.Strings;

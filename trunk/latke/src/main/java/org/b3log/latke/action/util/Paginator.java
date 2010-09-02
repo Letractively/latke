@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.b3log.latke.client.action.util;
+package org.b3log.latke.action.util;
 
 import java.util.ArrayList;
 import java.util.List;
