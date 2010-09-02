@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.b3log.latke.client.action;
+package org.b3log.latke.action;
 
 /**
  * Action exception.
