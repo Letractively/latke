@@ -61,9 +61,9 @@ public abstract class AbstractClientModule extends ServletModule {
      * <ul>
      *   <li>{@link JSONRPCServlet}</li>
      * </ul>
-     * Remote JavaScript Module:
+     * JSON RPC Module:
      * <ul>
-     *   <li>{@link RemoteServiceModule}</li>
+     *   <li>{@link JSONRpcServiceModule}</li>
      * </ul>
      */
     @Override
@@ -72,7 +72,7 @@ public abstract class AbstractClientModule extends ServletModule {
         bind(JSONRPCServlet.class).in(Scopes.SINGLETON);
         serve("/json-rpc.do").with(JSONRPCServlet.class, jabsorbInitParam);
 
-        // remote JS module
+        // json RPC services
         install(new JSONRpcServiceModule());
     }
 }
