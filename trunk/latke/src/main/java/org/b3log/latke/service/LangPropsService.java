@@ -18,7 +18,6 @@ package org.b3log.latke.service;
 import java.util.logging.Level;
 import org.b3log.latke.FwkStatusCodes;
 import org.b3log.latke.Keys;
-import org.b3log.latke.model.AbstractMessage;
 import org.b3log.latke.model.Label;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -116,14 +115,6 @@ public final class LangPropsService {
     public JSONObject getLabels(final Locale locale) throws ServiceException {
         final JSONObject ret = new JSONObject();
         ResourceBundle langBundle = null;
-        ResourceBundle messageBundle = null;
-
-        try {
-            messageBundle = ResourceBundle.getBundle(Keys.MESSAGES, locale);
-        } catch (final MissingResourceException e) {
-            messageBundle = ResourceBundle.getBundle(Keys.MESSAGES,
-                                                     Latkes.getDefaultLocale());
-        }
 
         try {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
@@ -134,18 +125,6 @@ public final class LangPropsService {
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
                                                   Latkes.getDefaultLocale());
-            try {
-                ret.put(Keys.STATUS_CODE,
-                        FwkStatusCodes.CHANGE_LOCALE_FAIL_NOT_FOUND);
-
-                final JSONObject localeNotFound = new JSONObject();
-                localeNotFound.put(AbstractMessage.LOCALE_NOT_FOUND,
-                                   messageBundle.getString(
-                        AbstractMessage.LOCALE_NOT_FOUND));
-                ret.put(Keys.MESSAGES, localeNotFound);
-            } catch (final JSONException ex) {
-                LOGGER.severe(ex.getMessage());
-            }
         }
 
         final Enumeration<String> keys = langBundle.getKeys();
@@ -189,7 +168,7 @@ public final class LangPropsService {
      */
     public String get(final String baseName, final String key,
                       final Locale locale) {
-        if (!Keys.LANGUAGE.equals(baseName) && !Keys.MESSAGES.equals(baseName)) {
+        if (!Keys.LANGUAGE.equals(baseName)) {
             final RuntimeException e =
                     new RuntimeException("i18n resource[baseName="
                                          + baseName + "] not found");

@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Aug 28, 2010
+ * @version 1.0.1.4, Sep 2, 2010
  */
 public final class Keys {
 
@@ -55,10 +55,6 @@ public final class Keys {
      * Key of language.
      */
     public static final String LANGUAGE = "lang";
-    /**
-     * Key of messages.
-     */
-    public static final String MESSAGES = "msgs";
     /**
      * Simple date format. (yyyy-MM-dd HH:mm:ss)
      */
