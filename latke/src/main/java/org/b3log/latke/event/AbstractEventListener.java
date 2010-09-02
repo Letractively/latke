@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  *
  * @param <T> the type of event data
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Aug 27, 2010
+ * @version 1.0.0.3, Sep 2, 2010
  */
 public abstract class AbstractEventListener<T> {
 
@@ -49,14 +49,11 @@ public abstract class AbstractEventListener<T> {
 
     /**
      * Constructs an {@link AbstractEventListener} object and register it with
-     * the specified event manager and type of event.
+     * the specified event manager.
      *
-     * @param eventType the type of event this listener could handle
      * @param eventManager the specified event manager
      */
-    public AbstractEventListener(final String eventType,
-                                 final EventManager eventManager) {
-        this.eventType = eventType;
+    public AbstractEventListener(final EventManager eventManager) {
         this.eventManager = eventManager;
 
         register();
