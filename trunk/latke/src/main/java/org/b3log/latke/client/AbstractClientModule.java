@@ -15,13 +15,12 @@
  */
 package org.b3log.latke.client;
 
-import org.b3log.latke.servlet.filter.PagePostfixFilter;
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.b3log.latke.client.remote.RemoteServiceModule;
+import org.b3log.latke.jsonrpc.JSONRpcServiceModule;
 import org.jabsorb.JSONRPCServlet;
 
 /**
@@ -30,7 +29,7 @@ import org.jabsorb.JSONRPCServlet;
  * configurations in servlet container.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Aug 15, 2010
+ * @version 1.0.0.9, Sep 2, 2010
  * @see AbstractClientModule#configureServlets() 
  */
 public abstract class AbstractClientModule extends ServletModule {
@@ -58,10 +57,6 @@ public abstract class AbstractClientModule extends ServletModule {
      * Configures some filters, servlets, remote JavaScript module for
      * <a href="http://code.google.com/p/google-guice/">Guice</a>.
      *
-     * Filters:
-     * <ul>
-     *   <li>{@link PagePostfixFilter}</li>
-     * </ul>
      * Servlets:
      * <ul>
      *   <li>{@link JSONRPCServlet}</li>
@@ -73,15 +68,11 @@ public abstract class AbstractClientModule extends ServletModule {
      */
     @Override
     protected void configureServlets() {
-        // filters
-        bind(PagePostfixFilter.class).in(Scopes.SINGLETON);
-        filter("/*").through(PagePostfixFilter.class);
-
         // servlets
         bind(JSONRPCServlet.class).in(Scopes.SINGLETON);
         serve("/json-rpc.do").with(JSONRPCServlet.class, jabsorbInitParam);
 
         // remote JS module
-        install(new RemoteServiceModule());
+        install(new JSONRpcServiceModule());
     }
 }

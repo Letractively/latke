@@ -34,8 +34,8 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.client.remote.AbstractRemoteService;
-import org.b3log.latke.client.remote.impl.LanguageService;
+import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
+import org.b3log.latke.jsonrpc.impl.LanguageService;
 import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
 import org.jabsorb.JSONRPCBridge;
 
@@ -125,8 +125,8 @@ public abstract class AbstractServletListener
             serviceClasses.add(LanguageService.class); // XXX: one by one manually?
 
             for (final Class<?> serviceClass : serviceClasses) {
-                final AbstractRemoteService serviceObject =
-                        (AbstractRemoteService) injector.getInstance(
+                final AbstractJSONRpcService serviceObject =
+                        (AbstractJSONRpcService) injector.getInstance(
                         serviceClass);
                 JSONRPCBridge.getGlobalBridge().registerObject(serviceObject.
                         getServiceObjectName(), serviceObject);

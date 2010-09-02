@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client.remote;
+package org.b3log.latke.jsonrpc;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.client.Sessions;
 
 /**
- * Abstract remote service.
+ * Abstract json RPC service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Aug 15, 2010
+ * @version 1.0.0.9, Sep 2, 2010
  */
-public abstract class AbstractRemoteService {
+public abstract class AbstractJSONRpcService {
 
     /**
      * JavaScirpt client service object name.

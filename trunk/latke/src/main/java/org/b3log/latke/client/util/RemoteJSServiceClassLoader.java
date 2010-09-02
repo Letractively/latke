@@ -16,7 +16,7 @@
 package org.b3log.latke.client.util;
 
 import java.util.logging.Level;
-import org.b3log.latke.client.remote.AbstractRemoteService;
+import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.servlet.AbstractServletListener;
 import java.io.File;
 import java.io.FileFilter;
@@ -105,7 +105,7 @@ public final class RemoteJSServiceClassLoader {
      */
     private static List<Class<?>> loadClasses(final List<File> classFiles) {
         final List<Class<?>> ret = new ArrayList<Class<?>>();
-        final ClassLoader classLoader = AbstractRemoteService.class.
+        final ClassLoader classLoader = AbstractJSONRpcService.class.
                 getClassLoader();
 
         try {
