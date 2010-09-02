@@ -20,7 +20,6 @@ import com.google.inject.servlet.ServletModule;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import org.b3log.latke.jsonrpc.JSONRpcServiceModule;
 import org.jabsorb.JSONRPCServlet;
 
 /**
@@ -32,13 +31,13 @@ import org.jabsorb.JSONRPCServlet;
  * @version 1.0.0.9, Sep 2, 2010
  * @see AbstractClientModule#configureServlets() 
  */
-public abstract class AbstractClientModule extends ServletModule {
+public abstract class AbstractActionModule extends ServletModule {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractClientModule.class.getName());
+            Logger.getLogger(AbstractActionModule.class.getName());
     /**
      * <a href="http://jabsorb.org/">jabsorb</a>(JSON-RPC) initialize
      * parameters. Override this configuration in subclass' constructor.
@@ -48,22 +47,18 @@ public abstract class AbstractClientModule extends ServletModule {
     /**
      * Public default constructor.
      */
-    public AbstractClientModule() {
+    public AbstractActionModule() {
         jabsorbInitParam = new HashMap<String, String>();
         jabsorbInitParam.put("gzip_threshold", "200");
     }
 
     /**
-     * Configures some filters, servlets, remote JavaScript module for
+     * Configures some servlets
      * <a href="http://code.google.com/p/google-guice/">Guice</a>.
      *
      * Servlets:
      * <ul>
      *   <li>{@link JSONRPCServlet}</li>
-     * </ul>
-     * JSON RPC Module:
-     * <ul>
-     *   <li>{@link JSONRpcServiceModule}</li>
      * </ul>
      */
     @Override
@@ -71,8 +66,5 @@ public abstract class AbstractClientModule extends ServletModule {
         // servlets
         bind(JSONRPCServlet.class).in(Scopes.SINGLETON);
         serve("/json-rpc.do").with(JSONRPCServlet.class, jabsorbInitParam);
-
-        // json RPC services
-        install(new JSONRpcServiceModule());
     }
 }
