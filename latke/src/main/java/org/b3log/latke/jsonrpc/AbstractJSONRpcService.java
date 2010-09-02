@@ -18,7 +18,7 @@ package org.b3log.latke.jsonrpc;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.b3log.latke.client.Sessions;
+import org.b3log.latke.util.Sessions;
 
 /**
  * Abstract json RPC service.

@@ -16,7 +16,7 @@
 package org.b3log.latke.servlet.filter;
 
 import java.util.logging.Level;
-import org.b3log.latke.client.Sessions;
+import org.b3log.latke.util.Sessions;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.servlet.Filter;
