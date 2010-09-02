@@ -32,7 +32,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
@@ -59,7 +60,7 @@ public abstract class AbstractGAERepository implements Repository {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractGAERepository.class);
+            Logger.getLogger(AbstractGAERepository.class.getName());
     /**
      * GAE datastore service.
      */
@@ -120,12 +121,12 @@ public abstract class AbstractGAERepository implements Repository {
 
             DATASTORE_SERVICE.put(entity);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new RepositoryException(e);
         }
 
-        LOGGER.debug("Added an object[oId=" + ret + "] in repository["
-                     + getName() + "]");
+        LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
+                   new Object[]{ret, getName()});
 
         return ret;
     }
@@ -161,19 +162,20 @@ public abstract class AbstractGAERepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.debug("Updating an object[oId=" + id
-                         + "] in repository[name="
-                         + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Updating an object[oId={0}] in repository[name={1}]",
+                       new Object[]{id, getName()});
             // Step 1, 2:
             remove(id);
             // Step 3:
             jsonObject.put(Keys.OBJECT_ID, id);
             // Step 4:
             add(jsonObject);
-            LOGGER.debug("Updated an object[oId=" + id + "] in repository[name="
-                         + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Updated an object[oId={0}] in repository[name={1}]",
+                       new Object[]{id, getName()});
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new RepositoryException(e);
         }
     }
@@ -182,8 +184,9 @@ public abstract class AbstractGAERepository implements Repository {
     public void remove(final String id) throws RepositoryException {
         final Key key = KeyFactory.createKey(parent, getName(), id);
         DATASTORE_SERVICE.delete(key);
-        LOGGER.debug("Removed an object[oId=" + id + "] from "
-                     + "repository[name=" + getName() + "]");
+        LOGGER.log(Level.FINER,
+                   "Removed an object[oId={0}] from repository[name={1}]",
+                   new Object[]{id, getName()});
     }
 
     @Override
@@ -196,11 +199,14 @@ public abstract class AbstractGAERepository implements Repository {
             final Entity entity = DATASTORE_SERVICE.get(key);
             ret = entity2JSONObject(entity);
 
-            LOGGER.debug("Got an object[oId=" + id + "] from "
-                         + "repository[name=" + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Got an object[oId={0}] from repository[name={1}]",
+                       new Object[]{id,
+                                    getName()});
         } catch (final EntityNotFoundException e) {
-            LOGGER.warn("Not found an object[oId=" + id
-                        + "] in repository[name=" + getName() + "]");
+            LOGGER.log(Level.WARNING,
+                       "Not found an object[oId={0}] in repository[name={1}]",
+                       new Object[]{id, getName()});
         }
 
         return ret;
@@ -245,11 +251,14 @@ public abstract class AbstractGAERepository implements Repository {
 
             ret.put(Keys.RESULTS, results);
 
-            LOGGER.debug("Found objects[size=" + results.length() + "] at page"
-                         + "[currentPageNum=" + currentPageNum + ", pageSize="
-                         + pageSize + "] in repository[" + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
+                       new Object[]{results.length(),
+                                    currentPageNum,
+                                    pageSize,
+                                    getName()});
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new RepositoryException(e);
         }
 
@@ -296,11 +305,14 @@ public abstract class AbstractGAERepository implements Repository {
 
             ret.put(Keys.RESULTS, results);
 
-            LOGGER.debug("Found objects[size=" + results.length() + "] at page"
-                         + "[currentPageNum=" + currentPageNum + ", pageSize="
-                         + pageSize + "] in repository[" + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
+                       new Object[]{results.length(),
+                                    currentPageNum,
+                                    pageSize,
+                                    getName()});
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new RepositoryException(e);
         }
 
@@ -323,10 +335,12 @@ public abstract class AbstractGAERepository implements Repository {
             final Object v = property.getValue();
             if (v instanceof Text) {
                 final Text valueText = (Text) v;
-                LOGGER.trace("Put[key=" + k + ", value=" + valueText + "]");
+                LOGGER.log(Level.FINEST, "Put[key={0}, value={1}]",
+                           new Object[]{k, valueText});
                 jsonMap.put(k, valueText.getValue());
             } else {
-                LOGGER.trace("Put[key=" + k + ", value=" + v + "]");
+                LOGGER.log(Level.FINEST, "Put[key={0}, value={1}]",
+                           new Object[]{k, v});
                 jsonMap.put(k, v);
             }
         }
