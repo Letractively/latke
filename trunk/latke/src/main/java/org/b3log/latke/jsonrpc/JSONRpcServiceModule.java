@@ -43,7 +43,7 @@ public final class JSONRpcServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        LOGGER.finer("Initializing remote JavaScirpt services....");
+        LOGGER.finer("Initializing json RPC services....");
         String clientRemoteServicesPath = null;
         try {
             final ClassLoader classLoader = AbstractServletListener.class.
@@ -52,7 +52,7 @@ public final class JSONRpcServiceModule extends AbstractModule {
                     classLoader.getResource(AbstractServletListener.
                     getClientRemoteServicePackage()).toURI().getPath();
             LOGGER.log(Level.FINER,
-                       "Client remote JavaScirpt services path of application is [{0}]",
+                       "Client json RPC services path of application is [{0}]",
                        clientRemoteServicesPath);
         } catch (final URISyntaxException e) {
             LOGGER.severe(e.getMessage());
