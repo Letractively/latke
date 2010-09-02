@@ -36,10 +36,6 @@ public abstract class AbstractEventListener<T> {
      * Event manager.
      */
     private EventManager eventManager;
-    /**
-     * Event type.
-     */
-    private String eventType;
 
     /**
      * Gets the event type of this listener could handle.
@@ -99,6 +95,6 @@ public abstract class AbstractEventListener<T> {
         eventManager.registerListener(this);
         LOGGER.log(Level.FINER,
                    "Registered an event listener[classSimpleName={0}, eventType={1}]",
-                   new Object[]{getClass().getSimpleName(), eventType});
+                   new Object[]{getClass().getSimpleName(), getEventType()});
     }
 }
