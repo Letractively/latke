@@ -265,7 +265,7 @@ public abstract class AbstractAction extends HttpServlet {
         } else {
             idx = ret.lastIndexOf(".do");
             ret = ret.substring(0, idx);
-            ret += ".html";
+            ret += ".ftl";
         }
 
         LOGGER.log(Level.FINER, "Request[pageName={0}]", ret);
