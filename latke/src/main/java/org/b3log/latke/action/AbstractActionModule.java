@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client;
+package org.b3log.latke.action;
 
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
