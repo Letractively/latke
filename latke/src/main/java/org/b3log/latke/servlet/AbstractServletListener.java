@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.jsonrpc.impl.LanguageService;
-import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
+import org.b3log.latke.jsonrpc.util.RemoteJSServiceClassLoader;
 import org.jabsorb.JSONRPCBridge;
 
 /**
