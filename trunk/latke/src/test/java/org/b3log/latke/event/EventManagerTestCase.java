@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
  * {@link EventManager} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Aug 27, 2010
+ * @version 1.0.0.3, Sep 2, 2010
  */
 public final class EventManagerTestCase {
 
@@ -59,7 +59,7 @@ public final class EventManagerTestCase {
          * @param eventManager the specified event manager
          */
         public TestEventListener1(final EventManager eventManager) {
-            super("event1", eventManager);
+            super(eventManager);
         }
 
         @Override
@@ -91,7 +91,7 @@ public final class EventManagerTestCase {
          * @param eventManager the specified event manager
          */
         public TestEventListener2(final EventManager eventManager) {
-            super("event2", eventManager);
+            super(eventManager);
         }
 
         @Override
