@@ -160,7 +160,6 @@ public final class LangPropsService {
      * @param baseName base name of resource bundle, options as the following:
      * <ul>
      *   <li>{@link Keys#LANGUAGE}</li>
-     *   <li>{@link Keys#MESSAGES}</li>
      * </ul>
      * @param key the specified key
      * @param locale the specified locale
