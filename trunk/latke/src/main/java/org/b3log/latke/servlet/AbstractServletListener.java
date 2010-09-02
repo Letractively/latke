@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.jsonrpc.impl.LanguageService;
-import org.b3log.latke.jsonrpc.util.RemoteJSServiceClassLoader;
+import org.b3log.latke.jsonrpc.util.JSONRPCServiceClassLoader;
 import org.jabsorb.JSONRPCBridge;
 
 /**
@@ -120,7 +120,7 @@ public abstract class AbstractServletListener
                     classLoader.getResource(AbstractServletListener.
                     getClientRemoteServicePackage()).toURI().getPath();
             final List<Class<?>> serviceClasses =
-                    RemoteJSServiceClassLoader.loadServiceClasses(
+                    JSONRPCServiceClassLoader.loadServiceClasses(
                     clientRemoteServicesPath);
             serviceClasses.add(LanguageService.class); // XXX: one by one manually?
 

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.jsonrpc.impl.LanguageService;
-import org.b3log.latke.jsonrpc.util.RemoteJSServiceClassLoader;
+import org.b3log.latke.jsonrpc.util.JSONRPCServiceClassLoader;
 import org.b3log.latke.servlet.AbstractServletListener;
 
 /**
@@ -60,7 +60,7 @@ public final class JSONRpcServiceModule extends AbstractModule {
         }
 
         final List<Class<?>> serviceClasses =
-                RemoteJSServiceClassLoader.loadServiceClasses(
+                JSONRPCServiceClassLoader.loadServiceClasses(
                 clientRemoteServicesPath);
         serviceClasses.add(LanguageService.class); // XXX: one by one manually?
 
