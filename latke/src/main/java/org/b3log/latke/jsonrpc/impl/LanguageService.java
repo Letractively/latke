@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client.remote.impl;
+package org.b3log.latke.jsonrpc.impl;
 
 import java.util.logging.Level;
 import org.b3log.latke.Keys;
 import org.b3log.latke.client.action.ActionException;
-import org.b3log.latke.client.remote.AbstractRemoteService;
+import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.service.ServiceException;
 import com.google.inject.Inject;
 import java.util.Locale;
@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.7, Aug 15, 2010
  */
-public final class LanguageService extends AbstractRemoteService {
+public final class LanguageService extends AbstractJSONRpcService {
 
     /**
      * Logger.

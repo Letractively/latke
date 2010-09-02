@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client.remote;
+package org.b3log.latke.jsonrpc;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -21,25 +21,25 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.b3log.latke.client.remote.impl.LanguageService;
+import org.b3log.latke.jsonrpc.impl.LanguageService;
 import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
 import org.b3log.latke.servlet.AbstractServletListener;
 
 /**
- * Client-side remove JavaScirpt service module for IoC
+ * Client-side json RPC service module for IoC
  * environment(<a href="http://code.google.com/p/google-guice/">Guice</a>)
  * configurations in servlet container.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 15, 2010
+ * @version 1.0.0.1, Sep 2, 2010
  */
-public final class RemoteServiceModule extends AbstractModule {
+public final class JSONRpcServiceModule extends AbstractModule {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(RemoteServiceModule.class.getName());
+            Logger.getLogger(JSONRpcServiceModule.class.getName());
 
     @Override
     protected void configure() {
