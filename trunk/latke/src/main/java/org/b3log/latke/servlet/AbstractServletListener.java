@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
+import java.util.logging.Level;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.jabsorb.serializer.FwkStatusCodesSerializer;
 import com.google.inject.Injector;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -31,7 +33,6 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import org.apache.log4j.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.client.remote.AbstractRemoteService;
 import org.b3log.latke.client.remote.impl.LanguageService;
@@ -54,7 +55,7 @@ public abstract class AbstractServletListener
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractServletListener.class);
+            Logger.getLogger(AbstractServletListener.class.getName());
     /**
      * Web root.
      */
@@ -86,14 +87,14 @@ public abstract class AbstractServletListener
         super.contextInitialized(servletContextEvent);
 
         Latkes.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        LOGGER.info("Default locale[" + Latkes.getDefaultLocale() + "]");
+        LOGGER.log(Level.INFO, "Default locale[{0}]", Latkes.getDefaultLocale());
 
         final ServletContext servletContext =
                 servletContextEvent.getServletContext();
         webRoot = servletContext.getRealPath("") + File.separator;
         final String catalinaBase = System.getProperty("catalina.base");
-        LOGGER.info("[Web root[path=" + webRoot + ", catalina.base="
-                + catalinaBase + "]");
+        LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]",
+                   new Object[]{webRoot, catalinaBase});
 
         final String postfixExceptionPathsString =
                 servletContext.getInitParameter("postfixExceptionPaths");
@@ -101,7 +102,8 @@ public abstract class AbstractServletListener
                 postfixExceptionPathsString.split(","));
         postfixExceptionPaths = org.b3log.latke.util.CollectionUtils.arrayToSet(
                 paths);
-        LOGGER.info("[postfixExceptionPath=" + postfixExceptionPaths + "]");
+        LOGGER.log(Level.INFO, "[postfixExceptionPath={0}]",
+                   postfixExceptionPaths);
 
         registerRemoteJSServices();
         registerRemoteJSServiceSerializers();
@@ -130,7 +132,7 @@ public abstract class AbstractServletListener
                         getServiceObjectName(), serviceObject);
             }
         } catch (final Exception e) {
-            LOGGER.error("Register remote JavaScript service error");
+            LOGGER.severe("Register remote JavaScript service error");
             throw new RuntimeException(e);
         }
     }
@@ -178,7 +180,7 @@ public abstract class AbstractServletListener
     public static String getClientRemoteServicePackage() {
         if (Strings.isEmptyOrNull(clientRemoteServicePackage)) {
             throw new RuntimeException("Please override "
-                    + "clientRemoteServicePackage field!");
+                                       + "clientRemoteServicePackage field!");
         }
 
         return clientRemoteServicePackage;
@@ -234,7 +236,7 @@ public abstract class AbstractServletListener
         try {
             jsonRpcBridge.registerSerializer(new FwkStatusCodesSerializer());
         } catch (final Exception e) {
-            LOGGER.fatal(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new RuntimeException(e);
         }
     }

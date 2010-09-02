@@ -15,7 +15,8 @@
  */
 package org.b3log.latke.event;
 
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Abstract event listener(Observer).
@@ -30,7 +31,7 @@ public abstract class AbstractEventListener<T> {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractEventListener.class);
+            Logger.getLogger(AbstractEventListener.class.getName());
     /**
      * Event manager.
      */
@@ -96,8 +97,8 @@ public abstract class AbstractEventListener<T> {
      */
     private void register() {
         eventManager.registerListener(this);
-        LOGGER.debug("Registered an event listener[classSimpleName="
-                     + getClass().getSimpleName() + ", eventType=" + eventType
-                     + "]");
+        LOGGER.log(Level.FINER,
+                   "Registered an event listener[classSimpleName={0}, eventType={1}]",
+                   new Object[]{getClass().getSimpleName(), eventType});
     }
 }

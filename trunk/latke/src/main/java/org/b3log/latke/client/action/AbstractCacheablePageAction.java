@@ -21,9 +21,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.cache.Cache;
 import org.b3log.latke.util.cache.CacheFactory;
@@ -44,7 +45,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(
-            AbstractCacheablePageAction.class);
+            AbstractCacheablePageAction.class.getName());
     /**
      * Maximum count of cacheable pages.
      */
@@ -65,8 +66,8 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
                 CacheFactory.CACHE_LRU_MEMORY_CACHE);
         PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
 
-        LOGGER.info("Initialized page cache[maxCount="
-                    + MAX_CACHEABLE_PAGE_CNT + "]");
+        LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
+                   MAX_CACHEABLE_PAGE_CNT);
     }
 
     /**
@@ -97,7 +98,8 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
                 cachedPageKey += "?" + queryString;
             }
 
-            LOGGER.trace("Caching page[cachedPageKey=" + cachedPageKey + "]");
+            LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
+                       cachedPageKey);
 
             final String pageContent = stringWriter.toString();
 
@@ -105,12 +107,13 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             writer.close();
 
             PAGE_CACHE.put(cachedPageKey, pageContent);
-            LOGGER.trace("Cached page[cachedPageKey=" + cachedPageKey + "]");
+            LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
+                       cachedPageKey);
         } catch (final TemplateException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         }
     }

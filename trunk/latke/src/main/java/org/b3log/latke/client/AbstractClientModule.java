@@ -20,7 +20,7 @@ import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 import org.b3log.latke.client.remote.RemoteServiceModule;
 import org.jabsorb.JSONRPCServlet;
 
@@ -39,7 +39,7 @@ public abstract class AbstractClientModule extends ServletModule {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractClientModule.class);
+            Logger.getLogger(AbstractClientModule.class.getName());
     /**
      * <a href="http://jabsorb.org/">jabsorb</a>(JSON-RPC) initialize
      * parameters. Override this configuration in subclass' constructor.

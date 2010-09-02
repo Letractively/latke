@@ -15,11 +15,11 @@
  */
 package org.b3log.latke.client;
 
+import java.util.logging.Logger;
 import org.b3log.latke.model.User;
 import org.b3log.latke.util.Strings;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.log4j.Logger;
 
 /**
  * Session utilities.
@@ -32,7 +32,8 @@ public final class Sessions {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Sessions.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(Sessions.class.getName());
 
     /**
      * Private default constructor.

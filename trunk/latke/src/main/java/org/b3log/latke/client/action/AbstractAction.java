@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.client.action;
 
+import java.util.logging.Level;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
 import com.google.inject.Inject;
@@ -26,11 +27,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,7 +51,8 @@ public abstract class AbstractAction extends HttpServlet {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractAction.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(AbstractAction.class.getName());
     /**
      * Injector.
      */
@@ -124,7 +126,7 @@ public abstract class AbstractAction extends HttpServlet {
         try {
             init(request, response);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ServletException(e);
         }
 
@@ -149,7 +151,7 @@ public abstract class AbstractAction extends HttpServlet {
         try {
             init(request, response);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ServletException(e);
         }
 
@@ -215,7 +217,7 @@ public abstract class AbstractAction extends HttpServlet {
             return new JSONObject();
         }
 
-        LOGGER.trace("Client is using QueryString[" + tmp + "]");
+        LOGGER.log(Level.FINEST, "Client is using QueryString[{0}]", tmp);
         final StringBuilder sb = new StringBuilder();
         sb.append("{");
         final String[] split = tmp.split("&");
@@ -266,7 +268,7 @@ public abstract class AbstractAction extends HttpServlet {
             ret += ".html";
         }
 
-        LOGGER.debug("Request[pageName=" + ret + "]");
+        LOGGER.log(Level.FINER, "Request[pageName={0}]", ret);
 
         return ret;
     }
@@ -280,7 +282,7 @@ public abstract class AbstractAction extends HttpServlet {
      * @throws IOException io exception
      */
     protected void processFreemarkRequest(final HttpServletRequest request,
-                                        final HttpServletResponse response)
+                                          final HttpServletResponse response)
             throws ServletException, IOException {
         try {
             final Template template =
@@ -290,7 +292,7 @@ public abstract class AbstractAction extends HttpServlet {
             afterDoFreeMarkerTemplateAction(request, response, dataModel,
                                             template);
         } catch (final ActionException e) {
-            LOGGER.trace(e.getMessage(), e);
+            LOGGER.finest(e.getMessage());
             response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                e.getMessage());
 
@@ -315,13 +317,13 @@ public abstract class AbstractAction extends HttpServlet {
             result = doAjaxAction(data, request, response);
             afterDoAjaxAction(request, response, result);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ServletException(e);
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ServletException(e);
         } catch (final ActionException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ServletException(e);
         }
     }
@@ -342,15 +344,16 @@ public abstract class AbstractAction extends HttpServlet {
         try {
             final String requestJSONString = toJSONString(request);
             final JSONObject requestJSONObject = toJSONObject(requestJSONString);
-            LOGGER.debug("Template request[json=" + requestJSONObject
-                         + ", pageName=" + pageName + "]");
+            LOGGER.log(Level.FINER,
+                       "Template request[json={0}, pageName={1}]",
+                       new Object[]{requestJSONObject, pageName});
 
             return Templates.getTemplate(pageName);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         }
     }
@@ -373,10 +376,10 @@ public abstract class AbstractAction extends HttpServlet {
             final PrintWriter writer = response.getWriter();
             template.process(dataModel, writer);
         } catch (final TemplateException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         }
     }
@@ -397,7 +400,7 @@ public abstract class AbstractAction extends HttpServlet {
         response.setContentType("application/json");
 
         final String requestJSONString = toJSONString(request);
-        LOGGER.debug("AJAX request[string=" + requestJSONString + "]");
+        LOGGER.log(Level.FINER, "AJAX request[string={0}]", requestJSONString);
 
         return toJSONObject(requestJSONString);
     }

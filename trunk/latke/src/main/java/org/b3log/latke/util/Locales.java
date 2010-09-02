@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
+import java.util.logging.Level;
 import org.b3log.latke.Keys;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.log4j.Logger;
 import org.b3log.latke.Latkes;
 
 /**
@@ -36,7 +36,8 @@ public final class Locales {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Locales.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(Locales.class.getName());
     /**
      * Language start description in Accept-Language of request header.
      */
@@ -80,7 +81,7 @@ public final class Locales {
         if (null == locale) {
             // get from request header
             final String languageHeader = request.getHeader("Accept-Language");
-            LOGGER.debug("[Accept-Language=" + languageHeader + "]");
+            LOGGER.log(Level.FINER, "[Accept-Language={0}]", languageHeader);
 
             String language = null;
             String country = null;
@@ -94,14 +95,15 @@ public final class Locales {
             if (!hasLocale(locale)) {
                 // using default
                 locale = Latkes.getDefaultLocale();
-                LOGGER.debug("Using the default locale["
-                        + locale.toString() + "]");
+                LOGGER.log(Level.FINER, "Using the default locale[{0}]",
+                           locale.toString());
             } else {
-                LOGGER.debug("Got locale[" + locale.toString()
-                        + "] from request.");
+                LOGGER.log(Level.FINER, "Got locale[{0}] from request.",
+                           locale.toString());
             }
         } else {
-            LOGGER.debug("Got locale[" + locale.toString() + "] from session.");
+            LOGGER.log(Level.FINER, "Got locale[{0}] from session.", locale.
+                    toString());
         }
 
         return locale;
@@ -135,8 +137,8 @@ public final class Locales {
                                  final Locale locale) {
         final HttpSession session = request.getSession();
         session.setAttribute(Keys.LOCALE, locale);
-        LOGGER.debug("Client[sessionId=" + session.getId()
-                + "] sets locale to [" + locale.toString() + "]");
+        LOGGER.log(Level.FINER, "Client[sessionId={0}] sets locale to [{1}]",
+                   new Object[]{session.getId(), locale.toString()});
     }
 
     /**

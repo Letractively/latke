@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.util;
 
+import java.util.logging.Level;
 import org.b3log.latke.client.remote.AbstractRemoteService;
 import org.b3log.latke.servlet.AbstractServletListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * Loads the services for JavaScript client.
@@ -36,7 +36,7 @@ public final class RemoteJSServiceClassLoader {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(RemoteJSServiceClassLoader.class);
+            Logger.getLogger(RemoteJSServiceClassLoader.class.getName());
 
     /**
      * Private default constructor.
@@ -86,7 +86,8 @@ public final class RemoteJSServiceClassLoader {
                 final File file = files[i];
                 if (file.isFile()) {
                     ret.add(file);
-                    LOGGER.trace("Got class file[" + file.getPath() + "]");
+                    LOGGER.log(Level.FINEST, "Got class file[{0}]",
+                               file.getPath());
                 } else if (file.isDirectory()) {
                     ret.addAll(getClassFiles(file));
                 }
@@ -104,7 +105,8 @@ public final class RemoteJSServiceClassLoader {
      */
     private static List<Class<?>> loadClasses(final List<File> classFiles) {
         final List<Class<?>> ret = new ArrayList<Class<?>>();
-        final ClassLoader classLoader = AbstractRemoteService.class.getClassLoader();
+        final ClassLoader classLoader = AbstractRemoteService.class.
+                getClassLoader();
 
         try {
             for (final File classFile : classFiles) {
@@ -121,14 +123,14 @@ public final class RemoteJSServiceClassLoader {
                 // removes the .class extension of filename
                 className = className.substring(0, className.lastIndexOf("."));
 
-                LOGGER.trace("Loading class[name=" + className + "]");
+                LOGGER.log(Level.FINEST, "Loading class[name={0}]", className);
 
                 final Class<?> clazz = classLoader.loadClass(className);
 
                 ret.add(clazz);
             }
         } catch (final ClassNotFoundException e) {
-            LOGGER.fatal(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
         }
 
         return ret;

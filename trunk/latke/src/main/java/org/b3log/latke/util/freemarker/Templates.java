@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util.freemarker;
 
+import java.util.logging.Level;
 import org.b3log.latke.servlet.AbstractServletListener;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import java.io.File;
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * Utilities of <a href="http://www.freemarker.org">FreeMarker</a> template
@@ -35,7 +35,8 @@ public final class Templates {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Templates.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(Templates.class.getName());
     /**
      * FreeMarker {@linkplain  Configuration configuration}.
      */
@@ -46,11 +47,11 @@ public final class Templates {
         CONFIGURATION.setDefaultEncoding("UTF-8");
         try {
             final String webRootPath = AbstractServletListener.getWebRoot();
-            LOGGER.trace("Web root[path=" + webRootPath + "]");
+            LOGGER.log(Level.FINEST, "Web root[path={0}]", webRootPath);
 
             CONFIGURATION.setDirectoryForTemplateLoading(new File(webRootPath));
         } catch (final IOException e) {
-            LOGGER.fatal(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
         }
     }
 
@@ -70,7 +71,7 @@ public final class Templates {
      */
     public static Template getTemplate(final String templateName)
             throws IOException {
-        LOGGER.trace("templateName =" + templateName);
+        LOGGER.log(Level.FINEST, "templateName ={0}", templateName);
 
         return CONFIGURATION.getTemplate(templateName);
     }

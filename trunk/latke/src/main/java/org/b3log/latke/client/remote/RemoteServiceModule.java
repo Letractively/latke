@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.client.remote;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import java.net.URISyntaxException;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.client.remote.impl.LanguageService;
 import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
 import org.b3log.latke.servlet.AbstractServletListener;
@@ -39,11 +39,11 @@ public final class RemoteServiceModule extends AbstractModule {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(RemoteServiceModule.class);
+            Logger.getLogger(RemoteServiceModule.class.getName());
 
     @Override
     protected void configure() {
-        LOGGER.debug("Initializing remote JavaScirpt services....");
+        LOGGER.finer("Initializing remote JavaScirpt services....");
         String clientRemoteServicesPath = null;
         try {
             final ClassLoader classLoader = AbstractServletListener.class.
@@ -51,10 +51,11 @@ public final class RemoteServiceModule extends AbstractModule {
             clientRemoteServicesPath =
                     classLoader.getResource(AbstractServletListener.
                     getClientRemoteServicePackage()).toURI().getPath();
-            LOGGER.debug("Client remote JavaScirpt services path "
-                    + "of application is [" + clientRemoteServicesPath + "]");
+            LOGGER.log(Level.FINER,
+                       "Client remote JavaScirpt services path of application is [{0}]",
+                       clientRemoteServicesPath);
         } catch (final URISyntaxException e) {
-            LOGGER.fatal(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new RuntimeException(e);
         }
 
