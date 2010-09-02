@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client;
+package org.b3log.latke.util;
 
 import java.util.logging.Logger;
 import org.b3log.latke.model.User;
-import org.b3log.latke.util.Strings;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
