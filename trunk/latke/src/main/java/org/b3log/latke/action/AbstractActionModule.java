@@ -29,7 +29,7 @@ import org.jabsorb.JSONRPCServlet;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.9, Sep 2, 2010
- * @see AbstractClientModule#configureServlets() 
+ * @see #configureServlets() 
  */
 public abstract class AbstractActionModule extends ServletModule {
 
