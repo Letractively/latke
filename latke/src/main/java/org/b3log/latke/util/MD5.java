@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * MD5 hash.
@@ -31,7 +30,7 @@ public final class MD5 {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(MD5.class);
+    private static final Logger LOGGER = Logger.getLogger(MD5.class.getName());
     /**
      * Message digest.
      */
@@ -55,7 +54,8 @@ public final class MD5 {
         try {
             messageDigest = MessageDigest.getInstance("MD5");
         } catch (final NoSuchAlgorithmException e) {
-            LOGGER.fatal(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -88,4 +88,3 @@ public final class MD5 {
         return hexValue.toString();
     }
 }
-

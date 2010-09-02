@@ -15,16 +15,17 @@
  */
 package org.b3log.latke.client.remote.impl;
 
+import java.util.logging.Level;
 import org.b3log.latke.Keys;
 import org.b3log.latke.client.action.ActionException;
 import org.b3log.latke.client.remote.AbstractRemoteService;
 import org.b3log.latke.service.ServiceException;
 import com.google.inject.Inject;
 import java.util.Locale;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.util.Locales;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,7 +40,8 @@ public final class LanguageService extends AbstractRemoteService {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(LanguageService.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(LanguageService.class.getName());
     /**
      * Language service.
      */
@@ -66,7 +68,7 @@ public final class LanguageService extends AbstractRemoteService {
         try {
             ret.put(Keys.LOCALE, locale);
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
 
             throw new ActionException(e);
         }
@@ -112,15 +114,15 @@ public final class LanguageService extends AbstractRemoteService {
             Locales.setLocale(request, locale);
 
             final JSONObject ret = langPropsService.getLabels(locale);
-            LOGGER.debug("Got all labels[locale=" + locale + ", sessionId="
-                    + request.getSession().getId() + "]");
+            LOGGER.log(Level.FINER, "Got all labels[locale={0}, sessionId={1}]",
+                       new Object[]{locale, request.getSession().getId()});
 
             return ret;
         } catch (final ServiceException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         }
     }

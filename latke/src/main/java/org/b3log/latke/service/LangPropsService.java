@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.service;
 
+import java.util.logging.Level;
 import org.b3log.latke.FwkStatusCodes;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.AbstractMessage;
@@ -25,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +44,7 @@ public final class LangPropsService {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(LangPropsService.class);
+            Logger.getLogger(LangPropsService.class.getName());
     /**
      * Language properties.
      */
@@ -68,8 +69,10 @@ public final class LangPropsService {
 
                 langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
             } catch (final MissingResourceException e) {
-                LOGGER.warn(e.getMessage() + ", using default locale["
-                        + Latkes.getDefaultLocale() + "]  instead");
+                LOGGER.log(Level.WARNING,
+                           "{0}, using default locale[{1}]  instead",
+                           new Object[]{e.getMessage(),
+                                        Latkes.getDefaultLocale()});
 
                 langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
                                                       Latkes.getDefaultLocale());
@@ -125,8 +128,9 @@ public final class LangPropsService {
         try {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
         } catch (final MissingResourceException e) {
-            LOGGER.warn(e.getMessage() + ", using default locale["
-                    + Latkes.getDefaultLocale() + "]  instead");
+            LOGGER.log(Level.WARNING, "{0}, using default locale[{1}]  instead",
+                       new Object[]{e.getMessage(),
+                                    Latkes.getDefaultLocale()});
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
                                                   Latkes.getDefaultLocale());
@@ -140,7 +144,7 @@ public final class LangPropsService {
                         AbstractMessage.LOCALE_NOT_FOUND));
                 ret.put(Keys.MESSAGES, localeNotFound);
             } catch (final JSONException ex) {
-                LOGGER.error(ex.getMessage(), e);
+                LOGGER.severe(ex.getMessage());
             }
         }
 
@@ -161,7 +165,7 @@ public final class LangPropsService {
 
             ret.put(Keys.STATUS_CODE, FwkStatusCodes.CHANGE_LOCALE_SUCC);
         } catch (final JSONException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
 
             throw new ServiceException(e);
         }
@@ -188,8 +192,8 @@ public final class LangPropsService {
         if (!Keys.LANGUAGE.equals(baseName) && !Keys.MESSAGES.equals(baseName)) {
             final RuntimeException e =
                     new RuntimeException("i18n resource[baseName="
-                    + baseName + "] not found");
-            LOGGER.error(e.getMessage(), e);
+                                         + baseName + "] not found");
+            LOGGER.severe(e.getMessage());
 
             throw e;
         }
@@ -198,8 +202,9 @@ public final class LangPropsService {
             return ResourceBundle.getBundle(baseName, locale).
                     getString(key);
         } catch (final MissingResourceException e) {
-            LOGGER.warn(e.getMessage() + ", get it from default locale["
-                    + Latkes.getDefaultLocale() + "]");
+            LOGGER.log(Level.WARNING, "{0}, get it from default locale[{1}]",
+                       new Object[]{e.getMessage(),
+                                    Latkes.getDefaultLocale()});
 
             return ResourceBundle.getBundle(
                     baseName, Latkes.getDefaultLocale()).getString(key);

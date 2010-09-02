@@ -17,6 +17,7 @@
 package org.b3log.latke.util;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 import javax.mail.Authenticator;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
@@ -25,7 +26,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import org.apache.log4j.Logger;
 
 /**
  * Email sender.
@@ -117,7 +117,7 @@ public final class EmailSender implements Runnable {
         try {
             sendMail();
         } catch (final MessagingException ex) {
-            Logger.getLogger(EmailSender.class).error(ex.getMessage());
+            Logger.getLogger(EmailSender.class.getName()).severe(ex.getMessage());
         }
     }
 

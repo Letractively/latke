@@ -15,12 +15,14 @@
  */
 package org.b3log.latke.servlet.filter;
 
+import java.util.logging.Level;
 import org.b3log.latke.servlet.AbstractServletListener;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Set;
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,7 +31,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 
 /**
  * *.do!
@@ -43,7 +44,7 @@ public final class PagePostfixFilter implements Filter {
      * Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(
-            PagePostfixFilter.class);
+            PagePostfixFilter.class.getName());
     /**
      * Filter configuration.
      */
@@ -75,14 +76,14 @@ public final class PagePostfixFilter implements Filter {
         final String requestURI = httpServletRequest.getRequestURI();
         final String requestLocalName =
                 httpServletRequest.getLocalName();
-        LOGGER.trace("Request[URI=" + requestURI + ", localName="
-                     + requestLocalName + "]");
+        LOGGER.log(Level.FINEST, "Request[URI={0}, localName={1}]",
+                   new Object[]{requestURI, requestLocalName});
 
         final Set<String> postfixExceptionPaths =
                 AbstractServletListener.getPostfixExceptionPaths();
         if (postfixExceptionPaths.contains(requestURI)) {
-            LOGGER.trace("Excepts request[URI=" + requestURI + "] from "
-                         + getClass().getSimpleName());
+            LOGGER.log(Level.FINEST, "Excepts request[URI={0}] from {1}",
+                       new Object[]{requestURI, getClass().getSimpleName()});
             chain.doFilter(request, response);
 
             return;
@@ -119,7 +120,7 @@ public final class PagePostfixFilter implements Filter {
                                     + postfix + "] you requested is "
                                     + "illegal.");
             //sendProcessingError(problem, response);
-            LOGGER.trace(problem.getMessage());
+            LOGGER.finest(problem.getMessage());
             httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             return;
@@ -137,8 +138,8 @@ public final class PagePostfixFilter implements Filter {
         this.filterConfig = filterConfig;
 
         if (null != filterConfig) {
-            LOGGER.trace("Initializing filter[classSimpleName="
-                         + toString() + "]");
+            LOGGER.log(Level.FINEST, "Initializing filter[classSimpleName={0}]",
+                       toString());
         }
     }
 
@@ -175,7 +176,7 @@ public final class PagePostfixFilter implements Filter {
                 ps.close();
                 response.getOutputStream().close();
             } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.severe(e.getMessage());
             }
         } else {
             try {
@@ -185,7 +186,7 @@ public final class PagePostfixFilter implements Filter {
                 ps.close();
                 response.getOutputStream().close();
             } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.severe(e.getMessage());
             }
         }
     }
@@ -206,7 +207,7 @@ public final class PagePostfixFilter implements Filter {
             sw.close();
             stackTrace = sw.getBuffer().toString();
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
         }
 
         return stackTrace;

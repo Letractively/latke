@@ -15,8 +15,10 @@
  */
 package org.b3log.latke.servlet.filter;
 
+import java.util.logging.Level;
 import org.b3log.latke.client.Sessions;
 import java.io.IOException;
+import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -25,7 +27,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 
 /**
  * Authentication filter.
@@ -39,7 +40,7 @@ public final class AuthenticationFilter implements Filter {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AuthenticationFilter.class);
+            Logger.getLogger(AuthenticationFilter.class.getName());
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -66,7 +67,7 @@ public final class AuthenticationFilter implements Filter {
                 (HttpServletResponse) response;
 
         if (!hasLoggedIn(httpServletRequest)) {
-            LOGGER.info("Authenticate fail for request[" + request + "]");
+            LOGGER.log(Level.INFO, "Authenticate fail for request[{0}]", request);
 
             httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
@@ -87,10 +88,11 @@ public final class AuthenticationFilter implements Filter {
     private boolean hasLoggedIn(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String requestURL = request.getRequestURL().toString();
-        LOGGER.trace("Request[URI=" + requestURI + ", URL=" + requestURL + "]");
+        LOGGER.log(Level.FINEST, "Request[URI={0}, URL={1}]",
+                   new Object[]{requestURI, requestURL});
 
         final String userName = Sessions.currentUserName(request);
-        LOGGER.trace("Session[userName=" + userName + "]");
+        LOGGER.log(Level.FINEST, "Session[userName={0}]", userName);
 
         return null != userName ? true : false;
     }

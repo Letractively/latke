@@ -17,7 +17,7 @@
 package org.b3log.latke.event;
 
 import com.google.inject.AbstractModule;
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * Abstract event module for IoC
@@ -33,7 +33,7 @@ public abstract  class AbstractEventModule extends AbstractModule {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractEventModule.class);
+            Logger.getLogger(AbstractEventModule.class.getName());
 
     /**
      * Public default constructor.

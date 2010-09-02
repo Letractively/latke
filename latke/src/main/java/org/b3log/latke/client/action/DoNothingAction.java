@@ -19,9 +19,9 @@ import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Locales;
@@ -42,7 +42,8 @@ public final class DoNothingAction extends AbstractAction {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DoNothingAction.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(DoNothingAction.class.getName());
     /**
      * Language service.
      */
@@ -54,7 +55,7 @@ public final class DoNothingAction extends AbstractAction {
             final freemarker.template.Template template,
             final HttpServletRequest request,
             final HttpServletResponse response) throws ActionException {
-        LOGGER.trace("Do nothing action[FreeMarker action]");
+        LOGGER.finest("Do nothing action[FreeMarker action]");
         final Map<String, Object> ret = new HashMap<String, Object>();
 
         try {
@@ -64,7 +65,7 @@ public final class DoNothingAction extends AbstractAction {
             final Map<String, String> langs = langPropsService.getAll(locale);
             ret.putAll(langs);
         } catch (final ServiceException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.severe(e.getMessage());
             throw new ActionException("Language model fill error");
         }
 
@@ -76,7 +77,7 @@ public final class DoNothingAction extends AbstractAction {
                                       final HttpServletRequest request,
                                       final HttpServletResponse response)
             throws ActionException {
-        LOGGER.trace("Do nothing action[Ajax action]");
+        LOGGER.finest("Do nothing action[Ajax action]");
         return new JSONObject();
     }
 }
