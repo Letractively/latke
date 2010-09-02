@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.jsonrpc.impl.LanguageService;
-import org.b3log.latke.client.util.RemoteJSServiceClassLoader;
+import org.b3log.latke.jsonrpc.util.RemoteJSServiceClassLoader;
 import org.b3log.latke.servlet.AbstractServletListener;
 
 /**

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.client.util;
+package org.b3log.latke.jsonrpc.util;
 
 import java.util.logging.Level;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
