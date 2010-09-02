@@ -69,9 +69,8 @@ public abstract class AbstractServletListener
     private static String clientRemoteServicePackage;
 
     /**
-     * Initializes context, {@linkplain #webRoot web root},
-     * {@linkplain #postfixExceptionPaths postfix exception paths}, registers
-     * remote JavaScript services and remote JavaScript service serializers.
+     * Initializes context, {@linkplain #webRoot web root}, registers json RPC
+     * services and json RPC service serializers.
      * 
      * @param servletContextEvent servlet context event
      */
