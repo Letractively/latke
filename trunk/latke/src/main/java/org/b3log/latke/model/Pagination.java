@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.model;
 
 /**
  * This class defines all pagination model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 28, 2010
+ * @version 1.0.0.1, Sep 2, 2010
  */
 public final class Pagination {
 
@@ -49,6 +48,16 @@ public final class Pagination {
      * Pagination page numbers.
      */
     public static final String PAGINATION_PAGE_NUMS = "paginationPageNums";
+    /**
+     * Pagination first page number.
+     */
+    public static final String PAGINATION_FIRST_PAGE_NUM =
+            "paginationFirstPageNum";
+    /**
+     * Pagination last page number.
+     */
+    public static final String PAGINATION_LAST_PAGE_NUM =
+            "paginationLastPageNum";
 
     /**
      * Private constructor.
