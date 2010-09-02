@@ -43,7 +43,7 @@ import org.jabsorb.JSONRPCBridge;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.3, Aug 26, 2010
+ * @version 1.0.2.4, Sep 2, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -60,10 +60,6 @@ public abstract class AbstractServletListener
      * Web root.
      */
     private static String webRoot;
-    /**
-     * Postfix exception paths.
-     */
-    private static Set<String> postfixExceptionPaths;
     /**
      * Guice injector.
      */
@@ -95,15 +91,6 @@ public abstract class AbstractServletListener
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]",
                    new Object[]{webRoot, catalinaBase});
-
-        final String postfixExceptionPathsString =
-                servletContext.getInitParameter("postfixExceptionPaths");
-        final String[] paths = Strings.trimAll(
-                postfixExceptionPathsString.split(","));
-        postfixExceptionPaths = org.b3log.latke.util.CollectionUtils.arrayToSet(
-                paths);
-        LOGGER.log(Level.INFO, "[postfixExceptionPath={0}]",
-                   postfixExceptionPaths);
 
         registerRemoteJSServices();
         registerRemoteJSServiceSerializers();
@@ -162,15 +149,6 @@ public abstract class AbstractServletListener
     @Override
     public abstract void sessionDestroyed(
             final HttpSessionEvent httpSessionEvent);
-
-    /**
-     * Gets postfix exception paths configured in web.xml.
-     *
-     * @return a set of postfix exception paths
-     */
-    public static Set<String> getPostfixExceptionPaths() {
-        return Collections.unmodifiableSet(postfixExceptionPaths);
-    }
 
     /**
      * Gets client remote JavaScript service package.
