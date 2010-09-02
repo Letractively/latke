@@ -30,18 +30,18 @@ import java.util.logging.Logger;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.1.0, Aug 3, 2010
  */
-public final class RemoteJSServiceClassLoader {
+public final class JSONRPCServiceClassLoader {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(RemoteJSServiceClassLoader.class.getName());
+            Logger.getLogger(JSONRPCServiceClassLoader.class.getName());
 
     /**
      * Private default constructor.
      */
-    private RemoteJSServiceClassLoader() {
+    private JSONRPCServiceClassLoader() {
     }
 
     /**
