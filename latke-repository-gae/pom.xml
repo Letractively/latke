@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke repository implementation for GAE.
-    Version: 1.0.0.2, Sep 2, 2010
+    Version: 1.0.0.3, Sep 3, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -25,6 +25,7 @@
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.6.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
+        <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
         <!-- Unit Test -->
         <testng.version>5.9</testng.version>
         <!-- -->
@@ -277,6 +278,15 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
                     <updateReleaseInfo>true</updateReleaseInfo>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <show>private</show>
                 </configuration>
             </plugin>
 
