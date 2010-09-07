@@ -149,6 +149,7 @@ public final class LatkeFormatter extends Formatter {
     @Override
     public String format(final LogRecord record) {
         final String[] arguments = new String[ARGS_LENGTH];
+
         // %L
         arguments[INDEX_LEVEL] = record.getLevel().toString();
         arguments[INDEX_MESSAGE] = record.getMessage();
@@ -160,30 +161,36 @@ public final class LatkeFormatter extends Formatter {
                 arguments[INDEX_MESSAGE] = thrown.getMessage();
             }
         }
+
         // %m
         arguments[INDEX_MESSAGE] = record.getMessage();
+
         // %M
         if (null != record.getSourceMethodName()) {
             arguments[INDEX_METHOD_NAME] = record.getSourceMethodName();
         } else {
             arguments[INDEX_METHOD_NAME] = "?";
         }
+
         // %t
         final Date date = new Date(record.getMillis());
         synchronized (dateFormat) {
             arguments[INDEX_TIME] = dateFormat.format(date);
         }
+
         // %c
         if (null != record.getSourceClassName()) {
             arguments[INDEX_CLASS_NAME] = record.getSourceClassName();
         } else {
             arguments[INDEX_CLASS_NAME] = "?";
         }
+
         // %T
         arguments[INDEX_THREAD_ID] = Integer.valueOf(record.getThreadID()).
                 toString();
         // %n
         arguments[INDEX_LOGGER_NAME] = record.getLoggerName();
+        
         // %C
         final int start = arguments[INDEX_CLASS_NAME].lastIndexOf(".") + 1;
         if (start > 0 && start < arguments[INDEX_CLASS_NAME].length()) {
