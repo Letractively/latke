@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jun 22, 2010
+ * @version 1.0.0.5, Sep 11, 2010
  */
 public final class Templates {
 
@@ -40,7 +40,7 @@ public final class Templates {
     /**
      * FreeMarker {@linkplain  Configuration configuration}.
      */
-    private static final Configuration CONFIGURATION;
+    public static final Configuration CONFIGURATION;
 
     static {
         CONFIGURATION = new Configuration();
