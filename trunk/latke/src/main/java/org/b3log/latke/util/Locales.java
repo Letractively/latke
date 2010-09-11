@@ -29,7 +29,7 @@ import org.b3log.latke.Latkes;
  * Locale utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Aug 15, 2010
+ * @version 1.0.1.0, Sep 11, 2010
  */
 public final class Locales {
 
@@ -169,5 +169,18 @@ public final class Locales {
         }
 
         return "";
+    }
+
+    /**
+     * Gest a {@link java.util.Locale} with the specified locale string.
+     *
+     * @param localeString the specified locale string
+     * @return locale
+     */
+    public static Locale getLocale(final String localeString) {
+        final String language = getLanguage(localeString);
+        final String country = getCountry(localeString);
+        //// XXX: variant
+        return new Locale(language, country);
     }
 }
