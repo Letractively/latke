@@ -42,14 +42,26 @@ public abstract class AbstractActionModule extends ServletModule {
      * <a href="http://jabsorb.org/">jabsorb</a>(JSON-RPC) initialize
      * parameters. Override this configuration in subclass' constructor.
      */
-    private Map<String, String> jabsorbInitParam;
+    private Map<String, String> jabsorbInitParams;
+
+    /**
+     * Puts <a href="http://jabsorb.org/">jabsorb</a>(JSON-RPC) initialize
+     * parameter with the specified key and value.
+     *
+     * @param key the specified key
+     * @param value the specified value
+     */
+    public final void putJabsorbInitParam(final String key,
+                                          final String value) {
+        jabsorbInitParams.put(key, value);
+    }
 
     /**
      * Public default constructor.
      */
     public AbstractActionModule() {
-        jabsorbInitParam = new HashMap<String, String>();
-        jabsorbInitParam.put("gzip_threshold", "200");
+        jabsorbInitParams = new HashMap<String, String>();
+        jabsorbInitParams.put("gzip_threshold", "200");
     }
 
     /**
@@ -65,6 +77,6 @@ public abstract class AbstractActionModule extends ServletModule {
     protected void configureServlets() {
         // servlets
         bind(JSONRPCServlet.class).in(Scopes.SINGLETON);
-        serve("/json-rpc.do").with(JSONRPCServlet.class, jabsorbInitParam);
+        serve("/json-rpc.do").with(JSONRPCServlet.class, jabsorbInitParams);
     }
 }
