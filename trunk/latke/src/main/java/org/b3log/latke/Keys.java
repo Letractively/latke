@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke;
 
 import java.text.DateFormat;
@@ -23,10 +22,25 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Sep 2, 2010
+ * @version 1.0.1.5, Sep 21, 2010
  */
 public final class Keys {
-
+    /**
+     * Key of message.
+     */
+    public static final String MSG = "msg";
+    /**
+     * Key of event.
+     */
+    public static final String EVENTS = "events";
+    /**
+     * Key of code.
+     */
+    public static final String CODE = "code";
+    /**
+     * Key of action status.
+     */
+    public static final String STATUS = "status";
     /**
      * Key of action status code.
      */
