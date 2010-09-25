@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.event;
+
+import java.util.concurrent.Future;
 
 /**
  * Event manager.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 16, 2010
+ * @version 1.0.0.2, Sep 25, 2010
  */
 public final class EventManager {
 
@@ -39,6 +40,19 @@ public final class EventManager {
     public void fireEventSynchronously(final Event<?> event)
             throws EventException {
         synchronizedEventQueue.fireEvent(event);
+    }
+
+    /**
+     * Fire the specified event asynchronously.
+     *
+     * @param event the specified event
+     * @return future result
+     * @throws EventException event exception
+     */
+    public Future<?> fireEventAsynchronously(final Event<?> event)
+            throws EventException {
+        // TODO: fire event asynchronously
+        throw new UnsupportedOperationException();
     }
 
     /**
