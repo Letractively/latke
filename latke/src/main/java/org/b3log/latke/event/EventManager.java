@@ -15,7 +15,11 @@
  */
 package org.b3log.latke.event;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * Event manager.
@@ -45,14 +49,30 @@ public final class EventManager {
     /**
      * Fire the specified event asynchronously.
      *
+     * @param <T> the result type
      * @param event the specified event
      * @return future result
      * @throws EventException event exception
      */
-    public Future<?> fireEventAsynchronously(final Event<?> event)
+    public <T> Future<T> fireEventAsynchronously(final Event<?> event)
             throws EventException {
-        // TODO: fire event asynchronously
-        throw new UnsupportedOperationException();
+        final ExecutorService executorService =
+                Executors.newSingleThreadExecutor();
+
+        final FutureTask<T> futureTask =
+                new FutureTask<T>(new Callable<T>() {
+
+            @Override
+            public T call() throws Exception {
+                synchronizedEventQueue.fireEvent(event);
+
+                return null; // XXX: Our future????
+            }
+        });
+
+        executorService.execute(futureTask);
+
+        return futureTask;
     }
 
     /**
@@ -60,7 +80,7 @@ public final class EventManager {
      *
      * @param eventListener the specified event listener
      */
-    public void registerListener(final AbstractEventListener<?> eventListener) {
+    void registerListener(final AbstractEventListener<?> eventListener) {
         synchronizedEventQueue.addListener(eventListener);
     }
 
