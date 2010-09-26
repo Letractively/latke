@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.event;
 
+import java.util.logging.Logger;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
@@ -22,9 +23,15 @@ import org.testng.annotations.Test;
  * {@link EventManager} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Sep 2, 2010
+ * @version 1.0.0.4, Sep 26, 2010
  */
 public final class EventManagerTestCase {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(EventManagerTestCase.class.getName());
 
     /**
      *
@@ -33,14 +40,35 @@ public final class EventManagerTestCase {
     @Test
     public void test() throws Exception {
         final EventManager eventManager = EventManager.getInstance();
-        eventManager.registerListener(new TestEventListener1(eventManager));
-        eventManager.registerListener(new TestEventListener2(eventManager));
+        final TestEventListener1 testEventListener1 =
+                new TestEventListener1(eventManager);
+        final TestEventListener2 testEventListener2 =
+                new TestEventListener2(eventManager);
+        final TestEventAsyncListener1 testEventAsyncListener1 =
+                new TestEventAsyncListener1(eventManager);
 
         final JSONObject eventData = new JSONObject();
         eventData.put("prop1", 1);
 
         eventManager.fireEventSynchronously(
-                new Event<JSONObject>("Test", eventData));
+                new Event<JSONObject>("Test sync listener1", eventData));
+        eventManager.fireEventSynchronously(
+                new Event<JSONObject>("Test sync listener2", eventData));
+
+        eventManager.<String>fireEventAsynchronously(
+                new Event<JSONObject>("Test async listener1", eventData));
+        System.out.println("Doing somthing in main thread....");
+        final long sleepTime = 101;
+        final long loopCnt = 40;
+        try {
+            for (int i = 0; i < loopCnt; i++) {
+                System.out.println("In main thread: " + i);
+                Thread.sleep(sleepTime);
+            }
+        } catch (final InterruptedException e) {
+            throw new EventException(e);
+        }
+        System.out.println("Done in main thread");
     }
 
     /**
@@ -71,7 +99,7 @@ public final class EventManagerTestCase {
 
         @Override
         public String getEventType() {
-            return "event1";
+            return "Test sync listener1";
         }
     }
 
@@ -103,7 +131,49 @@ public final class EventManagerTestCase {
 
         @Override
         public String getEventType() {
-            return "event2";
+            return "Test sync listener2";
+        }
+    }
+
+    /**
+     * Test event asynchronous listener 1.
+     *
+     * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+     * @version 1.0.0.1, Sep 26, 2010
+     */
+    private final class TestEventAsyncListener1
+            extends AbstractEventListener<JSONObject> {
+
+        /**
+         * Constructs a {@link TestEventAsyncListener1} object with the
+         * specified event manager.
+         *
+         * @param eventManager the specified event manager
+         */
+        public TestEventAsyncListener1(final EventManager eventManager) {
+            super(eventManager);
+        }
+
+        @Override
+        public void action(final Event<JSONObject> event) throws EventException {
+            System.out.println("Asynchonous listener1 is processing a event[type="
+                               + event.getType() + ", data=" + event.getData()
+                               + "]");
+            final long sleepTime = 100;
+            final long loopCnt = 40;
+            try {
+                for (int i = 0; i < loopCnt; i++) {
+                    System.out.println("In listener: " + i);
+                    Thread.sleep(sleepTime);
+                }
+            } catch (final InterruptedException e) {
+                throw new EventException(e);
+            }
+        }
+
+        @Override
+        public String getEventType() {
+            return "Test async listener1";
         }
     }
 }
