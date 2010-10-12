@@ -15,13 +15,14 @@
  */
 package org.b3log.latke.repository;
 
+import java.util.List;
 import org.json.JSONObject;
 
 /**
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Aug 23, 2010
+ * @version 1.0.1.2, Oct 12, 2010
  */
 public interface Repository {
 
@@ -131,6 +132,17 @@ public interface Repository {
                    final int pageSize,
                    final String sortPopertyName,
                    final SortDirection sortDirection)
+            throws RepositoryException;
+
+    /**
+     * Gets a list of json objects randomly with the specified fetch size.
+     *
+     * @param fetchSize the specified fetch size
+     * @return a list of json objects, its size less or equal to the specified
+     * fetch size, returns an empty list if not found
+     * @throws RepositoryException repository exception
+     */
+    List<JSONObject> getRandomly(final int fetchSize)
             throws RepositoryException;
 
     /**
