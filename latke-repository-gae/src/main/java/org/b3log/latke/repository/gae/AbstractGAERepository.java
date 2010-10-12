@@ -27,9 +27,11 @@ import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -39,6 +41,7 @@ import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
+import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +55,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Aug 27, 2010
+ * @version 1.0.0.9, Oct 12, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -314,6 +317,45 @@ public abstract class AbstractGAERepository implements Repository {
         } catch (final JSONException e) {
             LOGGER.severe(e.getMessage());
             throw new RepositoryException(e);
+        }
+
+        return ret;
+    }
+
+    @Override
+    public List<JSONObject> getRandomly(final int fetchSize)
+            throws RepositoryException {
+        final List<JSONObject> ret = new ArrayList<JSONObject>();
+        final Query query = new Query(getName());
+        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
+        final int count = preparedQuery.countEntities();
+
+        if (0 == count) {
+            return ret;
+        }
+
+        final Iterable<Entity> entities = preparedQuery.asIterable();
+
+        if (fetchSize >= count) {
+            for (final Entity entity : entities) {
+                final JSONObject jsonObject = entity2JSONObject(entity);
+                ret.add(jsonObject);
+            }
+
+            return ret;
+        }
+
+        final List<Integer> fetchIndexes =
+                CollectionUtils.getRandomIntegers(0, count - 1, fetchSize);
+
+        int index = 0;
+        for (final Entity entity : entities) { // XXX: performance issue
+            index++;
+
+            if (fetchIndexes.contains(index)) {
+                final JSONObject jsonObject = entity2JSONObject(entity);
+                ret.add(jsonObject);
+            }
         }
 
         return ret;
