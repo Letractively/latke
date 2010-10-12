@@ -61,7 +61,7 @@ public final class CollectionUtils {
         int index;
         while (ret.size() < size) {
             remainsSize = integers.size();
-            index = (int) Math.random() * (remainsSize - 1);
+            index = (int) (Math.random() * (remainsSize - 1) + 1);
             final Integer i = integers.get(index);
             ret.add(i);
             integers.remove(i);
