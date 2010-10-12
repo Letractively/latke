@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.util;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import org.json.JSONException;
  * Collection utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Aug 13, 2010
+ * @version 1.0.0.5, Oct 12, 2010
  */
 public final class CollectionUtils {
 
@@ -36,6 +35,56 @@ public final class CollectionUtils {
      * Private default constructor.
      */
     private CollectionUtils() {
+    }
+
+    /**
+     * Gets a list of integers(sum specified by the given size) between the
+     * specified start(inclusion) and end(inclusion) randomly.
+     *
+     * @param start the specified start
+     * @param end the specified end
+     * @param size the given size
+     * @return a list of integers
+     */
+    public static List<Integer> getRandomIntegers(final int start,
+                                                  final int end,
+                                                  final int size) {
+        if (size > (end - start + 1)) {
+            throw new IllegalArgumentException(
+                    "The specified size more then (end - start + 1)!");
+        }
+
+        final List<Integer> integers = genIntegers(start, end);
+        final List<Integer> ret = new ArrayList<Integer>();
+
+        int remainsSize;
+        int index;
+        while (ret.size() < size) {
+            remainsSize = integers.size();
+            index = (int) Math.random() * (remainsSize - 1);
+            final Integer i = integers.get(index);
+            ret.add(i);
+            integers.remove(i);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Generates a list of integers from the specified start(inclusion) to the
+     * specified end(inclusion).
+     *
+     * @param start the specified start
+     * @param end the specified end
+     * @return a list of integers
+     */
+    public static List<Integer> genIntegers(final int start, final int end) {
+        final List<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i <= end; i++) {
+            ret.add(i + start);
+        }
+
+        return ret;
     }
 
     /**
