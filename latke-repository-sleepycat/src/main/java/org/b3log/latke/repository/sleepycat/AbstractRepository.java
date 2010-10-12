@@ -22,6 +22,7 @@ import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
@@ -36,7 +37,7 @@ import org.json.JSONObject;
  * Abstract repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Aug 5, 2010
+ * @version 1.0.0.4, Oct 12, 2010
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -316,5 +317,11 @@ public abstract class AbstractRepository implements Repository {
         }
 
         return ret;
+    }
+
+    @Override
+    public List<JSONObject> getRandomly(final int fetchSize)
+            throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet!");
     }
 }
