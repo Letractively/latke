@@ -31,9 +31,9 @@ import org.json.JSONObject;
  * Do nothing action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 15, 2010
+ * @version 1.0.0.2, Oct 18, 2010
  */
-public final class DoNothingAction extends AbstractAction {
+public class DoNothingAction extends AbstractAction {
 
     /**
      * Default serial version uid.
