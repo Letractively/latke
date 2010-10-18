@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.4, Sep 3, 2010
+ * @version 1.0.2.5, Oct 18, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -256,7 +256,7 @@ public abstract class AbstractAction extends HttpServlet {
      *         returns {@literal index.html} if not exists such a FreeMarker
      *         template
      */
-    private String getPageName(final String requestURI) {
+    protected String getPageName(final String requestURI) {
         int idx = requestURI.lastIndexOf("/");
 
         String ret = requestURI.substring(idx + 1, requestURI.length());
