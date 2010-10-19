@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
@@ -55,7 +56,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Oct 12, 2010
+ * @version 1.0.1.0, Oct 19, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -221,7 +222,8 @@ public abstract class AbstractGAERepository implements Repository {
         query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.EQUAL, id);
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
 
-        return 0 == preparedQuery.countEntities() ? false : true;
+        return 0 == preparedQuery.countEntities(
+                FetchOptions.Builder.withDefaults()) ? false : true;
     }
 
     @Override
@@ -230,7 +232,8 @@ public abstract class AbstractGAERepository implements Repository {
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
 
-        final int count = preparedQuery.countEntities();
+        final int count = preparedQuery.countEntities(
+                FetchOptions.Builder.withDefaults());
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
 
@@ -284,7 +287,8 @@ public abstract class AbstractGAERepository implements Repository {
         query.addSort(sortPropertyName, querySortDirection);
 
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
-        final int count = preparedQuery.countEntities();
+        final int count = preparedQuery.countEntities(
+                FetchOptions.Builder.withDefaults());
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
 
@@ -328,7 +332,8 @@ public abstract class AbstractGAERepository implements Repository {
         final List<JSONObject> ret = new ArrayList<JSONObject>();
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
-        final int count = preparedQuery.countEntities();
+        final int count = preparedQuery.countEntities(
+                FetchOptions.Builder.withDefaults());
 
         if (0 == count) {
             return ret;
