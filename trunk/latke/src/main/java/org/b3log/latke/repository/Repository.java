@@ -16,6 +16,7 @@
 package org.b3log.latke.repository;
 
 import java.util.List;
+import java.util.Set;
 import org.json.JSONObject;
 
 /**
@@ -85,7 +86,7 @@ public interface Repository {
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
      * MUST greater then 0
-     * @return for example:
+     * @return for example,
      * <pre>
      * {
      *     "pagination": {
@@ -105,16 +106,16 @@ public interface Repository {
 
     /**
      * Gets json objects by the specified current page number, page size, sort
-     * property name, {@link SortDirection sort direction} and excepted ids.
+     * property name, {@link SortDirection sort direction} and excluded ids.
      *
      * @param currentPageNum the specified current page number, MUST greater
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
      * MUST greater then 0
-     * @param sortPopertyName the specified sort property name
+     * @param sortPropertyName the specified sort property name
      * @param sortDirection the sort direction
-     * @param exceptedIds excepted ids
-     * @return for example:
+     * @param excludedIds excluded ids
+     * @return for example,
      * <pre>
      * {
      *     "pagination": {
@@ -131,9 +132,45 @@ public interface Repository {
      */
     JSONObject get(final int currentPageNum,
                    final int pageSize,
-                   final String sortPopertyName,
+                   final String sortPropertyName,
                    final SortDirection sortDirection,
-                   final String... exceptedIds)
+                   final String... excludedIds)
+            throws RepositoryException;
+
+    /**
+     * Gets json objects by the specified current page number, page size, sort
+     * property name, {@link SortDirection sort direction} included ids and
+     * excluded ids.
+     *
+     * @param currentPageNum the specified current page number, MUST greater
+     * then 0
+     * @param pageSize the specified page size(count of a page contains objects),
+     * MUST greater then 0
+     * @param sortPropertyName the specified sort property name
+     * @param sortDirection the sort direction
+     * @param includedIds included ids
+     * @param excludedIds excluded ids
+     * @return for example,
+     * <pre>
+     * {
+     *     "pagination": {
+     *       "paginationPageCount": 88250
+     *     },
+     *     "rslts": [{
+     *         "oId": "...."
+     *     }, ....]
+     * }, if not found any objects by the specified current page number and
+     * page size, returns pagination info as the only attribute of the returned
+     * json object
+     * </pre>
+     * @throws RepositoryException repository exception
+     */
+    JSONObject get(final int currentPageNum,
+                   final int pageSize,
+                   final String sortPropertyName,
+                   final SortDirection sortDirection,
+                   final Set<String> includedIds,
+                   final Set<String> excludedIds)
             throws RepositoryException;
 
     /**
