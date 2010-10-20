@@ -142,6 +142,11 @@ public interface Repository {
      * property name, {@link SortDirection sort direction} included ids and
      * excluded ids.
      *
+     * <p>
+     * If exists the same id in the specified included ids and excluded ids,
+     * the is will be excluded.
+     * </p>
+     *
      * @param currentPageNum the specified current page number, MUST greater
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
