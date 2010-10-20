@@ -105,7 +105,7 @@ public interface Repository {
 
     /**
      * Gets json objects by the specified current page number, page size, sort
-     * property name and {@link SortDirection sort direction}.
+     * property name, {@link SortDirection sort direction} and excepted ids.
      *
      * @param currentPageNum the specified current page number, MUST greater
      * then 0
@@ -113,6 +113,7 @@ public interface Repository {
      * MUST greater then 0
      * @param sortPopertyName the specified sort property name
      * @param sortDirection the sort direction
+     * @param exceptedIds excepted ids
      * @return for example:
      * <pre>
      * {
@@ -131,7 +132,8 @@ public interface Repository {
     JSONObject get(final int currentPageNum,
                    final int pageSize,
                    final String sortPopertyName,
-                   final SortDirection sortDirection)
+                   final SortDirection sortDirection,
+                   final String... exceptedIds)
             throws RepositoryException;
 
     /**
