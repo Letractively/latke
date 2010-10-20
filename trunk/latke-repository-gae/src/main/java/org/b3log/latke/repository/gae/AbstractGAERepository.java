@@ -235,8 +235,7 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public JSONObject get(final int currentPageNum,
                           final int pageSize,
-                          final String sortPropertyName,
-                          final SortDirection sortDirection,
+                          final Map<String, SortDirection> sorts,
                           final String... excludedIds)
             throws RepositoryException {
         final Query query = new Query(getName());
@@ -245,13 +244,18 @@ public abstract class AbstractGAERepository implements Repository {
             query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
         }
 
-        Query.SortDirection querySortDirection = null;
-        if (sortDirection.equals(SortDirection.ASCENDING)) {
-            querySortDirection = Query.SortDirection.ASCENDING;
-        } else {
-            querySortDirection = Query.SortDirection.DESCENDING;
+        for (Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
+            Query.SortDirection querySortDirection = null;
+            if (sort.getValue().equals(SortDirection.ASCENDING)) {
+                querySortDirection = Query.SortDirection.ASCENDING;
+            } else {
+                querySortDirection = Query.SortDirection.DESCENDING;
+            }
+            
+            query.addSort(sort.getKey(), querySortDirection);
         }
-        query.addSort(sortPropertyName, querySortDirection);
+
+
 
         return get(query, currentPageNum, pageSize);
     }
