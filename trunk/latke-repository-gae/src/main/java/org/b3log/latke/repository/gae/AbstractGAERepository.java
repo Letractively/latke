@@ -237,36 +237,6 @@ public abstract class AbstractGAERepository implements Repository {
                           final int pageSize,
                           final String sortPropertyName,
                           final SortDirection sortDirection,
-                          final Set<String> includedIds,
-                          final Set<String> excludedIds)
-            throws RepositoryException {
-        final Query query = new Query(getName());
-        query.addSort(Keys.OBJECT_ID, Query.SortDirection.DESCENDING);
-
-        for (final String id : excludedIds) {
-            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
-        }
-
-        for (final String id : includedIds) {
-            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.EQUAL, id);
-        }
-
-        Query.SortDirection querySortDirection = null;
-        if (sortDirection.equals(SortDirection.ASCENDING)) {
-            querySortDirection = Query.SortDirection.ASCENDING;
-        } else {
-            querySortDirection = Query.SortDirection.DESCENDING;
-        }
-        query.addSort(sortPropertyName, querySortDirection);
-
-        return get(query, currentPageNum, pageSize);
-    }
-
-    @Override
-    public JSONObject get(final int currentPageNum,
-                          final int pageSize,
-                          final String sortPropertyName,
-                          final SortDirection sortDirection,
                           final String... excludedIds)
             throws RepositoryException {
         final Query query = new Query(getName());
@@ -440,7 +410,8 @@ public abstract class AbstractGAERepository implements Repository {
             ret.put(Pagination.PAGINATION, pagination);
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
-            final int offset = pageSize * (currentPageNum - 1);
+            final int offset = pageSize * (currentPageNum - 1)
+                               - query.getFilterPredicates().size(); // excluded ids
             final QueryResultList<Entity> queryResultList =
                     preparedQuery.asQueryResultList(
                     withOffset(offset).limit(pageSize));
