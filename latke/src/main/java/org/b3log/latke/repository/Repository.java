@@ -22,7 +22,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Oct 12, 2010
+ * @version 1.0.1.3, Oct 20, 2010
  */
 public interface Repository {
 
@@ -144,6 +144,14 @@ public interface Repository {
      */
     List<JSONObject> getRandomly(final int fetchSize)
             throws RepositoryException;
+
+    /**
+     * Gets the count of all json objects.
+     *
+     * @return count
+     * @throws RepositoryException repository exception
+     */
+    long count() throws RepositoryException;
 
     /**
      * Gets the name of this repository.
