@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * Abstract repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Oct 12, 2010
+ * @version 1.0.0.5, Oct 20, 2010
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -322,6 +322,11 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public List<JSONObject> getRandomly(final int fetchSize)
             throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet!");
+    }
+
+    @Override
+    public long count() throws RepositoryException {
         throw new UnsupportedOperationException("Not supported yet!");
     }
 }
