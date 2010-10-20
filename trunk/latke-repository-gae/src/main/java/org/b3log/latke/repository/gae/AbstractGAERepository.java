@@ -366,6 +366,13 @@ public abstract class AbstractGAERepository implements Repository {
         return ret;
     }
 
+    @Override
+    public long count() {
+        final Query query = new Query(getName());
+        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
+        return preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
+    }
+
     /**
      * Converts the specified {@link Entity entity} to a {@link JSONObject
      * json object}.
