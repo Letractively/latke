@@ -229,46 +229,7 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public JSONObject get(final int currentPageNum, final int pageSize)
             throws RepositoryException {
-        final Query query = new Query(getName());
-        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
-
-        final int count = preparedQuery.countEntities(
-                FetchOptions.Builder.withDefaults());
-        final int pageCount =
-                (int) Math.ceil((double) count / (double) pageSize);
-
-        final JSONObject ret = new JSONObject();
-        try {
-            final JSONObject pagination = new JSONObject();
-            ret.put(Pagination.PAGINATION, pagination);
-            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
-
-            final int offset = pageSize * (currentPageNum - 1);
-            final QueryResultList<Entity> queryResultList =
-                    preparedQuery.asQueryResultList(
-                    withOffset(offset).limit(pageSize));
-
-            final JSONArray results = new JSONArray();
-            for (final Entity entity : queryResultList) {
-                final JSONObject jsonObject = entity2JSONObject(entity);
-
-                results.put(jsonObject);
-            }
-
-            ret.put(Keys.RESULTS, results);
-
-            LOGGER.log(Level.FINER,
-                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
-                       new Object[]{results.length(),
-                                    currentPageNum,
-                                    pageSize,
-                                    getName()});
-        } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
-            throw new RepositoryException(e);
-        }
-
-        return ret;
+        return get(new Query(getName()), currentPageNum, pageSize);
     }
 
     @Override
@@ -276,10 +237,40 @@ public abstract class AbstractGAERepository implements Repository {
                           final int pageSize,
                           final String sortPropertyName,
                           final SortDirection sortDirection,
-                          final String... exceptedIds)
+                          final Set<String> includedIds,
+                          final Set<String> excludedIds)
             throws RepositoryException {
         final Query query = new Query(getName());
-        for (final String id : exceptedIds) {
+        query.addSort(Keys.OBJECT_ID, Query.SortDirection.DESCENDING);
+
+        for (final String id : excludedIds) {
+            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
+        }
+
+        for (final String id : includedIds) {
+            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.EQUAL, id);
+        }
+
+        Query.SortDirection querySortDirection = null;
+        if (sortDirection.equals(SortDirection.ASCENDING)) {
+            querySortDirection = Query.SortDirection.ASCENDING;
+        } else {
+            querySortDirection = Query.SortDirection.DESCENDING;
+        }
+        query.addSort(sortPropertyName, querySortDirection);
+
+        return get(query, currentPageNum, pageSize);
+    }
+
+    @Override
+    public JSONObject get(final int currentPageNum,
+                          final int pageSize,
+                          final String sortPropertyName,
+                          final SortDirection sortDirection,
+                          final String... excludedIds)
+            throws RepositoryException {
+        final Query query = new Query(getName());
+        for (final String id : excludedIds) {
             query.addSort(Keys.OBJECT_ID, Query.SortDirection.DESCENDING);
             query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
         }
@@ -292,44 +283,7 @@ public abstract class AbstractGAERepository implements Repository {
         }
         query.addSort(sortPropertyName, querySortDirection);
 
-        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
-        final int count = preparedQuery.countEntities(
-                FetchOptions.Builder.withDefaults());
-        final int pageCount =
-                (int) Math.ceil((double) count / (double) pageSize);
-
-        final JSONObject ret = new JSONObject();
-        try {
-            final JSONObject pagination = new JSONObject();
-            ret.put(Pagination.PAGINATION, pagination);
-            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
-
-            final int offset = pageSize * (currentPageNum - 1);
-            final QueryResultList<Entity> queryResultList =
-                    preparedQuery.asQueryResultList(
-                    withOffset(offset).limit(pageSize));
-
-            final JSONArray results = new JSONArray();
-            for (final Entity entity : queryResultList) {
-                final JSONObject jsonObject = entity2JSONObject(entity);
-
-                results.put(jsonObject);
-            }
-
-            ret.put(Keys.RESULTS, results);
-
-            LOGGER.log(Level.FINER,
-                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
-                       new Object[]{results.length(),
-                                    currentPageNum,
-                                    pageSize,
-                                    getName()});
-        } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
-            throw new RepositoryException(e);
-        }
-
-        return ret;
+        return get(query, currentPageNum, pageSize);
     }
 
     @Override
@@ -446,5 +400,71 @@ public abstract class AbstractGAERepository implements Repository {
                         getClass() + "]");
             }
         }
+    }
+
+    /**
+     * Gets result json object by the specified query, current page number and
+     * page size.
+     *
+     * @param query the specified query
+     * @param currentPageNum the specified current page number
+     * @param pageSize the specified page size
+     * @return for example,
+     * <pre>
+     * {
+     *     "pagination": {
+     *       "paginationPageCount": 88250
+     *     },
+     *     "rslts": [{
+     *         "oId": "...."
+     *     }, ....]
+     * }, if not found any objects by the specified current page number and
+     * page size, returns pagination info as the only attribute of the returned
+     * json object
+     * </pre>
+     * @throws RepositoryException repository exception
+     */
+    private JSONObject get(final Query query,
+                           final int currentPageNum,
+                           final int pageSize)
+            throws RepositoryException {
+        final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
+        final int count = preparedQuery.countEntities(
+                FetchOptions.Builder.withDefaults());
+        final int pageCount =
+                (int) Math.ceil((double) count / (double) pageSize);
+
+        final JSONObject ret = new JSONObject();
+        try {
+            final JSONObject pagination = new JSONObject();
+            ret.put(Pagination.PAGINATION, pagination);
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+
+            final int offset = pageSize * (currentPageNum - 1);
+            final QueryResultList<Entity> queryResultList =
+                    preparedQuery.asQueryResultList(
+                    withOffset(offset).limit(pageSize));
+
+            final JSONArray results = new JSONArray();
+            for (final Entity entity : queryResultList) {
+                final JSONObject jsonObject = entity2JSONObject(entity);
+
+                results.put(jsonObject);
+            }
+
+            ret.put(Keys.RESULTS, results);
+
+            LOGGER.log(Level.FINER,
+                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
+                       new Object[]{results.length(),
+                                    currentPageNum,
+                                    pageSize,
+                                    getName()});
+        } catch (final JSONException e) {
+            LOGGER.severe(e.getMessage());
+            throw new RepositoryException(e);
+        }
+
+        return ret;
     }
 }
