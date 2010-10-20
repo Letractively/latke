@@ -279,6 +279,11 @@ public abstract class AbstractGAERepository implements Repository {
                           final String... exceptedIds)
             throws RepositoryException {
         final Query query = new Query(getName());
+        for (final String id : exceptedIds) {
+            query.addSort(Keys.OBJECT_ID, Query.SortDirection.DESCENDING);
+            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
+        }
+
         Query.SortDirection querySortDirection = null;
         if (sortDirection.equals(SortDirection.ASCENDING)) {
             querySortDirection = Query.SortDirection.ASCENDING;
@@ -286,10 +291,6 @@ public abstract class AbstractGAERepository implements Repository {
             querySortDirection = Query.SortDirection.DESCENDING;
         }
         query.addSort(sortPropertyName, querySortDirection);
-
-        for (final String id : exceptedIds) {
-            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
-        }
 
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
         final int count = preparedQuery.countEntities(
