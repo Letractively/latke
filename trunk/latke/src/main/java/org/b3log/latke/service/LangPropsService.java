@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Aug 30, 2010
+ * @version 1.0.1.0, Oct 20, 2010
  */
 public final class LangPropsService {
 
@@ -69,12 +69,21 @@ public final class LangPropsService {
                 langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
             } catch (final MissingResourceException e) {
                 LOGGER.log(Level.WARNING,
-                           "{0}, using default locale[{1}]  instead",
+                           "{0}, using default locale[{1}] instead",
                            new Object[]{e.getMessage(),
                                         Latkes.getDefaultLocale()});
 
-                langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
-                                                      Latkes.getDefaultLocale());
+                try {
+                    langBundle = ResourceBundle.getBundle(
+                            Keys.LANGUAGE,
+                            Latkes.getDefaultLocale());
+                } catch (final MissingResourceException ex) {
+                    LOGGER.log(Level.WARNING,
+                               "{0}, using default lang.properties instead",
+                               new Object[]{e.getMessage()});
+                    langBundle = ResourceBundle.getBundle(Keys.LANGUAGE);
+                }
+
             }
 
             final Enumeration<String> keys = langBundle.getKeys();
