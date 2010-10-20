@@ -56,7 +56,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Oct 19, 2010
+ * @version 1.0.1.1, Oct 20, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -275,7 +275,8 @@ public abstract class AbstractGAERepository implements Repository {
     public JSONObject get(final int currentPageNum,
                           final int pageSize,
                           final String sortPropertyName,
-                          final SortDirection sortDirection)
+                          final SortDirection sortDirection,
+                          final String... exceptedIds)
             throws RepositoryException {
         final Query query = new Query(getName());
         Query.SortDirection querySortDirection = null;
@@ -285,6 +286,10 @@ public abstract class AbstractGAERepository implements Repository {
             querySortDirection = Query.SortDirection.DESCENDING;
         }
         query.addSort(sortPropertyName, querySortDirection);
+
+        for (final String id : exceptedIds) {
+            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
+        }
 
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
         final int count = preparedQuery.countEntities(
