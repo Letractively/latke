@@ -16,6 +16,7 @@
 package org.b3log.latke.repository;
 
 import java.util.List;
+import java.util.Map;
 import org.json.JSONObject;
 
 /**
@@ -105,14 +106,13 @@ public interface Repository {
 
     /**
      * Gets json objects by the specified current page number, page size, sort
-     * property name, {@link SortDirection sort direction} and excluded ids.
+     * parameters and excluded ids.
      *
      * @param currentPageNum the specified current page number, MUST greater
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
      * MUST greater then 0
-     * @param sortPropertyName the specified sort property name
-     * @param sortDirection the sort direction
+     * @param sorts the specified sort parameters
      * @param excludedIds excluded ids
      * @return for example,
      * <pre>
@@ -131,8 +131,7 @@ public interface Repository {
      */
     JSONObject get(final int currentPageNum,
                    final int pageSize,
-                   final String sortPropertyName,
-                   final SortDirection sortDirection,
+                   final Map<String, SortDirection> sorts,
                    final String... excludedIds)
             throws RepositoryException;
 
