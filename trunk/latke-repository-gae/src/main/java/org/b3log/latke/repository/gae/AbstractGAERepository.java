@@ -56,7 +56,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Oct 20, 2010
+ * @version 1.0.1.2, Oct 21, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -251,7 +251,7 @@ public abstract class AbstractGAERepository implements Repository {
             } else {
                 querySortDirection = Query.SortDirection.DESCENDING;
             }
-            
+
             query.addSort(sort.getKey(), querySortDirection);
         }
 
@@ -314,7 +314,7 @@ public abstract class AbstractGAERepository implements Repository {
      * @param entity the specified entity
      * @return converted json object
      */
-    public JSONObject entity2JSONObject(final Entity entity) {
+    public static final JSONObject entity2JSONObject(final Entity entity) {
         final Map<String, Object> properties = entity.getProperties();
         final Map<String, Object> jsonMap = new HashMap<String, Object>();
 
@@ -343,8 +343,8 @@ public abstract class AbstractGAERepository implements Repository {
      * @param jsonObject the specified json object
      * @throws JSONException json exception
      */
-    public final void setProperties(final Entity entity,
-                                    final JSONObject jsonObject)
+    public static final void setProperties(final Entity entity,
+                                           final JSONObject jsonObject)
             throws JSONException {
         @SuppressWarnings("unchecked")
         final Iterator<String> keys = jsonObject.keys();
