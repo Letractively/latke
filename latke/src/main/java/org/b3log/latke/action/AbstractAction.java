@@ -260,7 +260,7 @@ public abstract class AbstractAction extends HttpServlet {
 
         String ret = requestURI.substring(idx + 1, requestURI.length());
         if (Strings.isEmptyOrNull(ret)) {
-            ret = "index.do";
+            ret = "index.ftl";
         } else {
             idx = ret.lastIndexOf(".do");
             ret = ret.substring(0, idx);
