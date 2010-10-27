@@ -102,15 +102,18 @@ public final class DoubleLinkedMap<K, V> implements Serializable {
     /**
      * Adds a new value to the start of the linked map.
      *
+     * <p>
+     * Throws {@link IllegalArgumentException} if the specified key is null
+     * </p>
+     *
      * @param key the key of the new value
      * @param value the new value
-     * @throws IllegalArgumentException if the specified key is null
      */
     public synchronized void addFirst(final K key, final V value) {
         if (null == key) {
             throw new IllegalArgumentException("Key is null!");
         }
-        
+
         final DoubleLinkedMapNode<K, V> node =
                 new DoubleLinkedMapNode<K, V>(key, value);
         addFirstNode(node);

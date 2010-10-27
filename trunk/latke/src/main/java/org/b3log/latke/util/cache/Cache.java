@@ -28,9 +28,12 @@ public interface Cache<K, V> {
     /**
      * Puts the specified object into this cache.
      *
+     * <p>
+     * Throws {@link IllegalArgumentException} if the specified key is null
+     * </p>
+     *
      * @param key the key of the specified object
      * @param value the specified object
-     * @throws IllegalArgumentException if the specified key is null
      */
     void put(final K key, final V value);
 
