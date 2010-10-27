@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
  * @version 1.0.1.6, Oct 26, 2010
  */
 public final class Keys {
+
     /**
      * Key of message.
      */
@@ -75,9 +76,9 @@ public final class Keys {
     public static final DateFormat SIMPLE_DATE_FORMAT1 =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
-     * Key of request URI.
+     * Key of page cache key.
      */
-    public static final String REQUEST_URI = "requestURI";
+    public static final String PAGE_CACHE_KEY = "pageCacheKey";
 
     /**
      * Private constructor.
