@@ -27,7 +27,7 @@ import org.b3log.latke.util.cache.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.3, Aug 26, 2010
+ * @version 1.0.2.4, Oct 26, 2010
  */
 public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         implements Serializable {
@@ -107,5 +107,7 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     public synchronized void removeAll() {
         map.removeAll();
         setCachedCount(0);
+        setMissCount(0);
+        setHitCount(0);
     }
 }
