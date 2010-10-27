@@ -104,6 +104,7 @@ public final class DoubleLinkedMap<K, V> implements Serializable {
      *
      * @param key the key of the new value
      * @param value the new value
+     * @throws IllegalArgumentException if the specified key is null
      */
     public synchronized void addFirst(final K key, final V value) {
         if (null == key) {

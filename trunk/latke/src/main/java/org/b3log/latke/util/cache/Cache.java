@@ -21,7 +21,7 @@ package org.b3log.latke.util.cache;
  * @param <K> the key of a object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Aug 26, 2010
+ * @version 1.0.2.2, Oct 26, 2010
  */
 public interface Cache<K, V> {
 
@@ -30,6 +30,7 @@ public interface Cache<K, V> {
      *
      * @param key the key of the specified object
      * @param value the specified object
+     * @throws IllegalArgumentException if the specified key is null
      */
     void put(final K key, final V value);
 
