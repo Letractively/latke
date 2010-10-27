@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, Sep 21, 2010
+ * @version 1.0.1.6, Oct 26, 2010
  */
 public final class Keys {
     /**
@@ -74,6 +74,10 @@ public final class Keys {
      */
     public static final DateFormat SIMPLE_DATE_FORMAT1 =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    /**
+     * Key of request URI.
+     */
+    public static final String REQUEST_URI = "requestURI";
 
     /**
      * Private constructor.

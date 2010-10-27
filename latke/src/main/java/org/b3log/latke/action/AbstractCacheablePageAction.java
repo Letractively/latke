@@ -16,8 +16,6 @@
 package org.b3log.latke.action;
 
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
@@ -25,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.Keys;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.cache.Cache;
 import org.b3log.latke.util.cache.CacheFactory;
@@ -33,7 +32,7 @@ import org.b3log.latke.util.cache.CacheFactory;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Aug 31, 2010
+ * @version 1.0.0.3, Oct 26, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -91,7 +90,11 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
             final PrintWriter writer = response.getWriter();
-            final String requestURI = request.getRequestURI();
+            String requestURI = (String) request.getAttribute(Keys.REQUEST_URI);
+            if (Strings.isEmptyOrNull(requestURI)) {
+                requestURI = request.getRequestURI();
+            }
+
             String cachedPageKey = requestURI;
             final String queryString = request.getQueryString();
             if (!Strings.isEmptyOrNull(queryString)) {
@@ -109,10 +112,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             PAGE_CACHE.put(cachedPageKey, pageContent);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                        cachedPageKey);
-        } catch (final TemplateException e) {
-            LOGGER.severe(e.getMessage());
-            throw new ActionException(e);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             LOGGER.severe(e.getMessage());
             throw new ActionException(e);
         }
