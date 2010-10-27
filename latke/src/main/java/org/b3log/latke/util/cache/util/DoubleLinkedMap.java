@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @param <K> the type of the key of this map's elements
  * @param <V> the type of the nodes of this map
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Aug 26, 2009
+ * @version 1.0.1.5, Oct 26, 2010
  */
 public final class DoubleLinkedMap<K, V> implements Serializable {
 
@@ -106,6 +106,10 @@ public final class DoubleLinkedMap<K, V> implements Serializable {
      * @param value the new value
      */
     public synchronized void addFirst(final K key, final V value) {
+        if (null == key) {
+            throw new IllegalArgumentException("Key is null!");
+        }
+        
         final DoubleLinkedMapNode<K, V> node =
                 new DoubleLinkedMapNode<K, V>(key, value);
         addFirstNode(node);
