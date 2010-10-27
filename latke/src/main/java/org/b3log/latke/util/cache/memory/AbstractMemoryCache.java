@@ -23,7 +23,7 @@ import org.b3log.latke.util.cache.Cache;
  * @param <K> the type of the key of objects
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Aug 26, 2010
+ * @version 1.0.2.2, Oct 26, 2010
  */
 public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
 
@@ -57,6 +57,15 @@ public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
     }
 
     /**
+     * Sets his count by the specified hit count.
+     * 
+     * @param hitCount the specified hit count
+     */
+    public final void setHitCount(final int hitCount) {
+        this.hitCount = hitCount;
+    }
+
+    /**
      * Adds one to hit count itself.
      */
     protected final void hitCountInc() {
@@ -69,6 +78,15 @@ public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
     @Override
     public final int getMissCount() {
         return missCount;
+    }
+
+    /**
+     * Sets miss count by the specified miss count.
+     *
+     * @param missCount the specified miss count
+     */
+    public final void setMissCount(final int missCount) {
+        this.missCount = missCount;
     }
 
     /**
