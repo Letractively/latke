@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-repository-sleepycat</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <name>Latke Repository(Sleepycat)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke repository implemented by Sleepycat.</description>
