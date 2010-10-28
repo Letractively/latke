@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.cache.gae;
 
 import com.google.appengine.api.memcache.MemcacheService;
@@ -26,35 +25,58 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 27, 2010
+ * @version 1.0.0.1, Oct 27, 2010
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
     /**
      * Memcache service.
      */
-    private static final MemcacheService MEMCACHE_SERVICE =
-            MemcacheServiceFactory.getMemcacheService();
+    private MemcacheService memcacheService;
+    /**
+     * Name of this cache.
+     */
+    private String name;
+
+    /**
+     * Constructs a memcache with the specified name.
+     *
+     * @param name the specified name
+     */
+    public Memcache(final String name) {
+        this.name = name;
+
+        memcacheService = MemcacheServiceFactory.getMemcacheService(name);
+    }
+
+    /**
+     * Gets the name of this cache.
+     *
+     * @return name of this cache
+     */
+    public String getName() {
+        return name;
+    }
 
     @Override
     public void put(final K key, final V value) {
-        MEMCACHE_SERVICE.put(key, value);
+        memcacheService.put(key, value);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public V get(final K key) {
-        return (V) MEMCACHE_SERVICE.get(key);
+        return (V) memcacheService.get(key);
     }
 
     @Override
     public void remove(final K key) {
-        MEMCACHE_SERVICE.delete(key);
+        memcacheService.delete(key);
     }
 
     @Override
     public void removeAll() {
-        MEMCACHE_SERVICE.clearAll();
+        memcacheService.clearAll();
     }
 
     @Override
@@ -68,12 +90,12 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     @Override
     public long getHitCount() {
-        return MEMCACHE_SERVICE.getStatistics().getHitCount();
+        return memcacheService.getStatistics().getHitCount();
     }
 
     @Override
     public long getMissCount() {
-        return MEMCACHE_SERVICE.getStatistics().getMissCount();
+        return memcacheService.getStatistics().getMissCount();
     }
 
     @Override
@@ -83,7 +105,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     @Override
     public long getCachedCount() {
-        return MEMCACHE_SERVICE.getStatistics().getItemCount();
+        return memcacheService.getStatistics().getItemCount();
     }
 
     @Override
