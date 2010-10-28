@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.cache;
 
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,8 @@ public final class CacheFactory {
      * @param cacheName the given cache name
      * @return a cache specified by the given cache name
      */
-    public static Cache<String, Object> getCache(final String cacheName) {
+    public static synchronized Cache<String, Object> getCache(
+            final String cacheName) {
         Cache<String, Object> ret = CACHES.get(cacheName);
 
         try {
@@ -60,7 +62,9 @@ public final class CacheFactory {
                     final Class<Cache<String, Object>> gaeMemcache =
                             (Class<Cache<String, Object>>) Class.forName(
                             "org.b3log.latke.cache.gae.Memcache");
-                    ret = gaeMemcache.newInstance();
+                    final Constructor<Cache<String, Object>> constructor =
+                            gaeMemcache.getConstructor(String.class);
+                    ret = constructor.newInstance(cacheName);
                 }
 
                 CACHES.put(cacheName, ret);
