@@ -17,6 +17,7 @@ package org.b3log.latke.cache.gae;
 
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import java.util.Collection;
 import org.b3log.latke.cache.Cache;
 
 /**
@@ -75,8 +76,14 @@ public final class Memcache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public void remove(final Collection<K> keys) {
+        memcacheService.deleteAll(keys);
+    }
+
+    @Override
     public void removeAll() {
-        memcacheService.clearAll();
+        // memcacheService.clearAll(); // Will clear in all namespaces
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
