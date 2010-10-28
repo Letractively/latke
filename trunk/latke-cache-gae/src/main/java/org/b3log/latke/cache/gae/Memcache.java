@@ -111,6 +111,16 @@ public final class Memcache<K, V> implements Cache<K, V> {
     }
 
     @Override
+    public long getCachedBytes() {
+        return memcacheService.getStatistics().getTotalItemBytes();
+    }
+
+    @Override
+    public long getHitBytes() {
+        return memcacheService.getStatistics().getBytesReturnedForHits();
+    }
+
+    @Override
     public long getCachedCount() {
         return memcacheService.getStatistics().getItemCount();
     }
