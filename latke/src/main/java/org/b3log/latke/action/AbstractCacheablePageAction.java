@@ -24,17 +24,14 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Keys;
-import org.b3log.latke.Latkes;
-import org.b3log.latke.RunsOnEnv;
-import org.b3log.latke.cache.Cache;
-import org.b3log.latke.cache.CacheFactory;
+import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.util.Strings;
 
 /**
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Oct 26, 2010
+ * @version 1.0.0.4, Oct 27, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -47,34 +44,6 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     private static final Logger LOGGER = Logger.getLogger(
             AbstractCacheablePageAction.class.getName());
-    /**
-     * Maximum count of cacheable pages.
-     */
-    private static final int MAX_CACHEABLE_PAGE_CNT = 1024;
-    /**
-     * Page cache.
-     * <p>
-     * &lt;requestURI, page HTML content&gt;
-     * </p>
-     */
-    public static final Cache<String, Object> PAGE_CACHE;
-    /**
-     * Page.
-     */
-    public static final String PAGE = "page";
-
-    /**
-     * Initializes cache.
-     */
-    static {
-        PAGE_CACHE = CacheFactory.getCache(PAGE);
-        final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
-        if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
-            PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
-            LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
-                       MAX_CACHEABLE_PAGE_CNT);
-        }
-    }
 
     /**
      * Processes FreeMarker template with the specified request, data model,
@@ -115,7 +84,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             writer.write(pageContent);
             writer.close();
 
-            PAGE_CACHE.put(cachedPageKey, pageContent);
+            PageCaches.put(cachedPageKey, pageContent);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                        cachedPageKey);
         } catch (final Exception e) {

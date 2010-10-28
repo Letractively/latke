@@ -15,6 +15,8 @@
  */
 package org.b3log.latke.cache;
 
+import java.util.Collection;
+
 /**
  * This is the top interface of cache like structures.
  *
@@ -52,6 +54,12 @@ public interface Cache<K, V> {
      * @param key the specified key
      */
     void remove(final K key);
+    /**
+     * Removes objects by the specified keys.
+     *
+     * @param keys the specified keys
+     */
+    void remove(final Collection<K> keys);
 
     /**
      * Removes all cached objects.
