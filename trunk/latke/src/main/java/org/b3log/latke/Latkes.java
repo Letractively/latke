@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke;
 
 import java.util.Locale;
@@ -24,7 +23,7 @@ import org.b3log.latke.util.Strings;
  * class MUST be invoked before setting up your application.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 21, 2010
+ * @version 1.0.0.1, Oct 27, 2010
  */
 public final class Latkes {
 
@@ -37,6 +36,43 @@ public final class Latkes {
      * Repository path.
      */
     private static String repositoryPath;
+    /**
+     * Where latke runs on?.
+     */
+    private static RunsOnEnv runsOnEnv;
+
+    /**
+     * Checks environment settings.
+     */
+    public static void check() {
+        final RunsOnEnv runsOn = getRunsOnEnv();
+        if (runsOn.equals(RunsOnEnv.LOCALE)) {
+            getRepositoryPath();
+        }
+    }
+
+    /**
+     * Sets the runs on with the specified environment.
+     *
+     * @param runsOnEnv the specified environment
+     */
+    public static void setRunsOnEnv(final RunsOnEnv runsOnEnv) {
+        Latkes.runsOnEnv = runsOnEnv;
+    }
+
+    /**
+     * Gets the runs on environment.
+     *
+     * @return runs on environment
+     */
+    public static RunsOnEnv getRunsOnEnv() {
+        if (null == Latkes.runsOnEnv) {
+            throw new RuntimeException(
+                    "Runs on enviornment has not been initialized!");
+        }
+
+        return Latkes.runsOnEnv;
+    }
 
     /**
      * Sets the repository path with the specified repository path.

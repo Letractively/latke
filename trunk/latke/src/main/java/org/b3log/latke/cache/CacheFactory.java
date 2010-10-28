@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.util.cache;
+package org.b3log.latke.cache;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.b3log.latke.util.cache.memory.LruMemoryCache;
+import org.b3log.latke.Latkes;
+import org.b3log.latke.RunsOnEnv;
 
 /**
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 26, 2010
+ * @version 1.0.0.1, Oct 27, 2010
  */
 public final class CacheFactory {
 
-    /**
-     * LRU memory cache.
-     */
-    public static final String CACHE_LRU_MEMORY_CACHE =
-            "cacheLruMemoryCache";
     /**
      * Caches.
      */
@@ -48,11 +44,30 @@ public final class CacheFactory {
      */
     public static Cache<String, Object> getCache(final String cacheName) {
         Cache<String, Object> ret = CACHES.get(cacheName);
-        if (null == ret) {
-            ret = new LruMemoryCache<String, Object>();
-            CACHES.put(cacheName, ret);
-        }
 
+        try {
+            if (null == ret) {
+                final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
+
+                if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
+                    @SuppressWarnings("unchecked")
+                    final Class<Cache<String, Object>> localLruCache =
+                            (Class<Cache<String, Object>>) Class.forName(
+                            "org.b3log.latke.cache.local.memory.LruMemoryCache");
+                    ret = localLruCache.newInstance();
+                } else if (runsOnEnv.equals(RunsOnEnv.GAE)) {
+                    @SuppressWarnings("unchecked")
+                    final Class<Cache<String, Object>> gaeMemcache =
+                            (Class<Cache<String, Object>>) Class.forName(
+                            "org.b3log.latke.cache.gae.Memcache");
+                    ret = gaeMemcache.newInstance();
+                }
+
+                CACHES.put(cacheName, ret);
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException("Can not get cache: " + e.getMessage());
+        }
 
         return ret;
     }
