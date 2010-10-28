@@ -51,20 +51,27 @@ public final class CacheFactory {
             if (null == ret) {
                 final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
 
-                if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
-                    @SuppressWarnings("unchecked")
-                    final Class<Cache<String, Object>> localLruCache =
-                            (Class<Cache<String, Object>>) Class.forName(
-                            "org.b3log.latke.cache.local.memory.LruMemoryCache");
-                    ret = localLruCache.newInstance();
-                } else if (runsOnEnv.equals(RunsOnEnv.GAE)) {
-                    @SuppressWarnings("unchecked")
-                    final Class<Cache<String, Object>> gaeMemcache =
-                            (Class<Cache<String, Object>>) Class.forName(
-                            "org.b3log.latke.cache.gae.Memcache");
-                    final Constructor<Cache<String, Object>> constructor =
-                            gaeMemcache.getConstructor(String.class);
-                    ret = constructor.newInstance(cacheName);
+                switch (runsOnEnv) {
+                    case LOCALE:
+                        @SuppressWarnings("unchecked")
+                        final Class<Cache<String, Object>> localLruCache =
+                                (Class<Cache<String, Object>>) Class.forName(
+                                "org.b3log.latke.cache.local.memory.LruMemoryCache");
+                        ret = localLruCache.newInstance();
+                        break;
+                    case GAE:
+                        @SuppressWarnings("unchecked")
+                        final Class<Cache<String, Object>> gaeMemcache =
+                                (Class<Cache<String, Object>>) Class.forName(
+                                "org.b3log.latke.cache.gae.Memcache");
+                        final Constructor<Cache<String, Object>> constructor =
+                                gaeMemcache.getConstructor(String.class);
+                        ret = constructor.newInstance(cacheName);
+                        break;
+                    default:
+                        throw new RuntimeException(
+                                "Latke runs in the hell.... "
+                                + "Please set the enviornment correctly");
                 }
 
                 CACHES.put(cacheName, ret);
