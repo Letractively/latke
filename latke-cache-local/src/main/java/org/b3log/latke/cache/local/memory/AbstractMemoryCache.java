@@ -23,7 +23,7 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the type of the key of objects
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.3, Oct 27, 2010
+ * @version 1.0.2.4, Oct 27, 2010
  */
 public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
 
@@ -165,5 +165,15 @@ public abstract class AbstractMemoryCache<K, V> implements Cache<K, V> {
     @Override
     public final void setMaxCount(final long maxCount) {
         this.maxCount = maxCount;
+    }
+
+    @Override
+    public long getCachedBytes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public long getHitBytes() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
