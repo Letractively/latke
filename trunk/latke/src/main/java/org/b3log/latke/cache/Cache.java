@@ -23,7 +23,7 @@ import java.util.Collection;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.3, Oct 27, 2010
+ * @version 1.0.2.4, Oct 27, 2010
  */
 public interface Cache<K, V> {
 
@@ -54,6 +54,7 @@ public interface Cache<K, V> {
      * @param key the specified key
      */
     void remove(final K key);
+
     /**
      * Removes objects by the specified keys.
      *
@@ -107,6 +108,19 @@ public interface Cache<K, V> {
      * @return current cached object count of this cache
      */
     long getCachedCount();
+
+    /**
+     * Gets cached bytes.
+     *
+     * @return cached bytes
+     */
+    long getCachedBytes();
+    /**
+     * Gets hit bytes.
+     *
+     * @return hit bytes
+     */
+    long getHitBytes();
 
     /**
      * Collects all useless cached objects. 
