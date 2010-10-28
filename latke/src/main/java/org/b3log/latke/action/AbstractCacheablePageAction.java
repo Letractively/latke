@@ -24,9 +24,11 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Keys;
+import org.b3log.latke.Latkes;
+import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.cache.Cache;
+import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.util.Strings;
-import org.b3log.latke.util.cache.Cache;
-import org.b3log.latke.util.cache.CacheFactory;
 
 /**
  * Abstract cacheable page action.
@@ -56,17 +58,22 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * </p>
      */
     public static final Cache<String, Object> PAGE_CACHE;
+    /**
+     * Page.
+     */
+    public static final String PAGE = "page";
 
     /**
      * Initializes cache.
      */
     static {
-        PAGE_CACHE = CacheFactory.getCache(
-                CacheFactory.CACHE_LRU_MEMORY_CACHE);
-        PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
-
-        LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
-                   MAX_CACHEABLE_PAGE_CNT);
+        PAGE_CACHE = CacheFactory.getCache(PAGE);
+        final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
+        if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
+            PAGE_CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
+            LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
+                       MAX_CACHEABLE_PAGE_CNT);
+        }
     }
 
     /**

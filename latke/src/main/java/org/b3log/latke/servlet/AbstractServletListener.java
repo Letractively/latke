@@ -41,7 +41,7 @@ import org.jabsorb.JSONRPCBridge;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.4, Sep 2, 2010
+ * @version 1.0.2.5, Oct 27, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -76,6 +76,7 @@ public abstract class AbstractServletListener
      */
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
+        Latkes.check();
         LOGGER.info("Initializing the context....");
         super.contextInitialized(servletContextEvent);
 

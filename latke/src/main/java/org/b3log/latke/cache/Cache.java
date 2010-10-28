@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.util.cache;
+package org.b3log.latke.cache;
 
 /**
  * This is the top interface of cache like structures.
  *
- * @param <K> the key of a object
+ * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.2, Oct 26, 2010
+ * @version 1.0.2.3, Oct 27, 2010
  */
 public interface Cache<K, V> {
 
@@ -63,42 +63,42 @@ public interface Cache<K, V> {
      *
      * @param maxCount the maximum count of this cache
      */
-    void setMaxCount(final int maxCount);
+    void setMaxCount(final long maxCount);
 
     /**
      * Gets the maximum objects count of this cache.
      *
      * @return the maximum objects count of this cache 
      */
-    int getMaxCount();
+    long getMaxCount();
 
     /**
      * Gets the hit count of this cache.
      *
      * @return hit count of this cache
      */
-    int getHitCount();
+    long getHitCount();
 
     /**
      * Gets the miss count of this cache.
      *
      * @return miss count of this cache
      */
-    int getMissCount();
+    long getMissCount();
 
     /**
      * Gets the put count of this cache.
      *
      * @return put count of this cache
      */
-    int getPutCount();
+    long getPutCount();
 
     /**
      * Gets current cached object count of this cache.
      *
      * @return current cached object count of this cache
      */
-    int getCachedCount();
+    long getCachedCount();
 
     /**
      * Collects all useless cached objects. 
