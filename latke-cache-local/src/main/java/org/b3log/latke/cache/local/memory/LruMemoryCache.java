@@ -16,6 +16,7 @@
 package org.b3log.latke.cache.local.memory;
 
 import java.io.Serializable;
+import java.util.Collection;
 import org.b3log.latke.cache.local.util.DoubleLinkedMap;
 
 /**
@@ -27,7 +28,7 @@ import org.b3log.latke.cache.local.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.4, Oct 26, 2010
+ * @version 1.0.2.5, Oct 27, 2010
  */
 public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         implements Serializable {
@@ -91,6 +92,16 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         final boolean removed = map.remove(key);
         if (removed) {
             cachedCountDec();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void remove(final Collection<K> keys) {
+        for (final K key : keys) {
+            remove(key);
         }
     }
 
