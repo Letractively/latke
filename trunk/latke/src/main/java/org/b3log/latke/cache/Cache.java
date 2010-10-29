@@ -23,7 +23,7 @@ import java.util.Collection;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.4, Oct 27, 2010
+ * @version 1.0.2.5, Oct 29, 2010
  */
 public interface Cache<K, V> {
 
@@ -77,21 +77,23 @@ public interface Cache<K, V> {
     /**
      * Gets the maximum objects count of this cache.
      *
-     * @return the maximum objects count of this cache 
+     * @return the maximum objects count of this cache, returns {@code -1} if
+     * cache unavailable.
      */
     long getMaxCount();
 
     /**
      * Gets the hit count of this cache.
      *
-     * @return hit count of this cache
+     * @return hit count of this cache, returns {@code -1} if cache unavailable.
      */
     long getHitCount();
 
     /**
      * Gets the miss count of this cache.
      *
-     * @return miss count of this cache
+     * @return miss count of this cache, returns {@code -1} if cache
+     * unavailable.
      */
     long getMissCount();
 
@@ -105,20 +107,22 @@ public interface Cache<K, V> {
     /**
      * Gets current cached object count of this cache.
      *
-     * @return current cached object count of this cache
+     * @return current cached object count of this cache, returns {@code -1}
+     * if cache unavailable.
      */
     long getCachedCount();
 
     /**
      * Gets cached bytes.
      *
-     * @return cached bytes
+     * @return cached bytes, returns {@code -1} if cache unavailable.
      */
     long getCachedBytes();
+
     /**
      * Gets hit bytes.
      *
-     * @return hit bytes
+     * @return hit bytes, returns {@code -1} if cache unavailable.
      */
     long getHitBytes();
 
