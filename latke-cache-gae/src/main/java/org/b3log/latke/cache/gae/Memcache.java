@@ -17,6 +17,7 @@ package org.b3log.latke.cache.gae;
 
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.memcache.Stats;
 import java.util.Collection;
 import org.b3log.latke.cache.Cache;
 
@@ -26,7 +27,7 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Oct 27, 2010
+ * @version 1.0.0.2, Oct 29, 2010
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -97,12 +98,22 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     @Override
     public long getHitCount() {
-        return memcacheService.getStatistics().getHitCount();
+        final Stats statistics = memcacheService.getStatistics();
+        if (null != statistics) {
+            return statistics.getHitCount();
+        }
+
+        return -1;
     }
 
     @Override
     public long getMissCount() {
-        return memcacheService.getStatistics().getMissCount();
+        final Stats statistics = memcacheService.getStatistics();
+        if (null != statistics) {
+            return statistics.getMissCount();
+        }
+
+        return -1;
     }
 
     @Override
@@ -112,17 +123,32 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     @Override
     public long getCachedBytes() {
-        return memcacheService.getStatistics().getTotalItemBytes();
+        final Stats statistics = memcacheService.getStatistics();
+        if (null != statistics) {
+            return statistics.getTotalItemBytes();
+        }
+
+        return -1;
     }
 
     @Override
     public long getHitBytes() {
-        return memcacheService.getStatistics().getBytesReturnedForHits();
+        final Stats statistics = memcacheService.getStatistics();
+        if (null != statistics) {
+            return statistics.getHitCount();
+        }
+
+        return -1;
     }
 
     @Override
     public long getCachedCount() {
-        return memcacheService.getStatistics().getItemCount();
+        final Stats statistics = memcacheService.getStatistics();
+        if (null != statistics) {
+            return statistics.getItemCount();
+        }
+
+        return -1;
     }
 
     @Override
