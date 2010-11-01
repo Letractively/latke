@@ -314,7 +314,7 @@ public abstract class AbstractGAERepository implements Repository {
      * @param entity the specified entity
      * @return converted json object
      */
-    public static final JSONObject entity2JSONObject(final Entity entity) {
+    public static JSONObject entity2JSONObject(final Entity entity) {
         final Map<String, Object> properties = entity.getProperties();
         final Map<String, Object> jsonMap = new HashMap<String, Object>();
 
@@ -343,8 +343,8 @@ public abstract class AbstractGAERepository implements Repository {
      * @param jsonObject the specified json object
      * @throws JSONException json exception
      */
-    public static final void setProperties(final Entity entity,
-                                           final JSONObject jsonObject)
+    public static void setProperties(final Entity entity,
+                                     final JSONObject jsonObject)
             throws JSONException {
         @SuppressWarnings("unchecked")
         final Iterator<String> keys = jsonObject.keys();
