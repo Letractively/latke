@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke repository implementation for GAE.
-    Version: 1.0.0.7, Oct 26, 2010
+    Version: 1.0.0.8, Nov 1, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-repository-gae</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <name>Latke Repository(GAE)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke repository implementation for GAE.</description>
