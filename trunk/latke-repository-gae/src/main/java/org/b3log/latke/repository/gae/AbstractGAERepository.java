@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.gae;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DataTypeUtils;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -56,7 +57,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Oct 21, 2010
+ * @version 1.0.1.3, Nov 1, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -366,8 +367,10 @@ public abstract class AbstractGAERepository implements Repository {
                 } else {
                     entity.setProperty(key, value);
                 }
-            } else if (value instanceof Number || value instanceof Date
-                           || value instanceof Boolean) {
+            } else if (value instanceof Number
+                           || value instanceof Date
+                           || value instanceof Boolean
+                           || value instanceof Blob) {
                 entity.setProperty(key, value);
             } else {
                 throw new RuntimeException("Need to add known data type[" + value.
