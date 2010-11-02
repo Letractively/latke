@@ -28,7 +28,7 @@ import org.b3log.latke.cache.CacheFactory;
  * Page cache.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 27, 2010
+ * @version 1.0.0.1, Nov 2, 2010
  */
 // XXX:  Why GAE memcache can not clear all by namespace?
 public final class PageCaches {
@@ -110,7 +110,11 @@ public final class PageCaches {
         }
 
         @SuppressWarnings("unchecked")
-        final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
+        Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
+        if (null == pageKeys) {
+            pageKeys = new HashSet<String>();
+        }
+
         pageKeys.add(pageKey);
         CACHE.put(PAGE_KEYS, pageKeys);
 
@@ -129,7 +133,11 @@ public final class PageCaches {
         }
 
         @SuppressWarnings("unchecked")
-        final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
+        Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
+        if (null == pageKeys) {
+            pageKeys = new HashSet<String>();
+        }
+        
         pageKeys.remove(pageKey);
         CACHE.put(PAGE_KEYS, pageKeys);
 
@@ -141,7 +149,10 @@ public final class PageCaches {
      */
     public static void removeAll() {
         @SuppressWarnings("unchecked")
-        final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
+        Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
+        if (null == pageKeys) {
+            pageKeys = new HashSet<String>();
+        }
 
         CACHE.remove(pageKeys);
         CACHE.put(PAGE_KEYS, new HashSet<String>());
