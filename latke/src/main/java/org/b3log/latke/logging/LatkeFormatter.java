@@ -57,6 +57,7 @@ import java.util.logging.LogRecord;
  *   <li>{@code %c} - source class name (if available, otherwise "?")</li>
  *   <li>{@code %C} - source simple class name (if available, otherwise "?")</li>
  *   <li>{@code %T} - thread ID</li>
+ *   <li>{@code %ln} - line number</li>
  * </ul>
  *
  * The default format is {@value #DEFAULT_FORMAT}. Curly brace characters are not
@@ -67,9 +68,14 @@ import java.util.logging.LogRecord;
  *   Logging with `java.util.logging`</a> for more details.
  * </p>
  *
+ * <p>
+ * This customized logging formatter tested with Sun JDK, others JDK
+ * implementation may not work fine.
+ * </p>
+ *
  * @author Samuel Halliday
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 5, 2010
+ * @version 1.0.0.6, Nov 4, 2010
  */
 public final class LatkeFormatter extends Formatter {
 
@@ -86,10 +92,6 @@ public final class LatkeFormatter extends Formatter {
      */
     private final DateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-    /**
-     * Length of arguments.
-     */
-    private static final int ARGS_LENGTH = 8;
     /**
      * Index of %m.
      */
@@ -122,6 +124,14 @@ public final class LatkeFormatter extends Formatter {
      * Index of %T.
      */
     private static final int INDEX_THREAD_ID = 5;
+    /**
+     * Index of %ln.
+     */
+    private static final int INDEX_LINE_NUM = 8;
+    /**
+     * Length of arguments.
+     */
+    private static final int ARGS_LENGTH = 9;
 
     /**
      * Public default constructor.
@@ -141,7 +151,8 @@ public final class LatkeFormatter extends Formatter {
         format = format.replace("%L", "{0}").replace("%m", "{1}").replace("%M",
                                                                           "{2}").
                 replace("%t", "{3}").replace("%c", "{4}").replace("%T", "{5}").
-                replace("%n", "{6}").replace("%C", "{7}") + "\n";
+                replace("%n", "{6}").replace("%C", "{7}").replace("%ln", "{8}")
+                 + System.getProperty("line.separator");
 
         messageFormat = new MessageFormat(format);
     }
@@ -163,7 +174,7 @@ public final class LatkeFormatter extends Formatter {
         }
 
         // %m
-        arguments[INDEX_MESSAGE] = record.getMessage();
+        arguments[INDEX_MESSAGE] = formatMessage(record);
 
         // %M
         if (null != record.getSourceMethodName()) {
@@ -190,7 +201,7 @@ public final class LatkeFormatter extends Formatter {
                 toString();
         // %n
         arguments[INDEX_LOGGER_NAME] = record.getLoggerName();
-        
+
         // %C
         final int start = arguments[INDEX_CLASS_NAME].lastIndexOf(".") + 1;
         if (start > 0 && start < arguments[INDEX_CLASS_NAME].length()) {
@@ -199,6 +210,39 @@ public final class LatkeFormatter extends Formatter {
         } else {
             arguments[INDEX_SIMPLE_CLASS_NAME] = arguments[INDEX_CLASS_NAME];
         }
+
+        final StackTraceElement[] stackTrace =
+                Thread.currentThread().getStackTrace();
+        final int lastCallDepthInLoggerJavaFile = 5;
+        int currentCallerDepth = lastCallDepthInLoggerJavaFile;
+        for (int i = lastCallDepthInLoggerJavaFile; i < stackTrace.length; i++) {
+            final StackTraceElement stackTraceElement = stackTrace[i];
+            final String fileName = stackTraceElement.getFileName();
+
+            if ("Logger.java".equals(fileName)) {
+                final String methodName = stackTraceElement.getMethodName();
+
+                if ("log".equals(methodName)) {
+                    if (i < stackTrace.length - 1) {
+                        final StackTraceElement ste = stackTrace[i + 1];
+                        final String fn = ste.getFileName();
+                        if (!"Logger.java".equals(fn)) {
+                            currentCallerDepth++;
+                            break;
+                        } else {
+                            currentCallerDepth += 2; // skip warning, config, info, fine, etc calls in Logger.java
+                            break;
+                        }
+                    }
+                }
+            }
+
+            currentCallerDepth++;
+        }
+
+        final int lineNumber = stackTrace[currentCallerDepth].getLineNumber();
+        // %ln
+        arguments[INDEX_LINE_NUM] = Integer.toString(lineNumber);
 
         synchronized (messageFormat) {
             return messageFormat.format(arguments);
