@@ -189,11 +189,46 @@ public final class LatkeFormatter extends Formatter {
             arguments[INDEX_TIME] = dateFormat.format(date);
         }
 
+        final StackTraceElement[] stackTrace =
+                Thread.currentThread().getStackTrace();
+        final int lastCallDepthInLoggerJavaFile = 5;
+        int currentCallerDepth = lastCallDepthInLoggerJavaFile;
+        String className = null;
+
+        for (int i = currentCallerDepth; i < stackTrace.length; i++) {
+            StackTraceElement stackTraceElement = stackTrace[i];
+            String fileName = stackTraceElement.getFileName();
+
+            if ("Jdk14Log.java".equals(fileName)
+                || "JDK14LoggerAdapter.java".equals(fileName)
+                || "Logger.java".equals(fileName)) {
+                currentCallerDepth = i;
+
+                if (i < stackTrace.length - 1) { // look ahead one
+                    stackTraceElement = stackTrace[i + 1];
+                    fileName = stackTraceElement.getFileName();
+                    stackTraceElement.getClassName();
+
+                    if (!"Jdk14Log.java".equals(fileName)
+                        && !"JDK14LoggerAdapter.java".equals(fileName)
+                        && !"Logger.java".equals(fileName)) {
+                        currentCallerDepth++;
+                        className = stackTraceElement.getClassName();
+                        break;
+                    }
+                }
+            }
+        }
+
         // %c
-        if (null != record.getSourceClassName()) {
-            arguments[INDEX_CLASS_NAME] = record.getSourceClassName();
+        if (null == className) {
+            if (null != record.getSourceClassName()) {
+                arguments[INDEX_CLASS_NAME] = record.getSourceClassName();
+            } else {
+                arguments[INDEX_CLASS_NAME] = "?";
+            }
         } else {
-            arguments[INDEX_CLASS_NAME] = "?";
+            arguments[INDEX_CLASS_NAME] = className;
         }
 
         // %T
@@ -211,36 +246,8 @@ public final class LatkeFormatter extends Formatter {
             arguments[INDEX_SIMPLE_CLASS_NAME] = arguments[INDEX_CLASS_NAME];
         }
 
-        final StackTraceElement[] stackTrace =
-                Thread.currentThread().getStackTrace();
-        final int lastCallDepthInLoggerJavaFile = 5;
-        int currentCallerDepth = lastCallDepthInLoggerJavaFile;
-        for (int i = lastCallDepthInLoggerJavaFile; i < stackTrace.length; i++) {
-            final StackTraceElement stackTraceElement = stackTrace[i];
-            final String fileName = stackTraceElement.getFileName();
-
-            if ("Logger.java".equals(fileName)) {
-                final String methodName = stackTraceElement.getMethodName();
-
-                if ("log".equals(methodName)) {
-                    if (i < stackTrace.length - 1) {
-                        final StackTraceElement ste = stackTrace[i + 1];
-                        final String fn = ste.getFileName();
-                        if (!"Logger.java".equals(fn)) {
-                            currentCallerDepth++;
-                            break;
-                        } else {
-                            currentCallerDepth += 2; // skip warning, config, info, fine, etc calls in Logger.java
-                            break;
-                        }
-                    }
-                }
-            }
-
-            currentCallerDepth++;
-        }
-
-        final int lineNumber = stackTrace[currentCallerDepth].getLineNumber();
+        final int lineNumber =
+                stackTrace[currentCallerDepth].getLineNumber();
         // %ln
         arguments[INDEX_LINE_NUM] = Integer.toString(lineNumber);
 
