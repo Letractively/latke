@@ -201,7 +201,8 @@ public final class LatkeFormatter extends Formatter {
 
             if ("Jdk14Log.java".equals(fileName)
                 || "JDK14LoggerAdapter.java".equals(fileName)
-                || "Logger.java".equals(fileName)) {
+                || "Logger.java".equals(fileName)
+                || "DirectJDKLog.java".equals(fileName)) {
                 currentCallerDepth = i;
 
                 if (i < stackTrace.length - 1) { // look ahead one
@@ -211,7 +212,8 @@ public final class LatkeFormatter extends Formatter {
 
                     if (!"Jdk14Log.java".equals(fileName)
                         && !"JDK14LoggerAdapter.java".equals(fileName)
-                        && !"Logger.java".equals(fileName)) {
+                        && !"Logger.java".equals(fileName)
+                        && !"DirectJDKLog.java".equals(fileName)) {
                         currentCallerDepth++;
                         className = stackTraceElement.getClassName();
                         break;
