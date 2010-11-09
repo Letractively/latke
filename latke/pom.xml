@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.4.0, Oct 27, 2010
+    Version: 1.0.4.1, Nov 9, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -29,7 +29,7 @@
         <javax.mail.version>1.4</javax.mail.version>
         <commons-io.version>1.4</commons-io.version>
         <!-- Maven Plugin -->
-        <maven-license-plugin.version>1.6.0</maven-license-plugin.version>
+        <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
         <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
         <!-- Unit Test -->
@@ -224,6 +224,15 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>etc/</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -239,10 +248,11 @@
                 <version>${maven-license-plugin.version}</version>
                 <configuration>
                     <basedir>${basedir}</basedir>
-                    <header>etc/header.txt</header>
+                    <header>src/main/resources/etc/header.txt</header>
                     <quiet>false</quiet>
                     <failIfMissing>true</failIfMissing>
                     <aggregate>true</aggregate>
+                    <strictCheck>true</strictCheck>
                     <includes>
                         <include>**/src/main/java/**/*.java</include>
                         <include>**/src/test/java/**/*.java</include>
@@ -279,7 +289,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
-                    <configLocation>${basedir}/etc/beyondtrack_checks.xml</configLocation>
+                    <configLocation>${basedir}/src/main/resources/etc/beyondtrack_checks.xml</configLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <consoleOutput>true</consoleOutput>
                     <failOnViolation>true</failOnViolation>
