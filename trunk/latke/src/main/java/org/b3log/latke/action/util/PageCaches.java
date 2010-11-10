@@ -146,6 +146,7 @@ public final class PageCaches {
 
         CACHE.remove(pageKeys);
         CACHE.put(PAGE_KEYS, new HashSet<String>());
+        LOGGER.info("Removed all page cache");
     }
 
     /**
