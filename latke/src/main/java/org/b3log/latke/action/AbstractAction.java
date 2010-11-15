@@ -24,6 +24,7 @@ import com.google.inject.Injector;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -285,16 +286,22 @@ public abstract class AbstractAction extends HttpServlet {
                                           final HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            LOGGER.log(Level.FINE, "Action[{0}]", getClass());
             final Template template =
                     beforeDoFreeMarkerAction(request, response);
+            if (null == template) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+                return;
+            }
+
             final Map<?, ?> dataModel = doFreeMarkerAction(template,
                                                            request, response);
+
             afterDoFreeMarkerTemplateAction(request, response, dataModel,
                                             template);
         } catch (final ActionException e) {
-            LOGGER.finest(e.getMessage());
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                               e.getMessage());
+            LOGGER.warning(e.getMessage());
 
             return;
         }
@@ -333,12 +340,13 @@ public abstract class AbstractAction extends HttpServlet {
      *
      * @param request the specified request
      * @param response the specified response
-     * @return a FreeMarker template
+     * @return a FreeMarker template, returns {@code null} if not found
      * @throws ActionException action exception
+     * @throws IOException io exception
      */
     protected Template beforeDoFreeMarkerAction(
             final HttpServletRequest request, final HttpServletResponse response)
-            throws ActionException {
+            throws ActionException, IOException {
         final String pageName = getPageName(request.getRequestURI());
 
         try {
@@ -349,9 +357,9 @@ public abstract class AbstractAction extends HttpServlet {
                        new Object[]{requestJSONObject, pageName});
 
             return Templates.getTemplate(pageName);
-        } catch (final IOException e) {
-            LOGGER.severe(e.getMessage());
-            throw new ActionException(e);
+        } catch (final FileNotFoundException e) {
+            LOGGER.warning(e.getMessage());
+            return null;
         } catch (final JSONException e) {
             LOGGER.severe(e.getMessage());
             throw new ActionException(e);
@@ -361,6 +369,11 @@ public abstract class AbstractAction extends HttpServlet {
     /**
      * Processes FreeMarker template with the specified request, data model,
      * template and response.
+     *
+     * <p>
+     *   <b>Note</b>: If the specified response has been committed, flush response
+     *   writer and return.
+     * </p>
      *
      * @param request the specified request
      * @param response the specified response
@@ -374,6 +387,12 @@ public abstract class AbstractAction extends HttpServlet {
             throws ActionException {
         try {
             final PrintWriter writer = response.getWriter();
+            if (response.isCommitted()) {
+                writer.flush();
+
+                return;
+            }
+
             template.process(dataModel, writer);
         } catch (final TemplateException e) {
             LOGGER.severe(e.getMessage());
