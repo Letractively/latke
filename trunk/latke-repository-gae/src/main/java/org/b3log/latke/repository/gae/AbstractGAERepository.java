@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Nov 1, 2010
+ * @version 1.0.1.4, Nov 18, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -142,15 +142,16 @@ public abstract class AbstractGAERepository implements Repository {
      * json object.
      *
      * <p>
+     *   Invokes this method for an non-existent entity will create a new entity
+     *   in database, as the same effect of method {@linkplain #add(org.json.JSONObject)}.
+     * </p>
+     *
+     * <p>
      *   Update algorithm steps:
      *   <ol>
-     *     <li>Finds the old record by the id stored in database value entry</li>
-     *     O(n)
-     *     <li>Removes the found old record if exists</li>
-     *     <li>Sets id of the old one into the specified new json object</li>
-     *     <li>Invokes {@linkplain #add(org.json.JSONObject) add} with the
-     *         new json object as argument
-     *     </li>
+     *     <li>Sets the specified id into the specified new json object</li>
+     *     <li>Creates a new entity with the specified id</li>
+     *     <li>Puts the entity into database</li>
      *   </ol>
      * </p>
      *
@@ -171,12 +172,14 @@ public abstract class AbstractGAERepository implements Repository {
             LOGGER.log(Level.FINER,
                        "Updating an object[oId={0}] in repository[name={1}]",
                        new Object[]{id, getName()});
-            // Step 1, 2:
-            remove(id);
-            // Step 3:
             jsonObject.put(Keys.OBJECT_ID, id);
-            // Step 4:
-            add(jsonObject);
+
+            final String kind = getName();
+            final Entity entity = new Entity(kind, id, parent);
+            setProperties(entity, jsonObject);
+
+            DATASTORE_SERVICE.put(entity);
+
             LOGGER.log(Level.FINER,
                        "Updated an object[oId={0}] in repository[name={1}]",
                        new Object[]{id, getName()});
@@ -257,8 +260,6 @@ public abstract class AbstractGAERepository implements Repository {
             query.addSort(sort.getKey(), querySortDirection);
         }
 
-
-
         return get(query, currentPageNum, pageSize);
     }
 
@@ -306,6 +307,7 @@ public abstract class AbstractGAERepository implements Repository {
     public long count() {
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
+        
         return preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
     }
 
