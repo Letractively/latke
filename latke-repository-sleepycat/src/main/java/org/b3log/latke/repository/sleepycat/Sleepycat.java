@@ -26,21 +26,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 
 /**
  * Sleepycat.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jul 23, 2010
+ * @version 1.0.0.3, Nov 18, 2010
  */
 public final class Sleepycat {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(Sleepycat.class);
+    private static final Logger LOGGER =
+            Logger.getLogger(Sleepycat.class.getName());
     /**
      * Default environment configurations. Set the following options explicitly: 
      * <ul>
@@ -81,7 +83,7 @@ public final class Sleepycat {
 
             DEFAULT_DB_CONFIG.setAllowCreate(true).setDeferredWrite(true);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -111,7 +113,8 @@ public final class Sleepycat {
         final Database ret = DEFAULT_ENV.openDatabase(null,
                                                       repositoryName,
                                                       databaseConfig);
-        LOGGER.info("Created database[repositoryName=" + repositoryName + "]");
+        LOGGER.log(Level.INFO, "Created database[repositoryName={0}]",
+                   repositoryName);
 
         final Set<SleepycatDatabase> sleepycatDatabases =
                 new HashSet<SleepycatDatabase>();
@@ -130,7 +133,8 @@ public final class Sleepycat {
             for (final SleepycatDatabase sleepycatDatabase : sleepycatDatabases) {
                 final Database database = sleepycatDatabase.getDatabase();
                 database.close();
-                LOGGER.info("Closed database[name=" + entry.getKey() + "]");
+                LOGGER.log(Level.INFO, "Closed database[name={0}]",
+                           entry.getKey());
             }
         }
 

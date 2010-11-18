@@ -24,7 +24,8 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import java.util.List;
-import org.apache.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
@@ -38,7 +39,7 @@ import org.json.JSONObject;
  * Abstract repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Oct 20, 2010
+ * @version 1.0.0.6, Nov 18, 2010
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -46,7 +47,7 @@ public abstract class AbstractRepository implements Repository {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractRepository.class);
+            Logger.getLogger(AbstractRepository.class.getName());
 
     /**
      * Gets database configuration of this repository.
@@ -100,20 +101,21 @@ public abstract class AbstractRepository implements Repository {
 
             switch (operationStatus) {
                 case KEYEXIST:
-                    LOGGER.warn("Found duplicated object[oId=" + ret
-                                + "] in repository[name=" + getName()
-                                + "], ignores add object operation");
+                    LOGGER.log(Level.WARNING,
+                               "Found duplicated object[oId={0}] in repository[name={1}], ignores add object operation",
+                               new Object[]{ret, getName()});
                     break;
                 case SUCCESS:
-                    LOGGER.debug("Added object[oId=" + ret
-                                 + "] in repository[name=" + getName() + "]");
+                    LOGGER.log(Level.FINER,
+                               "Added object[oId={0}] in repository[name={1}]",
+                               new Object[]{ret, getName()});
                     break;
                 default:
                     throw new ServiceException("Add object[oId="
                                                + ret + "] fail");
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             database.sync();
@@ -153,19 +155,20 @@ public abstract class AbstractRepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.debug("Updating an object[oId=" + id
-                         + "] in repository[name="
-                         + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Updating an object[oId={0}] in repository[name={1}]",
+                       new Object[]{id, getName()});
             // Step 1, 2:
             remove(id);
             // Step 3:
             jsonObject.put(Keys.OBJECT_ID, id);
             // Step 4:
             add(jsonObject);
-            LOGGER.debug("Updated an object[oId=" + id + "] in repository[name="
-                         + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Updated an object[oId={0}] in repository[name={1}]",
+                       new Object[]{id, getName()});
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         }
     }
@@ -198,24 +201,25 @@ public abstract class AbstractRepository implements Repository {
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 if (jsonObject.getString(Keys.OBJECT_ID).equals(id)) {
                     if (cursor.delete().equals(OperationStatus.SUCCESS)) {
-                        LOGGER.debug("Removed an object[oId=" + id + "] from "
-                                     + "repository[name=" + getName() + "]");
+                        LOGGER.log(Level.FINER,
+                                   "Removed an object[oId={0}] from repository[name={1}]",
+                                   new Object[]{id, getName()});
                     }
 
                     return;
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             cursor.close();
             database.sync();
         }
 
-        LOGGER.warn("Not found object[oId="
-                    + id + "] in repository[name=" + getName()
-                    + "], ignores remove object operation");
+        LOGGER.log(Level.WARNING,
+                   "Not found object[oId={0}] in repository[name={1}], ignores remove object operation",
+                   new Object[]{id, getName()});
     }
 
     /**
@@ -246,21 +250,23 @@ public abstract class AbstractRepository implements Repository {
                 final JSONObject ret =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
                 if (ret.getString(Keys.OBJECT_ID).equals(id)) {
-                    LOGGER.debug("Got an object[oId=" + id + "] from "
-                                 + "repository[name=" + getName() + "]");
+                    LOGGER.log(Level.FINER,
+                               "Got an object[oId={0}] from repository[name={1}]",
+                               new Object[]{id, getName()});
 
                     return ret;
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             cursor.close();
         }
 
-        LOGGER.warn("Not found an object[oId=" + id + "] in repository[name="
-                    + getName() + "]");
+        LOGGER.log(Level.WARNING,
+                   "Not found an object[oId={0}] in repository[name={1}]",
+                   new Object[]{id, getName()});
 
         return null;
     }
@@ -307,11 +313,14 @@ public abstract class AbstractRepository implements Repository {
                 cnt++;
             }
 
-            LOGGER.debug("Found objects[size=" + cnt + "] at page"
-                         + "[currentPageNum=" + currentPageNum + ", pageSize="
-                         + pageSize + "] in repository[" + getName() + "]");
+            LOGGER.log(Level.FINER,
+                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
+                       new Object[]{cnt,
+                                    currentPageNum,
+                                    pageSize,
+                                    getName()});
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             cursor.close();

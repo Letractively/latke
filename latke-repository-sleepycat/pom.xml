@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke repository implementation by Sleepycat.
-    Version: 1.0.0.7, Nov 15, 2010
+    Version: 1.0.0.8, Nov 18, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-repository-sleepycat</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.1</version>
+    <version>0.2.8</version>
     <name>Latke Repository(Sleepycat)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke repository implemented by Sleepycat.</description>
@@ -19,8 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.2.7</org.b3log.latke.version>
-        <log4j.version>1.2.14</log4j.version>
+        <org.b3log.latke.version>0.2.8</org.b3log.latke.version>
         <json.version>2010-06-24</json.version>
         <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
         <!-- Maven Plugin -->
@@ -120,12 +119,6 @@
             </dependency>
 
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.sleepycat</groupId>
                 <artifactId>je</artifactId>
                 <version>${com.sleepycat.je.version}</version>
@@ -151,11 +144,6 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
         </dependency>
 
         <dependency>
