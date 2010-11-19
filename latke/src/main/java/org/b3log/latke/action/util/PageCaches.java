@@ -29,7 +29,7 @@ import org.b3log.latke.cache.CacheFactory;
  * Page cache.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 27, 2010
+ * @version 1.0.0.1, Nov 19, 2010
  */
 // XXX:  Why GAE memcache can not clear all by namespace?
 public final class PageCaches {
@@ -144,7 +144,10 @@ public final class PageCaches {
         @SuppressWarnings("unchecked")
         final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
 
-        CACHE.remove(pageKeys);
+        if (null != pageKeys) {
+            CACHE.remove(pageKeys);
+        }
+
         CACHE.put(PAGE_KEYS, new HashSet<String>());
         LOGGER.info("Removed all page cache");
     }

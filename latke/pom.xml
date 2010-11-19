@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.4.3, Nov 18, 2010
+    Version: 1.0.4.4, Nov 19, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.8</version>
+    <version>0.2.9</version>
     <name>Latke</name>
     <url>http://latke.googlecode.com</url>
     <description>Yet another simple web framework based on Java servlet technology.</description>
