@@ -72,7 +72,7 @@ public final class Templates {
      */
     public static Template getTemplate(final String templateName)
             throws IOException {
-        LOGGER.log(Level.FINEST, "templateName ={0}", templateName);
+        LOGGER.log(Level.FINEST, "Get template[templateName={0}]", templateName);
 
         return CONFIGURATION.getTemplate(templateName);
     }
