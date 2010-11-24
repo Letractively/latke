@@ -32,7 +32,7 @@ import org.b3log.latke.util.Strings;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Oct 27, 2010
+ * @version 1.0.0.5, Nov 24, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -48,7 +48,9 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
     /**
      * Processes FreeMarker template with the specified request, data model,
-     * template and response.
+     * template and response. Then puts the page response contents into cache 
+     * with the key getting from request attribute specified by  
+     * {@linkplain org.b3log.latke.Keys#PAGE_CACHE_KEY}.
      *
      * @param request the specified request
      * @param response the specified response
