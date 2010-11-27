@@ -32,7 +32,7 @@ import org.b3log.latke.util.Strings;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Nov 24, 2010
+ * @version 1.0.0.6, Nov 27, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -51,6 +51,11 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * template and response. Then puts the page response contents into cache 
      * with the key getting from request attribute specified by  
      * {@linkplain org.b3log.latke.Keys#PAGE_CACHE_KEY}.
+     *
+     * <p>
+     *   <b>Note</b>: This method will write page content to the writer of the
+     *   specified response without flush/close it.
+     * </p>
      *
      * @param request the specified request
      * @param response the specified response
@@ -85,7 +90,6 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final String pageContent = stringWriter.toString();
 
             writer.write(pageContent);
-            writer.close();
 
             PageCaches.put(cachedPageKey, pageContent);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
