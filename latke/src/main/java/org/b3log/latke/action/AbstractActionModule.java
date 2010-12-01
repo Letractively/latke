@@ -66,10 +66,7 @@ public abstract class AbstractActionModule extends ServletModule {
     }
 
     /**
-     * Configures some servlets
-     * <a href="http://code.google.com/p/google-guice/">Guice</a>.
-     *
-     * Servlets:
+     * Configures some servlets:
      * <ul>
      *   <li>{@link JSONRPCServlet}</li>
      * </ul>
