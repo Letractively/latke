@@ -267,7 +267,8 @@ public final class LatkeFormatter extends Formatter {
                     record.getThrown().printStackTrace(printWriter);
                     printWriter.close();
                     stringBuilder.append(stringWriter.toString());
-                } catch (final Exception ex) {
+                } catch (final Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
 

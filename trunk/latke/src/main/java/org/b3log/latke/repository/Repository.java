@@ -16,6 +16,7 @@
 
 package org.b3log.latke.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
@@ -24,7 +25,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Oct 20, 2010
+ * @version 1.0.1.4, Dec 2, 2010
  */
 public interface Repository {
 
@@ -106,15 +107,44 @@ public interface Repository {
                    final int pageSize) throws RepositoryException;
 
     /**
-     * Gets json objects by the specified current page number, page size, sort
-     * parameters and excluded ids.
+     * Gets json objects by the specified sorts, current page number and page
+     * size.
      *
      * @param currentPageNum the specified current page number, MUST greater
      * then 0
      * @param pageSize the specified page size(count of a page contains objects),
      * MUST greater then 0
      * @param sorts the specified sort parameters
-     * @param excludedIds excluded ids
+     * @return for example,
+     * <pre>
+     * {
+     *     "pagination": {
+     *       "paginationPageCount": 88250
+     *     },
+     *     "rslts": [{
+     *         "oId": "...."
+     *     }, ....]
+     * }, if not found any objects by the specified current page number and
+     * page size, returns pagination info as the only attribute of the returned
+     * json object
+     * </pre>
+     * @throws RepositoryException repository exception
+     */
+    JSONObject get(final int currentPageNum,
+                   final int pageSize,
+                   final Map<String, SortDirection> sorts)
+            throws RepositoryException;
+
+    /**
+     * Gets json objects by the specified sorts, filters, current page number
+     * and page size.
+     *
+     * @param currentPageNum the specified current page number, MUST greater
+     * then 0
+     * @param pageSize the specified page size(count of a page contains objects),
+     * MUST greater then 0
+     * @param sorts the specified sort parameters
+     * @param filters the specified filters
      * @return for example,
      * <pre>
      * {
@@ -133,7 +163,7 @@ public interface Repository {
     JSONObject get(final int currentPageNum,
                    final int pageSize,
                    final Map<String, SortDirection> sorts,
-                   final String... excludedIds)
+                   final Collection<Filter> filters)
             throws RepositoryException;
 
     /**
