@@ -66,10 +66,14 @@ public abstract class AbstractActionModule extends ServletModule {
     }
 
     /**
-     * Configures some servlets:
-     * <ul>
-     *   <li>{@link JSONRPCServlet}</li>
-     * </ul>
+     * Configures some servlets and filters.
+     *
+     * <p>
+     * Servlets: 
+     *   <ul>
+     *     <li>{@link JSONRPCServlet}</li>
+     *   </ul>
+     * </p>
      */
     @Override
     protected void configureServlets() {
