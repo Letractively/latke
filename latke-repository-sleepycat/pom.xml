@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke repository implementation by Sleepycat.
-    Version: 1.0.1.0, Nov 27, 2010
+    Version: 1.0.1.1, Dec 2, 2010
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-repository-sleepycat</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
     <name>Latke Repository(Sleepycat)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke repository implemented by Sleepycat.</description>
@@ -19,7 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.3.0</org.b3log.latke.version>
+        <org.b3log.latke.version>0.3.1</org.b3log.latke.version>
         <json.version>2010-06-24</json.version>
         <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
         <!-- Maven Plugin -->
