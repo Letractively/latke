@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
+import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
@@ -58,7 +60,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Nov 18, 2010
+ * @version 1.0.1.5, Dec 2, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -240,13 +242,59 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public JSONObject get(final int currentPageNum,
                           final int pageSize,
-                          final Map<String, SortDirection> sorts,
-                          final String... excludedIds)
+                          final Map<String, SortDirection> sorts)
             throws RepositoryException {
         final Query query = new Query(getName());
-        for (final String id : excludedIds) {
-            query.addSort(Keys.OBJECT_ID, Query.SortDirection.DESCENDING);
-            query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.NOT_EQUAL, id);
+        for (Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
+            Query.SortDirection querySortDirection = null;
+            if (sort.getValue().equals(SortDirection.ASCENDING)) {
+                querySortDirection = Query.SortDirection.ASCENDING;
+            } else {
+                querySortDirection = Query.SortDirection.DESCENDING;
+            }
+
+            query.addSort(sort.getKey(), querySortDirection);
+        }
+
+        return get(query, currentPageNum, pageSize);
+    }
+
+    @Override
+    public JSONObject get(final int currentPageNum,
+                          final int pageSize,
+                          final Map<String, SortDirection> sorts,
+                          final Collection<Filter> filters)
+            throws RepositoryException {
+        final Query query = new Query(getName());
+        for (final Filter filter : filters) {
+            query.addSort(filter.getKey(), Query.SortDirection.DESCENDING);
+
+            Query.FilterOperator filterOperator = null;
+            switch (filter.getOperator()) {
+                case EQUAL:
+                    filterOperator = Query.FilterOperator.EQUAL;
+                    break;
+                case GREATER_THAN:
+                    filterOperator = Query.FilterOperator.GREATER_THAN;
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    filterOperator = Query.FilterOperator.GREATER_THAN_OR_EQUAL;
+                    break;
+                case LESS_THAN:
+                    filterOperator = Query.FilterOperator.LESS_THAN;
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    filterOperator = Query.FilterOperator.LESS_THAN_OR_EQUAL;
+                    break;
+                case NOT_EQUAL:
+                    filterOperator = Query.FilterOperator.NOT_EQUAL;
+                    break;
+                default:
+                    throw new RepositoryException("Unsupported filter operator["
+                                                  + filter.getOperator() + "]");
+            }
+
+            query.addFilter(filter.getKey(), filterOperator, filter.getValue());
         }
 
         for (Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
@@ -307,7 +355,7 @@ public abstract class AbstractGAERepository implements Repository {
     public long count() {
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = DATASTORE_SERVICE.prepare(query);
-        
+
         return preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
     }
 
@@ -420,8 +468,7 @@ public abstract class AbstractGAERepository implements Repository {
             ret.put(Pagination.PAGINATION, pagination);
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
-            final int offset = pageSize * (currentPageNum - 1)
-                               - query.getFilterPredicates().size(); // excluded ids
+            final int offset = pageSize * (currentPageNum - 1);
             final QueryResultList<Entity> queryResultList =
                     preparedQuery.asQueryResultList(
                     withOffset(offset).limit(pageSize));
