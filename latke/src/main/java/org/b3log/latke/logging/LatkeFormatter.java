@@ -34,6 +34,8 @@
  */
 package org.b3log.latke.logging;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -76,7 +78,7 @@ import java.util.logging.LogRecord;
  *
  * @author Samuel Halliday
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Nov 9, 2010
+ * @version 1.0.0.8, Dec 2, 2010
  */
 public final class LatkeFormatter extends Formatter {
 
@@ -255,7 +257,21 @@ public final class LatkeFormatter extends Formatter {
         arguments[INDEX_LINE_NUM] = Integer.toString(lineNumber);
 
         synchronized (messageFormat) {
-            return messageFormat.format(arguments);
+            final StringBuilder stringBuilder = new StringBuilder(
+                    messageFormat.format(arguments));
+            if (record.getThrown() != null) {
+                try {
+                    final StringWriter stringWriter = new StringWriter();
+                    final PrintWriter printWriter =
+                            new PrintWriter(stringWriter);
+                    record.getThrown().printStackTrace(printWriter);
+                    printWriter.close();
+                    stringBuilder.append(stringWriter.toString());
+                } catch (final Exception ex) {
+                }
+            }
+
+            return stringBuilder.toString();
         }
     }
 }
