@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.api.datastore.Blob;
@@ -60,7 +59,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, Dec 2, 2010
+ * @version 1.0.1.6, Dec 3, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -446,9 +445,7 @@ public abstract class AbstractGAERepository implements Repository {
      *     "rslts": [{
      *         "oId": "...."
      *     }, ....]
-     * }, if not found any objects by the specified current page number and
-     * page size, returns pagination info as the only attribute of the returned
-     * json object
+     * }
      * </pre>
      * @throws RepositoryException repository exception
      */
@@ -474,13 +471,12 @@ public abstract class AbstractGAERepository implements Repository {
                     withOffset(offset).limit(pageSize));
 
             final JSONArray results = new JSONArray();
+            ret.put(Keys.RESULTS, results);
             for (final Entity entity : queryResultList) {
                 final JSONObject jsonObject = entity2JSONObject(entity);
 
                 results.put(jsonObject);
             }
-
-            ret.put(Keys.RESULTS, results);
 
             LOGGER.log(Level.FINER,
                        "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
