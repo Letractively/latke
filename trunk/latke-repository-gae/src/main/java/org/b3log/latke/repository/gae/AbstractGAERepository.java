@@ -59,7 +59,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, Dec 3, 2010
+ * @version 1.0.1.7, Dec 3, 2010
  */
 public abstract class AbstractGAERepository implements Repository {
 
@@ -128,7 +128,7 @@ public abstract class AbstractGAERepository implements Repository {
 
             DATASTORE_SERVICE.put(entity);
         } catch (final Exception e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         }
 
@@ -185,7 +185,7 @@ public abstract class AbstractGAERepository implements Repository {
                        "Updated an object[oId={0}] in repository[name={1}]",
                        new Object[]{id, getName()});
         } catch (final Exception e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         }
     }
@@ -485,7 +485,7 @@ public abstract class AbstractGAERepository implements Repository {
                                     pageSize,
                                     getName()});
         } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         }
 
