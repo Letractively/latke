@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ import org.json.JSONObject;
  * Do nothing action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Oct 18, 2010
+ * @version 1.0.0.3, Dec 3, 2010
  */
 public class DoNothingAction extends AbstractAction {
 
@@ -66,7 +67,7 @@ public class DoNothingAction extends AbstractAction {
             final Map<String, String> langs = langPropsService.getAll(locale);
             ret.putAll(langs);
         } catch (final ServiceException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException("Language model fill error");
         }
 

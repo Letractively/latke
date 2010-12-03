@@ -42,7 +42,7 @@ import org.jabsorb.JSONRPCBridge;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.5, Oct 27, 2010
+ * @version 1.0.2.6, Dec 3, 2010
  */
 public abstract class AbstractServletListener
         extends GuiceServletContextListener
@@ -213,7 +213,7 @@ public abstract class AbstractServletListener
         try {
             jsonRpcBridge.registerSerializer(new FwkStatusCodesSerializer());
         } catch (final Exception e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
