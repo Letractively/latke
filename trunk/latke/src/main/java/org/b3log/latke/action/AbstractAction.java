@@ -41,7 +41,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.6, Oct 22, 2010
+ * @version 1.0.2.7, Dec 3, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -128,7 +128,7 @@ public abstract class AbstractAction extends HttpServlet {
         try {
             init(request, response);
         } catch (final IOException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e);
         }
 
@@ -153,7 +153,7 @@ public abstract class AbstractAction extends HttpServlet {
         try {
             init(request, response);
         } catch (final IOException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e);
         }
 
@@ -324,13 +324,13 @@ public abstract class AbstractAction extends HttpServlet {
             result = doAjaxAction(data, request, response);
             afterDoAjaxAction(request, response, result);
         } catch (final IOException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e);
         } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e);
         } catch (final ActionException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e);
         }
     }
@@ -361,7 +361,7 @@ public abstract class AbstractAction extends HttpServlet {
             LOGGER.warning(e.getMessage());
             return null;
         } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         }
     }
@@ -395,10 +395,10 @@ public abstract class AbstractAction extends HttpServlet {
 
             template.process(dataModel, writer);
         } catch (final TemplateException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         } catch (final IOException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         }
     }

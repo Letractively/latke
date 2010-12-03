@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * Loads the services for JavaScript client.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Aug 3, 2010
+ * @version 1.0.1.1, Dec 3, 2010
  */
 public final class JSONRPCServiceClassLoader {
 
@@ -131,7 +131,7 @@ public final class JSONRPCServiceClassLoader {
                 ret.add(clazz);
             }
         } catch (final ClassNotFoundException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
 
         return ret;

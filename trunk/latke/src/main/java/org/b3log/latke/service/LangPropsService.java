@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Oct 20, 2010
+ * @version 1.0.1.1, Dec 3, 2010
  */
 public final class LangPropsService {
 
@@ -154,7 +154,7 @@ public final class LangPropsService {
 
             ret.put(Keys.STATUS_CODE, FwkStatusCodes.CHANGE_LOCALE_SUCC);
         } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
             throw new ServiceException(e);
         }
@@ -181,7 +181,7 @@ public final class LangPropsService {
             final RuntimeException e =
                     new RuntimeException("i18n resource[baseName="
                                          + baseName + "] not found");
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
             throw e;
         }

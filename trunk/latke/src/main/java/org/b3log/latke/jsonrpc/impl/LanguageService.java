@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * Language service for JavaScript client.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Aug 15, 2010
+ * @version 1.0.0.8, Dec 3, 2010
  */
 public final class LanguageService extends AbstractJSONRpcService {
 
@@ -69,7 +69,7 @@ public final class LanguageService extends AbstractJSONRpcService {
         try {
             ret.put(Keys.LOCALE, locale);
         } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
             throw new ActionException(e);
         }
@@ -120,10 +120,10 @@ public final class LanguageService extends AbstractJSONRpcService {
 
             return ret;
         } catch (final ServiceException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         } catch (final JSONException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         }
     }

@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Sep 11, 2010
+ * @version 1.0.0.6, Dec 3, 2010
  */
 public final class Templates {
 
@@ -52,7 +52,7 @@ public final class Templates {
 
             CONFIGURATION.setDirectoryForTemplateLoading(new File(webRootPath));
         } catch (final IOException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

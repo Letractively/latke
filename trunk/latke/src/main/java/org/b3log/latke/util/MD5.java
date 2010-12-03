@@ -18,13 +18,14 @@ package org.b3log.latke.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * MD5 hash.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, May 4, 2010
+ * @version 1.0.0.4, Dec 3, 2010
  */
 public final class MD5 {
 
@@ -55,7 +56,7 @@ public final class MD5 {
         try {
             messageDigest = MessageDigest.getInstance("MD5");
         } catch (final NoSuchAlgorithmException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
