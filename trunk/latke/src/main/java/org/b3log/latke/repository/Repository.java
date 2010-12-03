@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Dec 2, 2010
+ * @version 1.0.1.5, Dec 3, 2010
  */
 public interface Repository {
 
@@ -97,9 +97,7 @@ public interface Repository {
      *     "rslts": [{
      *         "oId": "...."
      *     }, ....]
-     * }, if not found any objects by the specified current page number and
-     * page size, returns pagination info as the only attribute of the returned
-     * json object
+     * }
      * </pre>
      * @throws RepositoryException repository exception
      */
@@ -124,9 +122,7 @@ public interface Repository {
      *     "rslts": [{
      *         "oId": "...."
      *     }, ....]
-     * }, if not found any objects by the specified current page number and
-     * page size, returns pagination info as the only attribute of the returned
-     * json object
+     * }
      * </pre>
      * @throws RepositoryException repository exception
      */
@@ -154,9 +150,7 @@ public interface Repository {
      *     "rslts": [{
      *         "oId": "...."
      *     }, ....]
-     * }, if not found any objects by the specified current page number and
-     * page size, returns pagination info as the only attribute of the returned
-     * json object
+     * }
      * </pre>
      * @throws RepositoryException repository exception
      */
