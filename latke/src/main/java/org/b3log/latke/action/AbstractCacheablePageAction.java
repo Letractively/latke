@@ -32,7 +32,7 @@ import org.b3log.latke.util.Strings;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Nov 27, 2010
+ * @version 1.0.0.7, Dec 3, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -95,7 +95,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                        cachedPageKey);
         } catch (final Exception e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         }
     }
