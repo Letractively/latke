@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.3</version>
+    <version>0.3.4--SNAPSHOT</version>
     <name>Latke</name>
     <url>http://latke.googlecode.com</url>
     <description>Yet another simple web framework based on Java servlet technology.</description>
@@ -100,6 +100,14 @@
             <name>Maven Repository at Google</name>
             <url>dav:https://m2-repos.googlecode.com/svn/release</url>
         </repository>
+
+        <snapshotRepository>
+            <id>m2-snapshot</id>
+            <name>Maven Repository at Google</name>
+            <url>dav:https://m2-repos.googlecode.com/svn/snapshot</url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+
     </distributionManagement>
 
     <dependencyManagement>
@@ -409,19 +417,4 @@
         </repository>
 
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>m2-release</id>
-            <name>88250 at Google Maven repository of releases</name>
-            <url>http://m2-repos.googlecode.com/svn/release</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-
-    </pluginRepositories>
 </project>

@@ -26,6 +26,7 @@ import freemarker.template.TemplateException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -41,7 +42,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.7, Dec 3, 2010
+ * @version 1.0.2.8, Dec 4, 2010
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -185,7 +186,17 @@ public abstract class AbstractAction extends HttpServlet {
     private String toJSONString(final HttpServletRequest request)
             throws IOException, JSONException {
         final StringBuilder sb = new StringBuilder();
-        final BufferedReader reader = request.getReader();
+        BufferedReader reader = null;
+        try {
+            reader = request.getReader();
+        } catch (final IllegalStateException e) {
+            reader = new BufferedReader(new InputStreamReader(
+                    request.getInputStream()));
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+            return "{}";
+        }
 
         String line = reader.readLine();
         while (null != line) {
