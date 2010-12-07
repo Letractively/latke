@@ -28,6 +28,14 @@ import org.b3log.latke.cache.CacheFactory;
 /**
  * Page cache.
  *
+ * <p>
+ *   <b>Note</b>: The method <a href="http://code.google.com/appengine/docs/java/javadoc/
+ *  com/google/appengine/api/memcache/MemcacheService.html#clearAll%28%29">
+ *   clearAll</a> of <a href="http://code.google.com/appengine/docs/java/javadoc/
+ *  com/google/appengine/api/memcache/MemcacheService.html">MemcacheService</a>
+ *   does not respect namespaces - this flushes the cache for every namespace.
+ * </p>
+ *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.1, Nov 19, 2010
  */
