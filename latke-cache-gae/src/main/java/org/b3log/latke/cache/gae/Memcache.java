@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.cache.gae;
 
+import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.memcache.Stats;
 import java.util.Collection;
+import java.util.Date;
 import org.b3log.latke.cache.Cache;
 
 /**
- * Google app engine memcache service.
+ * Google App Engine memcache service.
  *
  * @param <K> the key of an object
  * @param <V> the type of objects
@@ -40,6 +41,11 @@ public final class Memcache<K, V> implements Cache<K, V> {
      * Name of this cache.
      */
     private String name;
+    /**
+     * Default expiration(epoch: {@value Long#MAX_VALUE}).
+     */
+    private static final Expiration DEFAULT_EXPIRATION =
+            Expiration.onDate(new Date(Long.MAX_VALUE));
 
     /**
      * Constructs a memcache with the specified name.
@@ -61,9 +67,16 @@ public final class Memcache<K, V> implements Cache<K, V> {
         return name;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The {@link Exception} using default {@linkplain #DEFAULT_EXPIRATION}.
+     * </p>
+     */
     @Override
     public void put(final K key, final V value) {
-        memcacheService.put(key, value);
+        memcacheService.put(key, value, DEFAULT_EXPIRATION);
     }
 
     @Override
