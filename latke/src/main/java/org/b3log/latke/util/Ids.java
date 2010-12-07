@@ -45,6 +45,10 @@ public final class Ids {
     /**
      * Gets current date time string with the specified date formatter.
      *
+     * <p>
+     *   <b>Note</b>: This method is not safe in cluster environment.
+     * </p>
+     *
      * @return a time millis string
      */
     public static String genTimeMillisId() {
