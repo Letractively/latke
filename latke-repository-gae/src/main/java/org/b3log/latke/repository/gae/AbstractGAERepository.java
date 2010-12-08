@@ -63,7 +63,8 @@ import org.json.JSONObject;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.1.9, Dec 8, 2010
  */
-// XXX: ID generation in cluster issue
+// XXX: (1) ID generation in cluster issue
+//      (2) All entities store in the same entity group? 
 public abstract class AbstractGAERepository implements Repository {
 
     /**
