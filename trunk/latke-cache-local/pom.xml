@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-cache-local</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.4--SNAPSHOT</version>
+    <version>0.3.5</version>
     <name>Latke Cache(Local)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke cache implementation for local.</description>
@@ -19,7 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.3.4--SNAPSHOT</org.b3log.latke.version>
+        <org.b3log.latke.version>0.3.5</org.b3log.latke.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
