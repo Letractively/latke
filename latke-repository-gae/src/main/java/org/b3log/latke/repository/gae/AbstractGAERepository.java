@@ -41,6 +41,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Keys;
+import org.b3log.latke.Latkes;
+import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.cache.Cache;
+import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.Repository;
@@ -91,6 +95,37 @@ public abstract class AbstractGAERepository implements Repository {
      */
     private final Key parent = KeyFactory.createKey("parentKind",
                                                     "parentKeyName");
+    /**
+     * Repository cache.
+     * <p>
+     * &lt;oId, JSONObject&gt;
+     * </p>
+     */
+    private static final Cache<String, Object> CACHE;
+    /**
+     * Repository cache name.
+     */
+    public static final String REPOSITORY_CACHE_NAME = "repositoryCache";
+    /**
+     * Is cache enabled?
+     */
+    private boolean isCacheEnabled = true;
+
+    /**
+     * Initializes cache.
+     */
+    static {
+        final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
+        if (!runsOnEnv.equals(RunsOnEnv.GAE)) {
+            throw new RuntimeException(
+                    "GAE repository can only runs on Google App Engine, please "
+                    + "check your configuration and make sure "
+                    + "Latkes.setRunsOnEnv(RunsOnEnv.GAE) was invoked before "
+                    + "using GAE repository.");
+        }
+
+        CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
+    }
 
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
@@ -115,6 +150,13 @@ public abstract class AbstractGAERepository implements Repository {
 
         LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
                    new Object[]{ret, getName()});
+
+        if (isCacheEnabled) {
+            CACHE.put(ret, jsonObject);
+            LOGGER.log(Level.FINER,
+                       "Added an object[oId={0}] in repository cache[{1}]",
+                       new Object[]{ret, getName()});
+        }
 
         return ret;
     }
@@ -151,9 +193,6 @@ public abstract class AbstractGAERepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
         try {
-            LOGGER.log(Level.FINER,
-                       "Updating an object[oId={0}] in repository[name={1}]",
-                       new Object[]{id, getName()});
             jsonObject.put(Keys.OBJECT_ID, id);
 
             final String kind = getName();
@@ -161,13 +200,20 @@ public abstract class AbstractGAERepository implements Repository {
             setProperties(entity, jsonObject);
 
             datastoreService.put(entity);
-
-            LOGGER.log(Level.FINER,
-                       "Updated an object[oId={0}] in repository[name={1}]",
-                       new Object[]{id, getName()});
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
+        }
+
+        LOGGER.log(Level.FINER,
+                   "Updated an object[oId={0}] in repository[name={1}]",
+                   new Object[]{id, getName()});
+
+        if (isCacheEnabled) {
+            CACHE.put(id, jsonObject);
+            LOGGER.log(Level.FINER,
+                       "Updated an object[oId={0}] in repository cache[{1}]",
+                       new Object[]{id, getName()});
         }
     }
 
@@ -178,26 +224,49 @@ public abstract class AbstractGAERepository implements Repository {
         LOGGER.log(Level.FINER,
                    "Removed an object[oId={0}] from repository[name={1}]",
                    new Object[]{id, getName()});
+
+        if (isCacheEnabled) {
+            CACHE.remove(id);
+            LOGGER.log(Level.FINER,
+                       "Removed an object[oId={0}] in repository cache[{1}]",
+                       new Object[]{id, getName()});
+        }
     }
 
     @Override
     public JSONObject get(final String id) throws RepositoryException {
         JSONObject ret = null;
 
-        final Key key = KeyFactory.createKey(parent, getName(), id);
+        if (isCacheEnabled) {
+            ret = (JSONObject) CACHE.get(id);
+            if (null != ret) {
+                LOGGER.log(Level.FINER,
+                           "Got an object[oId={0}] from repository cache[name={1}]",
+                           new Object[]{id, getName()});
+                return ret;
+            }
+        }
 
+        final Key key = KeyFactory.createKey(parent, getName(), id);
         try {
             final Entity entity = datastoreService.get(key);
             ret = entity2JSONObject(entity);
 
             LOGGER.log(Level.FINER,
                        "Got an object[oId={0}] from repository[name={1}]",
-                       new Object[]{id,
-                                    getName()});
+                       new Object[]{id, getName()});
+
+            if (isCacheEnabled) {
+                CACHE.put(id, ret);
+                LOGGER.log(Level.FINER,
+                           "Added an object[oId={0}] in repository cache[{1}]",
+                           new Object[]{ret, getName()});
+            }
         } catch (final EntityNotFoundException e) {
             LOGGER.log(Level.WARNING,
                        "Not found an object[oId={0}] in repository[name={1}]",
                        new Object[]{id, getName()});
+            return null;
         }
 
         return ret;
@@ -205,6 +274,12 @@ public abstract class AbstractGAERepository implements Repository {
 
     @Override
     public boolean has(final String id) throws RepositoryException {
+        if (isCacheEnabled) {
+            if (null != CACHE.get(id)) {
+                return true;
+            }
+        }
+
         final Query query = new Query(getName());
         query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.EQUAL, id);
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
