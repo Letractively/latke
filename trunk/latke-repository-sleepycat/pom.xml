@@ -19,7 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.3.3</org.b3log.latke.version>
+        <org.b3log.latke.version>0.3.4--SNAPSHOT</org.b3log.latke.version>
         <json.version>2010-06-24</json.version>
         <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
         <!-- Maven Plugin -->
