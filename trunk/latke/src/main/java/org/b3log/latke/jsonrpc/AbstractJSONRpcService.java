@@ -16,16 +16,11 @@
 
 package org.b3log.latke.jsonrpc;
 
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.b3log.latke.util.Sessions;
-
 /**
  * Abstract json RPC service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Sep 2, 2010
+ * @version 1.0.1.0, Dec 7, 2010
  */
 public abstract class AbstractJSONRpcService {
 
@@ -53,28 +48,5 @@ public abstract class AbstractJSONRpcService {
         final char firstChar = simpleName.charAt(0);
 
         return Character.toLowerCase(firstChar) + simpleName.substring(1);
-    }
-
-    /**
-     * Checks the specified request authorized or not(Http Status Code:
-     * 401).
-     * <p>
-     * If the specified request is unauthorized, sends an error with status code
-     * 401.
-     * </p>
-     *
-     * @param request the specified http servlet request
-     * @param response the specified http servlet response
-     * @throws IOException io exception
-     * @see Sessions#currentUserName(javax.servlet.http.HttpServletRequest)
-     */
-    public void checkAuthorized(final HttpServletRequest request,
-                                final HttpServletResponse response)
-            throws IOException {
-        final String currentUserName = Sessions.currentUserName(request);
-
-        if (null == currentUserName) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        }
     }
 }
