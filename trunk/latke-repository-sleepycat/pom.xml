@@ -20,7 +20,6 @@
     <!-- Version -->
     <properties>
         <org.b3log.latke.version>0.3.4--SNAPSHOT</org.b3log.latke.version>
-        <json.version>2010-06-24</json.version>
         <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
@@ -120,12 +119,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>${json.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.sleepycat</groupId>
                 <artifactId>je</artifactId>
                 <version>${com.sleepycat.je.version}</version>
@@ -146,11 +139,6 @@
             <artifactId>testng</artifactId>
             <classifier>jdk15</classifier>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
         </dependency>
 
         <dependency>
