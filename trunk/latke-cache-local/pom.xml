@@ -20,7 +20,6 @@
     <!-- Version -->
     <properties>
         <org.b3log.latke.version>0.3.4--SNAPSHOT</org.b3log.latke.version>
-        <json.version>2010-06-24</json.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
@@ -119,12 +118,6 @@
                 <classifier>jdk15</classifier>
             </dependency>
 
-            <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>${json.version}</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -140,11 +133,6 @@
             <artifactId>testng</artifactId>
             <classifier>jdk15</classifier>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
         </dependency>
 
     </dependencies>
