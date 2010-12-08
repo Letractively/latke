@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-repository-gae</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.4--SNAPSHOT</version>
+    <version>0.3.5</version>
     <name>Latke Repository(GAE)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke repository implementation for GAE.</description>
@@ -19,7 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.3.4--SNAPSHOT</org.b3log.latke.version>
+        <org.b3log.latke.version>0.3.5</org.b3log.latke.version>
         <gae.version>1.4.0</gae.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
