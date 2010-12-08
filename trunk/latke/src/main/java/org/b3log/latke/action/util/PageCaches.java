@@ -59,9 +59,9 @@ public final class PageCaches {
      */
     private static final int MAX_CACHEABLE_PAGE_CNT = 1024;
     /**
-     * Page.
+     * Page cache name.
      */
-    public static final String PAGE = "page";
+    public static final String PAGE_CACHE_NAME = "page";
     /**
      * Key of page keys in cache.
      */
@@ -71,7 +71,7 @@ public final class PageCaches {
      * Initializes cache.
      */
     static {
-        CACHE = CacheFactory.getCache(PAGE);
+        CACHE = CacheFactory.getCache(PAGE_CACHE_NAME);
         final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
         if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
             CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
