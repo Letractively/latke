@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.cache;
 
 import java.lang.reflect.Constructor;
@@ -78,7 +77,7 @@ public final class CacheFactory {
                 CACHES.put(cacheName, ret);
             }
         } catch (final Exception e) {
-            throw new RuntimeException("Can not get cache: " + e.getMessage());
+            throw new RuntimeException("Can not get cache: " + e.getMessage(), e);
         }
 
         return ret;
