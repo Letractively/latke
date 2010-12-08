@@ -185,4 +185,27 @@ public interface Repository {
      * @return the name of this repository
      */
     String getName();
+
+    /**
+     * Begins a transaction against the repository.
+     *
+     * Callers are responsible for explicitly calling {@linkplain Transaction#commit()}
+     * or {@linkplain Transaction#rollback()} when they no longer need the
+     * {@code Transaction}. The {@code Transaction} returned by this call will
+     * be considered <i>the current transaction</i> until one of the
+     * following happens:
+     * <ol>
+     *   <li>{@linkplain #beginTransaction()} is invoked from the same thread</li>
+     *   <li>{@linkplain Transaction#commit()} is invoked on the
+     *        {@code Transaction} returned by this method</li>
+     *   Whether or not the commit returns successfully, the {@code Transaction}
+     *   will no longer be <i>the current transaction</i>.
+     *   <li>{@linkplain Transaction#rollback()} is invoked on the
+     *   {@code Transaction} returned by this method</li>
+     *    Whether or not the rollback returns successfully, the {@code Transaction}
+     *    will no longer be <i>the current transaction</i>.
+     * </ol>
+     * @return the transaction that was started.
+     */
+    Transaction beginTransaction();
 }
