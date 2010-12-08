@@ -44,6 +44,7 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.Repository;
+import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
@@ -60,7 +61,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.8, Dec 8, 2010
+ * @version 1.0.1.9, Dec 8, 2010
  */
 // XXX: ID generation in cluster issue
 public abstract class AbstractGAERepository implements Repository {
@@ -469,5 +470,22 @@ public abstract class AbstractGAERepository implements Repository {
         }
 
         return ret;
+    }
+
+    @Override
+    public Transaction beginTransaction() {
+        final com.google.appengine.api.datastore.Transaction tx =
+                datastoreService.beginTransaction();
+
+        return new GAETransaction(tx);
+    }
+
+    /**
+     * Gets the underlying Google App Engine datastore service.
+     *
+     * @return datastore service
+     */
+    protected final DatastoreService getDatastoreService() {
+        return datastoreService;
     }
 }
