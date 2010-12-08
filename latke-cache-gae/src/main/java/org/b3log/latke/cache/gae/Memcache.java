@@ -63,10 +63,6 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     /**
      * {@inheritDoc}
-     *
-     * <p>
-     * The {@link Exception} using default {@linkplain #DEFAULT_EXPIRATION}.
-     * </p>
      */
     @Override
     public void put(final K key, final V value) {
