@@ -65,10 +65,11 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.9, Dec 8, 2010
+ * @version 1.0.2.1, Dec 11, 2010
  */
 // XXX: (1) ID generation in cluster issue
 //      (2) All entities store in the same entity group? 
+// TODO: pagination query cache
 public abstract class AbstractGAERepository implements Repository {
 
     /**
@@ -286,6 +287,23 @@ public abstract class AbstractGAERepository implements Repository {
 
         return 0 == preparedQuery.countEntities(
                 FetchOptions.Builder.withDefaults()) ? false : true;
+    }
+
+    @Override
+    public JSONObject get(final org.b3log.latke.repository.Query query)
+            throws RepositoryException {
+        final int currentPageNum = query.getCurrentPageNum();
+        final Collection<Filter> filters = query.getFilters();
+        final int pageSize = query.getPageSize();
+        final Map<String, SortDirection> sorts = query.getSorts();
+
+        if (org.b3log.latke.repository.Query.DEFAULT_CUR_PAGE_NUM
+            != currentPageNum
+            && org.b3log.latke.repository.Query.DEFAULT_PAGE_SIZE != pageSize) {
+            return get(currentPageNum, pageSize, sorts, filters);
+        } else {
+            return get(1, Integer.MAX_VALUE, sorts, filters);
+        }
     }
 
     @Override
