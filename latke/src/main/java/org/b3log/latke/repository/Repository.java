@@ -77,6 +77,30 @@ public interface Repository {
     boolean has(final String id) throws RepositoryException;
 
     /**
+     * Gets json objects by the specified query.
+     *
+     * <p>
+     *   <b>Note</b>:the order of elements of the returned result list is
+     *   decided by datastore implementation.
+     * </p>
+     *
+     * @param query the specified query
+     * @return for example,
+     * <pre>
+     * {
+     *     "pagination": {
+     *       "paginationPageCount": 88250
+     *     },
+     *     "rslts": [{
+     *         "oId": "...."
+     *     }, ....]
+     * }
+     * </pre>
+     * @throws RepositoryException repository exception
+     */
+    JSONObject get(final Query query) throws RepositoryException;
+
+    /**
      * Gets json objects by the specified current page number and page size.
      *
      * <p>
