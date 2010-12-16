@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.servlet.filter;
 
 import java.util.logging.Level;
@@ -68,7 +67,8 @@ public final class AuthenticationFilter implements Filter {
                 (HttpServletResponse) response;
 
         if (!hasLoggedIn(httpServletRequest)) {
-            LOGGER.log(Level.INFO, "Authenticate fail for request[{0}]", request);
+            LOGGER.log(Level.WARNING,
+                       "Authenticate fail for request[{0}]", request);
 
             httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
