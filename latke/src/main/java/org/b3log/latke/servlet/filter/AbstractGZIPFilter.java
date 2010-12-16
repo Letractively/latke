@@ -19,6 +19,7 @@ package org.b3log.latke.servlet.filter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 import javax.servlet.Filter;
@@ -33,18 +34,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * HTTP response GZIP filter.
+ * Abstract HTTP response GZIP filter.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Dec 16, 2010
+ * @version 1.0.0.1, Dec 16, 2010
  */
-public class GZIPFilter implements Filter {
+public abstract class AbstractGZIPFilter implements Filter {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(GZIPFilter.class.getName());
+            Logger.getLogger(AbstractGZIPFilter.class.getName());
 
     @Override
     public void init(final FilterConfig cfg) throws ServletException {
@@ -66,6 +67,14 @@ public class GZIPFilter implements Filter {
                                                          ServletException {
         final HttpServletRequest httpServletRequest =
                 (HttpServletRequest) request;
+        final String requestURI = httpServletRequest.getRequestURI();
+        if (shouldSkip(requestURI)) {
+            LOGGER.log(Level.FINEST, "Skip GZIP filter request[URI={0}]",
+                       requestURI);
+            chain.doFilter(request, response);
+
+            return;
+        }
 
         final String acceptEncoding =
                 httpServletRequest.getHeader("Accept-Encoding");
@@ -89,6 +98,19 @@ public class GZIPFilter implements Filter {
         chain.doFilter(request,
                        new GZIPServletResponseWrapper(httpServletResponse));
     }
+
+    /**
+     * Determines whether the specified request URI should be skipped filter.
+     *
+     * <p>
+     *   <b>Note</b>: This method SHOULD be invoked for all filters with pattern
+     *   "/*".
+     * </p>
+     *
+     * @param requestURI the specified request URI
+     * @return {@code true} if should be skipped, {@code false} otherwise
+     */
+    public abstract boolean shouldSkip(final String requestURI);
 
     @Override
     public void destroy() {
