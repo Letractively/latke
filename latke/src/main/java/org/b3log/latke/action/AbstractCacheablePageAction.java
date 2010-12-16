@@ -88,7 +88,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
                        cachedPageKey);
 
             final String pageContent = stringWriter.toString();
-
+            
             writer.write(pageContent);
 
             PageCaches.put(cachedPageKey, pageContent);
