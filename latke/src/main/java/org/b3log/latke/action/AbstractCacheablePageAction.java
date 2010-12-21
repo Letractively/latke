@@ -77,6 +77,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             String cachedPageKey =
                     (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
             if (Strings.isEmptyOrNull(cachedPageKey)) {
+                // XXX: cachedPageKey += replica Id
                 cachedPageKey = request.getRequestURI();
                 final String queryString = request.getQueryString();
                 if (!Strings.isEmptyOrNull(queryString)) {
