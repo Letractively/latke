@@ -30,6 +30,7 @@ import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.api.utils.SystemProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -111,6 +112,11 @@ public abstract class AbstractGAERepository implements Repository {
      * Is cache enabled?
      */
     private boolean isCacheEnabled = true;
+    /**
+     * Instance replica id.
+     */
+    private static final String INSTANCE_ID = SystemProperty.instanceReplicaId.
+            get() + "_";
 
     /**
      * Initializes cache.
@@ -153,10 +159,11 @@ public abstract class AbstractGAERepository implements Repository {
                    new Object[]{ret, getName()});
 
         if (isCacheEnabled) {
-            CACHE.put(ret, jsonObject);
+            final String key = INSTANCE_ID + ret;
+            CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
-                       "Added an object[oId={0}] in repository cache[{1}]",
-                       new Object[]{ret, getName()});
+                       "Added an object[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{key, getName()});
         }
 
         return ret;
@@ -211,10 +218,11 @@ public abstract class AbstractGAERepository implements Repository {
                    new Object[]{id, getName()});
 
         if (isCacheEnabled) {
-            CACHE.put(id, jsonObject);
+            final String key = INSTANCE_ID + id;
+            CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
-                       "Updated an object[oId={0}] in repository cache[{1}]",
-                       new Object[]{id, getName()});
+                       "Updated an object[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{key, getName()});
         }
     }
 
@@ -227,10 +235,11 @@ public abstract class AbstractGAERepository implements Repository {
                    new Object[]{id, getName()});
 
         if (isCacheEnabled) {
-            CACHE.remove(id);
+            final String cacheKey = INSTANCE_ID + id;
+            CACHE.remove(cacheKey);
             LOGGER.log(Level.FINER,
-                       "Removed an object[oId={0}] in repository cache[{1}]",
-                       new Object[]{id, getName()});
+                       "Removed an object[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{cacheKey, getName()});
         }
     }
 
@@ -239,11 +248,12 @@ public abstract class AbstractGAERepository implements Repository {
         JSONObject ret = null;
 
         if (isCacheEnabled) {
-            ret = (JSONObject) CACHE.get(id);
+            final String cacheKey = INSTANCE_ID + id;
+            ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
                 LOGGER.log(Level.FINER,
-                           "Got an object[oId={0}] from repository cache[name={1}]",
-                           new Object[]{id, getName()});
+                           "Got an object[cacheKey={0}] from repository cache[name={1}]",
+                           new Object[]{cacheKey, getName()});
                 return ret;
             }
         }
@@ -258,10 +268,11 @@ public abstract class AbstractGAERepository implements Repository {
                        new Object[]{id, getName()});
 
             if (isCacheEnabled) {
-                CACHE.put(id, ret);
+                final String cacheKey = INSTANCE_ID + id;
+                CACHE.put(cacheKey, ret);
                 LOGGER.log(Level.FINER,
-                           "Added an object[oId={0}] in repository cache[{1}]",
-                           new Object[]{ret, getName()});
+                           "Added an object[cacheKey={0}] in repository cache[{1}]",
+                           new Object[]{cacheKey, getName()});
             }
         } catch (final EntityNotFoundException e) {
             LOGGER.log(Level.WARNING,
