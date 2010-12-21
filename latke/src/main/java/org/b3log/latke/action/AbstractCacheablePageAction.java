@@ -26,13 +26,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.util.PageCaches;
-import org.b3log.latke.util.Strings;
 
 /**
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Dec 3, 2010
+ * @version 1.0.0.8, Dec 22, 2010
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -48,8 +47,8 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
     /**
      * Processes FreeMarker template with the specified request, data model,
-     * template and response. Then puts the page response contents into cache 
-     * with the key getting from request attribute specified by  
+     * template and response. Then puts the page response contents into cache
+     * with the key getting from request attribute specified by
      * {@linkplain org.b3log.latke.Keys#PAGE_CACHE_KEY}.
      *
      * <p>
@@ -70,26 +69,25 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
         try {
+            final PrintWriter writer = response.getWriter();
+            if (response.isCommitted()) { // response has been sent redirect
+                writer.flush();
+
+                return;
+            }
+
             final StringWriter stringWriter = new StringWriter();
             template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
-            final PrintWriter writer = response.getWriter();
-            String cachedPageKey =
+
+            final String cachedPageKey =
                     (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
-            if (Strings.isEmptyOrNull(cachedPageKey)) {
-                // XXX: cachedPageKey += replica Id
-                cachedPageKey = request.getRequestURI();
-                final String queryString = request.getQueryString();
-                if (!Strings.isEmptyOrNull(queryString)) {
-                    cachedPageKey += "?" + queryString;
-                }
-            }
 
             LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
                        cachedPageKey);
 
             final String pageContent = stringWriter.toString();
-            
+
             writer.write(pageContent);
 
             PageCaches.put(cachedPageKey, pageContent);

@@ -398,7 +398,7 @@ public abstract class AbstractAction extends HttpServlet {
             throws ActionException {
         try {
             final PrintWriter writer = response.getWriter();
-            if (response.isCommitted()) {
+            if (response.isCommitted()) { // response has been sent redirect
                 writer.flush();
 
                 return;
