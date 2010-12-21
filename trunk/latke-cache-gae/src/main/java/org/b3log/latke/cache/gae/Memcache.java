@@ -23,7 +23,8 @@ import java.util.Collection;
 import org.b3log.latke.cache.Cache;
 
 /**
- * Google App Engine memcache service.
+ * Simple warper of <a href="http://code.google.com/appengine/docs/java/memcache/">
+ * Google App Engine memcache service</a>.
  *
  * @param <K> the key of an object
  * @param <V> the type of objects
