@@ -29,7 +29,7 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Dec 8, 2010
+ * @version 1.0.0.4, Dec 22, 2010
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -140,7 +140,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
     public long getHitBytes() {
         final Stats statistics = memcacheService.getStatistics();
         if (null != statistics) {
-            return statistics.getHitCount();
+            return statistics.getBytesReturnedForHits();
         }
 
         return -1;
