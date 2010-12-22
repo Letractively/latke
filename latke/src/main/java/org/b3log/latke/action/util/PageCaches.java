@@ -16,8 +16,6 @@
 
 package org.b3log.latke.action.util;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
@@ -37,9 +35,8 @@ import org.b3log.latke.cache.CacheFactory;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Nov 19, 2010
+ * @version 1.0.0.2, Dec 22, 2010
  */
-// XXX:  Why GAE memcache can not clear all by namespace?
 public final class PageCaches {
 
     /**
@@ -62,13 +59,9 @@ public final class PageCaches {
      * Page cache name.
      */
     public static final String PAGE_CACHE_NAME = "page";
-    /**
-     * Key of page keys in cache.
-     */
-    public static final String PAGE_KEYS = "pageKeys";
 
     /**
-     * Initializes cache.
+     * Initializes the cache.
      */
     static {
         CACHE = CacheFactory.getCache(PAGE_CACHE_NAME);
@@ -78,8 +71,6 @@ public final class PageCaches {
             LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
                        MAX_CACHEABLE_PAGE_CNT);
         }
-
-        CACHE.put(PAGE_KEYS, new HashSet<String>());
     }
 
     /**
@@ -98,11 +89,6 @@ public final class PageCaches {
      * @return page content
      */
     public static String get(final String pageKey) {
-        if (PAGE_KEYS.equals(pageKey)) {
-            throw new IllegalArgumentException(
-                    "key of a page put into this cache MUST differ with \"pageKeys\"");
-        }
-
         return (String) CACHE.get(pageKey);
     }
 
@@ -113,16 +99,6 @@ public final class PageCaches {
      * @param pageContent content of the page to put
      */
     public static void put(final String pageKey, final String pageContent) {
-        if (PAGE_KEYS.equals(pageKey)) {
-            throw new IllegalArgumentException(
-                    "key of a page put into this cache MUST differ with \"pageKeys\"");
-        }
-
-        @SuppressWarnings("unchecked")
-        final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
-        pageKeys.add(pageKey);
-        CACHE.put(PAGE_KEYS, pageKeys);
-
         CACHE.put(pageKey, pageContent);
     }
 
@@ -132,32 +108,18 @@ public final class PageCaches {
      * @param pageKey the given page key
      */
     public static void remove(final String pageKey) {
-        if (PAGE_KEYS.equals(pageKey)) {
-            throw new IllegalArgumentException(
-                    "key of a page put into this cache MUST differ with \"pageKeys\"");
-        }
-
-        @SuppressWarnings("unchecked")
-        final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
-        pageKeys.remove(pageKey);
-        CACHE.put(PAGE_KEYS, pageKeys);
-
         CACHE.remove(pageKey);
     }
 
     /**
      * Removes all cached pages.
+     *
+     * <p>
+     *   <b>Note</b>: This method will flush the cache for every namespace.
+     * </p>
      */
     public static void removeAll() {
-        @SuppressWarnings("unchecked")
-        final Set<String> pageKeys = (Set<String>) CACHE.get(PAGE_KEYS);
-
-        if (null != pageKeys) {
-            CACHE.remove(pageKeys);
-        }
-
-        CACHE.put(PAGE_KEYS, new HashSet<String>());
-        LOGGER.info("Removed all page cache");
+        CACHE.removeAll();
     }
 
     /**
