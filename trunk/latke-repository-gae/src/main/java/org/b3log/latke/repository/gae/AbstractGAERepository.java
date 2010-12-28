@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.api.datastore.Blob;
@@ -66,7 +65,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Dec 11, 2010
+ * @version 1.0.2.2, Dec 28, 2010
  */
 // XXX: (1) ID generation in cluster issue
 //      (2) All entities store in the same entity group? 
@@ -108,6 +107,10 @@ public abstract class AbstractGAERepository implements Repository {
      * Repository cache name.
      */
     public static final String REPOSITORY_CACHE_NAME = "repositoryCache";
+    /**
+     * Repository cache count.
+     */
+    public static final String REPOSITORY_CACHE_COUNT = "#count";
     /**
      * Is cache enabled?
      */
@@ -437,10 +440,31 @@ public abstract class AbstractGAERepository implements Repository {
 
     @Override
     public long count() {
+        final String cacheKey = INSTANCE_ID + REPOSITORY_CACHE_COUNT;
+        if (isCacheEnabled) {
+            final Object o = CACHE.get(cacheKey);
+            if (null != o) {
+                LOGGER.log(Level.FINER,
+                           "Got an object[cacheKey={0}] from repository cache[name={1}]",
+                           new Object[]{cacheKey, getName()});
+                return (Long) o;
+            }
+        }
+
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
-        return preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
+        long ret =
+                preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
+
+        if (isCacheEnabled) {
+            CACHE.put(cacheKey, ret);
+            LOGGER.log(Level.FINER,
+                       "Added an object[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{cacheKey, getName()});
+        }
+
+        return ret;
     }
 
     /**
