@@ -198,7 +198,7 @@ public interface Repository {
     /**
      * Gets the count of all json objects.
      *
-     * @return count
+     * @return count, returns {@code -1} if not available
      * @throws RepositoryException repository exception
      */
     long count() throws RepositoryException;
