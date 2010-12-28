@@ -447,14 +447,20 @@ public abstract class AbstractGAERepository implements Repository {
                 LOGGER.log(Level.FINER,
                            "Got an object[cacheKey={0}] from repository cache[name={1}]",
                            new Object[]{cacheKey, getName()});
-                return (Long) o;
+                try {
+                    return (Long) o;
+                } catch (final Exception e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+                    return -1;
+                }
             }
         }
 
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
-        long ret =
+        final long ret =
                 preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
 
         if (isCacheEnabled) {
