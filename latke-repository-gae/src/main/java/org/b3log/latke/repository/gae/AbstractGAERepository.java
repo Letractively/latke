@@ -405,8 +405,7 @@ public abstract class AbstractGAERepository implements Repository {
         final List<JSONObject> ret = new ArrayList<JSONObject>();
         final Query query = new Query(getName());
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
-        final int count = preparedQuery.countEntities(
-                FetchOptions.Builder.withDefaults());
+        final int count = (int) count();
 
         if (0 == count) {
             return ret;
