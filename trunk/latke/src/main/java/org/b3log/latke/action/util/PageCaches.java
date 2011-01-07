@@ -22,6 +22,7 @@ import org.b3log.latke.Latkes;
 import org.b3log.latke.RunsOnEnv;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
+import org.json.JSONObject;
 
 /**
  * Page cache.
@@ -35,7 +36,7 @@ import org.b3log.latke.cache.CacheFactory;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Dec 22, 2010
+ * @version 1.0.0.3, Jan 7, 2011
  */
 public final class PageCaches {
 
@@ -96,10 +97,10 @@ public final class PageCaches {
      * Puts a page into cache.
      *
      * @param pageKey key of the page to put
-     * @param pageContent content of the page to put
+     * @param cachedValue value to put
      */
-    public static void put(final String pageKey, final String pageContent) {
-        CACHE.put(pageKey, pageContent);
+    public static void put(final String pageKey, final JSONObject cachedValue) {
+        CACHE.put(pageKey, cachedValue);
     }
 
     /**

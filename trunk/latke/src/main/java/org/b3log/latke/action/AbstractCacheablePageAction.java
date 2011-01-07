@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.util.PageCaches;
+import org.json.JSONObject;
 
 /**
  * Abstract cacheable page action.
@@ -44,6 +45,18 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     private static final Logger LOGGER = Logger.getLogger(
             AbstractCacheablePageAction.class.getName());
+    /**
+     * Key of cached type.
+     */
+    public static final String CACHED_TYPE = "cachedType";
+    /**
+     * Key of cached HTML content.
+     */
+    public static final String CACHED_CONTENT = "cachedContent";
+    /**
+     * Key of cached oid.
+     */
+    public static final String CACHED_OID = "cachedOid";
 
     /**
      * Processes FreeMarker template with the specified request, data model,
@@ -86,11 +99,15 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
                        cachedPageKey);
 
+            final JSONObject cachedValue = new JSONObject();
             final String pageContent = stringWriter.toString();
+            cachedValue.put(CACHED_CONTENT, pageContent);
+            cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
+            cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
 
             writer.write(pageContent);
 
-            PageCaches.put(cachedPageKey, pageContent);
+            PageCaches.put(cachedPageKey, cachedValue);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                        cachedPageKey);
         } catch (final Exception e) {
