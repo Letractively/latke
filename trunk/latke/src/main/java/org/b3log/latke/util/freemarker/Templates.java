@@ -23,13 +23,17 @@ import freemarker.template.Template;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
+import org.b3log.latke.Latkes;
+import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.cache.Cache;
+import org.b3log.latke.cache.CacheFactory;
 
 /**
  * Utilities of <a href="http://www.freemarker.org">FreeMarker</a> template
  * engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Dec 3, 2010
+ * @version 1.0.0.7, Jan 9, 2011
  */
 public final class Templates {
 
@@ -42,6 +46,21 @@ public final class Templates {
      * FreeMarker {@linkplain  Configuration configuration}.
      */
     public static final Configuration CONFIGURATION;
+    /**
+     * Template cache.
+     * <p>
+     * &lt;templateName, template&gt;
+     * </p>
+     */
+    private static final Cache<String, Object> CACHE;
+    /**
+     * Template cache name.
+     */
+    public static final String TEMPLATE_CACHE_NAME = "template";
+    /**
+     * Maximum count of cacheable template.
+     */
+    private static final int MAX_CACHEABLE_TEMPLATE_CNT = 1024;
 
     static {
         CONFIGURATION = new Configuration();
@@ -53,6 +72,14 @@ public final class Templates {
             CONFIGURATION.setDirectoryForTemplateLoading(new File(webRootPath));
         } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        CACHE = CacheFactory.getCache(TEMPLATE_CACHE_NAME);
+        final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
+        if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
+            CACHE.setMaxCount(MAX_CACHEABLE_TEMPLATE_CNT);
+            LOGGER.log(Level.INFO, "Initialized template cache[maxCount={0}]",
+                       MAX_CACHEABLE_TEMPLATE_CNT);
         }
     }
 
@@ -72,8 +99,18 @@ public final class Templates {
      */
     public static Template getTemplate(final String templateName)
             throws IOException {
-        LOGGER.log(Level.FINEST, "Get template[templateName={0}]", templateName);
+        Template ret = (Template) CACHE.get(templateName);
+        if (null != ret) {
+            LOGGER.log(Level.FINEST, "Get template[templateName={0}] from cache",
+                       templateName);
+        } else {
+            ret = CONFIGURATION.getTemplate(templateName);
+            CACHE.put(templateName, ret);
+            LOGGER.log(Level.FINEST,
+                       "Get template[templateName={0}], then put it into template cache",
+                       templateName);
+        }
 
-        return CONFIGURATION.getTemplate(templateName);
+        return ret;
     }
 }
