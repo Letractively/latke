@@ -22,6 +22,7 @@ import org.b3log.latke.Latkes;
 import org.b3log.latke.RunsOnEnv;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
+import org.b3log.latke.util.freemarker.Templates;
 import org.json.JSONObject;
 
 /**
@@ -36,7 +37,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Jan 7, 2011
+ * @version 1.0.0.4, Jan 9, 2011
  */
 public final class PageCaches {
 
@@ -110,6 +111,7 @@ public final class PageCaches {
      */
     public static void remove(final String pageKey) {
         CACHE.remove(pageKey);
+        Templates.CACHE.clear();
     }
 
     /**
@@ -121,6 +123,7 @@ public final class PageCaches {
      */
     public static void removeAll() {
         CACHE.removeAll();
+        Templates.CACHE.clear();
     }
 
     /**
