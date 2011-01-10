@@ -399,7 +399,7 @@ public abstract class AbstractGAERepository implements Repository {
         return get(query, currentPageNum, pageSize);
     }
 
-    @Override
+    @Override // XXX: performance issue
     public List<JSONObject> getRandomly(final int fetchSize)
             throws RepositoryException {
         final List<JSONObject> ret = new ArrayList<JSONObject>();
@@ -426,7 +426,7 @@ public abstract class AbstractGAERepository implements Repository {
                 CollectionUtils.getRandomIntegers(0, count - 1, fetchSize);
 
         int index = 0;
-        for (final Entity entity : entities) { // XXX: performance issue
+        for (final Entity entity : entities) {
             index++;
 
             if (fetchIndexes.contains(index)) {
