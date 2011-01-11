@@ -16,7 +16,6 @@
 
 package org.b3log.latke.repository.gae;
 
-import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DataTypeUtils;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -66,7 +65,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.3, Dec 11, 2011
+ * @version 1.0.2.4, Jan 11, 2011
  */
 // XXX: (1) ID generation in cluster issue
 //      (2) All entities store in the same entity group? 
@@ -535,8 +534,7 @@ public abstract class AbstractGAERepository implements Repository {
             } else if (value instanceof Number
                            || value instanceof Date
                            || value instanceof Boolean
-                           || value instanceof Blob
-                           || value instanceof Text) {
+                           || SUPPORTED_TYPES.contains(value.getClass())) {
                 entity.setProperty(key, value);
             } else {
                 throw new RuntimeException("Need to add known data type[class=" + value.
