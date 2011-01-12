@@ -19,7 +19,7 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.4.4</org.b3log.latke.version>
+        <org.b3log.latke.version>0.4.5</org.b3log.latke.version>
         <gae.version>1.4.0</gae.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
