@@ -21,7 +21,6 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.action.ActionException;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.service.ServiceException;
-import com.google.inject.Inject;
 import java.util.Locale;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +33,7 @@ import org.json.JSONObject;
  * Language service for JavaScript client.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Dec 3, 2010
+ * @version 1.0.0.9, Jan 12, 2011
  */
 public final class LanguageService extends AbstractJSONRpcService {
 
@@ -46,8 +45,7 @@ public final class LanguageService extends AbstractJSONRpcService {
     /**
      * Language service.
      */
-    @Inject
-    private LangPropsService langPropsService;
+    private LangPropsService langPropsService = LangPropsService.getInstance();
 
     /**
      * Gets locale of the specified request.

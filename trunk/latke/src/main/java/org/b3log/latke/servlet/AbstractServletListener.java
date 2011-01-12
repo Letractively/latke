@@ -17,12 +17,8 @@
 package org.b3log.latke.servlet;
 
 import java.util.logging.Level;
-import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.jabsorb.serializer.FwkStatusCodesSerializer;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -33,22 +29,17 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
-import org.b3log.latke.jsonrpc.impl.LanguageService;
-import org.b3log.latke.jsonrpc.util.JSONRPCServiceClassLoader;
 import org.jabsorb.JSONRPCBridge;
 
 /**
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.6, Dec 3, 2010
+ * @version 1.0.2.7, Jan 12, 2011
  */
-public abstract class AbstractServletListener
-        extends GuiceServletContextListener
-        implements ServletContextListener,
-                   ServletRequestListener,
-                   HttpSessionListener {
+public abstract class AbstractServletListener implements ServletContextListener,
+                                                         ServletRequestListener,
+                                                         HttpSessionListener {
 
     /**
      * Logger.
@@ -59,15 +50,6 @@ public abstract class AbstractServletListener
      * Web root.
      */
     private static String webRoot;
-    /**
-     * Guice injector.
-     */
-    private Injector injector;
-    /**
-     * The directory of client remote service(via JSON-RPC) implementation
-     * package.
-     */
-    private static String clientRemoteServicePackage;
 
     /**
      * Initializes context, {@linkplain #webRoot web root}, registers json RPC
@@ -79,7 +61,6 @@ public abstract class AbstractServletListener
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
         Latkes.check();
         LOGGER.info("Initializing the context....");
-        super.contextInitialized(servletContextEvent);
 
         Latkes.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
         LOGGER.log(Level.INFO, "Default locale[{0}]", Latkes.getDefaultLocale());
@@ -91,36 +72,7 @@ public abstract class AbstractServletListener
         LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]",
                    new Object[]{webRoot, catalinaBase});
 
-        registerRemoteJSServices();
         registerRemoteJSServiceSerializers();
-    }
-
-    /**
-     * Registers remote JavaScript services.
-     */
-    private void registerRemoteJSServices() {
-        try {
-            final ClassLoader classLoader = AbstractServletListener.class.
-                    getClassLoader();
-            final String clientRemoteServicesPath =
-                    classLoader.getResource(AbstractServletListener.
-                    getClientRemoteServicePackage()).toURI().getPath();
-            final List<Class<?>> serviceClasses =
-                    JSONRPCServiceClassLoader.loadServiceClasses(
-                    clientRemoteServicesPath);
-            serviceClasses.add(LanguageService.class); // XXX: one by one manually?
-
-            for (final Class<?> serviceClass : serviceClasses) {
-                final AbstractJSONRpcService serviceObject =
-                        (AbstractJSONRpcService) injector.getInstance(
-                        serviceClass);
-                JSONRPCBridge.getGlobalBridge().registerObject(serviceObject.
-                        getServiceObjectName(), serviceObject);
-            }
-        } catch (final Exception e) {
-            LOGGER.severe("Register remote JavaScript service error");
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -131,7 +83,6 @@ public abstract class AbstractServletListener
     @Override
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         LOGGER.info("Destroying the context....");
-        super.contextDestroyed(servletContextEvent);
     }
 
     @Override
@@ -150,32 +101,6 @@ public abstract class AbstractServletListener
             final HttpSessionEvent httpSessionEvent);
 
     /**
-     * Gets client remote JavaScript service package.
-     *
-     * @return the client remote service package
-     */
-    public static String getClientRemoteServicePackage() {
-        if (Strings.isEmptyOrNull(clientRemoteServicePackage)) {
-            throw new RuntimeException("Please override "
-                                       + "clientRemoteServicePackage field!");
-        }
-
-        return clientRemoteServicePackage;
-    }
-
-    /**
-     * Sets client remote JavaScript service package.
-     *
-     * @param clientRemoteServicePackage the specified client remote service
-     * package
-     */
-    public static void setClientRemoteServicePackage(
-            final String clientRemoteServicePackage) {
-        AbstractServletListener.clientRemoteServicePackage =
-                clientRemoteServicePackage;
-    }
-
-    /**
      * Gets the absolute file path of web root directory on the server's
      * file system.
      *
@@ -183,25 +108,6 @@ public abstract class AbstractServletListener
      */
     public static String getWebRoot() {
         return webRoot;
-    }
-
-    /**
-     * Sets the injector.
-     *
-     * @param injector the specified injector
-     */
-    public void setInjector(final Injector injector) {
-        this.injector = injector;
-    }
-
-    /**
-     * Gets the injector.
-     *
-     * @return injector
-     */
-    @Override
-    public Injector getInjector() {
-        return injector;
     }
 
     /**

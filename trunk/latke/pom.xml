@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.5.6, Jan 9, 2011
+    Version: 1.0.5.7, Jan 12, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.3</version>
+    <version>0.4.4</version>
     <name>Latke</name>
     <url>http://latke.googlecode.com</url>
     <description>Yet another simple web framework based on Java servlet technology.</description>
@@ -19,8 +19,6 @@
 
     <!-- Version -->
     <properties>
-        <guice.version>2.0.1</guice.version>
-        <aop.version>1.0</aop.version>
         <servlet.version>2.5</servlet.version>
         <freemarker.version>2.3.16</freemarker.version>
         <jabsorb.version>1.3.1</jabsorb.version>
@@ -112,17 +110,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.google.code.guice</groupId>
-                <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.guice</groupId>
-                <artifactId>guice-servlet</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <version>${aop.version}</version>
@@ -171,20 +158,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>com.google.code.guice</groupId>
-            <artifactId>guice</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.guice</groupId>
-            <artifactId>guice-servlet</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>aopalliance</groupId>
-            <artifactId>aopalliance</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -394,12 +367,6 @@
 
 
     <repositories>
-        <repository>
-            <id>guice-maven</id>
-            <name>guice maven</name>
-            <url>http://guice-maven.googlecode.com/svn/trunk</url>
-        </repository>
-
         <repository>
             <id>m2-release</id>
             <name>88250 at Google Maven repository of releases</name>

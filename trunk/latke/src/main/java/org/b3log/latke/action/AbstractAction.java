@@ -19,8 +19,6 @@ package org.b3log.latke.action;
 import java.util.logging.Level;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.BufferedReader;
@@ -42,7 +40,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.8, Dec 4, 2010
+ * @version 1.0.2.9, Jan 12, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -56,11 +54,6 @@ public abstract class AbstractAction extends HttpServlet {
      */
     private static final Logger LOGGER =
             Logger.getLogger(AbstractAction.class.getName());
-    /**
-     * Injector.
-     */
-    @Inject
-    private Injector injector;
 
     /**
      * Performs the FreeMarker template action.
