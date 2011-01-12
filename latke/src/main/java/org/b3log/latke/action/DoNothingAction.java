@@ -16,7 +16,6 @@
 
 package org.b3log.latke.action;
 
-import com.google.inject.Inject;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -33,7 +32,7 @@ import org.json.JSONObject;
  * Do nothing action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Dec 3, 2010
+ * @version 1.0.0.4, Jan 12, 2011
  */
 public class DoNothingAction extends AbstractAction {
 
@@ -49,8 +48,7 @@ public class DoNothingAction extends AbstractAction {
     /**
      * Language service.
      */
-    @Inject
-    private LangPropsService langPropsService;
+    private LangPropsService langPropsService = LangPropsService.getInstance();
 
     @Override
     protected Map<?, ?> doFreeMarkerAction(
