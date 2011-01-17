@@ -8,11 +8,12 @@ Without this configuration present, some functionality in the IDE may be limited
 -->
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>cacheable</word>
+        <word>datastore</word>
         <word>enum</word>
+        <word>json</word>
         <word>Serializer</word>
         <word>servlet</word>
         <word>servlets</word>
         <word>xml</word>
-        <word>datastore</word>
     </spellchecker-wordlist>
 </project-shared-configuration>
