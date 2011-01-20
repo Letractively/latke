@@ -65,7 +65,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.4, Jan 11, 2011
+ * @version 1.0.2.5, Jan 20, 2011
  */
 // XXX: (1) ID generation in cluster issue
 //      (2) All entities store in the same entity group? 
@@ -306,6 +306,20 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public JSONObject get(final org.b3log.latke.repository.Query query)
             throws RepositoryException {
+        JSONObject ret = null;
+
+        if (isCacheEnabled) {
+            final String cacheKey = INSTANCE_ID + query.hashCode() + "_"
+                                    + getName();
+            ret = (JSONObject) CACHE.get(cacheKey);
+            if (null != ret) {
+                LOGGER.log(Level.FINER,
+                           "Got query result[cacheKey={0}] from repository cache[name={1}]",
+                           new Object[]{cacheKey, getName()});
+                return ret;
+            }
+        }
+
         final int currentPageNum = query.getCurrentPageNum();
         final Collection<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
@@ -314,43 +328,39 @@ public abstract class AbstractGAERepository implements Repository {
         if (org.b3log.latke.repository.Query.DEFAULT_CUR_PAGE_NUM
             != currentPageNum
             && org.b3log.latke.repository.Query.DEFAULT_PAGE_SIZE != pageSize) {
-            return get(currentPageNum, pageSize, sorts, filters);
+            ret = get(currentPageNum, pageSize, sorts, filters);
         } else {
-            return get(1, Integer.MAX_VALUE, sorts, filters);
-        }
-    }
-
-    @Override
-    public JSONObject get(final int currentPageNum, final int pageSize)
-            throws RepositoryException {
-        return get(new Query(getName()), currentPageNum, pageSize);
-    }
-
-    @Override
-    public JSONObject get(final int currentPageNum,
-                          final int pageSize,
-                          final Map<String, SortDirection> sorts)
-            throws RepositoryException {
-        final Query query = new Query(getName());
-        for (Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
-            Query.SortDirection querySortDirection = null;
-            if (sort.getValue().equals(SortDirection.ASCENDING)) {
-                querySortDirection = Query.SortDirection.ASCENDING;
-            } else {
-                querySortDirection = Query.SortDirection.DESCENDING;
-            }
-
-            query.addSort(sort.getKey(), querySortDirection);
+            ret = get(1, Integer.MAX_VALUE, sorts, filters);
         }
 
-        return get(query, currentPageNum, pageSize);
+        if (isCacheEnabled) {
+            final String cacheKey = INSTANCE_ID + query.hashCode() + "_"
+                                    + getName();
+            CACHE.put(cacheKey, ret);
+            LOGGER.log(Level.FINER,
+                       "Added query result[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{cacheKey, getName()});
+        }
+
+        return ret;
     }
 
-    @Override
-    public JSONObject get(final int currentPageNum,
-                          final int pageSize,
-                          final Map<String, SortDirection> sorts,
-                          final Collection<Filter> filters)
+    /**
+     * Gets the result object by the specified current page number, page size,
+     * sorts and filters.
+     *
+     * @param currentPageNum the specified current page number
+     * @param pageSize the specified page size
+     * @param sorts the specified sorts
+     * @param filters the specified filters
+     * @return the result object, see return of
+     * {@linkplain #get(org.b3log.latke.repository.Query)} for details
+     * @throws RepositoryException repository exception
+     */
+    private JSONObject get(final int currentPageNum,
+                           final int pageSize,
+                           final Map<String, SortDirection> sorts,
+                           final Collection<Filter> filters)
             throws RepositoryException {
         final Query query = new Query(getName());
         for (final Filter filter : filters) {
