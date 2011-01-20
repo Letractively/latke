@@ -16,16 +16,14 @@
 
 package org.b3log.latke.repository;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import org.json.JSONObject;
 
 /**
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, Dec 3, 2010
+ * @version 1.0.1.6, Jan 20, 2011
  */
 public interface Repository {
 
@@ -125,8 +123,8 @@ public interface Repository {
      * </pre>
      * @throws RepositoryException repository exception
      */
-    JSONObject get(final int currentPageNum,
-                   final int pageSize) throws RepositoryException;
+//    JSONObject get(final int currentPageNum,
+//                   final int pageSize) throws RepositoryException;
 
     /**
      * Gets json objects by the specified sorts, current page number and page
@@ -150,10 +148,10 @@ public interface Repository {
      * </pre>
      * @throws RepositoryException repository exception
      */
-    JSONObject get(final int currentPageNum,
-                   final int pageSize,
-                   final Map<String, SortDirection> sorts)
-            throws RepositoryException;
+//    JSONObject get(final int currentPageNum,
+//                   final int pageSize,
+//                   final Map<String, SortDirection> sorts)
+//            throws RepositoryException;
 
     /**
      * Gets json objects by the specified sorts, filters, current page number
@@ -178,11 +176,11 @@ public interface Repository {
      * </pre>
      * @throws RepositoryException repository exception
      */
-    JSONObject get(final int currentPageNum,
-                   final int pageSize,
-                   final Map<String, SortDirection> sorts,
-                   final Collection<Filter> filters)
-            throws RepositoryException;
+//    JSONObject get(final int currentPageNum,
+//                   final int pageSize,
+//                   final Map<String, SortDirection> sorts,
+//                   final Collection<Filter> filters)
+//            throws RepositoryException;
 
     /**
      * Gets a list of json objects randomly with the specified fetch size.
