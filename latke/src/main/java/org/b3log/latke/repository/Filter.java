@@ -20,7 +20,7 @@ package org.b3log.latke.repository;
  * Filter.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Dec 2, 2010
+ * @version 1.0.0.1, Jan 20, 2011
  */
 public final class Filter {
 
@@ -36,6 +36,14 @@ public final class Filter {
      * Value.
      */
     private Object value;
+    /**
+     * Initialization value for hashing.
+     */
+    private static final int INIT_HASH = 7;
+    /**
+     * Base for hashing.
+     */
+    private static final int BASE = 97;
 
     /**
      * Constructor with the specified parameters.
@@ -77,5 +85,42 @@ public final class Filter {
      */
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final Filter other = (Filter) obj;
+        if ((this.key == null) ? (other.key != null)
+                : !this.key.equals(other.key)) {
+            return false;
+        }
+        if (this.operator != other.operator) {
+            return false;
+        }
+        if (this.value != other.value && (this.value == null || !this.value.
+                                          equals(other.value))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = INIT_HASH;
+        hash = BASE * hash + (this.key != null ? this.key.hashCode() : 0);
+        hash = BASE * hash + (this.operator != null ? this.operator.hashCode()
+                              : 0);
+        hash = BASE * hash + (this.value != null ? this.value.hashCode() : 0);
+
+        return hash;
     }
 }
