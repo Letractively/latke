@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.api.datastore.DataTypeUtils;
@@ -65,7 +64,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.5, Jan 20, 2011
+ * @version 1.0.2.6, Jan 21, 2011
  */
 // XXX: (1) ID generation in cluster issue
 //      (2) All entities store in the same entity group? 
@@ -162,6 +161,7 @@ public abstract class AbstractGAERepository implements Repository {
                    new Object[]{ret, getName()});
 
         if (isCacheEnabled) {
+            CACHE.removeAll(); // for query
             final String key = INSTANCE_ID + ret;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
@@ -221,6 +221,7 @@ public abstract class AbstractGAERepository implements Repository {
                    new Object[]{id, getName()});
 
         if (isCacheEnabled) {
+            CACHE.removeAll(); // for query
             final String key = INSTANCE_ID + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
@@ -238,11 +239,10 @@ public abstract class AbstractGAERepository implements Repository {
                    new Object[]{id, getName()});
 
         if (isCacheEnabled) {
-            final String cacheKey = INSTANCE_ID + id;
-            CACHE.remove(cacheKey);
+            CACHE.removeAll(); // for query
             LOGGER.log(Level.FINER,
-                       "Removed an object[cacheKey={0}] in repository cache[{1}]",
-                       new Object[]{cacheKey, getName()});
+                       "Clear all objects in repository cache[{1}]",
+                       getName());
         }
     }
 
