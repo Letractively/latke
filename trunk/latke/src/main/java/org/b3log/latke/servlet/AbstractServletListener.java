@@ -17,7 +17,6 @@
 package org.b3log.latke.servlet;
 
 import java.util.logging.Level;
-import org.b3log.latke.util.jabsorb.serializer.FwkStatusCodesSerializer;
 import java.io.File;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -29,13 +28,12 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
-import org.jabsorb.JSONRPCBridge;
 
 /**
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.7, Jan 12, 2011
+ * @version 1.0.2.8, Jan 23, 2011
  */
 public abstract class AbstractServletListener implements ServletContextListener,
                                                          ServletRequestListener,
@@ -71,8 +69,6 @@ public abstract class AbstractServletListener implements ServletContextListener,
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]",
                    new Object[]{webRoot, catalinaBase});
-
-        registerRemoteJSServiceSerializers();
     }
 
     /**
@@ -108,19 +104,5 @@ public abstract class AbstractServletListener implements ServletContextListener,
      */
     public static String getWebRoot() {
         return webRoot;
-    }
-
-    /**
-     * Registers remote JavaScript service serializers.
-     */
-    private void registerRemoteJSServiceSerializers() {
-        final JSONRPCBridge jsonRpcBridge = JSONRPCBridge.getGlobalBridge();
-
-        try {
-            jsonRpcBridge.registerSerializer(new FwkStatusCodesSerializer());
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new RuntimeException(e);
-        }
     }
 }
