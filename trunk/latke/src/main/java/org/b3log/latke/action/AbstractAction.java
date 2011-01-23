@@ -40,7 +40,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.9, Jan 12, 2011
+ * @version 1.0.3.0, Jan 23, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -267,9 +267,11 @@ public abstract class AbstractAction extends HttpServlet {
         String ret = requestURI.substring(idx + 1, requestURI.length());
         if (Strings.isEmptyOrNull(ret)) {
             ret = "index.ftl";
-        } else {
+        } else if (ret.endsWith(".do")) {
             idx = ret.lastIndexOf(".do");
             ret = ret.substring(0, idx);
+            ret += ".ftl";
+        } else {
             ret += ".ftl";
         }
 
