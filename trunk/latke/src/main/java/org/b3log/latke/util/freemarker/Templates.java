@@ -31,8 +31,9 @@ import java.util.logging.Logger;
  * engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jan 9, 2011
+ * @version 1.0.0.8, Jan 24, 2011
  */
+// XXX: thread-safe?
 public final class Templates {
 
     /**
@@ -52,6 +53,10 @@ public final class Templates {
      */
     public static final Map<String, Template> CACHE =
             new HashMap<String, Template>();
+    /**
+     * Enables the {@linkplain #CACHE cache}? Default to {@code true}.
+     */
+    private static boolean cacheEnabled = true;
     /**
      * Template cache name.
      */
@@ -77,6 +82,15 @@ public final class Templates {
     }
 
     /**
+     * Enables or disables the template cache.
+     *
+     * @param enabled {@code true} to enable, disable otherwise
+     */
+    public static void enableCache(final boolean enabled) {
+        cacheEnabled = enabled;
+    }
+
+    /**
      * Gets a FreeMarker {@linkplain Template template} with the specified
      * template name.
      *
@@ -86,16 +100,24 @@ public final class Templates {
      */
     public static Template getTemplate(final String templateName)
             throws IOException {
-        Template ret = CACHE.get(templateName);
+        Template ret = null;
+
+        if (cacheEnabled) {
+            ret = CACHE.get(templateName);
+        }
+
         if (null != ret) {
             LOGGER.log(Level.FINEST, "Got template[templateName={0}] from cache",
                        templateName);
         } else {
             ret = CONFIGURATION.getTemplate(templateName);
-            CACHE.put(templateName, ret);
-            LOGGER.log(Level.FINEST,
-                       "Got template[templateName={0}], then put it into template cache",
-                       templateName);
+
+            if (cacheEnabled) {
+                CACHE.put(templateName, ret);
+                LOGGER.log(Level.FINEST,
+                           "Got template[templateName={0}], then put it into template cache",
+                           templateName);
+            }
         }
 
         return ret;
