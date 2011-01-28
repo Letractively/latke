@@ -24,7 +24,7 @@ import java.util.Collection;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.5, Oct 29, 2010
+ * @version 1.0.2.6, Jan 28, 2010
  */
 public interface Cache<K, V> {
 
@@ -48,6 +48,15 @@ public interface Cache<K, V> {
      * <code>null</code>
      */
     V get(final K key);
+
+    /**
+     * Increments the value specified by the given key with the specified delta.
+     *
+     * @param key the given key
+     * @param delta the specified delta value
+     * @return the post-increment value
+     */
+    long inc(final K key, final long delta);
 
     /**
      * Removes a object by the specified key.
