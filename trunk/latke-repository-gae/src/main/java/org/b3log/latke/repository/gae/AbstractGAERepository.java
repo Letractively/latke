@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.api.datastore.DataTypeUtils;
@@ -46,7 +47,6 @@ import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Filter;
-import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
@@ -57,19 +57,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Google App Engine datastore.
- * <p>
- *   See <a href="http://code.google.com/appengine/docs/java/javadoc/com/google/appengine/api/datastore/package-summary.html">
- *   The Datastore Java API(Low-level API)</a> for more details.
- * </p>
+ * Abstract Google App Engine repository implementation, wraps
+ * <a href="http://code.google.com/appengine/docs/java/javadoc/com/google/appengine/api/datastore/package-summary.html">
+ * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.6, Jan 21, 2011
+ * @version 1.0.2.7, Jan 28, 2011
  */
 // XXX: (1) ID generation in cluster issue
-//      (2) All entities store in the same entity group? 
-// TODO: pagination query cache
-public abstract class AbstractGAERepository implements Repository {
+public abstract class AbstractGAERepository implements GAERepository {
 
     /**
      * Logger.
@@ -91,10 +87,11 @@ public abstract class AbstractGAERepository implements Repository {
      */
     private static final double EVENTUAL_DEADLINE = 5.0;
     /**
-     * Parent key.
+     * Default parent key. Kind is {@code "parentKind"}, name is
+     * {@code "parentKeyName"}.
      */
-    private final Key parent = KeyFactory.createKey("parentKind",
-                                                    "parentKeyName");
+    private final Key defaultParentKey = KeyFactory.createKey("parentKind",
+                                                              "parentKeyName");
     /**
      * Repository cache.
      * <p>
@@ -136,8 +133,24 @@ public abstract class AbstractGAERepository implements Repository {
         CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
     }
 
+    /**
+     * Adds the specified json object with the {@linkplain #defaultParentKey
+     * default parent key}.
+     *
+     * @param jsonObject the specified json object
+     * @return the generated object id
+     * @throws RepositoryException repository exception
+     */
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
+        return add(jsonObject,
+                   defaultParentKey.getKind(), defaultParentKey.getName());
+    }
+
+    @Override
+    public String add(final JSONObject jsonObject,
+                      final String parentKeyKind, final String parentKeyName)
+            throws RepositoryException {
         String ret = null;
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
@@ -147,8 +160,9 @@ public abstract class AbstractGAERepository implements Repository {
                 ret = jsonObject.getString(Keys.OBJECT_ID);
             }
 
-            final String kind = getName();
-            final Entity entity = new Entity(kind, ret, parent);
+            final Key parentKey = KeyFactory.createKey(parentKeyKind,
+                                                       parentKeyName);
+            final Entity entity = new Entity(getName(), ret, parentKey);
             setProperties(entity, jsonObject);
 
             datastoreService.put(entity);
@@ -177,6 +191,11 @@ public abstract class AbstractGAERepository implements Repository {
      * json object.
      *
      * <p>
+     * The parent key of the entity to update is the {@linkplain #defaultParentKey
+     * default parent key}.
+     * </p>
+     *
+     * <p>
      *   Invokes this method for an non-existent entity will create a new entity
      *   in database, as the same effect of method {@linkplain #add(org.json.JSONObject)}.
      * </p>
@@ -203,11 +222,21 @@ public abstract class AbstractGAERepository implements Repository {
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
+        update(id, jsonObject,
+               defaultParentKey.getKind(),
+               defaultParentKey.getName());
+    }
+
+    @Override
+    public void update(final String id, final JSONObject jsonObject,
+                       final String parentKeyKind, final String parentKeyName)
+            throws RepositoryException {
         try {
             jsonObject.put(Keys.OBJECT_ID, id);
 
-            final String kind = getName();
-            final Entity entity = new Entity(kind, id, parent);
+            final Key parentKey = KeyFactory.createKey(parentKeyKind,
+                                                       parentKeyName);
+            final Entity entity = new Entity(getName(), id, parentKey);
             setProperties(entity, jsonObject);
 
             datastoreService.put(entity);
@@ -230,9 +259,25 @@ public abstract class AbstractGAERepository implements Repository {
         }
     }
 
+    /**
+     * Removes a json object by the specified id with the {@linkplain #defaultParentKey
+     * default parent key}.
+     *
+     * @param id the specified id
+     * @throws RepositoryException repository exception
+     */
     @Override
     public void remove(final String id) throws RepositoryException {
-        final Key key = KeyFactory.createKey(parent, getName(), id);
+        remove(id, defaultParentKey.getKind(), defaultParentKey.getName());
+    }
+
+    @Override
+    public void remove(final String id,
+                       final String parentKeyKind, final String parentKeyName)
+            throws RepositoryException {
+
+        final Key parentKey = KeyFactory.createKey(parentKeyKind, parentKeyName);
+        final Key key = KeyFactory.createKey(parentKey, getName(), id);
         datastoreService.delete(key);
         LOGGER.log(Level.FINER,
                    "Removed an object[oId={0}] from repository[name={1}]",
@@ -246,8 +291,23 @@ public abstract class AbstractGAERepository implements Repository {
         }
     }
 
+    /**
+     * Gets a json object by the specified id with the {@linkplain #defaultParentKey
+     * default parent key}.
+     *
+     * @param id the specified id
+     * @return a json object, {@code null} if not found
+     * @throws RepositoryException repository exception
+     */
     @Override
     public JSONObject get(final String id) throws RepositoryException {
+        return get(id, defaultParentKey.getKind(), defaultParentKey.getName());
+    }
+
+    @Override
+    public JSONObject get(final String id,
+                          final String parentKeyKind, final String parentKeyName)
+            throws RepositoryException {
         JSONObject ret = null;
 
         if (isCacheEnabled) {
@@ -261,7 +321,8 @@ public abstract class AbstractGAERepository implements Repository {
             }
         }
 
-        final Key key = KeyFactory.createKey(parent, getName(), id);
+        final Key parentKey = KeyFactory.createKey(parentKeyKind, parentKeyName);
+        final Key key = KeyFactory.createKey(parentKey, getName(), id);
         try {
             final Entity entity = datastoreService.get(key);
             ret = entity2JSONObject(entity);
