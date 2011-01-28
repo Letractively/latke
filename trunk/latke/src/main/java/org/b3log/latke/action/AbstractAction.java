@@ -73,14 +73,14 @@ public abstract class AbstractAction extends HttpServlet {
     /**
      * Performs the ajax action.
      *
-     * @param data request data
+     * @param requestJSONObject request data
      * @param request the specified http servlet request
      * @param response the specified http servlet response
      * @return a JSONObject for responsing
      * @throws ActionException action exception
      */
     protected abstract JSONObject doAjaxAction(
-            final JSONObject data,
+            final JSONObject requestJSONObject,
             final HttpServletRequest request,
             final HttpServletResponse response)
             throws ActionException;
