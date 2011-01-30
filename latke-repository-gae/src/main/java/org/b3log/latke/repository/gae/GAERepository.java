@@ -29,7 +29,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jan 28, 2011
+ * @version 1.0.0.1, Jan 30, 2011
  */
 public interface GAERepository extends Repository {
 
@@ -47,6 +47,32 @@ public interface GAERepository extends Repository {
      */
     String add(final JSONObject jsonObject,
                final String parentKeyKind, final String parentKeyName)
+            throws RepositoryException;
+
+    /**
+     * The asynchronous version of interface {@linkplain #add(org.json.JSONObject)}.
+     *
+     * @param jsonObject the specified json object
+     * @return the generated object id
+     * @throws RepositoryException repository exception
+     */
+    String addAsync(final JSONObject jsonObject)
+            throws RepositoryException;
+
+    /**
+     * The asynchronous version of interface
+     * {@linkplain #add(org.json.JSONObject, java.lang.String, java.lang.String)}.
+     *
+     * @param jsonObject the specified json object
+     * @param parentKeyKind the specified kind of the parent key of the
+     * specified json object
+     * @param parentKeyName the specified name of the parent key of the
+     * specified json object
+     * @return the generated object id
+     * @throws RepositoryException repository exception
+     */
+    String addAsync(final JSONObject jsonObject,
+                    final String parentKeyKind, final String parentKeyName)
             throws RepositoryException;
 
     /**
@@ -84,10 +110,36 @@ public interface GAERepository extends Repository {
      * @param parentKeyName the specified name of the parent key of the
      * specified json object
      * @throws RepositoryException repository exception
-     * @see Keys#OBJECT_ID
      */
     void update(final String id, final JSONObject jsonObject,
                 final String parentKeyKind, final String parentKeyName)
+            throws RepositoryException;
+
+    /**
+     * The asynchronous version of interface 
+     * {@linkplain #update(java.lang.String, org.json.JSONObject)}. 
+     *
+     * @param id the specified id
+     * @param jsonObject the specified new json object
+     * @throws RepositoryException repository exception
+     */
+    void updateAsync(final String id, final JSONObject jsonObject)
+            throws RepositoryException;
+
+    /**
+     * The asynchronous version of interface
+     * {@linkplain #update(java.lang.String, org.json.JSONObject, java.lang.String, java.lang.String)}.
+     *
+     * @param id the specified id
+     * @param jsonObject the specified new json object
+     * @param parentKeyKind the specified kind of the parent key of the
+     * specified json object
+     * @param parentKeyName the specified name of the parent key of the
+     * specified json object
+     * @throws RepositoryException repository exception
+     */
+    void updateAsync(final String id, final JSONObject jsonObject,
+                     final String parentKeyKind, final String parentKeyName)
             throws RepositoryException;
 
     /**
