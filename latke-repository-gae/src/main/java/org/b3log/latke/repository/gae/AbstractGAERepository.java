@@ -311,7 +311,6 @@ public abstract class AbstractGAERepository implements GAERepository {
                    new Object[]{id, getName()});
 
         if (isCacheEnabled) {
-            CACHE.removeAll(); // for query
             final String key = INSTANCE_ID + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
