@@ -16,6 +16,7 @@
 
 package org.b3log.latke.repository.gae;
 
+import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DataTypeUtils;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -62,7 +63,7 @@ import org.json.JSONObject;
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.7, Jan 28, 2011
+ * @version 1.0.2.8, Jan 30, 2011
  */
 // XXX: (1) ID generation in cluster issue
 public abstract class AbstractGAERepository implements GAERepository {
@@ -77,6 +78,11 @@ public abstract class AbstractGAERepository implements GAERepository {
      */
     private final DatastoreService datastoreService =
             DatastoreServiceFactory.getDatastoreService();
+    /**
+     * GAE asynchronous datastore service.
+     */
+    private final AsyncDatastoreService asyncDatastoreService =
+            DatastoreServiceFactory.getAsyncDatastoreService();
     /**
      * GAE datastore supported types.
      */
@@ -186,6 +192,53 @@ public abstract class AbstractGAERepository implements GAERepository {
         return ret;
     }
 
+    @Override
+    public String addAsync(final JSONObject jsonObject)
+            throws RepositoryException {
+        return addAsync(jsonObject,
+                        defaultParentKey.getKind(), defaultParentKey.getName());
+    }
+
+    @Override
+    public String addAsync(final JSONObject jsonObject,
+                           final String parentKeyKind,
+                           final String parentKeyName)
+            throws RepositoryException {
+        String ret = null;
+        try {
+            if (!jsonObject.has(Keys.OBJECT_ID)) {
+                ret = Ids.genTimeMillisId();
+                jsonObject.put(Keys.OBJECT_ID, ret);
+            } else {
+                ret = jsonObject.getString(Keys.OBJECT_ID);
+            }
+
+            final Key parentKey = KeyFactory.createKey(parentKeyKind,
+                                                       parentKeyName);
+            final Entity entity = new Entity(getName(), ret, parentKey);
+            setProperties(entity, jsonObject);
+
+            asyncDatastoreService.put(entity);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
+                   new Object[]{ret, getName()});
+
+        if (isCacheEnabled) {
+            CACHE.removeAll(); // for query
+            final String key = INSTANCE_ID + ret;
+            CACHE.put(key, jsonObject);
+            LOGGER.log(Level.FINER,
+                       "Added an object[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{key, getName()});
+        }
+
+        return ret;
+    }
+
     /**
      * Updates a certain json object by the specified id and the specified new
      * json object.
@@ -228,6 +281,14 @@ public abstract class AbstractGAERepository implements GAERepository {
     }
 
     @Override
+    public void updateAsync(final String id, final JSONObject jsonObject)
+            throws RepositoryException {
+        updateAsync(id, jsonObject,
+                    defaultParentKey.getKind(),
+                    defaultParentKey.getName());
+    }
+
+    @Override
     public void update(final String id, final JSONObject jsonObject,
                        final String parentKeyKind, final String parentKeyName)
             throws RepositoryException {
@@ -251,6 +312,38 @@ public abstract class AbstractGAERepository implements GAERepository {
 
         if (isCacheEnabled) {
             CACHE.removeAll(); // for query
+            final String key = INSTANCE_ID + id;
+            CACHE.put(key, jsonObject);
+            LOGGER.log(Level.FINER,
+                       "Updated an object[cacheKey={0}] in repository cache[{1}]",
+                       new Object[]{key, getName()});
+        }
+    }
+
+    @Override
+    public void updateAsync(final String id, final JSONObject jsonObject,
+                            final String parentKeyKind,
+                            final String parentKeyName)
+            throws RepositoryException {
+        try {
+            jsonObject.put(Keys.OBJECT_ID, id);
+
+            final Key parentKey = KeyFactory.createKey(parentKeyKind,
+                                                       parentKeyName);
+            final Entity entity = new Entity(getName(), id, parentKey);
+            setProperties(entity, jsonObject);
+
+            asyncDatastoreService.put(entity);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        LOGGER.log(Level.FINER,
+                   "Updated an object[oId={0}] in repository[name={1}]",
+                   new Object[]{id, getName()});
+
+        if (isCacheEnabled) {
             final String key = INSTANCE_ID + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
