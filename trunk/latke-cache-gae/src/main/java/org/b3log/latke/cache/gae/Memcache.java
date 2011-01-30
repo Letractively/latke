@@ -20,6 +20,7 @@ import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.memcache.Stats;
 import java.util.Collection;
+import java.util.logging.Logger;
 import org.b3log.latke.cache.Cache;
 
 /**
@@ -29,10 +30,15 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jan 28, 2010
+ * @version 1.0.0.7, Jan 30, 2010
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(Memcache.class.getName());
     /**
      * Memcache service.
      */
@@ -94,6 +100,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
     @Override
     public void removeAll() {
         memcacheService.clearAll(); // Will clear in all namespaces
+        LOGGER.finest("Clear all cache");
     }
 
     @Override
@@ -108,7 +115,8 @@ public final class Memcache<K, V> implements Cache<K, V> {
     @Override
     public long getHitCount() {
         final Stats statistics = memcacheService.getStatistics();
-        if (null != statistics) {
+        if (null
+            != statistics) {
             return statistics.getHitCount();
         }
 
