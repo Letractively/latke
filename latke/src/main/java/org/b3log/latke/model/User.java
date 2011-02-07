@@ -20,7 +20,7 @@ package org.b3log.latke.model;
  * This class defines all user model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Aug 24, 2010
+ * @version 1.0.0.8, Feb 7, 2011
  */
 public final class User {
 
@@ -40,6 +40,10 @@ public final class User {
      * Key of user email.
      */
     public static final String USER_EMAIL = "userEmail";
+    /**
+     * Key of user URL.
+     */
+    public static final String USER_URL = "userURL";
     /**
      * Key of user password.
      */
