@@ -104,7 +104,7 @@ public abstract class AbstractGAERepository implements GAERepository {
      * &lt;oId, JSONObject&gt;
      * </p>
      */
-    private static final Cache<String, Object> CACHE;
+    public static final Cache<String, Object> CACHE;
     /**
      * Repository cache name.
      */
