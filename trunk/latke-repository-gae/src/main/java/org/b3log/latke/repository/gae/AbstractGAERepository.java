@@ -120,7 +120,7 @@ public abstract class AbstractGAERepository implements GAERepository {
     /**
      * Instance replica id.
      */
-    private static final String INSTANCE_ID = SystemProperty.instanceReplicaId.
+    public static final String INSTANCE_ID = SystemProperty.instanceReplicaId.
             get() + "_";
 
     /**
