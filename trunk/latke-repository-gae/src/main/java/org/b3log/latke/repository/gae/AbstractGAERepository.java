@@ -63,7 +63,7 @@ import org.json.JSONObject;
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.8, Jan 30, 2011
+ * @version 1.0.2.9, Feb 8, 2011
  */
 // XXX: (1) ID generation in cluster issue
 public abstract class AbstractGAERepository implements GAERepository {
@@ -116,7 +116,7 @@ public abstract class AbstractGAERepository implements GAERepository {
     /**
      * Is cache enabled?
      */
-    private boolean isCacheEnabled = true;
+    private boolean cacheEnabled = true;
     /**
      * Instance replica id.
      */
@@ -180,7 +180,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
                    new Object[]{ret, getName()});
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             CACHE.removeAll(); // for query
             final String key = INSTANCE_ID + ret;
             CACHE.put(key, jsonObject);
@@ -227,7 +227,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
                    new Object[]{ret, getName()});
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             CACHE.removeAll(); // for query
             final String key = INSTANCE_ID + ret;
             CACHE.put(key, jsonObject);
@@ -310,7 +310,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                    "Updated an object[oId={0}] in repository[name={1}]",
                    new Object[]{id, getName()});
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             final String key = INSTANCE_ID + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
@@ -342,7 +342,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                    "Updated an object[oId={0}] in repository[name={1}]",
                    new Object[]{id, getName()});
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             final String key = INSTANCE_ID + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
@@ -375,7 +375,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                    "Removed an object[oId={0}] from repository[name={1}]",
                    new Object[]{id, getName()});
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             CACHE.removeAll(); // for query
             LOGGER.log(Level.FINER,
                        "Clear all objects in repository cache[{1}]",
@@ -402,7 +402,7 @@ public abstract class AbstractGAERepository implements GAERepository {
             throws RepositoryException {
         JSONObject ret = null;
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             final String cacheKey = INSTANCE_ID + id;
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
@@ -423,7 +423,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                        "Got an object[oId={0}] from repository[name={1}]",
                        new Object[]{id, getName()});
 
-            if (isCacheEnabled) {
+            if (cacheEnabled) {
                 final String cacheKey = INSTANCE_ID + id;
                 CACHE.put(cacheKey, ret);
                 LOGGER.log(Level.FINER,
@@ -442,7 +442,7 @@ public abstract class AbstractGAERepository implements GAERepository {
 
     @Override
     public boolean has(final String id) throws RepositoryException {
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             if (null != CACHE.get(id)) {
                 return true;
             }
@@ -461,7 +461,7 @@ public abstract class AbstractGAERepository implements GAERepository {
             throws RepositoryException {
         JSONObject ret = null;
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             final String cacheKey = INSTANCE_ID + query.hashCode() + "_"
                                     + getName();
             ret = (JSONObject) CACHE.get(cacheKey);
@@ -486,7 +486,7 @@ public abstract class AbstractGAERepository implements GAERepository {
             ret = get(1, Integer.MAX_VALUE, sorts, filters);
         }
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             final String cacheKey = INSTANCE_ID + query.hashCode() + "_"
                                     + getName();
             CACHE.put(cacheKey, ret);
@@ -603,7 +603,7 @@ public abstract class AbstractGAERepository implements GAERepository {
     @Override
     public long count() {
         final String cacheKey = INSTANCE_ID + REPOSITORY_CACHE_COUNT;
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             final Object o = CACHE.get(cacheKey);
             if (null != o) {
                 LOGGER.log(Level.FINER,
@@ -625,7 +625,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         final long ret =
                 preparedQuery.countEntities(FetchOptions.Builder.withDefaults());
 
-        if (isCacheEnabled) {
+        if (cacheEnabled) {
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
                        "Added an object[cacheKey={0}] in repository cache[{1}]",
@@ -775,6 +775,25 @@ public abstract class AbstractGAERepository implements GAERepository {
                 datastoreService.beginTransaction();
 
         return new GAETransaction(tx);
+    }
+
+    /**
+     * Is the cache enabled?
+     *
+     * @return {@code true} for enabled, {@code false} otherwise
+     */
+    public final boolean isCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    /**
+     * Sets the cache enabled with the specified switch.
+     *
+     * @param isCacheEnabled the specified switch, {@code true} for enable
+     * cache, {@code false} otherwise
+     */
+    public final void setCacheEnabled(final boolean isCacheEnabled) {
+        this.cacheEnabled = isCacheEnabled;
     }
 
     /**
