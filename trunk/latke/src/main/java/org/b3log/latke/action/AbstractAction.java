@@ -356,19 +356,13 @@ public abstract class AbstractAction extends HttpServlet {
         final String pageName = getPageName(request.getRequestURI());
 
         try {
-            final String requestJSONString = toJSONString(request);
-            final JSONObject requestJSONObject = toJSONObject(requestJSONString);
             LOGGER.log(Level.FINER,
-                       "Template request[json={0}, pageName={1}]",
-                       new Object[]{requestJSONObject, pageName});
+                       "Template request[pageName={0}]", pageName);
 
             return Templates.getTemplate(pageName);
         } catch (final FileNotFoundException e) {
             LOGGER.warning(e.getMessage());
             return null;
-        } catch (final JSONException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ActionException(e);
         }
     }
 
