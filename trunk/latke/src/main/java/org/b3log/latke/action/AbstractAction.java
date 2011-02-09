@@ -40,7 +40,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.1, Feb 8, 2011
+ * @version 1.0.3.2, Feb 9, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -442,6 +442,10 @@ public abstract class AbstractAction extends HttpServlet {
                                    final HttpServletResponse response,
                                    final JSONObject responseJSONObject)
             throws ServletException, IOException, JSONException {
+        if (response.isCommitted()) { // response has been sent redirect
+            return;
+        }
+
         final PrintWriter writer = response.getWriter();
 
         try {
