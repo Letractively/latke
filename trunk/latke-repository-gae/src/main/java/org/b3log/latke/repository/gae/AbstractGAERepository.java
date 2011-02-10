@@ -63,9 +63,8 @@ import org.json.JSONObject;
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.9, Feb 8, 2011
+ * @version 1.0.3.0, Feb 10, 2011
  */
-// XXX: (1) ID generation in cluster issue
 public abstract class AbstractGAERepository implements GAERepository {
 
     /**
@@ -160,7 +159,8 @@ public abstract class AbstractGAERepository implements GAERepository {
         String ret = null;
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
-                ret = Ids.genTimeMillisId();
+                ret = genTimeMillisId();
+
                 jsonObject.put(Keys.OBJECT_ID, ret);
             } else {
                 ret = jsonObject.getString(Keys.OBJECT_ID);
@@ -207,7 +207,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         String ret = null;
         try {
             if (!jsonObject.has(Keys.OBJECT_ID)) {
-                ret = Ids.genTimeMillisId();
+                ret = genTimeMillisId();
                 jsonObject.put(Keys.OBJECT_ID, ret);
             } else {
                 ret = jsonObject.getString(Keys.OBJECT_ID);
@@ -767,6 +767,21 @@ public abstract class AbstractGAERepository implements GAERepository {
         }
 
         return ret;
+    }
+
+    /**
+     * Gets current date time string.
+     *
+     * @return a time millis string
+     */
+    public static String genTimeMillisId() {
+        final String timeMillisId = Ids.genTimeMillisId();
+        final long inc = CACHE.inc("id-step-generator", 1);
+
+        LOGGER.log(Level.FINEST, "[timeMillisId={0}, inc={1}]",
+                   new Object[]{timeMillisId, inc});
+
+        return String.valueOf(Long.parseLong(timeMillisId) + inc);
     }
 
     @Override
