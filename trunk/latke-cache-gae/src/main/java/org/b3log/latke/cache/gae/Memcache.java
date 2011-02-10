@@ -30,7 +30,7 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jan 30, 2010
+ * @version 1.0.0.8, Feb 10, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -84,6 +84,10 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     @Override
     public long inc(final K key, final long delta) {
+        if (!memcacheService.contains(key)) {
+            memcacheService.put(key, 1L);
+        }
+        
         return memcacheService.increment(key, delta);
     }
 
