@@ -43,7 +43,7 @@ public final class Ids {
     }
 
     /**
-     * Gets current date time string with the specified date formatter.
+     * Gets current date time string.
      *
      * <p>
      *   <b>Note</b>: This method is not safe in cluster environment.
