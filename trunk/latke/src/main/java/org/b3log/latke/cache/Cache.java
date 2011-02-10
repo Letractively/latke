@@ -52,6 +52,11 @@ public interface Cache<K, V> {
     /**
      * Increments the value specified by the given key with the specified delta.
      *
+     * <p>
+     * If the value specified by the given key is not present in this cache,
+     * initialize it as {@code 1L}.
+     * </p>
+     *
      * @param key the given key
      * @param delta the specified delta value
      * @return the post-increment value
