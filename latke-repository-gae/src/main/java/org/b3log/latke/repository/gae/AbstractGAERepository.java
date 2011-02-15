@@ -63,7 +63,7 @@ import org.json.JSONObject;
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.0, Feb 10, 2011
+ * @version 1.0.3.1, Feb 15, 2011
  */
 public abstract class AbstractGAERepository implements GAERepository {
 
@@ -602,7 +602,7 @@ public abstract class AbstractGAERepository implements GAERepository {
 
     @Override
     public long count() {
-        final String cacheKey = INSTANCE_ID + REPOSITORY_CACHE_COUNT;
+        final String cacheKey = INSTANCE_ID + getName() + REPOSITORY_CACHE_COUNT;
         if (cacheEnabled) {
             final Object o = CACHE.get(cacheKey);
             if (null != o) {
