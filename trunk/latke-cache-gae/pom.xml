@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke cache implementation for GAE.
-    Version: 1.0.1.7, Jan 28, 2011
+    Version: 1.0.1.8, Feb 17, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-cache-gae</artifactId>
     <packaging>jar</packaging>
-    <version>0.4.3</version>
+    <version>0.4.4</version>
     <name>Latke Cache(GAE)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke cache implementation for GAE.</description>
