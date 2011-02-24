@@ -27,7 +27,7 @@ public enum RunsOnEnv {
     /**
      * Indicates Latke runs on local.
      */
-    LOCALE,
+    LOCAL,
     /**
      * Indicates Latke runs on Google app engine.
      */
