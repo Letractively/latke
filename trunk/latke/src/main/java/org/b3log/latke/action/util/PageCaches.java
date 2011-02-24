@@ -68,7 +68,7 @@ public final class PageCaches {
     static {
         CACHE = CacheFactory.getCache(PAGE_CACHE_NAME);
         final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
-        if (runsOnEnv.equals(RunsOnEnv.LOCALE)) {
+        if (runsOnEnv.equals(RunsOnEnv.LOCAL)) {
             CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
             LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
                        MAX_CACHEABLE_PAGE_CNT);

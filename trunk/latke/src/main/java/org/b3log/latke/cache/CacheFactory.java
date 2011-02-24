@@ -53,7 +53,7 @@ public final class CacheFactory {
                 final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
 
                 switch (runsOnEnv) {
-                    case LOCALE:
+                    case LOCAL:
                         @SuppressWarnings("unchecked")
                         final Class<Cache<String, Object>> localLruCache =
                                 (Class<Cache<String, Object>>) Class.forName(

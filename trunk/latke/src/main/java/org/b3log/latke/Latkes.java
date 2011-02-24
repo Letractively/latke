@@ -47,7 +47,7 @@ public final class Latkes {
      */
     public static void check() {
         final RunsOnEnv runsOn = getRunsOnEnv();
-        if (runsOn.equals(RunsOnEnv.LOCALE)) {
+        if (runsOn.equals(RunsOnEnv.LOCAL)) {
             getRepositoryPath();
         }
     }
