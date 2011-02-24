@@ -34,7 +34,7 @@ public final class Latkes {
      */
     private static Locale defaultLocale;
     /**
-     * Repository path.
+     * Local repository path.
      */
     private static String repositoryPath;
     /**
