@@ -40,6 +40,7 @@ public class DefaultLocalServletListener extends AbstractServletListener {
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
         Latkes.setRunsOnEnv(RunsOnEnv.LOCAL);
+        Latkes.setRepositoryPath(""); // TODO: Generates repository directory
         LOGGER.info("Latke is running on local.");
 
         super.contextInitialized(servletContextEvent);
