@@ -33,7 +33,6 @@ import java.util.logging.Logger;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.8, Jan 24, 2011
  */
-// XXX: thread-safe?
 public final class Templates {
 
     /**
