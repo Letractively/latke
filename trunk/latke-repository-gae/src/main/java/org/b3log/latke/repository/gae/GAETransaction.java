@@ -16,6 +16,9 @@
 
 package org.b3log.latke.repository.gae;
 
+import java.util.ConcurrentModificationException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.repository.Transaction;
 
 /**
@@ -23,14 +26,23 @@ import org.b3log.latke.repository.Transaction;
  * {@link com.google.appengine.api.datastore.Transaction} simply.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Dec 8, 2010
+ * @version 1.0.0.1, Mar 7, 2011
  */
 public final class GAETransaction implements Transaction {
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(GAETransaction.class.getName());
+    /**
      * Underlying Google App Engine transaction.
      */
     private com.google.appengine.api.datastore.Transaction appEngineDatastoreTx;
+    /**
+     * Times of commit retries.
+     */
+    public static final int COMMIT_RETRIES = 3;
 
     /**
      * Constructs a {@link GAETransaction} object with the specified Google App
@@ -45,9 +57,35 @@ public final class GAETransaction implements Transaction {
         this.appEngineDatastoreTx = appEngineDatastoreTx;
     }
 
+    /**
+     * Commits this transaction with {@value #COMMIT_RETRIES} times of retries.
+     *
+     * <p>
+     * <b>Throws</b>:<br/>
+     * {@link java.util.ConcurrentModificationException} - if commits failed
+     * </p>
+     * @see #COMMIT_RETRIES
+     */
     @Override
     public void commit() {
-        appEngineDatastoreTx.commit();
+        int retries = COMMIT_RETRIES;
+
+        while (true) {
+            try {
+                appEngineDatastoreTx.commit();
+                break;
+            } catch (final ConcurrentModificationException e) {
+                if (retries == 0) {
+                    throw e;
+                }
+
+                --retries;
+                LOGGER.log(Level.WARNING,
+                           "Retrying to commit this transaction[id={0}, app={1}]",
+                           new Object[]{appEngineDatastoreTx.getId(),
+                                        appEngineDatastoreTx.getApp()});
+            }
+        }
     }
 
     @Override
