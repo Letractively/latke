@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.5.9, Jan 23, 2011
+    Version: 1.0.6.0, Mar 29, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -21,7 +21,6 @@
     <properties>
         <servlet.version>2.5</servlet.version>
         <freemarker.version>2.3.16</freemarker.version>
-        <slf4j.version>1.6.1</slf4j.version>
         <javax.mail.version>1.4</javax.mail.version>
         <commons-io.version>1.4</commons-io.version>
         <!-- Maven Plugin -->
@@ -166,12 +165,6 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
