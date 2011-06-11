@@ -45,6 +45,7 @@ public final class CacheFactory {
      * @param cacheName the given cache name
      * @return a cache specified by the given cache name
      */
+    @SuppressWarnings("unchecked")
     public static synchronized <T> Cache<String, T> getCache(
             final String cacheName) {
         Cache<String, Object> ret = CACHES.get(cacheName);
