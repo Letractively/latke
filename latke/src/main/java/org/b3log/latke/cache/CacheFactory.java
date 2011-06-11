@@ -27,7 +27,7 @@ import org.b3log.latke.RunsOnEnv;
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Oct 27, 2010
+ * @version 1.0.0.2, Jun 11, 2011
  */
 public final class CacheFactory {
 
@@ -41,10 +41,11 @@ public final class CacheFactory {
     /**
      * Gets a cache specified by the given cache name.
      *
+     * @param <T> the type of cached objects
      * @param cacheName the given cache name
      * @return a cache specified by the given cache name
      */
-    public static synchronized Cache<String, Object> getCache(
+    public static synchronized <T> Cache<String, T> getCache(
             final String cacheName) {
         Cache<String, Object> ret = CACHES.get(cacheName);
 
@@ -81,7 +82,7 @@ public final class CacheFactory {
             throw new RuntimeException("Can not get cache: " + e.getMessage(), e);
         }
 
-        return ret;
+        return (Cache<String, T>) ret;
     }
 
     /**
