@@ -695,13 +695,13 @@ public abstract class AbstractGAERepository implements GAERepository {
                     entity.setProperty(key, value);
                 }
             } else if (value instanceof Number
-                           || value instanceof Date
-                           || value instanceof Boolean
-                           || SUPPORTED_TYPES.contains(value.getClass())) {
+                       || value instanceof Date
+                       || value instanceof Boolean
+                       || SUPPORTED_TYPES.contains(value.getClass())) {
                 entity.setProperty(key, value);
             } else {
-                throw new RuntimeException("Need to add known data type[class=" + value.
-                        getClass().getName() + "]");
+                throw new RuntimeException("Need to add known data type[class="
+                                           + value.getClass().getName() + "]");
             }
         }
     }
