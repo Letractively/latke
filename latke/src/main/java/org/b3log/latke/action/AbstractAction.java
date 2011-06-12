@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventException;
 import org.b3log.latke.event.EventManager;
+import org.b3log.latke.model.Plugin;
 import org.b3log.latke.plugin.ViewLoadEventData;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -315,14 +316,19 @@ public abstract class AbstractAction extends HttpServlet {
                 return;
             }
 
-            final Map<?, ?> dataModel = doFreeMarkerAction(template,
-                                                           request, response);
+            final Map<String, Object> dataModel =
+                    (Map<String, Object>) doFreeMarkerAction(template,
+                                                             request, response);
             try {
                 final ViewLoadEventData data = new ViewLoadEventData();
                 data.setViewName(template.getName());
-                data.setDataModel((Map<String, Object>) dataModel);
+                data.setDataModel(dataModel);
                 eventManager.fireEventSynchronously(
                         new Event<ViewLoadEventData>(FREEMARKER_ACTION, data));
+                if (Strings.isEmptyOrNull((String) dataModel.get(Plugin.PLUGINS))) {
+                    // There is no plugin for this template, fill ${plugins} with blank.
+                    dataModel.put(Plugin.PLUGINS, "");
+                }
             } catch (final EventException e) {
                 LOGGER.log(Level.WARNING,
                            "Event[FREEMARKER_ACTION] handle failed, ignores this exception for kernel health",
