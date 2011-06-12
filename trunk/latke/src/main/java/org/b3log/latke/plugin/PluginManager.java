@@ -128,29 +128,32 @@ public final class PluginManager {
                    url.getPath());
         final URLClassLoader classLoader = new URLClassLoader(new URL[]{url});
 
-        final Class<?> pluginClass =
-                classLoader.loadClass("org.b3log.solo.plugin.PageCacheList");
+        final Properties props = new Properties();
+        props.load(new FileInputStream(
+                pluginDir.getPath() + File.separator + "plugin.properties"));
+
+        final String className = props.getProperty(Plugin.PLUGIN_CLASS);
+        final Class<?> pluginClass = classLoader.loadClass(className);
 
         final AbstractPlugin plugin = (AbstractPlugin) pluginClass.newInstance();
-        setPluginProps(pluginDir, plugin);
+        setPluginProps(pluginDir, plugin, props);
 
         PluginManager.register(plugin);
     }
 
     /**
-     * Sets the specified plugin's properties from configuration file under the
-     * specified plugin directory.
+     * Sets the specified plugin's properties from the specified properties file 
+     * under the specified plugin directory.
      * 
      * @param pluginDir the specified plugin directory
      * @param plugin the specified plugin
+     * @param props the specified properties file
      * @throws IOException io exception
      */
     private static void setPluginProps(final File pluginDir,
-                                       final AbstractPlugin plugin)
+                                       final AbstractPlugin plugin,
+                                       final Properties props)
             throws IOException {
-        final Properties props = new Properties();
-        props.load(new FileInputStream(
-                pluginDir.getPath() + File.separator + "plugin.properties"));
         final String author = props.getProperty(Plugin.PLUGIN_AUTHOR);
         final String name = props.getProperty(Plugin.PLUGIN_NAME);
         final String version = props.getProperty(Plugin.PLUGIN_VERSION);
