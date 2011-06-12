@@ -16,16 +16,24 @@
 
 package org.b3log.latke.plugin;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.io.IOUtils;
 import org.b3log.latke.Keys;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.model.Plugin;
+import org.b3log.latke.util.Strings;
 
 /**
  * Abstract plugin.
@@ -59,6 +67,14 @@ public abstract class AbstractPlugin implements Pluginable {
      * Status of this plugin.
      */
     private PluginStatus status = PluginStatus.ENABLED;
+    /**
+     * Languages.
+     */
+    private Map<String, Properties> langs = new HashMap<String, Properties>();
+    /**
+     * FreeMarker configuration.
+     */
+    private Configuration configuration;
 
     /**
      * Gets the directory of this plugin.
@@ -70,45 +86,144 @@ public abstract class AbstractPlugin implements Pluginable {
     }
 
     /**
-     * Sets the directory of this plugin with the specified directory.
+     * Sets the directory of this plugin with the specified directory. 
+     * Initializes template engine.
      * 
      * @param dir the specified directory
      */
     public void setDir(final String dir) {
         this.dir = dir;
+
+        configuration = new Configuration();
+        configuration.setDefaultEncoding("UTF-8");
+        try {
+            configuration.setDirectoryForTemplateLoading(new File(dir));
+        } catch (final IOException e) {
+            Logger.getLogger(getClass().getName()).
+                    log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
-    @Override
-    public void plug(final Map<String, Object> dataModel) {
-        dataModel.put(Plugin.PLUGINS, getMainViewContent());
-        
-        final ResourceBundle bundle = ResourceBundle.getBundle(Keys.LANGUAGE);
-        final Set<String> keySet = bundle.keySet();
-        for (final String key : keySet) {
-            dataModel.put(key, bundle.getString(key));
+    /**
+     * Reads lang_xx.properties into field {@link #langs langs}.
+     */
+    public void readLangs() {
+        final File root = new File(dir);
+        final File[] langFiles = root.listFiles(new FilenameFilter() {
+
+            @Override
+            public boolean accept(final File dir, final String name) {
+                if (name.startsWith(Keys.LANGUAGE)
+                    && name.endsWith(".properties")) {
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        for (int i = 0; i < langFiles.length; i++) {
+            final File lang = langFiles[i];
+            final String langFileName = lang.getName();
+            final String key =
+                    langFileName.substring(Keys.LANGUAGE.length() + 1,
+                                           langFileName.lastIndexOf("."));
+            final Properties props = new Properties();
+            try {
+                props.load(new FileInputStream(lang));
+                langs.put(key, props);
+            } catch (final Exception e) {
+                Logger.getLogger(getClass().getName()).
+                        log(Level.SEVERE,
+                            "Get plugin[name="
+                            + name + "]'s language configuration failed", e);
+            }
         }
     }
 
     @Override
-    public String getMainViewContent() {
-        if (null == mainViewContent) {
-            final File mainView = new File(dir + File.separator + Plugin.PLUGIN
-                                           + ".ftl");
+    public String getLang(final Locale locale, final String key) {
+        final String language = locale.getLanguage();
+        final String country = locale.getCountry();
+        final String variant = locale.getVariant();
 
-            String ret = null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void plug(final Map<String, Object> dataModel) {
+        String content = (String) dataModel.get(Plugin.PLUGINS);
+        if (null == content) {
+            dataModel.put(Plugin.PLUGINS, "");
+        }
+        handleLangs(dataModel);
+
+        content = (String) dataModel.get(Plugin.PLUGINS);
+        final StringBuilder contentBuilder = new StringBuilder(content);
+        contentBuilder.append(getMainViewContent(dataModel));
+
+        dataModel.put(Plugin.PLUGINS, contentBuilder.toString());
+    }
+
+    /**
+     * Processes languages. Retrieves language labels with default locale, then 
+     * sets them into the specified data model.
+     * 
+     * @param dataModel the specified data model
+     */
+    private void handleLangs(final Map<String, Object> dataModel) {
+        final Locale locale = Latkes.getDefaultLocale();
+        final String language = locale.getLanguage();
+        final String country = locale.getCountry();
+        final String variant = locale.getVariant();
+
+        final StringBuilder keyBuilder = new StringBuilder(language);
+        if (!Strings.isEmptyOrNull(country)) {
+            keyBuilder.append("_").append(country);
+        }
+        if (!Strings.isEmptyOrNull(variant)) {
+            keyBuilder.append("_").append(variant);
+        }
+
+        final String localKey = keyBuilder.toString();
+        Logger.getLogger(getClass().getName()).log(Level.FINER,
+                                                   "Locale key[{0}]", localKey);
+        final Properties props = langs.get(localKey);
+        final Set<Object> keySet = props.keySet();
+        for (final Object key : keySet) {
+            dataModel.put((String) key, props.getProperty((String) key));
+            // TODO: debug info
+            Logger.getLogger(getClass().getName()).log(
+                    Level.FINE, "{0}={1}",
+                    new Object[]{key, props.getProperty((String) key)});
+        }
+    }
+
+    /**
+     * Gets main view content. The content is processed with the specified data 
+     * model by template engine.
+     * 
+     * @param dataModel the specified data model
+     * @return content
+     */
+    private String getMainViewContent(final Map<String, Object> dataModel) {
+        if (null == mainViewContent) {
             try {
-                ret = IOUtils.toString(new FileInputStream(mainView));
+                final Template template =
+                        configuration.getTemplate(Plugin.PLUGIN + ".ftl");
+                final StringWriter sw = new StringWriter();
+                template.process(dataModel, sw);
+
+                mainViewContent = sw.toString();
             } catch (final Exception e) {
                 Logger.getLogger(getClass().getName()).
                         log(Level.SEVERE,
                             "Get plugin[name=" + name
                             + "]'s main view failed, will return null", e);
             }
-
-            return ret;
-        } else {
-            return mainViewContent;
         }
+
+        return mainViewContent;
     }
 
     /**

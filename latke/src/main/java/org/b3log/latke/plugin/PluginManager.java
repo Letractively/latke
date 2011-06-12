@@ -163,6 +163,7 @@ public final class PluginManager {
         plugin.setName(name);
         plugin.setVersion(version);
         plugin.setDir(pluginDir.getPath());
+        plugin.readLangs();
     }
 
     /**

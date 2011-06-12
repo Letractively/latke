@@ -16,6 +16,7 @@
 
 package org.b3log.latke.plugin;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -25,25 +26,23 @@ import java.util.Map;
  * @version 1.0.0.1, Jun 12, 2011
  */
 public interface Pluginable {
-    
+
     /**
-     * Gets the template content of main view.
+     * Gets the language configuration by the specified locale and key.
      * 
-     * <p>
-     *   Main view is the template file named "plugin.ftl".
-     * </p>
-     * 
-     * @return template content
+     * @param locale the specified locale
+     * @param key the specified key
+     * @return value, returns {@code null} if not found
      */
-    String getMainViewContent();
-    
+    String getLang(final Locale locale, final String key);
+
     /**
      * Gets the author of this plugin.
      * 
      * @return  author of this plugin
      */
     String getAuthor();
-    
+
     /**
      * Gets the version of this plugin.
      * 
