@@ -51,6 +51,10 @@ public abstract class AbstractPlugin implements Pluginable {
      * Directory of this plugin.
      */
     private String dir;
+    /**
+     * Status of this plugin.
+     */
+    private PluginStatus status = PluginStatus.ENABLED;
 
     /**
      * Gets the directory of this plugin.
@@ -92,9 +96,18 @@ public abstract class AbstractPlugin implements Pluginable {
         }
     }
 
+    /**
+     * Sets the status with the specified status.
+     * 
+     * @param status the specified status
+     */
+    public void setStatus(final PluginStatus status) {
+        this.status = status;
+    }
+
     @Override
     public PluginStatus getStatus() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return status;
     }
 
     @Override

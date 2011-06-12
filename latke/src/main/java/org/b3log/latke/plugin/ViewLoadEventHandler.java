@@ -30,7 +30,7 @@ import org.b3log.latke.event.EventManager;
  * FreeMarker view load event handler.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jun 11, 2011
+ * @version 1.0.0.1, Jun 12, 2011
  */
 public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEventData> {
 
@@ -66,8 +66,10 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
         LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]",
                    new Object[]{plugins.size(), viewName});
         for (final Pluginable plugin : plugins) {
-            plugin.plug(dataModel);
-            LOGGER.log(Level.FINER, "Plugged[name={0}]", plugin.getName());
+            if (PluginStatus.ENABLED == plugin.getStatus()) {
+                plugin.plug(dataModel);
+                LOGGER.log(Level.FINER, "Plugged[name={0}]", plugin.getName());
+            }
         }
     }
 }
