@@ -39,11 +39,20 @@ import org.b3log.latke.cache.Cache;
 /**
  * Simple warper of <a href="http://code.google.com/appengine/docs/java/memcache/">
  * Google App Engine memcache service</a>.
+ * 
+ * <p>
+ *   <b>Note</b>:
+ *   <ul>
+ *     <li>Invoking {@link #removeAll()} will clear all caches.</li>
+ *     <li>Statistics does not respect caches, this will return statistic states 
+ *         sum for all caches.</li>
+ *   </ul>
+ * </p>
  *
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Feb 10, 2011
+ * @version 1.0.0.9, Jun 12, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -165,7 +174,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
     @Override
     public void removeAll() {
         memcacheService.clearAll(); // Will clear in all namespaces
-        LOGGER.finest("Clear all cache");
+        LOGGER.finest("Clear all caches");
     }
 
     @Override
