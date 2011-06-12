@@ -56,14 +56,12 @@ public final class CacheFactory {
 
                 switch (runsOnEnv) {
                     case LOCAL:
-                        @SuppressWarnings("unchecked")
                         final Class<Cache<String, Object>> localLruCache =
                                 (Class<Cache<String, Object>>) Class.forName(
                                 "org.b3log.latke.cache.local.memory.LruMemoryCache");
                         ret = localLruCache.newInstance();
                         break;
                     case GAE:
-                        @SuppressWarnings("unchecked")
                         final Class<Cache<String, Object>> gaeMemcache =
                                 (Class<Cache<String, Object>>) Class.forName(
                                 "org.b3log.latke.cache.gae.Memcache");
