@@ -44,6 +44,10 @@ public final class Plugin {
      * Key of plugin version.
      */
     public static final String PLUGIN_VERSION = "version";
+    /**
+     * Key of plugin class.
+     */
+    public static final String PLUGIN_CLASS = "class";
 
     /**
      * Private default constructor.
