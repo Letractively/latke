@@ -33,6 +33,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.event.Event;
+import org.b3log.latke.event.EventException;
+import org.b3log.latke.event.EventManager;
+import org.b3log.latke.plugin.ViewLoadEventData;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +44,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.2, Feb 9, 2011
+ * @version 1.0.3.3, Jun 11, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -54,6 +58,15 @@ public abstract class AbstractAction extends HttpServlet {
      */
     private static final Logger LOGGER =
             Logger.getLogger(AbstractAction.class.getName());
+    /**
+     * Event manager.
+     */
+    private EventManager eventManager = EventManager.getInstance();
+    /**
+     * Indicates the event of invoked {@link #doFreeMarkerAction(freemarker.template.Template, 
+     * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
+     */
+    public static final String FREEMARKER_ACTION = "FreeMarkerAction";
 
     /**
      * Performs the FreeMarker template action.
@@ -288,6 +301,7 @@ public abstract class AbstractAction extends HttpServlet {
      * @throws ServletException servlet exception
      * @throws IOException io exception
      */
+    @SuppressWarnings("unchecked")
     protected void processFreemarkRequest(final HttpServletRequest request,
                                           final HttpServletResponse response)
             throws ServletException, IOException {
@@ -303,6 +317,17 @@ public abstract class AbstractAction extends HttpServlet {
 
             final Map<?, ?> dataModel = doFreeMarkerAction(template,
                                                            request, response);
+            try {
+                final ViewLoadEventData data = new ViewLoadEventData();
+                data.setViewName(template.getName());
+                data.setDataModel((Map<String, Object>) dataModel);
+                eventManager.fireEventSynchronously(
+                        new Event<ViewLoadEventData>(FREEMARKER_ACTION, data));
+            } catch (final EventException e) {
+                LOGGER.log(Level.WARNING,
+                           "Event[FREEMARKER_ACTION] handle failed, ignores this exception for kernel health",
+                           e);
+            }
 
             afterDoFreeMarkerTemplateAction(request, response, dataModel,
                                             template);
