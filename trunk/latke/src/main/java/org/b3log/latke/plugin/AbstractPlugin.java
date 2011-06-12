@@ -186,16 +186,10 @@ public abstract class AbstractPlugin implements Pluginable {
         }
 
         final String localKey = keyBuilder.toString();
-        Logger.getLogger(getClass().getName()).log(Level.FINER,
-                                                   "Locale key[{0}]", localKey);
         final Properties props = langs.get(localKey);
         final Set<Object> keySet = props.keySet();
         for (final Object key : keySet) {
             dataModel.put((String) key, props.getProperty((String) key));
-            // TODO: debug info
-            Logger.getLogger(getClass().getName()).log(
-                    Level.FINE, "{0}={1}",
-                    new Object[]{key, props.getProperty((String) key)});
         }
     }
 
