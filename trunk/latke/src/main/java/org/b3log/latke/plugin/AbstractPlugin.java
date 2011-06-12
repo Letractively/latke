@@ -18,9 +18,13 @@ package org.b3log.latke.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
+import org.b3log.latke.Keys;
 import org.b3log.latke.model.Plugin;
 
 /**
@@ -72,6 +76,17 @@ public abstract class AbstractPlugin implements Pluginable {
      */
     public void setDir(final String dir) {
         this.dir = dir;
+    }
+
+    @Override
+    public void plug(final Map<String, Object> dataModel) {
+        dataModel.put(Plugin.PLUGINS, getMainViewContent());
+        
+        final ResourceBundle bundle = ResourceBundle.getBundle(Keys.LANGUAGE);
+        final Set<String> keySet = bundle.keySet();
+        for (final String key : keySet) {
+            dataModel.put(key, bundle.getString(key));
+        }
     }
 
     @Override
