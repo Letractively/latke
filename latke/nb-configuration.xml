@@ -15,5 +15,10 @@ Without this configuration present, some functionality in the IDE may be limited
         <word>servlet</word>
         <word>servlets</word>
         <word>xml</word>
+        <word>Plugin</word>
+        <word>plugin</word>
+        <word>Pluginable</word>
+        <word>Plugins</word>
+        <word>plugins</word>
     </spellchecker-wordlist>
 </project-shared-configuration>
