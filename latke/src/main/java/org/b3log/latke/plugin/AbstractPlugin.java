@@ -56,10 +56,6 @@ public abstract class AbstractPlugin implements Pluginable {
      */
     private String version;
     /**
-     * Main view content.
-     */
-    private String mainViewContent;
-    /**
      * Directory of this plugin.
      */
     private String dir;
@@ -160,9 +156,12 @@ public abstract class AbstractPlugin implements Pluginable {
 
         content = (String) dataModel.get(Plugin.PLUGINS);
         final StringBuilder contentBuilder = new StringBuilder(content);
+
         contentBuilder.append(getMainViewContent(dataModel));
 
-        dataModel.put(Plugin.PLUGINS, contentBuilder.toString());
+        final String pluginsContent = contentBuilder.toString();
+        System.out.println("Current plugins' content: " + pluginsContent);
+        dataModel.put(Plugin.PLUGINS, pluginsContent);
     }
 
     /**
@@ -201,23 +200,21 @@ public abstract class AbstractPlugin implements Pluginable {
      * @return content
      */
     private String getMainViewContent(final Map<String, Object> dataModel) {
-        if (null == mainViewContent) {
-            try {
-                final Template template =
-                        configuration.getTemplate(Plugin.PLUGIN + ".ftl");
-                final StringWriter sw = new StringWriter();
-                template.process(dataModel, sw);
+        try {
+            final Template template =
+                    configuration.getTemplate(Plugin.PLUGIN + ".ftl");
+            final StringWriter sw = new StringWriter();
+            template.process(dataModel, sw);
 
-                mainViewContent = sw.toString();
-            } catch (final Exception e) {
-                Logger.getLogger(getClass().getName()).
-                        log(Level.SEVERE,
-                            "Get plugin[name=" + name
-                            + "]'s main view failed, will return null", e);
-            }
+            return sw.toString();
+        } catch (final Exception e) {
+            Logger.getLogger(getClass().getName()).
+                    log(Level.SEVERE,
+                        "Get plugin[name=" + name
+                        + "]'s main view failed, will return warning", e);
+            return "<div style='color: red;'>Plugin[name="
+                   + name + "] work failed</div>";
         }
-
-        return mainViewContent;
     }
 
     /**
