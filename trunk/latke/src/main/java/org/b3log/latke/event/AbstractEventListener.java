@@ -67,7 +67,7 @@ public abstract class AbstractEventListener<T> {
      * @see #action(org.b3log.latke.event.Event) 
      */
     final void performAction(final AbstractEventQueue eventQueue,
-                             final Event event) throws EventException {
+                             final Event<?> event) throws EventException {
         @SuppressWarnings("unchecked")
         final Event<T> eventObject = (Event<T>) event;
         try {
