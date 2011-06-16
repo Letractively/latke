@@ -66,9 +66,20 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
         LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]",
                    new Object[]{plugins.size(), viewName});
         for (final Pluginable plugin : plugins) {
-            if (PluginStatus.ENABLED == plugin.getStatus()) {
-                plugin.plug(dataModel);
-                LOGGER.log(Level.FINER, "Plugged[name={0}]", plugin.getName());
+            // TODO: Do not repeat plug, if plugged, consider page caching
+            switch (plugin.getStatus()) {
+                case ENABLED:
+                    plugin.plug(dataModel);
+                    LOGGER.log(Level.FINER, "Plugged[name={0}]",
+                               plugin.getName());
+                    break;
+                case DISABLED:
+                    // TODO: unplug
+                    break;
+                default:
+                    throw new AssertionError(
+                            "Plugin state error, this is a bug! Please report "
+                            + "this bug on http://code.google.com/p/b3log-solo/issues/list!");
             }
         }
     }

@@ -18,6 +18,7 @@ package org.b3log.latke.plugin;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Pluginable.
@@ -65,7 +66,16 @@ public interface Pluginable {
     PluginStatus getStatus();
 
     /**
-     * Plugs.
+     * Gets the types of this plugin.
+     * 
+     * @return types of this plugin
+     */
+    Set<PluginType> getTypes();
+
+    /**
+     * Plugs. The specified data model is passed from main view(existing view), 
+     * so the data model contains all data belongs to main view, such as all 
+     * language labels, filled data by the controller of it.
      * 
      * @param dataModel the specified data model
      */
