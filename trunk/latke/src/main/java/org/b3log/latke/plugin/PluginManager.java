@@ -164,6 +164,7 @@ public final class PluginManager {
         plugin.setVersion(version);
         plugin.setDir(pluginDir.getPath());
         plugin.readLangs();
+        plugin.addType(PluginType.ADMIN);
     }
 
     /**

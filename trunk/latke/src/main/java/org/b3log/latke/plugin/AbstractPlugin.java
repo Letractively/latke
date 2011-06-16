@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +40,7 @@ import org.b3log.latke.util.Strings;
  * Abstract plugin.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jun 12, 2011
+ * @version 1.0.0.1, Jun 16, 2011
  */
 public abstract class AbstractPlugin implements Pluginable {
 
@@ -63,6 +64,10 @@ public abstract class AbstractPlugin implements Pluginable {
      * Status of this plugin.
      */
     private PluginStatus status = PluginStatus.ENABLED;
+    /**
+     * Types of this plugin.
+     */
+    private Set<PluginType> types = new HashSet<PluginType>();
     /**
      * Languages.
      */
@@ -157,7 +162,7 @@ public abstract class AbstractPlugin implements Pluginable {
         content = (String) dataModel.get(Plugin.PLUGINS);
         final StringBuilder contentBuilder = new StringBuilder(content);
 
-        contentBuilder.append(getMainViewContent(dataModel));
+        contentBuilder.append(getViewContent(dataModel));
 
         final String pluginsContent = contentBuilder.toString();
         System.out.println("Current plugins' content: " + pluginsContent);
@@ -193,13 +198,13 @@ public abstract class AbstractPlugin implements Pluginable {
     }
 
     /**
-     * Gets main view content. The content is processed with the specified data 
-     * model by template engine.
+     * Gets view content of a plugin. The content is processed with the 
+     * specified data model by template engine.
      * 
      * @param dataModel the specified data model
-     * @return content
+     * @return plugin view content
      */
-    private String getMainViewContent(final Map<String, Object> dataModel) {
+    private String getViewContent(final Map<String, Object> dataModel) {
         try {
             final Template template =
                     configuration.getTemplate(Plugin.PLUGIN + ".ftl");
@@ -211,9 +216,9 @@ public abstract class AbstractPlugin implements Pluginable {
             Logger.getLogger(getClass().getName()).
                     log(Level.SEVERE,
                         "Get plugin[name=" + name
-                        + "]'s main view failed, will return warning", e);
+                        + "]'s view failed, will return warning", e);
             return "<div style='color: red;'>Plugin[name="
-                   + name + "] work failed</div>";
+                   + name + "] runs failed</div>";
         }
     }
 
@@ -271,5 +276,19 @@ public abstract class AbstractPlugin implements Pluginable {
      */
     public void setVersion(final String version) {
         this.version = version;
+    }
+
+    @Override
+    public Set<PluginType> getTypes() {
+        return types;
+    }
+
+    /**
+     * Adds the specified type.
+     * 
+     * @param type the specified type
+     */
+    public void addType(final PluginType type) {
+        types.add(type);
     }
 }
