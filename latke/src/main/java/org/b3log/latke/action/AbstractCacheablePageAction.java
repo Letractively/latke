@@ -26,13 +26,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.util.PageCaches;
+import org.b3log.latke.util.Strings;
 import org.json.JSONObject;
 
 /**
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Dec 22, 2010
+ * @version 1.0.0.9, Jun 18, 2011
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -54,9 +55,13 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     public static final String CACHED_CONTENT = "cachedContent";
     /**
-     * Key of cached oid.
+     * Key of cached object id.
      */
     public static final String CACHED_OID = "cachedOid";
+    /**
+     * Key of cached title.
+     */
+    public static final String CACHED_TITLE = "cachedTitle";
 
     /**
      * Processes FreeMarker template with the specified request, data model,
@@ -101,9 +106,17 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
             final JSONObject cachedValue = new JSONObject();
             final String pageContent = stringWriter.toString();
+
+            if (!check(request, pageContent)) {
+                throw new RuntimeException("Need arguments for caching page, "
+                                           + "resolve this bug first!");
+            }
+
             cachedValue.put(CACHED_CONTENT, pageContent);
             cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
             cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
+            request.setAttribute(CACHED_TITLE,
+                                 request.getAttribute(CACHED_TITLE));
 
             writer.write(pageContent);
 
@@ -114,5 +127,24 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         }
+    }
+
+    /**
+     * Checks if all conditions for caching page are ready by the specified 
+     * request and content.
+     * 
+     * @param request the specified request
+     * @param content the specified content
+     * @return {@code true} if ready, returns {@code false} if check fails
+     */
+    private boolean check(final HttpServletRequest request, final String content) {
+        if (Strings.isEmptyOrNull(content)
+            || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_TYPE))
+            || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_OID))
+            || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_TITLE))) {
+            return false;
+        }
+
+        return true;
     }
 }
