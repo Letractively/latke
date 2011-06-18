@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.action.util;
 
 import java.util.Collections;
@@ -148,8 +147,9 @@ public final class PageCaches {
         JSONObject stat = keys.get(pageKey);
         if (null == stat) {
             stat = new JSONObject();
-            keys.put(pageKey, stat);
         }
+        
+        keys.put(pageKey, stat);
 
         // TODO: page stat. info (put count)
     }
