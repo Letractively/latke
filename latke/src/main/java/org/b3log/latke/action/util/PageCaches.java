@@ -35,10 +35,10 @@ import org.json.JSONObject;
  * <p>
  *   This cache contains some pages and their statistics as the following: 
  *   <pre>
- *     &lt;"URL a", (oId, title, title, type)&gt;
- *     &lt;"URL b", (oId, title, title, type)&gt;
+ *     &lt;"URL a", JSONObject{oId, title, title, type}&gt;
+ *     &lt;"URL b", JSONObject{oId, title, title, type}&gt;
  *     ....
- *     &lt;{@value #PAGES}, Map&lt;"URL", JSONObject statistic info&gt;&gt;
+ *     &lt;{@value #PAGES}, Map&lt;"URL", JSONObject{TODO: statistic info}&gt;&gt;
  *   </pre>
  * </p>
  *
