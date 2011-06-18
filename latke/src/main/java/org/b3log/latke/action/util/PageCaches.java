@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.action.AbstractCacheablePageAction;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.util.freemarker.Templates;
@@ -99,7 +100,7 @@ public final class PageCaches {
             CACHE.put(PAGES, pages);
         }
     }
-    
+
     /**
      * Gets all cached page keys.
      * 
@@ -124,22 +125,43 @@ public final class PageCaches {
     }
 
     /**
-     * Gets page content with the specified page key.
+     * Gets a cached page with the specified page key. 
+     * <pre>
+     * </pre>
+     * "URL a", JSONObject{oId, title, title, type}&gt;
      *
      * @param pageKey the specified page key
-     * @return page content
+     * @return for example,
+     * <pre>
+     * {
+     *     {@value AbstractCacheablePageAction#CACHED_CONTENT}": "",
+     *     {@value AbstractCacheablePageAction#CACHED_OID}: "",
+     *     {@value AbstractCacheablePageAction#CACHED_TITLE}: "",
+     *     {@value AbstractCacheablePageAction#CACHED_TYPE}: ""
+     * }
+     * </pre>
      */
-    public static String get(final String pageKey) {
-        return (String) CACHE.get(pageKey);
+    public static JSONObject get(final String pageKey) {
+        return (JSONObject) CACHE.get(pageKey);
     }
 
     /**
      * Puts a page into cache.
      *
      * @param pageKey key of the page to put
-     * @param cachedValue value to put
+     * @param cachedValue value to put, for example, 
+     * <pre>
+     * {
+     *     {@value AbstractCacheablePageAction#CACHED_CONTENT}": "",
+     *     {@value AbstractCacheablePageAction#CACHED_OID}: "",
+     *     {@value AbstractCacheablePageAction#CACHED_TITLE}: "",
+     *     {@value AbstractCacheablePageAction#CACHED_TYPE}: ""
+     * }
+     * </pre>
      */
     public static void put(final String pageKey, final JSONObject cachedValue) {
+        check(cachedValue);
+
         CACHE.put(pageKey, cachedValue);
 
         @SuppressWarnings("unchecked")
@@ -191,6 +213,27 @@ public final class PageCaches {
         Templates.CACHE.clear();
 
         CACHE.put(PAGES, new HashMap<String, JSONObject>());
+    }
+
+    /**
+     * Checks if all keys of the specified cached page are ready.
+     * 
+     * @param cachedPage the specified cached page
+     */
+    private static void check(final JSONObject cachedPage) {
+        final int numOfKeys = 4;
+        if (numOfKeys != cachedPage.length()) {
+            throw new IllegalArgumentException("Illegal arguments for caching page, "
+                                               + "resolve this bug first!");
+        }
+
+        if (!cachedPage.has(AbstractCacheablePageAction.CACHED_CONTENT)
+            || !cachedPage.has(AbstractCacheablePageAction.CACHED_OID)
+            || !cachedPage.has(AbstractCacheablePageAction.CACHED_TITLE)
+            || !cachedPage.has(AbstractCacheablePageAction.CACHED_TYPE)) {
+            throw new IllegalArgumentException("Illegal arguments for caching page, "
+                                               + "resolve this bug first!");
+        }
     }
 
     /**
