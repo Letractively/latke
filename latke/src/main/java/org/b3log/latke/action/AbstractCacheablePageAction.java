@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.action;
 
 import freemarker.template.Template;
@@ -115,8 +114,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             cachedValue.put(CACHED_CONTENT, pageContent);
             cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
             cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
-            request.setAttribute(CACHED_TITLE,
-                                 request.getAttribute(CACHED_TITLE));
+            cachedValue.put(CACHED_TITLE, request.getAttribute(CACHED_TITLE));
 
             writer.write(pageContent);
 
