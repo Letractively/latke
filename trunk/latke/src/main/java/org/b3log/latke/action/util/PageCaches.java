@@ -154,7 +154,7 @@ public final class PageCaches {
         pages.put(pageKey, stat);
 
         LOGGER.log(Level.FINEST, "Put a page[key={0}, value={1} into page cache,"
-                                 + "cached pages[{2}]",
+                                 + " cached pages[{2}]",
                    new Object[]{pageKey, cachedValue, pages});
     }
 
