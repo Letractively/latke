@@ -16,6 +16,10 @@
 
 package org.b3log.latke.action.util;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
@@ -27,6 +31,16 @@ import org.json.JSONObject;
 
 /**
  * Page cache.
+ * 
+ * <p>
+ *   This cache contains some pages and their statistics as the following: 
+ *   <pre>
+ *     &lt;"URL a", "Page Content"&gt;
+ *     &lt;"URL b", Page Content&gt;
+ *     ....
+ *     &lt;{@value #PAGE_KEYS}, Map&lt;"URL", JSONObject statistic info&gt;&gt;
+ *   </pre>
+ * </p>
  *
  * <p>
  *   <b>Note</b>: The method <a href="http://code.google.com/appengine/docs/java/javadoc/
@@ -37,7 +51,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jan 9, 2011
+ * @version 1.0.0.5, Jun 18, 2011
  */
 public final class PageCaches {
 
@@ -58,9 +72,13 @@ public final class PageCaches {
      */
     private static final int MAX_CACHEABLE_PAGE_CNT = 1024;
     /**
-     * Page cache name.
+     * Key of page cache name.
      */
     public static final String PAGE_CACHE_NAME = "page";
+    /**
+     * Key of cached page keys.
+     */
+    public static final String PAGE_KEYS = "pageKeys";
 
     /**
      * Initializes the cache.
@@ -73,6 +91,27 @@ public final class PageCaches {
             LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
                        MAX_CACHEABLE_PAGE_CNT);
         }
+
+        @SuppressWarnings("unchecked")
+        Map<String, ?> pageKeys = (Map<String, ?>) CACHE.get(PAGE_KEYS);
+        if (null == pageKeys) {
+            pageKeys = new HashMap<String, JSONObject>();
+            CACHE.put(PAGE_KEYS, pageKeys);
+        }
+    }
+
+    /**
+     * Gets all cached page keys.
+     * 
+     * @return cached page keys, returns an empty set if not found
+     */
+    @SuppressWarnings("unchecked")
+    public static Set<String> getKeys() {
+        final Map<String, ?> keys = (Map<String, ?>) CACHE.get(PAGE_KEYS);
+
+        // TODO: sort
+
+        return Collections.unmodifiableSet(keys.keySet());
     }
 
     /**
@@ -102,16 +141,37 @@ public final class PageCaches {
      */
     public static void put(final String pageKey, final JSONObject cachedValue) {
         CACHE.put(pageKey, cachedValue);
+
+        @SuppressWarnings("unchecked")
+        final Map<String, JSONObject> keys =
+                (Map<String, JSONObject>) CACHE.get(PAGE_KEYS);
+        JSONObject stat = keys.get(pageKey);
+        if (null == stat) {
+            stat = new JSONObject();
+            keys.put(pageKey, stat);
+        }
+
+        // TODO: page stat. info (put count)
     }
 
     /**
      * Removes a cached pages specified by the given page key.
+     * 
+     * <p>
+     *   <b>Note</b>: In addition to remove cached page content, invoking this 
+     *   method will remove template of the cached page corresponds to.
+     * </p>
      *
      * @param pageKey the given page key
      */
     public static void remove(final String pageKey) {
         CACHE.remove(pageKey);
         Templates.CACHE.clear();
+
+        @SuppressWarnings("unchecked")
+        final Map<String, JSONObject> keys =
+                (Map<String, JSONObject>) CACHE.get(PAGE_KEYS);
+        keys.remove(pageKey);
     }
 
     /**
@@ -124,6 +184,8 @@ public final class PageCaches {
     public static void removeAll() {
         CACHE.removeAll();
         Templates.CACHE.clear();
+
+        CACHE.put(PAGE_KEYS, new HashMap<String, JSONObject>());
     }
 
     /**
