@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.action.util;
 
 import java.util.Collections;
@@ -93,10 +92,10 @@ public final class PageCaches {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, ?> pageKeys = (Map<String, ?>) CACHE.get(PAGES);
-        if (null == pageKeys) {
-            pageKeys = new HashMap<String, JSONObject>();
-            CACHE.put(PAGES, pageKeys);
+        Map<String, ?> pages = (Map<String, ?>) CACHE.get(PAGES);
+        if (null == pages) {
+            pages = new HashMap<String, JSONObject>();
+            CACHE.put(PAGES, pages);
         }
     }
 
@@ -143,16 +142,19 @@ public final class PageCaches {
         CACHE.put(pageKey, cachedValue);
 
         @SuppressWarnings("unchecked")
-        final Map<String, JSONObject> keys =
+        final Map<String, JSONObject> pages =
                 (Map<String, JSONObject>) CACHE.get(PAGES);
-        JSONObject stat = keys.get(pageKey);
+        JSONObject stat = pages.get(pageKey);
         if (null == stat) {
             stat = new JSONObject();
         }
-        
-        keys.put(pageKey, stat);
 
-        // TODO: page stat. info (put count)
+        // TODO: page stat. info (put count, etc)
+        pages.put(pageKey, stat);
+
+        LOGGER.log(Level.FINEST, "Put a page[key={0}, value={1} into page cache,"
+                                 + "cached pages[{2}]",
+                   new Object[]{pageKey, cachedValue, pages});
     }
 
     /**
