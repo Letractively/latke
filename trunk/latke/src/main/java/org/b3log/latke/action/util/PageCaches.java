@@ -152,6 +152,7 @@ public final class PageCaches {
 
         // TODO: page stat. info (put count, etc)
         pages.put(pageKey, stat);
+        CACHE.put(PAGES, pages);
 
         LOGGER.log(Level.FINEST, "Put a page[key={0}, value={1} into page cache,"
                                  + " cached pages[{2}]",
