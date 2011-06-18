@@ -18,7 +18,6 @@ package org.b3log.latke.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -153,23 +152,29 @@ public final class PluginManager {
      * @param pluginDir the specified plugin directory
      * @param plugin the specified plugin
      * @param props the specified properties file
-     * @throws IOException io exception
+     * @throws Exception exception
      */
     private static void setPluginProps(final File pluginDir,
                                        final AbstractPlugin plugin,
                                        final Properties props)
-            throws IOException {
+            throws Exception {
         final String author = props.getProperty(Plugin.PLUGIN_AUTHOR);
         final String name = props.getProperty(Plugin.PLUGIN_NAME);
         final String version = props.getProperty(Plugin.PLUGIN_VERSION);
-        LOGGER.log(Level.FINEST, "Plugin[name={0}, author={1}, version={2}]",
-                   new Object[]{name, author, version});
+        final String types = props.getProperty(Plugin.PLUGIN_TYPES);
+        LOGGER.log(Level.FINEST,
+                   "Plugin[name={0}, author={1}, version={2}, types={3}]",
+                   new Object[]{name, author, version, types});
         plugin.setAuthor(author);
         plugin.setName(name);
         plugin.setVersion(version);
         plugin.setDir(pluginDir.getPath());
         plugin.readLangs();
-        plugin.addType(PluginType.ADMIN);
+        final String[] typeArray = types.split(",");
+        for (int i = 0; i < typeArray.length; i++) {
+            final PluginType type = PluginType.valueOf(typeArray[i]);
+            plugin.addType(type);
+        }
     }
 
     /**
