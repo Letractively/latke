@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.plugin;
 
 import java.io.File;
@@ -49,14 +50,17 @@ public final class PluginManager {
      */
     private static final Map<String, List<Pluginable>> PLUGINS =
             new HashMap<String, List<Pluginable>>();
+    /**
+     * Plugin root directory.
+     */
+    public static final String PLUGIN_ROOT = AbstractServletListener.getWebRoot()
+                                             + Plugin.PLUGINS;
 
     /**
      * Loads plugins from directory {@literal ${webRoot}/plugins/}.
      */
     public static void load() {
-        final String pluginRoot = AbstractServletListener.getWebRoot()
-                                  + Plugin.PLUGINS;
-        final File[] pluginsDirs = new File(pluginRoot).listFiles();
+        final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
 
         for (int i = 0; i < pluginsDirs.length; i++) {
             final File pluginDir = pluginsDirs[i];
