@@ -38,7 +38,7 @@ import org.json.JSONObject;
  *     &lt;"URL a", "Page Content"&gt;
  *     &lt;"URL b", Page Content&gt;
  *     ....
- *     &lt;{@value #PAGE_KEYS}, Map&lt;"URL", JSONObject statistic info&gt;&gt;
+ *     &lt;{@value #PAGES}, Map&lt;"URL", JSONObject statistic info&gt;&gt;
  *   </pre>
  * </p>
  *
@@ -63,7 +63,7 @@ public final class PageCaches {
     /**
      * Page cache.
      * <p>
-     * &lt;requestURI?queryString, page HTML content&gt;
+     * &lt;requestURI?queryString, page info&gt;
      * </p>
      */
     private static final Cache<String, Object> CACHE;
@@ -78,7 +78,7 @@ public final class PageCaches {
     /**
      * Key of cached page keys.
      */
-    public static final String PAGE_KEYS = "pageKeys";
+    public static final String PAGES = "pages";
 
     /**
      * Initializes the cache.
@@ -93,10 +93,10 @@ public final class PageCaches {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, ?> pageKeys = (Map<String, ?>) CACHE.get(PAGE_KEYS);
+        Map<String, ?> pageKeys = (Map<String, ?>) CACHE.get(PAGES);
         if (null == pageKeys) {
             pageKeys = new HashMap<String, JSONObject>();
-            CACHE.put(PAGE_KEYS, pageKeys);
+            CACHE.put(PAGES, pageKeys);
         }
     }
 
@@ -107,7 +107,7 @@ public final class PageCaches {
      */
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
-        final Map<String, ?> keys = (Map<String, ?>) CACHE.get(PAGE_KEYS);
+        final Map<String, ?> keys = (Map<String, ?>) CACHE.get(PAGES);
 
         // TODO: sort
 
@@ -144,7 +144,7 @@ public final class PageCaches {
 
         @SuppressWarnings("unchecked")
         final Map<String, JSONObject> keys =
-                (Map<String, JSONObject>) CACHE.get(PAGE_KEYS);
+                (Map<String, JSONObject>) CACHE.get(PAGES);
         JSONObject stat = keys.get(pageKey);
         if (null == stat) {
             stat = new JSONObject();
@@ -170,7 +170,7 @@ public final class PageCaches {
 
         @SuppressWarnings("unchecked")
         final Map<String, JSONObject> keys =
-                (Map<String, JSONObject>) CACHE.get(PAGE_KEYS);
+                (Map<String, JSONObject>) CACHE.get(PAGES);
         keys.remove(pageKey);
     }
 
@@ -185,7 +185,7 @@ public final class PageCaches {
         CACHE.removeAll();
         Templates.CACHE.clear();
 
-        CACHE.put(PAGE_KEYS, new HashMap<String, JSONObject>());
+        CACHE.put(PAGES, new HashMap<String, JSONObject>());
     }
 
     /**
