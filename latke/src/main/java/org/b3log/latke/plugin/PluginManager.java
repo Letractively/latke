@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.plugin;
 
 import java.io.File;
@@ -58,9 +57,11 @@ public final class PluginManager {
         final String pluginRoot = AbstractServletListener.getWebRoot()
                                   + Plugin.PLUGINS;
         final File[] pluginsDirs = new File(pluginRoot).listFiles();
+
         for (int i = 0; i < pluginsDirs.length; i++) {
             final File pluginDir = pluginsDirs[i];
-            if (pluginDir.isDirectory()) {
+            if (pluginDir.isDirectory() && !pluginDir.isHidden()
+                && !pluginDir.getName().startsWith(".")) {
                 try {
                     load(pluginDir);
                 } catch (final Exception e) {
@@ -78,11 +79,26 @@ public final class PluginManager {
     }
 
     /**
+     * Gets a plugin by the specified view name.
+     * 
+     * @param viewName the specified view name
+     * @return a plugin, returns an empty list if not found
+     */
+    public static List<Pluginable> getPlugins(final String viewName) {
+        final List<Pluginable> ret = PLUGINS.get(viewName);
+        if (null == ret) {
+            return Collections.emptyList();
+        }
+
+        return ret;
+    }
+
+    /**
      * Registers the specified plugin.
      * 
      * @param plugin the specified plugin
      */
-    public static void register(final Pluginable plugin) {
+    private static void register(final Pluginable plugin) {
         final String viewName = plugin.getViewName();
         List<Pluginable> list = PLUGINS.get(viewName);
         if (null == list) {
@@ -97,21 +113,6 @@ public final class PluginManager {
                    + "[{3}] plugins totally",
                    new Object[]{plugin.getName(), plugin.getVersion(), viewName,
                                 PLUGINS.size()});
-    }
-
-    /**
-     * Gets a plugin by the specified view name.
-     * 
-     * @param viewName the specified view name
-     * @return a plugin, returns an empty list if not found
-     */
-    public static List<Pluginable> getPlugins(final String viewName) {
-        final List<Pluginable> ret = PLUGINS.get(viewName);
-        if (null == ret) {
-            return Collections.emptyList();
-        }
-
-        return ret;
     }
 
     /**
