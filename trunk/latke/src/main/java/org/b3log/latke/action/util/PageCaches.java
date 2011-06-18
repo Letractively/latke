@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.action.util;
 
 import java.util.Collections;
@@ -34,8 +35,8 @@ import org.json.JSONObject;
  * <p>
  *   This cache contains some pages and their statistics as the following: 
  *   <pre>
- *     &lt;"URL a", "Page Content"&gt;
- *     &lt;"URL b", Page Content&gt;
+ *     &lt;"URL a", (oId, title, title, type)&gt;
+ *     &lt;"URL b", (oId, title, title, type)&gt;
  *     ....
  *     &lt;{@value #PAGES}, Map&lt;"URL", JSONObject statistic info&gt;&gt;
  *   </pre>
