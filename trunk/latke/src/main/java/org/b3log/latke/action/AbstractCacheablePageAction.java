@@ -107,10 +107,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final JSONObject cachedValue = new JSONObject();
             final String pageContent = stringWriter.toString();
 
-            if (!check(request, pageContent)) {
-                throw new RuntimeException("Need arguments for caching page, "
-                                           + "resolve this bug first!");
-            }
+            check(request, pageContent);
 
             cachedValue.put(CACHED_CONTENT, pageContent);
             cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
@@ -134,16 +131,14 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * 
      * @param request the specified request
      * @param content the specified content
-     * @return {@code true} if ready, returns {@code false} if check fails
      */
-    private boolean check(final HttpServletRequest request, final String content) {
+    private void check(final HttpServletRequest request, final String content) {
         if (Strings.isEmptyOrNull(content)
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_TYPE))
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_OID))
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_TITLE))) {
-            return false;
+            throw new IllegalArgumentException("Illegal arguments for caching page, "
+                                               + "resolve this bug first!");
         }
-
-        return true;
     }
 }
