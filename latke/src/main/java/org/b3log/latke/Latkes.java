@@ -17,6 +17,8 @@
 package org.b3log.latke;
 
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.util.Strings;
 
 /**
@@ -28,10 +30,15 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Oct 27, 2010
+ * @version 1.0.0.2, Jun 18, 2011
  */
 public final class Latkes {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(Latkes.class.getName());
     /**
      * Default locale. Initializes this by
      * {@link #setDefaultLocale(java.util.Locale)}.
@@ -45,6 +52,35 @@ public final class Latkes {
      * Where latke runs on?.
      */
     private static RunsOnEnv runsOnEnv;
+    /**
+     * Is the page cache enabled?
+     */
+    private static boolean pageCacheEnabled;
+
+    /**
+     * Disables the page cache.
+     */
+    public static void disablePageCache() {
+        pageCacheEnabled = false;
+        LOGGER.log(Level.FINER, "Disabled page cache");
+    }
+
+    /**
+     * Enables the page cache.
+     */
+    public static void enablePageCache() {
+        pageCacheEnabled = true;
+        LOGGER.log(Level.FINER, "Enabled page cache");
+    }
+
+    /**
+     * Is the page cache enabled?
+     * 
+     * @return {@code true} if it is enabled, returns {@code false} otherwise
+     */
+    public static boolean isPageCacheEnabled() {
+        return pageCacheEnabled;
+    }
 
     /**
      * Checks environment settings.

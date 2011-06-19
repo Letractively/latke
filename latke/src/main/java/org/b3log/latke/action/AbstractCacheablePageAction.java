@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Keys;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.util.Strings;
 import org.json.JSONObject;
@@ -116,9 +117,11 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
             writer.write(pageContent);
 
-            PageCaches.put(cachedPageKey, cachedValue);
-            LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
-                       cachedPageKey);
+            if (Latkes.isPageCacheEnabled()) {
+                PageCaches.put(cachedPageKey, cachedValue);
+                LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
+                           cachedPageKey);
+            }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
