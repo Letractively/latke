@@ -26,7 +26,7 @@ import java.util.List;
  * String utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jul 23, 2010
+ * @version 1.0.0.8, Jun 19, 2011
  */
 public final class Strings {
 
@@ -40,11 +40,16 @@ public final class Strings {
      * Converts the specified string into a string list line by line.
      *
      * @param string the specified string
-     * @return a list of string lines
+     * @return a list of string lines, returns {@code null} if the specified 
+     * string is {@code null}
      * @throws IOException io exception
      */
     public static List<String> toLines(final String string)
             throws IOException {
+        if (null == string) {
+            return null;
+        }
+        
         final BufferedReader bufferedReader =
                 new BufferedReader(new StringReader(string));
         final List<String> ret = new ArrayList<String>();
@@ -77,10 +82,15 @@ public final class Strings {
     /**
      * Trims every string in the specified strings array.
      *
-     * @param strings the specified strings array
+     * @param strings the specified strings array, returns {@code null} if the
+     * specified strings is {@code null}
      * @return a trimmed strings array
      */
     public static String[] trimAll(final String[] strings) {
+        if (null == strings) {
+            return null;
+        }
+        
         final String[] ret = new String[strings.length];
 
         for (int i = 0; i < strings.length; i++) {
