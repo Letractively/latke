@@ -18,6 +18,7 @@ package org.b3log.latke.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -157,8 +158,9 @@ public final class PluginManager {
             final String jsonRpcClassName = jsonRpcClassArray[i];
             final Class<?> jsonRpcClass =
                     classLoader.loadClass(jsonRpcClassName);
+            final Method getInstance = jsonRpcClass.getMethod("getInstance");
             final AbstractJSONRpcService jsonRpcService =
-                    (AbstractJSONRpcService) jsonRpcClass.newInstance();
+                    (AbstractJSONRpcService) getInstance.invoke(jsonRpcClass);
 
             JSONRPCBridge.getGlobalBridge().registerObject(
                     jsonRpcService.getServiceObjectName(), jsonRpcService);
