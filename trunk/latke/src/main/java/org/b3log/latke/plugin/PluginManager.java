@@ -28,158 +28,188 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.servlet.AbstractServletListener;
+import org.jabsorb.JSONRPCBridge;
 
 /**
  * Plugin manager.
- *
+ * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Jun 11, 2011
  */
 public final class PluginManager {
 
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER =
-            Logger.getLogger(PluginManager.class.getName());
-    /**
-     * Plugins.
-     */
-    private static final Map<String, List<Pluginable>> PLUGINS =
-            new HashMap<String, List<Pluginable>>();
-    /**
-     * Plugin root directory.
-     */
-    public static final String PLUGIN_ROOT = AbstractServletListener.getWebRoot()
-                                             + Plugin.PLUGINS;
+	/**
+	 * Logger.
+	 */
+	private static final Logger LOGGER = Logger.getLogger(PluginManager.class
+			.getName());
+	/**
+	 * Plugins.
+	 */
+	private static final Map<String, List<Pluginable>> PLUGINS = new HashMap<String, List<Pluginable>>();
+	/**
+	 * Plugin root directory.
+	 */
+	public static final String PLUGIN_ROOT = AbstractServletListener
+			.getWebRoot()
+			+ Plugin.PLUGINS;
 
-    /**
-     * Loads plugins from directory {@literal ${webRoot}/plugins/}.
-     */
-    public static void load() {
-        final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
+	/**
+	 * Loads plugins from directory {@literal $ webRoot}/plugins/}.
+	 */
+	public static void load() {
+		final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
 
-        for (int i = 0; i < pluginsDirs.length; i++) {
-            final File pluginDir = pluginsDirs[i];
-            if (pluginDir.isDirectory() && !pluginDir.isHidden()
-                && !pluginDir.getName().startsWith(".")) {
-                try {
-                    load(pluginDir);
-                } catch (final Exception e) {
-                    LOGGER.log(Level.WARNING,
-                               "Load plugin under directory[" + pluginDir.
-                            getName() + "] failed", e);
-                }
-            } else {
-                LOGGER.log(Level.WARNING, "It[{0}] is not a directory under "
-                                          + "directory plugins, ignored",
-                           pluginDir.getName());
-            }
+		for (int i = 0; i < pluginsDirs.length; i++) {
+			final File pluginDir = pluginsDirs[i];
+			if (pluginDir.isDirectory() && !pluginDir.isHidden()
+					&& !pluginDir.getName().startsWith(".")) {
+				try {
+					load(pluginDir);
+				} catch (final Exception e) {
+					LOGGER.log(Level.WARNING, "Load plugin under directory["
+							+ pluginDir.getName() + "] failed", e);
+				}
+			} else {
+				LOGGER.log(Level.WARNING, "It[{0}] is not a directory under "
+						+ "directory plugins, ignored", pluginDir.getName());
+			}
 
-        }
-    }
+		}
+	}
 
-    /**
-     * Gets a plugin by the specified view name.
-     * 
-     * @param viewName the specified view name
-     * @return a plugin, returns an empty list if not found
-     */
-    public static List<Pluginable> getPlugins(final String viewName) {
-        final List<Pluginable> ret = PLUGINS.get(viewName);
-        if (null == ret) {
-            return Collections.emptyList();
-        }
+	/**
+	 * Gets a plugin by the specified view name.
+	 * 
+	 * @param viewName
+	 *            the specified view name
+	 * @return a plugin, returns an empty list if not found
+	 */
+	public static List<Pluginable> getPlugins(final String viewName) {
+		final List<Pluginable> ret = PLUGINS.get(viewName);
+		if (null == ret) {
+			return Collections.emptyList();
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    /**
-     * Registers the specified plugin.
-     * 
-     * @param plugin the specified plugin
-     */
-    private static void register(final Pluginable plugin) {
-        final String viewName = plugin.getViewName();
-        List<Pluginable> list = PLUGINS.get(viewName);
-        if (null == list) {
-            list = new ArrayList<Pluginable>();
-            PLUGINS.put(viewName, list);
-        }
+	/**
+	 * Registers the specified plugin.
+	 * 
+	 * @param plugin
+	 *            the specified plugin
+	 */
+	private static void register(final Pluginable plugin) {
+		final String viewName = plugin.getViewName();
+		List<Pluginable> list = PLUGINS.get(viewName);
+		if (null == list) {
+			list = new ArrayList<Pluginable>();
+			PLUGINS.put(viewName, list);
+		}
 
-        list.add(plugin);
+		list.add(plugin);
 
-        LOGGER.log(Level.FINER,
-                   "Registered plugin[name={0}, version={1}] for view[name={2}], "
-                   + "[{3}] plugins totally",
-                   new Object[]{plugin.getName(), plugin.getVersion(), viewName,
-                                PLUGINS.size()});
-    }
+		LOGGER.log(Level.FINER,
+				"Registered plugin[name={0}, version={1}] for view[name={2}], "
+						+ "[{3}] plugins totally", new Object[] {
+						plugin.getName(), plugin.getVersion(), viewName,
+						PLUGINS.size() });
+	}
 
-    /**
-     * Loads a plugin by the specified plugin directory.
-     * 
-     * @param pluginDir the specified plugin directory
-     * @throws Exception exception 
-     */
-    private static void load(final File pluginDir) throws Exception {
-        final File classesFileDir = new File(pluginDir.getPath()
-                                             + File.separator + "classes");
-        final URL url = classesFileDir.toURI().toURL();
-        LOGGER.log(Level.FINEST, "Loading class from URL[path={0}]",
-                   url.getPath());
-        final URLClassLoader classLoader = new URLClassLoader(new URL[]{url});
+	/**
+	 * Loads a plugin by the specified plugin directory.
+	 * 
+	 * @param pluginDir
+	 *            the specified plugin directory
+	 * @throws Exception
+	 *             exception
+	 */
+	private static void load(final File pluginDir) throws Exception {
+		final File classesFileDir = new File(pluginDir.getPath()
+				+ File.separator + "classes");
+		final URL url = classesFileDir.toURI().toURL();
+		LOGGER.log(Level.FINEST, "Loading class from URL[path={0}]", url
+				.getPath());
+		final URLClassLoader classLoader = new URLClassLoader(new URL[] { url });
 
-        final Properties props = new Properties();
-        props.load(new FileInputStream(
-                pluginDir.getPath() + File.separator + "plugin.properties"));
+		final Properties props = new Properties();
+		props.load(new FileInputStream(pluginDir.getPath() + File.separator
+				+ "plugin.properties"));
 
-        final String className = props.getProperty(Plugin.PLUGIN_CLASS);
-        final Class<?> pluginClass = classLoader.loadClass(className);
+		final String className = props.getProperty(Plugin.PLUGIN_CLASS);
+		final Class<?> pluginClass = classLoader.loadClass(className);
 
-        final AbstractPlugin plugin = (AbstractPlugin) pluginClass.newInstance();
-        setPluginProps(pluginDir, plugin, props);
+		final AbstractPlugin plugin = (AbstractPlugin) pluginClass
+				.newInstance();
 
-        PluginManager.register(plugin);
-    }
+		setPluginProps(pluginDir, plugin, props);
 
-    /**
-     * Sets the specified plugin's properties from the specified properties file 
-     * under the specified plugin directory.
-     * 
-     * @param pluginDir the specified plugin directory
-     * @param plugin the specified plugin
-     * @param props the specified properties file
-     * @throws Exception exception
-     */
-    private static void setPluginProps(final File pluginDir,
-                                       final AbstractPlugin plugin,
-                                       final Properties props)
-            throws Exception {
-        final String author = props.getProperty(Plugin.PLUGIN_AUTHOR);
-        final String name = props.getProperty(Plugin.PLUGIN_NAME);
-        final String version = props.getProperty(Plugin.PLUGIN_VERSION);
-        final String types = props.getProperty(Plugin.PLUGIN_TYPES);
-        LOGGER.log(Level.FINEST,
-                   "Plugin[name={0}, author={1}, version={2}, types={3}]",
-                   new Object[]{name, author, version, types});
-        plugin.setAuthor(author);
-        plugin.setName(name);
-        plugin.setVersion(version);
-        plugin.setDir(pluginDir.getPath());
-        plugin.readLangs();
-        final String[] typeArray = types.split(",");
-        for (int i = 0; i < typeArray.length; i++) {
-            final PluginType type = PluginType.valueOf(typeArray[i]);
-            plugin.addType(type);
-        }
-    }
+		final String jsonRpcClasses = props
+				.getProperty(Plugin.PLUGIN_JSON_RPC_CLASSES);
+		final String[] jsonRpcClassArray = jsonRpcClasses.split(",");
+		for (int i = 0; i < jsonRpcClassArray.length; i++) {
+			final String jsonRpcClassName = jsonRpcClassArray[i];
+			final Class<?> jsonRpcClass = classLoader
+					.loadClass(jsonRpcClassName);
+			final AbstractJSONRpcService jsonRpcService = (AbstractJSONRpcService) jsonRpcClass
+					.newInstance();
 
-    /**
-     * Private default constructor.
-     */
-    private PluginManager() {
-    }
+			JSONRPCBridge.getGlobalBridge().registerObject(
+					jsonRpcService.getServiceObjectName(), jsonRpcService);
+			LOGGER.log(Level.FINER, "Registered json rpc service["
+					+ jsonRpcService.getServiceObjectName()
+					+ "] for plugin[name=" + plugin.getName() + "]");
+		}
+
+		register(plugin);
+	}
+
+	/**
+	 * Sets the specified plugin's properties from the specified properties file
+	 * under the specified plugin directory.
+	 * 
+	 * @param pluginDir
+	 *            the specified plugin directory
+	 * @param plugin
+	 *            the specified plugin
+	 * @param props
+	 *            the specified properties file
+	 * @throws Exception
+	 *             exception
+	 */
+	private static void setPluginProps(final File pluginDir,
+			final AbstractPlugin plugin, final Properties props)
+			throws Exception {
+		final String author = props.getProperty(Plugin.PLUGIN_AUTHOR);
+		final String name = props.getProperty(Plugin.PLUGIN_NAME);
+		final String version = props.getProperty(Plugin.PLUGIN_VERSION);
+		final String types = props.getProperty(Plugin.PLUGIN_TYPES);
+		final String jsonRpcClasses = props
+				.getProperty(Plugin.PLUGIN_JSON_RPC_CLASSES);
+		LOGGER.log(Level.FINEST,
+				"Plugin[name={0}, author={1}, version={2}, types={3}, "
+						+ "jsonRpcClasses={4}]", new Object[] { name, author,
+						version, types, jsonRpcClasses });
+		plugin.setAuthor(author);
+		plugin.setName(name);
+		plugin.setVersion(version);
+		plugin.setDir(pluginDir.getPath());
+		plugin.readLangs();
+		final String[] typeArray = types.split(",");
+		for (int i = 0; i < typeArray.length; i++) {
+			final PluginType type = PluginType.valueOf(typeArray[i]);
+			plugin.addType(type);
+		}
+	}
+
+	/**
+	 * Private default constructor.
+	 */
+	private PluginManager() {
+	}
 }
