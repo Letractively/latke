@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -40,7 +41,7 @@ import org.b3log.latke.util.Strings;
  * Abstract plugin.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jun 16, 2011
+ * @version 1.0.0.2, Jun 21, 2011
  */
 public abstract class AbstractPlugin implements Pluginable {
 
@@ -165,7 +166,6 @@ public abstract class AbstractPlugin implements Pluginable {
         contentBuilder.append(getViewContent(dataModel));
 
         final String pluginsContent = contentBuilder.toString();
-        System.out.println("Current plugins' content: " + pluginsContent);
         dataModel.put(Plugin.PLUGINS, pluginsContent);
     }
 
@@ -280,7 +280,7 @@ public abstract class AbstractPlugin implements Pluginable {
 
     @Override
     public Set<PluginType> getTypes() {
-        return types;
+        return Collections.unmodifiableSet(types);
     }
 
     /**
