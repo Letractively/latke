@@ -34,6 +34,7 @@ import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.servlet.AbstractServletListener;
+import org.b3log.latke.util.Strings;
 import org.jabsorb.JSONRPCBridge;
 
 /**
@@ -71,6 +72,8 @@ public final class PluginManager {
             if (pluginDir.isDirectory() && !pluginDir.isHidden()
                 && !pluginDir.getName().startsWith(".")) {
                 try {
+                    LOGGER.log(Level.INFO, "Loading plugin under directory[{0}]",
+                               pluginDir.getName());
                     load(pluginDir);
                 } catch (final Exception e) {
                     LOGGER.log(Level.WARNING, "Load plugin under directory["
@@ -213,6 +216,12 @@ public final class PluginManager {
         final String[] jsonRpcClassArray = jsonRpcClasses.split(",");
         for (int i = 0; i < jsonRpcClassArray.length; i++) {
             final String jsonRpcClassName = jsonRpcClassArray[i];
+            if (Strings.isEmptyOrNull(jsonRpcClassName)) {
+                LOGGER.log(Level.INFO,
+                           "Not json rpc service to load for plugin[name={0}]",
+                           plugin.getName());
+                return;
+            }
             final Class<?> jsonRpcClass =
                     classLoader.loadClass(jsonRpcClassName);
             final Method getInstance = jsonRpcClass.getMethod("getInstance");
@@ -254,6 +263,16 @@ public final class PluginManager {
         final String[] eventListenerClassArray = eventListenerClasses.split(",");
         for (int i = 0; i < eventListenerClassArray.length; i++) {
             final String eventListenerClassName = eventListenerClassArray[i];
+            if (Strings.isEmptyOrNull(eventListenerClassName)) {
+                LOGGER.log(Level.INFO,
+                           "Not event listener to load for plugin[name={0}]",
+                           plugin.getName());
+                return;
+            }
+
+            LOGGER.log(Level.FINEST, "Loading event listener[class={0}]",
+                       eventListenerClassName);
+
             final Class<?> eventListenerClass =
                     classLoader.loadClass(eventListenerClassName);
             final Method getInstance =
