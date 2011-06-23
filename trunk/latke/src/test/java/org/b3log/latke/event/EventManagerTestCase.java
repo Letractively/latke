@@ -41,12 +41,14 @@ public final class EventManagerTestCase {
     @Test
     public void test() throws Exception {
         final EventManager eventManager = EventManager.getInstance();
-        final TestEventListener1 testEventListener1 =
-                new TestEventListener1(eventManager);
+        final TestEventListener1 testEventListener1 = new TestEventListener1();
+        eventManager.registerListener(testEventListener1);
         final TestEventListener2 testEventListener2 =
-                new TestEventListener2(eventManager);
+                new TestEventListener2();
+        eventManager.registerListener(testEventListener2);
         final TestEventAsyncListener1 testEventAsyncListener1 =
-                new TestEventAsyncListener1(eventManager);
+                new TestEventAsyncListener1();
+        eventManager.registerListener(testEventAsyncListener1);
 
         final JSONObject eventData = new JSONObject();
         eventData.put("prop1", 1);
@@ -81,16 +83,6 @@ public final class EventManagerTestCase {
     private final class TestEventListener1
             extends AbstractEventListener<JSONObject> {
 
-        /**
-         * Constructs a {@link TestEventListener1} object with the specified
-         * event manager.
-         *
-         * @param eventManager the specified event manager
-         */
-        public TestEventListener1(final EventManager eventManager) {
-            super(eventManager);
-        }
-
         @Override
         public void action(final Event<JSONObject> event) {
             System.out.println("Listener1 is processing a event[type="
@@ -108,20 +100,10 @@ public final class EventManagerTestCase {
      * Test event listener 2.
      *
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
-     * @version 1.0.0.0, Aug 12, 2010
+     * @version 1.0.0.1, Jun 23, 2011
      */
     private final class TestEventListener2
             extends AbstractEventListener<JSONObject> {
-
-        /**
-         * Constructs a {@link TestEventListener2} object with the specified
-         * event manager.
-         *
-         * @param eventManager the specified event manager
-         */
-        public TestEventListener2(final EventManager eventManager) {
-            super(eventManager);
-        }
 
         @Override
         public void action(final Event<JSONObject> event) {
@@ -140,20 +122,10 @@ public final class EventManagerTestCase {
      * Test event asynchronous listener 1.
      *
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
-     * @version 1.0.0.1, Sep 26, 2010
+     * @version 1.0.0.2, Jun 23, 2011
      */
     private final class TestEventAsyncListener1
             extends AbstractEventListener<JSONObject> {
-
-        /**
-         * Constructs a {@link TestEventAsyncListener1} object with the
-         * specified event manager.
-         *
-         * @param eventManager the specified event manager
-         */
-        public TestEventAsyncListener1(final EventManager eventManager) {
-            super(eventManager);
-        }
 
         @Override
         public void action(final Event<JSONObject> event) throws EventException {

@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.b3log.latke.event.AbstractEventListener;
+import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.servlet.AbstractServletListener;
@@ -39,7 +40,7 @@ import org.jabsorb.JSONRPCBridge;
  * Plugin manager.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jun 20, 2011
+ * @version 1.0.0.3, Jun 23, 2011
  */
 public final class PluginManager {
 
@@ -51,8 +52,8 @@ public final class PluginManager {
     /**
      * Plugins.
      */
-    private static final Map<String, List<Pluginable>> PLUGINS =
-            new HashMap<String, List<Pluginable>>();
+    private static final Map<String, List<AbstractPlugin>> PLUGINS =
+            new HashMap<String, List<AbstractPlugin>>();
     /**
      * Plugin root directory.
      */
@@ -88,12 +89,11 @@ public final class PluginManager {
     /**
      * Gets a plugin by the specified view name.
      * 
-     * @param viewName
-     *            the specified view name
+     * @param viewName the specified view name
      * @return a plugin, returns an empty list if not found
      */
-    public static List<Pluginable> getPlugins(final String viewName) {
-        final List<Pluginable> ret = PLUGINS.get(viewName);
+    public static List<AbstractPlugin> getPlugins(final String viewName) {
+        final List<AbstractPlugin> ret = PLUGINS.get(viewName);
         if (null == ret) {
             return Collections.emptyList();
         }
@@ -102,35 +102,10 @@ public final class PluginManager {
     }
 
     /**
-     * Registers the specified plugin.
-     * 
-     * @param plugin
-     *            the specified plugin
-     */
-    private static void register(final Pluginable plugin) {
-        final String viewName = plugin.getViewName();
-        List<Pluginable> list = PLUGINS.get(viewName);
-        if (null == list) {
-            list = new ArrayList<Pluginable>();
-            PLUGINS.put(viewName, list);
-        }
-
-        list.add(plugin);
-
-        LOGGER.log(Level.FINER,
-                   "Registered plugin[name={0}, version={1}] for view[name={2}], "
-                   + "[{3}] plugins totally", new Object[]{
-                    plugin.getName(), plugin.getVersion(), viewName,
-                    PLUGINS.size()});
-    }
-
-    /**
      * Loads a plugin by the specified plugin directory.
      * 
-     * @param pluginDir
-     *            the specified plugin directory
-     * @throws Exception
-     *             exception
+     * @param pluginDir the specified plugin directory
+     * @throws Exception exception
      */
     private static void load(final File pluginDir) throws Exception {
         final File classesFileDir = new File(pluginDir.getPath()
@@ -144,47 +119,46 @@ public final class PluginManager {
         props.load(new FileInputStream(pluginDir.getPath() + File.separator
                                        + "plugin.properties"));
 
-        final String className = props.getProperty(Plugin.PLUGIN_CLASS);
-        final Class<?> pluginClass = classLoader.loadClass(className);
-
+        final String pluginClassName = props.getProperty(Plugin.PLUGIN_CLASS);
+        final Class<?> pluginClass = classLoader.loadClass(pluginClassName);
         final AbstractPlugin plugin = (AbstractPlugin) pluginClass.newInstance();
 
         setPluginProps(pluginDir, plugin, props);
-
-        final String jsonRpcClasses = props.getProperty(
-                Plugin.PLUGIN_JSON_RPC_CLASSES);
-        final String[] jsonRpcClassArray = jsonRpcClasses.split(",");
-        for (int i = 0; i < jsonRpcClassArray.length; i++) {
-            final String jsonRpcClassName = jsonRpcClassArray[i];
-            final Class<?> jsonRpcClass =
-                    classLoader.loadClass(jsonRpcClassName);
-            final Method getInstance = jsonRpcClass.getMethod("getInstance");
-            final AbstractJSONRpcService jsonRpcService =
-                    (AbstractJSONRpcService) getInstance.invoke(jsonRpcClass);
-
-            JSONRPCBridge.getGlobalBridge().registerObject(
-                    jsonRpcService.getServiceObjectName(), jsonRpcService);
-            LOGGER.log(Level.FINER, "Registered json rpc service["
-                                    + jsonRpcService.getServiceObjectName()
-                                    + "] for plugin[name=" + plugin.getName()
-                                    + "]");
-        }
+        registerJSONRpcServices(props, classLoader, plugin);
+        registerEventListeners(props, classLoader, plugin);
 
         register(plugin);
+    }
+
+    /**
+     * Registers the specified plugin.
+     * 
+     * @param plugin the specified plugin
+     */
+    private static void register(final AbstractPlugin plugin) {
+        final String viewName = plugin.getViewName();
+        List<AbstractPlugin> list = PLUGINS.get(viewName);
+        if (null == list) {
+            list = new ArrayList<AbstractPlugin>();
+            PLUGINS.put(viewName, list);
+        }
+
+        list.add(plugin);
+        LOGGER.log(Level.FINER,
+                   "Registered plugin[name={0}, version={1}] for view[name={2}], "
+                   + "[{3}] plugins totally", new Object[]{
+                    plugin.getName(), plugin.getVersion(), viewName,
+                    PLUGINS.size()});
     }
 
     /**
      * Sets the specified plugin's properties from the specified properties file
      * under the specified plugin directory.
      * 
-     * @param pluginDir
-     *            the specified plugin directory
-     * @param plugin
-     *            the specified plugin
-     * @param props
-     *            the specified properties file
-     * @throws Exception
-     *             exception
+     * @param pluginDir the specified plugin directory
+     * @param plugin the specified plugin
+     * @param props the specified properties file
+     * @throws Exception exception
      */
     private static void setPluginProps(final File pluginDir,
                                        final AbstractPlugin plugin,
@@ -210,6 +184,91 @@ public final class PluginManager {
         for (int i = 0; i < typeArray.length; i++) {
             final PluginType type = PluginType.valueOf(typeArray[i]);
             plugin.addType(type);
+        }
+    }
+
+    /**
+     * Registers json rpc services with the specified plugin properties, class 
+     * loader and plugin.
+     * 
+     * <p>
+     *   <b>Note</b>: If the specified plugin has some json rpc services, each
+     *   of these service MUST implement a static method named 
+     *   {@code getInstance} to obtain an instance of this service. See 
+     *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
+     *   Singleton Pattern</a> for more details.
+     * </p>
+     * 
+     * @param props the specified plugin properties
+     * @param classLoader the specified class loader
+     * @param plugin the specified plugin
+     * @throws Exception exception
+     */
+    private static void registerJSONRpcServices(final Properties props,
+                                                final URLClassLoader classLoader,
+                                                final AbstractPlugin plugin)
+            throws Exception {
+        final String jsonRpcClasses =
+                props.getProperty(Plugin.PLUGIN_JSON_RPC_CLASSES);
+        final String[] jsonRpcClassArray = jsonRpcClasses.split(",");
+        for (int i = 0; i < jsonRpcClassArray.length; i++) {
+            final String jsonRpcClassName = jsonRpcClassArray[i];
+            final Class<?> jsonRpcClass =
+                    classLoader.loadClass(jsonRpcClassName);
+            final Method getInstance = jsonRpcClass.getMethod("getInstance");
+            final AbstractJSONRpcService jsonRpcService =
+                    (AbstractJSONRpcService) getInstance.invoke(jsonRpcClass);
+
+            JSONRPCBridge.getGlobalBridge().registerObject(
+                    jsonRpcService.getServiceObjectName(), jsonRpcService);
+            LOGGER.log(Level.FINER,
+                       "Registered json rpc service[{0}] for plugin[name={1}]",
+                       new Object[]{jsonRpcService.getServiceObjectName(),
+                                    plugin.getName()});
+        }
+    }
+
+    /**
+     * Registers event listeners with the specified plugin properties, class 
+     * loader and plugin.
+     *
+     * <p>
+     *   <b>Note</b>: If the specified plugin has some event listeners, each
+     *   of these listener MUST implement a static method named 
+     *   {@code getInstance} to obtain an instance of this listener. See 
+     *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
+     *   Singleton Pattern</a> for more details.
+     * </p>
+     * 
+     * @param props the specified plugin properties
+     * @param classLoader the specified class loader
+     * @param plugin the specified plugin
+     * @throws Exception exception
+     */
+    private static void registerEventListeners(final Properties props,
+                                               final URLClassLoader classLoader,
+                                               final AbstractPlugin plugin)
+            throws Exception {
+        final String eventListenerClasses =
+                props.getProperty(Plugin.PLUGIN_EVENT_LISTENER_CLASSES);
+        final String[] eventListenerClassArray = eventListenerClasses.split(",");
+        for (int i = 0; i < eventListenerClassArray.length; i++) {
+            final String eventListenerClassName = eventListenerClassArray[i];
+            final Class<?> eventListenerClass =
+                    classLoader.loadClass(eventListenerClassName);
+            final Method getInstance =
+                    eventListenerClass.getMethod("getInstance");
+            final AbstractEventListener<?> eventListener =
+                    (AbstractEventListener) getInstance.invoke(
+                    eventListenerClass);
+
+            final EventManager eventManager = EventManager.getInstance();
+            eventManager.registerListener(eventListener);
+            LOGGER.log(Level.FINER,
+                       "Registered event listener[class={0}, eventType={1}] for plugin[name={2}]",
+                       new Object[]{eventListener.getClass(),
+                                    eventListener.getEventType(),
+                                    plugin.getName()});
         }
     }
 

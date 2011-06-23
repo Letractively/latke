@@ -17,6 +17,7 @@ Without this configuration present, some functionality in the IDE may be limited
         <word>Pluginable</word>
         <word>Plugins</word>
         <word>plugins</word>
+        <word>rpc</word>
         <word>Serializer</word>
         <word>servlet</word>
         <word>servlets</word>

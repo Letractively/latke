@@ -39,11 +39,19 @@ import org.b3log.latke.util.Strings;
 
 /**
  * Abstract plugin.
+ * 
+ * <p>
+ *   <b>Note</b>: The subclass implementation of this abstract class MUST 
+ *   has a static method named {@code getInstance} to obtain an instance of 
+ *   this plugin. See 
+ *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
+ *   Singleton Pattern</a> for more implementation details.
+ * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jun 21, 2011
+ * @version 1.0.0.3, Jun 23, 2011
  */
-public abstract class AbstractPlugin implements Pluginable {
+public abstract class AbstractPlugin {
 
     /**
      * Name of this plugin.
@@ -77,6 +85,18 @@ public abstract class AbstractPlugin implements Pluginable {
      * FreeMarker configuration.
      */
     private Configuration configuration;
+
+    /**
+     * Gets an existing view name.
+     * 
+     * @return view name, the plugin to plug
+     */
+    public abstract String getViewName();
+
+    /**
+     * Unplugs.
+     */
+    public abstract void unplug();
 
     /**
      * Gets the directory of this plugin.
@@ -143,7 +163,13 @@ public abstract class AbstractPlugin implements Pluginable {
         }
     }
 
-    @Override
+    /**
+     * Gets language label with the specified locale and key.
+     * 
+     * @param locale the specified locale
+     * @param key the specified key
+     * @return language label
+     */
     public String getLang(final Locale locale, final String key) {
         final String language = locale.getLanguage();
         final String country = locale.getCountry();
@@ -152,7 +178,11 @@ public abstract class AbstractPlugin implements Pluginable {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+    /**
+     * Plugs with the specified data model.
+     * 
+     * @param dataModel the specified data model
+     */
     public void plug(final Map<String, Object> dataModel) {
         String content = (String) dataModel.get(Plugin.PLUGINS);
         if (null == content) {
@@ -231,12 +261,20 @@ public abstract class AbstractPlugin implements Pluginable {
         this.status = status;
     }
 
-    @Override
+    /**
+     * Gets the status of this plugin.
+     * 
+     * @return status
+     */
     public PluginStatus getStatus() {
         return status;
     }
 
-    @Override
+    /**
+     * Gets the author of this plugin.
+     * 
+     * @return author
+     */
     public String getAuthor() {
         return author;
     }
@@ -250,7 +288,11 @@ public abstract class AbstractPlugin implements Pluginable {
         this.author = author;
     }
 
-    @Override
+    /**
+     * Gets the name of this plugin.
+     * 
+     * @return name
+     */
     public String getName() {
         return name;
     }
@@ -264,7 +306,11 @@ public abstract class AbstractPlugin implements Pluginable {
         this.name = name;
     }
 
-    @Override
+    /**
+     * Gets the version of this plugin.
+     * 
+     * @return version
+     */
     public String getVersion() {
         return version;
     }
@@ -278,7 +324,11 @@ public abstract class AbstractPlugin implements Pluginable {
         this.version = version;
     }
 
-    @Override
+    /**
+     * Gets the types of this plugin.
+     * 
+     * @return types
+     */
     public Set<PluginType> getTypes() {
         return Collections.unmodifiableSet(types);
     }

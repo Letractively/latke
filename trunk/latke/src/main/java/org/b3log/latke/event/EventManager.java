@@ -26,7 +26,7 @@ import java.util.concurrent.FutureTask;
  * Event manager.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Sep 25, 2010
+ * @version 1.0.0.3, Jun 23, 2011
  */
 public final class EventManager {
 
@@ -81,7 +81,7 @@ public final class EventManager {
      *
      * @param eventListener the specified event listener
      */
-    void registerListener(final AbstractEventListener<?> eventListener) {
+    public void registerListener(final AbstractEventListener<?> eventListener) {
         synchronizedEventQueue.addListener(eventListener);
     }
 
