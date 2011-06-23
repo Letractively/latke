@@ -21,10 +21,18 @@ import java.util.logging.Logger;
 
 /**
  * Abstract event listener(Observer).
+ * 
+ * <p>
+ *   <b>Note</b>: The subclass implementation of this abstract class MUST 
+ *   has a static method named {@code getInstance} to obtain an instance of 
+ *   this listener. See 
+ *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
+ *   Singleton Pattern</a> for more implementation details.
+ * </p>
  *
  * @param <T> the type of event data
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Sep 2, 2010
+ * @version 1.0.0.4, Jun 23, 2011
  */
 public abstract class AbstractEventListener<T> {
 
@@ -33,10 +41,6 @@ public abstract class AbstractEventListener<T> {
      */
     private static final Logger LOGGER =
             Logger.getLogger(AbstractEventListener.class.getName());
-    /**
-     * Event manager.
-     */
-    private EventManager eventManager;
 
     /**
      * Gets the event type of this listener could handle.
@@ -44,18 +48,6 @@ public abstract class AbstractEventListener<T> {
      * @return event type
      */
     public abstract String getEventType();
-
-    /**
-     * Constructs an {@link AbstractEventListener} object and register it with
-     * the specified event manager.
-     *
-     * @param eventManager the specified event manager
-     */
-    public AbstractEventListener(final EventManager eventManager) {
-        this.eventManager = eventManager;
-
-        register();
-    }
 
     /**
      * Performs the listener {@code action} method with the specified event
@@ -72,6 +64,8 @@ public abstract class AbstractEventListener<T> {
         final Event<T> eventObject = (Event<T>) event;
         try {
             action(eventObject);
+        } catch (final Exception e) {
+            LOGGER.log(Level.WARNING, "Event perform failed", e);
         } finally { // remove event from event queue
             if (eventQueue instanceof SynchronizedEventQueue) {
                 final SynchronizedEventQueue synchronizedEventQueue =
@@ -88,14 +82,4 @@ public abstract class AbstractEventListener<T> {
      * @throws EventException event exception
      */
     public abstract void action(final Event<T> event) throws EventException;
-
-    /**
-     * Registers this listener to event manager.
-     */
-    private void register() {
-        eventManager.registerListener(this);
-        LOGGER.log(Level.FINER,
-                   "Registered an event listener[classSimpleName={0}, eventType={1}]",
-                   new Object[]{getClass().getSimpleName(), getEventType()});
-    }
 }

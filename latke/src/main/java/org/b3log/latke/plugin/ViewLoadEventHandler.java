@@ -24,13 +24,12 @@ import org.b3log.latke.action.AbstractAction;
 import org.b3log.latke.event.AbstractEventListener;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventException;
-import org.b3log.latke.event.EventManager;
 
 /**
  * FreeMarker view load event handler.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jun 12, 2011
+ * @version 1.0.0.2, Jun 23, 2011
  */
 public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEventData> {
 
@@ -39,16 +38,6 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
      */
     private static final Logger LOGGER =
             Logger.getLogger(ViewLoadEventHandler.class.getName());
-
-    /**
-     * Constructs a {@link ViewLoadEventHandler} object with the specified
-     * event manager.
-     *
-     * @param eventManager the specified event manager
-     */
-    public ViewLoadEventHandler(final EventManager eventManager) {
-        super(eventManager);
-    }
 
     @Override
     public String getEventType() {
@@ -62,10 +51,10 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
         final String viewName = data.getViewName();
         final Map<String, Object> dataModel = data.getDataModel();
 
-        final List<Pluginable> plugins = PluginManager.getPlugins(viewName);
+        final List<AbstractPlugin> plugins = PluginManager.getPlugins(viewName);
         LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]",
                    new Object[]{plugins.size(), viewName});
-        for (final Pluginable plugin : plugins) {
+        for (final AbstractPlugin plugin : plugins) {
             // TODO: Do not repeat plug, if plugged, consider page caching
             switch (plugin.getStatus()) {
                 case ENABLED:
