@@ -21,7 +21,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpSessionEvent;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.RuntimeEnv;
 
 /**
  * Default GAE servlet listener for the application runs on local environment.
@@ -39,7 +39,7 @@ public class DefaultLocalServletListener extends AbstractServletListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
-        Latkes.setRunsOnEnv(RunsOnEnv.LOCAL);
+        Latkes.setRuntimeEnv(RuntimeEnv.LOCAL);
         Latkes.setRepositoryPath(""); // TODO: Generates repository directory
         LOGGER.info("Latke is running on local.");
 

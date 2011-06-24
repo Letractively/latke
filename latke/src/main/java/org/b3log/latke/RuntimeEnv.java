@@ -17,12 +17,12 @@
 package org.b3log.latke;
 
 /**
- * Latke run environment.
+ * Latke runtime environment.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 27, 2010
+ * @version 1.0.0.1, Jun 24, 2011
  */
-public enum RunsOnEnv {
+public enum RuntimeEnv {
 
     /**
      * Indicates Latke runs on local.

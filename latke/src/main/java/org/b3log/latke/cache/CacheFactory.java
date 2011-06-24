@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.RuntimeEnv;
 
 /**
  * Cache factory.
@@ -52,9 +52,9 @@ public final class CacheFactory {
 
         try {
             if (null == ret) {
-                final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
+                final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
-                switch (runsOnEnv) {
+                switch (runtimeEnv) {
                     case LOCAL:
                         final Class<Cache<String, Object>> localLruCache =
                                 (Class<Cache<String, Object>>) Class.forName(
