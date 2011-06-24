@@ -25,7 +25,7 @@ import org.b3log.latke.util.Strings;
  * Latke framework configuration utility facade.
  *
  * <p>
- * If the application runs on {@linkplain  RunsOnEnv#LOCAL local environment},
+ * If the application runs on {@linkplain  RuntimeEnv#LOCAL local environment},
  * please set {@linkplain #repositoryPath} before setting up your application.
  * </p>
  *
@@ -49,9 +49,13 @@ public final class Latkes {
      */
     private static String repositoryPath;
     /**
-     * Where latke runs on?.
+     * Where Latke runs on?.
      */
-    private static RunsOnEnv runsOnEnv;
+    private static RuntimeEnv runtimeEnv;
+    /**
+     * Which mode Latke runs in?
+     */
+    private static RuntimeMode runtimeMode;
     /**
      * Is the page cache enabled?
      */
@@ -86,33 +90,56 @@ public final class Latkes {
      * Checks environment settings.
      */
     public static void check() {
-        final RunsOnEnv runsOn = getRunsOnEnv();
-        if (runsOn.equals(RunsOnEnv.LOCAL)) {
+        final RuntimeEnv env = getRuntimeEnv();
+        if (env.equals(RuntimeEnv.LOCAL)) {
             getRepositoryPath();
         }
     }
 
     /**
-     * Sets the runs on with the specified environment.
+     * Sets the runtime environment with the specified environment.
      *
-     * @param runsOnEnv the specified environment
+     * @param runtimeEnv the specified environment
      */
-    public static void setRunsOnEnv(final RunsOnEnv runsOnEnv) {
-        Latkes.runsOnEnv = runsOnEnv;
+    public static void setRuntimeEnv(final RuntimeEnv runtimeEnv) {
+        Latkes.runtimeEnv = runtimeEnv;
     }
 
     /**
-     * Gets the runs on environment.
+     * Gets the runtime environment.
      *
-     * @return runs on environment
+     * @return runtime environment
      */
-    public static RunsOnEnv getRunsOnEnv() {
-        if (null == Latkes.runsOnEnv) {
+    public static RuntimeEnv getRuntimeEnv() {
+        if (null == Latkes.runtimeEnv) {
             throw new RuntimeException(
-                    "Runs on enviornment has not been initialized!");
+                    "Runtime enviornment has not been initialized!");
         }
 
-        return Latkes.runsOnEnv;
+        return Latkes.runtimeEnv;
+    }
+
+    /**
+     * Sets the runtime mode with the specified mode.
+     *
+     * @param runtimeMode the specified mode
+     */
+    public static void setRuntimeMode(final RuntimeMode runtimeMode) {
+        Latkes.runtimeMode = runtimeMode;
+    }
+
+    /**
+     * Gets the runtime mode.
+     *
+     * @return runtime mode
+     */
+    public static RuntimeMode getRuntimeMode() {
+        if (null == Latkes.runtimeMode) {
+            throw new RuntimeException(
+                    "Runtime mode has not been initialized!");
+        }
+
+        return Latkes.runtimeMode;
     }
 
     /**

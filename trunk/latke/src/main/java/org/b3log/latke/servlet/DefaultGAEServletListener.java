@@ -21,7 +21,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.http.HttpSessionEvent;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.RuntimeEnv;
 
 /**
  * Default GAE servlet listener for the application runs on GAE environment.
@@ -39,7 +39,7 @@ public class DefaultGAEServletListener extends AbstractServletListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
-        Latkes.setRunsOnEnv(RunsOnEnv.GAE);
+        Latkes.setRuntimeEnv(RuntimeEnv.GAE);
         LOGGER.info("Latke is running on Google App Enigne.");
 
         super.contextInitialized(servletContextEvent);

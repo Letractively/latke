@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.RunsOnEnv;
+import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.action.AbstractCacheablePageAction;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
@@ -86,8 +86,8 @@ public final class PageCaches {
      */
     static {
         CACHE = CacheFactory.getCache(PAGE_CACHE_NAME);
-        final RunsOnEnv runsOnEnv = Latkes.getRunsOnEnv();
-        if (runsOnEnv.equals(RunsOnEnv.LOCAL)) {
+        final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
+        if (runtimeEnv.equals(RuntimeEnv.LOCAL)) {
             CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
             LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
                        MAX_CACHEABLE_PAGE_CNT);
