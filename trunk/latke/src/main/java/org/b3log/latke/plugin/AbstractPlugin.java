@@ -49,10 +49,14 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Jun 23, 2011
+ * @version 1.0.0.4, Jun 25, 2011
  */
 public abstract class AbstractPlugin {
-
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(AbstractPlugin.class.getName());
     /**
      * Name of this plugin.
      */
@@ -197,6 +201,8 @@ public abstract class AbstractPlugin {
 
         final String pluginsContent = contentBuilder.toString();
         dataModel.put(Plugin.PLUGINS, pluginsContent);
+        
+        LOGGER.log(Level.FINER, "Plugin[name={0}] has been plugged", getName());
     }
 
     /**
