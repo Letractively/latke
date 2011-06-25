@@ -38,17 +38,17 @@ import org.b3log.latke.util.Strings;
 import org.jabsorb.JSONRPCBridge;
 
 /**
- * Plugin manager.
+ * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Jun 23, 2011
+ * @version 1.0.0.4, Jun 25, 2011
  */
-public final class PluginManager {
+public final class PluginLoader {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(PluginManager.class.
+    private static final Logger LOGGER = Logger.getLogger(PluginLoader.class.
             getName());
     /**
      * Plugins.
@@ -294,6 +294,6 @@ public final class PluginManager {
     /**
      * Private default constructor.
      */
-    private PluginManager() {
+    private PluginLoader() {
     }
 }
