@@ -21,10 +21,8 @@ import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -45,7 +43,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.3, Jun 11, 2011
+ * @version 1.0.3.4, Jun 25, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -179,45 +177,6 @@ public abstract class AbstractAction extends HttpServlet {
     private JSONObject toJSONObject(final String jsonString)
             throws JSONException {
         return new JSONObject(jsonString);
-    }
-
-    /**
-     * Converts the specified http servlet request to a json string.
-     *
-     * @param request the specified http servlet request
-     * @return a json string if the specified http servlet request could convert,
-     *         otherwise, returns "{}"
-     * @throws IOException io exception
-     * @throws JSONException json exception
-     */
-    private String toJSONString(final HttpServletRequest request)
-            throws IOException, JSONException {
-        final StringBuilder sb = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            reader = request.getReader();
-        } catch (final IllegalStateException e) {
-            reader = new BufferedReader(new InputStreamReader(
-                    request.getInputStream()));
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
-            return "{}";
-        }
-
-        String line = reader.readLine();
-        while (null != line) {
-            sb.append(line);
-            line = reader.readLine();
-        }
-        reader.close();
-
-        String tmp = sb.toString();
-        if (Strings.isEmptyOrNull(tmp)) {
-            tmp = "{}";
-        }
-
-        return tmp;
     }
 
     /**
@@ -357,8 +316,10 @@ public abstract class AbstractAction extends HttpServlet {
             throws ServletException, IOException {
         JSONObject result = null;
         try {
-            final JSONObject data = beforeDoAjaxAction(request, response);
-            result = doAjaxAction(data, request, response);
+            final JSONObject requestJSONObject = beforeDoAjaxAction(request,
+                                                                    response);
+            LOGGER.log(Level.FINE, "Request json object[{0}]", requestJSONObject);
+            result = doAjaxAction(requestJSONObject, request, response);
             afterDoAjaxAction(request, response, result);
         } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -446,11 +407,16 @@ public abstract class AbstractAction extends HttpServlet {
                                           final HttpServletResponse response)
             throws ServletException, IOException, JSONException {
         response.setContentType("application/json");
+        final Map<?, ?> parameterMap = request.getParameterMap();
 
-        final String requestJSONString = toJSONString(request);
-        LOGGER.log(Level.FINER, "AJAX request[string={0}]", requestJSONString);
+        for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
+            LOGGER.log(Level.FINER, "AJAX request paramter[key={0}, value={1}]",
+                       new Object[]{entry.getKey(), entry.getValue()});
+            // XXX: "Why the ajax request hold arguments in key????
+            return new JSONObject(entry.getKey().toString());
+        }
 
-        return toJSONObject(requestJSONString);
+        return new JSONObject();
     }
 
     /**
