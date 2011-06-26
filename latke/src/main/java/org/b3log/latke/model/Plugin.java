@@ -20,7 +20,7 @@ package org.b3log.latke.model;
  * This class defines all plugin model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jun 22, 2011
+ * @version 1.0.0.5, Jun 26, 2011
  */
 public final class Plugin {
 
@@ -60,6 +60,10 @@ public final class Plugin {
      * Key of plugin event listener classes.
      */
     public static final String PLUGIN_EVENT_LISTENER_CLASSES = "eventListenerClasses";
+    /**
+     * Key of plugin status.
+     */
+    public static final String PLUGIN_STATUS = "status";
 
     /**
      * Private default constructor.

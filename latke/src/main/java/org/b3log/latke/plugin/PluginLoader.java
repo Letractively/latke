@@ -58,8 +58,8 @@ public final class PluginLoader {
     /**
      * Plugin root directory.
      */
-    public static final String PLUGIN_ROOT = AbstractServletListener.getWebRoot()
-                                             + Plugin.PLUGINS;
+    public static final String PLUGIN_ROOT =
+            AbstractServletListener.getWebRoot() + Plugin.PLUGINS;
 
     /**
      * Loads plugins from directory {@literal $ webRoot}/plugins/}.
@@ -69,16 +69,16 @@ public final class PluginLoader {
 
         for (int i = 0; i < pluginsDirs.length; i++) {
             final File pluginDir = pluginsDirs[i];
-            if (pluginDir.isDirectory() && !pluginDir.isHidden()
-                && !pluginDir.getName().startsWith(".")) {
+            if (pluginDir.isDirectory() && !pluginDir.isHidden() && !pluginDir.
+                    getName().startsWith(".")) {
                 try {
                     LOGGER.log(Level.INFO, "Loading plugin under directory[{0}]",
                                pluginDir.getName());
                     load(pluginDir);
                 } catch (final Exception e) {
-                    LOGGER.log(Level.WARNING, "Load plugin under directory["
-                                              + pluginDir.getName() + "] failed",
-                               e);
+                    LOGGER.log(Level.WARNING,
+                               "Load plugin under directory["
+                               + pluginDir.getName() + "] failed", e);
                 }
             } else {
                 LOGGER.log(Level.WARNING, "It[{0}] is not a directory under "
@@ -87,6 +87,22 @@ public final class PluginLoader {
             }
 
         }
+    }
+
+    /**
+     * Gets all plugins.
+     * 
+     * @return all plugins, returns an empty list if not found
+     */
+    public static List<AbstractPlugin> getPlugins() {
+        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
+
+        for (final Map.Entry<String, List<AbstractPlugin>> entry : PLUGINS.
+                entrySet()) {
+            ret.addAll(entry.getValue());
+        }
+
+        return ret;
     }
 
     /**
