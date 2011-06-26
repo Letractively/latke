@@ -36,6 +36,8 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.util.Strings;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Abstract plugin.
@@ -49,9 +51,10 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jun 25, 2011
+ * @version 1.0.0.5, Jun 26, 2011
  */
 public abstract class AbstractPlugin {
+
     /**
      * Logger.
      */
@@ -201,7 +204,7 @@ public abstract class AbstractPlugin {
 
         final String pluginsContent = contentBuilder.toString();
         dataModel.put(Plugin.PLUGINS, pluginsContent);
-        
+
         LOGGER.log(Level.FINER, "Plugin[name={0}] has been plugged", getName());
     }
 
@@ -256,6 +259,30 @@ public abstract class AbstractPlugin {
             return "<div style='color: red;'>Plugin[name="
                    + name + "] runs failed</div>";
         }
+    }
+
+    /**
+     * Converts this plugin to a json object.
+     * 
+     * @return a json object, for example, 
+     * <pre>
+     * {
+     *     "name": "",
+     *     "version": "",
+     *     "author": "",
+     *     "status": ""
+     * }
+     * </pre>
+     * @throws JSONException if can not convert 
+     */
+    public JSONObject toJSONObject() throws JSONException {
+        final JSONObject ret = new JSONObject();
+        ret.put(Plugin.PLUGIN_NAME, getName());
+        ret.put(Plugin.PLUGIN_VERSION, getVersion());
+        ret.put(Plugin.PLUGIN_AUTHOR,  getAuthor());
+        ret.put(Plugin.PLUGIN_STATUS, getStatus());
+        
+        return ret;
     }
 
     /**
