@@ -178,11 +178,7 @@ public abstract class AbstractPlugin {
      * @return language label
      */
     public String getLang(final Locale locale, final String key) {
-        final String language = locale.getLanguage();
-        final String country = locale.getCountry();
-        final String variant = locale.getVariant();
-
-        throw new UnsupportedOperationException();
+        return langs.get(locale.toString()).getProperty(key);
     }
 
     /**
@@ -270,7 +266,7 @@ public abstract class AbstractPlugin {
      *     "name": "",
      *     "version": "",
      *     "author": "",
-     *     "status": ""
+     *     "status": {@link PluginStatus}
      * }
      * </pre>
      * @throws JSONException if can not convert 
@@ -279,9 +275,9 @@ public abstract class AbstractPlugin {
         final JSONObject ret = new JSONObject();
         ret.put(Plugin.PLUGIN_NAME, getName());
         ret.put(Plugin.PLUGIN_VERSION, getVersion());
-        ret.put(Plugin.PLUGIN_AUTHOR,  getAuthor());
+        ret.put(Plugin.PLUGIN_AUTHOR, getAuthor());
         ret.put(Plugin.PLUGIN_STATUS, getStatus());
-        
+
         return ret;
     }
 
