@@ -21,7 +21,6 @@ import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +42,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.4, Jun 25, 2011
+ * @version 1.0.3.5, Jun 28, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -71,8 +70,8 @@ public abstract class AbstractAction extends HttpServlet {
      * Performs the FreeMarker template action.
      * 
      * @param template request FreeMarker template
-     * @param request the specified http servlet request
-     * @param response the specified http servlet response
+     * @param request the specified HTTP servlet request
+     * @param response the specified HTTP servlet response
      * @return data model for FreeMarker template
      * @throws ActionException action exception
      */
@@ -86,8 +85,8 @@ public abstract class AbstractAction extends HttpServlet {
      * Performs the ajax action.
      *
      * @param requestJSONObject request data
-     * @param request the specified http servlet request
-     * @param response the specified http servlet response
+     * @param request the specified HTTP servlet request
+     * @param response the specified HTTP servlet response
      * @return a JSONObject for responsing
      * @throws ActionException action exception
      */
@@ -98,14 +97,14 @@ public abstract class AbstractAction extends HttpServlet {
             throws ActionException;
 
     /**
-     * Sets the character encoding of the specified http servlet request and the
-     * specified http servlet response to "UTF-8", sets the content type of the
-     * specified http servlet response to "text/html".
+     * Sets the character encoding of the specified HTTP servlet request and the
+     * specified HTTP servlet response to "UTF-8", sets the content type of the
+     * specified HTTP servlet response to "text/html".
      *
-     * @param request the specified http servlet request
-     * @param response the specified http servlet response
+     * @param request the specified HTTP servlet request
+     * @param response the specified HTTP servlet response
      * @throws UnsupportedEncodingException if can not set the character
-     * encoding of the specified http servlet request
+     * encoding of the specified HTTP servlet request
      */
     protected void init(final HttpServletRequest request,
                         final HttpServletResponse response)
@@ -117,11 +116,11 @@ public abstract class AbstractAction extends HttpServlet {
 
     /**
      * Using <a href="http://www.freemarker.org">FreeMarker</a> to process the
-     * specified http servlet request and the specified http servlet response
+     * specified HTTP servlet request and the specified HTTP servlet response
      * for {@literal HTTP GET} method.
      *
-     * @param request the specified http servlet request
-     * @param response the specified http servlet response
+     * @param request the specified HTTP servlet request
+     * @param response the specified HTTP servlet response
      * @throws ServletException servlet exception
      * @throws IOException io exception
      * @see #processFreemarkRequest(javax.servlet.http.HttpServletRequest,
@@ -142,11 +141,11 @@ public abstract class AbstractAction extends HttpServlet {
     }
 
     /**
-     * Process the specified http servlet request and the specified http servlet 
+     * Process the specified HTTP servlet request and the specified HTTP servlet 
      * response for {@literal HTTP POST} method.
      *
-     * @param request the specified http servlet request
-     * @param response the specified http servlet response
+     * @param request the specified HTTP servlet request
+     * @param response the specified HTTP servlet response
      * @throws ServletException servlet exception
      * @throws IOException io exception
      * @see #processAjaxRequest(javax.servlet.http.HttpServletRequest,
@@ -167,23 +166,10 @@ public abstract class AbstractAction extends HttpServlet {
     }
 
     /**
-     * Converts the specified json string to a {@link JSONObject}.
-     *
-     * @param jsonString the specified json string
-     * @return a json object
-     * @throws JSONException json exception
-     * @see JSONObject#JSONObject(java.lang.String) 
-     */
-    private JSONObject toJSONObject(final String jsonString)
-            throws JSONException {
-        return new JSONObject(jsonString);
-    }
-
-    /**
      * Gets the query string(key1=value2&key2=value2&....) for the
-     * specified http servlet request.
+     * specified HTTP servlet request.
      *
-     * @param request the specified http servlet request
+     * @param request the specified HTTP servlet request
      * @return a json object converts from query string, if can't convert the
      * query string, returns an empty json object;
      * @throws JSONException json exception
@@ -232,29 +218,29 @@ public abstract class AbstractAction extends HttpServlet {
      *
      * @param requestURI the specified request URI
      * @return the name of FreeMarker template corresponding to request URI,
-     * returns {@literal index.do} if not exists such a FreeMarker template
+     * returns {@literal index.ftl} if not exists such a FreeMarker template
      */
-    protected String getPageName(final String requestURI) {
+    protected String getTemplateName(final String requestURI) {
         int idx = requestURI.lastIndexOf("/");
 
         String ret = requestURI.substring(idx + 1, requestURI.length());
-        if (Strings.isEmptyOrNull(ret)) {
+        if (Strings.isEmptyOrNull(ret)) { //   -> "index.ftl"
             ret = "index.ftl";
-        } else if (ret.endsWith(".do")) {
+        } else if (ret.endsWith(".do")) { // "xxx.do" -> "xxx.ftl"
             idx = ret.lastIndexOf(".do");
             ret = ret.substring(0, idx);
             ret += ".ftl";
-        } else {
+        } else { // "xxx" -> "xxx.ftl"
             ret += ".ftl";
         }
 
-        LOGGER.log(Level.FINER, "Request[pageName={0}]", ret);
+        LOGGER.log(Level.FINER, "Request[templateName={0}]", ret);
 
         return ret;
     }
 
     /**
-     * Processes FreeMarker request for the specified request and response.
+     * Processes a FreeMarker request for the specified request and response.
      *
      * @param request the specified request
      * @param response the specified response
@@ -265,46 +251,60 @@ public abstract class AbstractAction extends HttpServlet {
     protected void processFreemarkRequest(final HttpServletRequest request,
                                           final HttpServletResponse response)
             throws ServletException, IOException {
+        LOGGER.log(Level.FINE, "Action[{0}]", getClass());
+
         try {
-            LOGGER.log(Level.FINE, "Action[{0}]", getClass());
-            final Template template =
-                    beforeDoFreeMarkerAction(request, response);
+            final Template template = getTemplate(request);
             if (null == template) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
 
                 return;
             }
 
+            beforeDoFreeMarkerAction(request, response);
+
             final Map<String, Object> dataModel =
                     (Map<String, Object>) doFreeMarkerAction(template,
                                                              request, response);
-            try {
-                final ViewLoadEventData data = new ViewLoadEventData();
-                data.setViewName(template.getName());
-                data.setDataModel(dataModel);
-                eventManager.fireEventSynchronously(
-                        new Event<ViewLoadEventData>(FREEMARKER_ACTION, data));
-                if (Strings.isEmptyOrNull((String) dataModel.get(Plugin.PLUGINS))) {
-                    // There is no plugin for this template, fill ${plugins} with blank.
-                    dataModel.put(Plugin.PLUGINS, "");
-                }
-            } catch (final EventException e) {
-                LOGGER.log(Level.WARNING,
-                           "Event[FREEMARKER_ACTION] handle failed, ignores this exception for kernel health",
-                           e);
-            }
+
+            fireFreeMarkerActionEvent(template.getName(), dataModel);
 
             afterDoFreeMarkerTemplateAction(request, response, dataModel,
                                             template);
         } catch (final ActionException e) {
-            LOGGER.warning(e.getMessage());
+            LOGGER.log(Level.WARNING, "Process FreeMarker request failed", e);
 
             return;
         }
     }
 
     /**
-     * Processes ajax request for the specified request and response.
+     * Fires FreeMarker action event with the host template name and data model.
+     * 
+     * @param hostTemplateName the specified host template name
+     * @param dataModel the specified data model
+     */
+    protected void fireFreeMarkerActionEvent(final String hostTemplateName,
+                                             final Map<String, Object> dataModel) {
+        try {
+            final ViewLoadEventData data = new ViewLoadEventData();
+            data.setViewName(hostTemplateName);
+            data.setDataModel(dataModel);
+            eventManager.fireEventSynchronously(
+                    new Event<ViewLoadEventData>(FREEMARKER_ACTION, data));
+            if (Strings.isEmptyOrNull((String) dataModel.get(Plugin.PLUGINS))) {
+                // There is no plugin for this template, fill ${plugins} with blank.
+                dataModel.put(Plugin.PLUGINS, "");
+            }
+        } catch (final EventException e) {
+            LOGGER.log(Level.WARNING,
+                       "Event[FREEMARKER_ACTION] handle failed, ignores this exception for kernel health",
+                       e);
+        }
+    }
+
+    /**
+     * Processes an ajax request for the specified request and response.
      *
      * @param request the specified request
      * @param response the specified response
@@ -314,6 +314,8 @@ public abstract class AbstractAction extends HttpServlet {
     private void processAjaxRequest(final HttpServletRequest request,
                                     final HttpServletResponse response)
             throws ServletException, IOException {
+        LOGGER.log(Level.FINE, "Action[{0}]", getClass());
+
         JSONObject result = null;
         try {
             final JSONObject requestJSONObject = beforeDoAjaxAction(request,
@@ -321,46 +323,48 @@ public abstract class AbstractAction extends HttpServlet {
             LOGGER.log(Level.FINE, "Request json object[{0}]", requestJSONObject);
             result = doAjaxAction(requestJSONObject, request, response);
             afterDoAjaxAction(request, response, result);
-        } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ServletException(e);
-        } catch (final JSONException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ServletException(e);
-        } catch (final ActionException e) {
+        } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e);
         }
     }
 
     /**
-     * Gets FreeMarker template with the specified request and response.
+     * Before do FreeMarker action.
      *
      * @param request the specified request
      * @param response the specified response
-     * @return a FreeMarker template, returns {@code null} if not found
      * @throws ActionException action exception
      * @throws IOException io exception
      */
-    protected Template beforeDoFreeMarkerAction(
+    protected void beforeDoFreeMarkerAction(
             final HttpServletRequest request, final HttpServletResponse response)
             throws ActionException, IOException {
-        final String pageName = getPageName(request.getRequestURI());
+        LOGGER.log(Level.FINER, "Processing before do FreeMarker action");
+    }
+
+    /**
+     * Gets a template with the specified HTTP servlet request.
+     * 
+     * @param request the specified HTTP servlet request
+     * @return template, returns {@code null} if not found
+     */
+    protected Template getTemplate(final HttpServletRequest request) {
+        final String templateName = getTemplateName(request.getRequestURI());
 
         try {
-            LOGGER.log(Level.FINER,
-                       "Template request[pageName={0}]", pageName);
-
-            return Templates.getTemplate(pageName);
-        } catch (final FileNotFoundException e) {
-            LOGGER.warning(e.getMessage());
+            return Templates.getTemplate(templateName);
+        } catch (final IOException e) {
+            LOGGER.log(Level.SEVERE, "Can't find template by the specified request[URI="
+                                     + request.getRequestURI() + "]",
+                       e.getMessage());
             return null;
         }
     }
 
     /**
-     * Processes FreeMarker template with the specified request, data model,
-     * template and response.
+     * Processes the specified FreeMarker template with the specified request, 
+     * data model and response.
      *
      * <p>
      *   <b>Note</b>: If the specified response has been committed, flush response
@@ -370,7 +374,7 @@ public abstract class AbstractAction extends HttpServlet {
      * @param request the specified request
      * @param response the specified response
      * @param dataModel the specified data model
-     * @param template the specified template
+     * @param template the specified  FreeMarker template
      * @throws ActionException action exception
      */
     protected void afterDoFreeMarkerTemplateAction(
