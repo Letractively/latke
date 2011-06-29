@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -251,7 +250,8 @@ public abstract class AbstractAction extends HttpServlet {
     protected void processFreemarkRequest(final HttpServletRequest request,
                                           final HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.FINE, "Action[{0}]", getClass());
+        LOGGER.log(Level.FINE, "Action[className={0}, requestURI={1}]",
+                   new Object[]{getClass().getName(), request.getRequestURI()});
 
         try {
             final Template template = getTemplate(request);
@@ -314,7 +314,8 @@ public abstract class AbstractAction extends HttpServlet {
     private void processAjaxRequest(final HttpServletRequest request,
                                     final HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.FINE, "Action[{0}]", getClass());
+        LOGGER.log(Level.FINE, "Action[className={0}, requestURI={1}]",
+                   new Object[]{getClass().getName(), request.getRequestURI()});
 
         JSONObject result = null;
         try {
@@ -382,16 +383,12 @@ public abstract class AbstractAction extends HttpServlet {
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
         try {
-            if (response.isCommitted()) { // response has been sent redirect
-                return;
-            }
-
+//            if (response.isCommitted()) { // response has been sent redirect
+//                return;
+//            }
             final PrintWriter writer = response.getWriter();
             template.process(dataModel, writer);
-        } catch (final TemplateException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ActionException(e);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
         }
