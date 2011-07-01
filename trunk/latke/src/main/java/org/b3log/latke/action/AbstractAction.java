@@ -214,6 +214,18 @@ public abstract class AbstractAction extends HttpServlet {
     /**
      * Gets the name of <a href="http://www.freemarker.org">FreeMarker</a>
      * template with the specified request URI.
+     * 
+     * <p>
+     * This method will get template name from the specified request URI with 
+     * the following steps: <br/>
+     * Gets a substring from the last "/" of the specified request URI, if the 
+     * obtained substring:
+     *   <ul>
+     *     <li>is empty or null, returns "index.ftl"</li>
+     *     <li>else if it ends with ".do", replace ".do" with ".ftl" then return it</li>
+     *     <li>else appends ".ftl" on it then return it</li>
+     *   </ul>
+     * </p>
      *
      * @param requestURI the specified request URI
      * @return the name of FreeMarker template corresponding to request URI,
