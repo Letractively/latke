@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * String utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Jun 19, 2011
+ * @version 1.0.0.9, Jul 1, 2011
  */
 public final class Strings {
 
@@ -49,7 +51,7 @@ public final class Strings {
         if (null == string) {
             return null;
         }
-        
+
         final BufferedReader bufferedReader =
                 new BufferedReader(new StringReader(string));
         final List<String> ret = new ArrayList<String>();
@@ -66,6 +68,28 @@ public final class Strings {
         }
 
         return ret;
+    }
+
+    /**
+     * Checks whether the specified string is numeric.
+     * 
+     * @param string the specified string
+     * @return {@code true} if the specified string is numeric, returns 
+     * {@code false} otherwise
+     */
+    public static boolean isNumeric(final String string) {
+        if (isEmptyOrNull(string)) {
+            return false;
+        }
+        
+        final Pattern pattern = Pattern.compile("[0-9]*");
+        final Matcher matcher = pattern.matcher(string);
+
+        if (!matcher.matches()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -90,7 +114,7 @@ public final class Strings {
         if (null == strings) {
             return null;
         }
-        
+
         final String[] ret = new String[strings.length];
 
         for (int i = 0; i < strings.length; i++) {
