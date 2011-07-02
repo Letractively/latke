@@ -20,7 +20,7 @@ package org.b3log.latke.model;
  * This class defines all pagination model relevant keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Sep 2, 2010
+ * @version 1.0.0.2, Jul 1, 2011
  */
 public final class Pagination {
 
@@ -59,6 +59,16 @@ public final class Pagination {
      */
     public static final String PAGINATION_LAST_PAGE_NUM =
             "paginationLastPageNum";
+    /**
+     * Key of previous page number.
+     */
+    public static final String PAGINATION_PREVIOUS_PAGE_NUM =
+            "paginationPreviousPageNum";
+    /**
+     * Key of next page number.
+     */
+    public static final String PAGINATION_NEXT_PAGE_NUM =
+            "paginationNextPageNum";
 
     /**
      * Private constructor.
