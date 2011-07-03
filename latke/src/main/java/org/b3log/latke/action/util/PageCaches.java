@@ -52,7 +52,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Jun 18, 2011
+ * @version 1.0.0.6, Jul 3, 2011
  */
 public final class PageCaches {
 
@@ -134,10 +134,10 @@ public final class PageCaches {
      * @return for example,
      * <pre>
      * {
-     *     {@value AbstractCacheablePageAction#CACHED_CONTENT}": "",
-     *     {@value AbstractCacheablePageAction#CACHED_OID}: "",
-     *     {@value AbstractCacheablePageAction#CACHED_TITLE}: "",
-     *     {@value AbstractCacheablePageAction#CACHED_TYPE}: ""
+     *     "cachedContent: "",
+     *     "cachedOid": "",
+     *     "cachedTitle": "",
+     *     "cachedType": ""
      * }
      * </pre>
      */
