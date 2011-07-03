@@ -31,7 +31,6 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.cache.Cache;
-import org.b3log.latke.util.PageCacheKeys;
 import org.b3log.latke.util.Strings;
 import org.json.JSONObject;
 
@@ -39,7 +38,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Jun 28, 2011
+ * @version 1.0.1.1, Jul 3, 2011
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -106,12 +105,12 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * 
      * <p>
      * Invoking this method will set an attribute into the specified request 
-     * withe {@value Keys#PAGE_CACHE_KEY} as name and <i>page cache key</i> as 
+     * withe "pageCacheKey" as name and <i>page cache key</i> as 
      * value.
      * </p>
      * 
      * @see Keys#PAGE_CACHE_KEY
-     * @see PageCacheKeys#getPageCacheKey(java.lang.String, java.lang.String) 
+     * @see PageCaches#getPageCacheKey(java.lang.String, java.lang.String) 
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -127,7 +126,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final String requestURI = request.getRequestURI();
             final String queryString = request.getQueryString();
             final String pageCacheKey =
-                    PageCacheKeys.getPageCacheKey(requestURI, queryString);
+                    PageCaches.getPageCacheKey(requestURI, queryString);
 
             request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
 
