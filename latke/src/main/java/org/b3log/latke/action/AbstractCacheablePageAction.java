@@ -251,7 +251,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     @Override
     @SuppressWarnings("unchecked")
-    protected final void afterDoFreeMarkerTemplateAction(
+    protected void afterDoFreeMarkerTemplateAction(
             final HttpServletRequest request, final HttpServletResponse response,
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
@@ -325,7 +325,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * </p>
      */
     protected void processPageCacheHit(final JSONObject cachedPageContentObject) {
-        LOGGER.log(Level.FINEST, "Processing page cached hit");
+        LOGGER.log(Level.FINEST, "Processing page cache hit");
     }
 
     /**
