@@ -215,7 +215,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
                     "<!-- Cached by B3log Solo(%1$d ms), %2$s -->",
                     endimeMillis - startTimeMillis, dateString);
             LOGGER.finer(msg);
-            cachedPageContent += "<br/>" + msg;
+            cachedPageContent += "\r\n" + msg;
             writer.write(cachedPageContent);
             writer.flush();
             writer.close();
