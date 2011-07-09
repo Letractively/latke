@@ -228,6 +228,7 @@ public final class PageCaches {
             final String key = page.getKey();
 
             if (!CACHE.contains(key)) {
+                iterator.remove();
                 pages.remove(key);
             }
         }
