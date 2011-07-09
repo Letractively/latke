@@ -11,6 +11,7 @@ Without this configuration present, some functionality in the IDE may be limited
         <word>datastore</word>
         <word>enum</word>
         <word>json</word>
+        <word>Latke</word>
         <word>namespace</word>
         <word>Plugin</word>
         <word>plugin</word>
