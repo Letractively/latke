@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.cache.gae;
 
 import com.google.appengine.api.memcache.InvalidValueException;
@@ -52,7 +51,7 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Jun 12, 2011
+ * @version 1.0.1.0, Jul 9, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -102,13 +101,35 @@ public final class Memcache<K, V> implements Cache<K, V> {
      * {@inheritDoc}
      */
     @Override
+    public boolean contains(final K key) {
+        return memcacheService.contains(key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void put(final K key, final V value) {
+        if (null == key) {
+            throw new IllegalArgumentException(
+                    "The specified key can not be null!");
+        }
+
+        if (null == value) {
+            throw new IllegalArgumentException(
+                    "The specified value can not be null!");
+        }
+
         memcacheService.put(key, value);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public V get(final K key) {
+        if (null == key) {
+            return null;
+        }
+
         final MemcacheServicePb.MemcacheGetResponse.Builder response =
                 MemcacheServicePb.MemcacheGetResponse.newBuilder();
         MemcacheServicePb.MemcacheGetRequest request;
@@ -123,7 +144,8 @@ public final class Memcache<K, V> implements Cache<K, V> {
                     append(key).append("]").toString(), ex);
         }
 
-        if (!makeSyncCall("Get", request, response, (new StringBuilder()).append(
+        if (!makeSyncCall("Get", request, response,
+                          (new StringBuilder()).append(
                 "Memcache get: exception getting 1 key[").append(key).append(
                 "]").toString())) {
             return null;
@@ -154,6 +176,11 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
     @Override
     public long inc(final K key, final long delta) {
+        if (null == key) {
+            throw new IllegalArgumentException(
+                    "The specified key can not be null!");
+        }
+
         if (!memcacheService.contains(key)) {
             memcacheService.put(key, 1L);
         }
