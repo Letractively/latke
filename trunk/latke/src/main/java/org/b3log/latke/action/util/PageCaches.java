@@ -138,11 +138,11 @@ public final class PageCaches {
      */
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
-        final Map<String, ?> keys = (Map<String, ?>) CACHE.get(PAGES);
+        final Map<String, ?> pages = (Map<String, ?>) CACHE.get(PAGES);
 
         // TODO: sort
 
-        return Collections.unmodifiableSet(keys.keySet());
+        return Collections.unmodifiableSet(pages.keySet());
     }
 
     /**
@@ -209,6 +209,26 @@ public final class PageCaches {
         LOGGER.log(Level.FINEST, "Put a page[key={0}, value={1} into page cache,"
                                  + " cached pages[{2}]",
                    new Object[]{pageKey, cachedValue, pages});
+    }
+
+    /**
+     * Synchronizes the {@linkplain #PAGES keys} collection and cached page
+     * objects.
+     */
+    public static void syncKeys() {
+        @SuppressWarnings("unchecked")
+        final Map<String, JSONObject> pages =
+                (Map<String, JSONObject>) CACHE.get(PAGES);
+
+        for (final Map.Entry<String, JSONObject> page : pages.entrySet()) {
+            final String key = page.getKey();
+
+            if (!CACHE.contains(key)) {
+                pages.remove(key);
+            }
+        }
+
+        CACHE.put(PAGES, pages);
     }
 
     /**

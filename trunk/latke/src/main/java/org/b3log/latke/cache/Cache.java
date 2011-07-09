@@ -20,19 +20,32 @@ import java.util.Collection;
 
 /**
  * This is the top interface of cache like structures.
+ * 
+ * <p>
+ * This cache can not hold {@code null} key or value.
+ * </p>
  *
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.6, Jan 28, 2010
+ * @version 1.0.2.7, Jul 9, 2011
  */
 public interface Cache<K, V> {
+
+    /**
+     * Checks whether an object specified by the given key is in cache.
+     * 
+     * @param key the given key
+     * @return {@code true} if it is in cache, returns {@code false} otherwise
+     */
+    boolean contains(final K key);
 
     /**
      * Puts the specified object into this cache.
      *
      * <p>
-     * Throws {@link IllegalArgumentException} if the specified key is null
+     * Throws {@link IllegalArgumentException} if the specified key or value is 
+     * {@code null}.
      * </p>
      *
      * @param key the key of the specified object
@@ -42,10 +55,13 @@ public interface Cache<K, V> {
 
     /**
      * Gets a object by the specified key.
-     *
+     * 
+     * <p>
+     * Returns {@code null} if the specified key is {@code null}.
+     * </p>
+     * 
      * @param key the specified key
-     * @return if found, returns the object, otherwise returns
-     * <code>null</code>
+     * @return if found, returns the object, otherwise returns {@code null}
      */
     V get(final K key);
 
@@ -56,6 +72,11 @@ public interface Cache<K, V> {
      * If the value specified by the given key is not present in this cache,
      * initialize it as {@code 1L}.
      * </p>
+     * 
+     * <p>
+     * Throws {@link IllegalArgumentException} if the specified key is 
+     * {@code null}.
+     * </p>
      *
      * @param key the given key
      * @param delta the specified delta value
@@ -65,14 +86,14 @@ public interface Cache<K, V> {
 
     /**
      * Removes a object by the specified key.
-     *
+     * 
      * @param key the specified key
      */
     void remove(final K key);
 
     /**
      * Removes objects by the specified keys.
-     *
+     * 
      * @param keys the specified keys
      */
     void remove(final Collection<K> keys);
