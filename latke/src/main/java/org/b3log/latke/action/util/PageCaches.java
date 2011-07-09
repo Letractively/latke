@@ -18,7 +18,9 @@ package org.b3log.latke.action.util;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -219,8 +221,10 @@ public final class PageCaches {
         @SuppressWarnings("unchecked")
         final Map<String, JSONObject> pages =
                 (Map<String, JSONObject>) CACHE.get(PAGES);
-
-        for (final Map.Entry<String, JSONObject> page : pages.entrySet()) {
+        final Set<Entry<String, JSONObject>> entrySet = pages.entrySet();
+        final Iterator<Entry<String, JSONObject>> iterator = entrySet.iterator();
+        while (iterator.hasNext()) {
+            final Entry<String, JSONObject> page = iterator.next();
             final String key = page.getKey();
 
             if (!CACHE.contains(key)) {
