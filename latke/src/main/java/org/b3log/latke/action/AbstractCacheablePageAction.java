@@ -117,7 +117,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
     protected void processFreemarkRequest(final HttpServletRequest request,
                                           final HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.FINE, "Action[{0}]", getClass());
+        LOGGER.log(Level.FINER, "Action[{0}]", getClass());
 
         try {
             final long startTimeMillis = System.currentTimeMillis();

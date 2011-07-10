@@ -262,7 +262,7 @@ public abstract class AbstractAction extends HttpServlet {
     protected void processFreemarkRequest(final HttpServletRequest request,
                                           final HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.FINE, "Action[className={0}, requestURI={1}]",
+        LOGGER.log(Level.FINER, "Action[className={0}, requestURI={1}]",
                    new Object[]{getClass().getName(), request.getRequestURI()});
 
         try {
@@ -326,14 +326,14 @@ public abstract class AbstractAction extends HttpServlet {
     private void processAjaxRequest(final HttpServletRequest request,
                                     final HttpServletResponse response)
             throws ServletException, IOException {
-        LOGGER.log(Level.FINE, "Action[className={0}, requestURI={1}]",
+        LOGGER.log(Level.FINER, "Action[className={0}, requestURI={1}]",
                    new Object[]{getClass().getName(), request.getRequestURI()});
 
         JSONObject result = null;
         try {
             final JSONObject requestJSONObject = beforeDoAjaxAction(request,
                                                                     response);
-            LOGGER.log(Level.FINE, "Request json object[{0}]", requestJSONObject);
+            LOGGER.log(Level.FINER, "Request json object[{0}]", requestJSONObject);
             result = doAjaxAction(requestJSONObject, request, response);
             afterDoAjaxAction(request, response, result);
         } catch (final Exception e) {
