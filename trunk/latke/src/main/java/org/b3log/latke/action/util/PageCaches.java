@@ -157,12 +157,9 @@ public final class PageCaches {
     }
 
     /**
-     * Gets a cached page with the specified page key. 
-     * <pre>
-     * </pre>
-     * "URL a", JSONObject{oId, title, title, type}&gt;
+     * Gets a cached page with the specified page cache key. 
      *
-     * @param pageKey the specified page key
+     * @param pageCacheKey the specified page cache key
      * @return for example,
      * <pre>
      * {
@@ -173,8 +170,8 @@ public final class PageCaches {
      * }
      * </pre>
      */
-    public static JSONObject get(final String pageKey) {
-        return (JSONObject) CACHE.get(pageKey);
+    public static JSONObject get(final String pageCacheKey) {
+        return (JSONObject) CACHE.get(pageCacheKey);
     }
 
     /**
