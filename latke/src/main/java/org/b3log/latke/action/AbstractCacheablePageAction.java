@@ -38,7 +38,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jul 3, 2011
+ * @version 1.0.1.2, Jul 11, 2011
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -125,10 +125,13 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
             final String requestURI = request.getRequestURI();
             final String queryString = request.getQueryString();
-            final String pageCacheKey =
-                    PageCaches.getPageCacheKey(requestURI, queryString);
-
-            request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
+            String pageCacheKey =
+                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            if (Strings.isEmptyOrNull(pageCacheKey)) {
+                pageCacheKey = PageCaches.getPageCacheKey(requestURI,
+                                                          queryString);
+                request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
+            }
 
             if (Latkes.isPageCacheEnabled()) {
                 if (writeResponseFromCache(request, response, pageCacheKey)) {
