@@ -48,6 +48,10 @@ import org.json.JSONObject;
  *                     HttpServletRequest, HttpServletResponse)
  * @see Templates
  */
+ // TODO: request mapping processing (Process HTTP GET/POST/etc should be configurable 
+ //       rather than HTTP GET to FreeMarker and HTTP POST to AJAX at present). Refers 
+ //       spring mvc request dispathing and servlet bean initailization.
+ // TODO: include request processing
 public abstract class AbstractAction extends HttpServlet {
 
     /**
