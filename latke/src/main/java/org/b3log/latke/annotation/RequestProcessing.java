@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.b3log.latke.annotation;
 
 import java.lang.annotation.Documented;
@@ -41,15 +42,11 @@ public @interface RequestProcessing {
      * web application descriptor (web.xml) of a servlet. Ant-style path 
      * patterns are also supported.
      * </p>
-     * 
-     * @return dispatching URI path patterns
      */
     String[] value() default {};
 
     /**
      * The HTTP request methods the annotated method should process.
-     * 
-     * @return HTTP request methods
      */
     RequestMethod[] method() default {RequestMethod.GET};
 }
