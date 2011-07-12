@@ -43,7 +43,7 @@ public @interface RequestProcessing {
      * patterns are also supported.
      * </p>
      * 
-     * @return 
+     * @return dispatching URI path patterns
      */
     String[] value() default {};
 }
