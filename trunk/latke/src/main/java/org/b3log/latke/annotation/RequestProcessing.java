@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.annotation;
 
 import java.lang.annotation.Documented;
@@ -26,7 +25,7 @@ import java.lang.annotation.Target;
  * Indicates that an annotated method for HTTP servlet request processing.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 11, 2011
+ * @version 1.0.0.1, Jul 12, 2011
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -46,4 +45,11 @@ public @interface RequestProcessing {
      * @return dispatching URI path patterns
      */
     String[] value() default {};
+
+    /**
+     * The HTTP request methods the annotated method should process.
+     * 
+     * @return HTTP request methods
+     */
+    RequestMethod[] method() default {RequestMethod.GET};
 }
