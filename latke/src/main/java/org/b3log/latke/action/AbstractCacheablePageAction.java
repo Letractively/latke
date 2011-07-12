@@ -30,7 +30,6 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.action.util.PageCaches;
-import org.b3log.latke.cache.Cache;
 import org.b3log.latke.util.Strings;
 import org.json.JSONObject;
 
@@ -38,7 +37,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Jul 11, 2011
+ * @version 1.0.1.3, Jul 12, 2011
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -176,12 +175,8 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
     private boolean writeResponseFromCache(final HttpServletRequest request,
                                            final HttpServletResponse response,
                                            final String pageCacheKey) {
-        final Cache<String, Object> cache = PageCaches.getCache();
         LOGGER.log(Level.FINER, "Request[pageCacheKey={0}]", pageCacheKey);
-        LOGGER.log(Level.FINEST, "Page cache[cachedCount={0}, maxCount={1}]",
-                   new Object[]{cache.getCachedCount(), cache.getMaxCount()});
-        final JSONObject cachedPageContentObject =
-                (JSONObject) cache.get(pageCacheKey);
+        final JSONObject cachedPageContentObject =PageCaches.get(pageCacheKey);
 
         if (null == cachedPageContentObject) { // Miss
             LOGGER.log(Level.FINER, "Page cache miss");
