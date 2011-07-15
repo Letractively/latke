@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, Oct 26, 2010
+ * @version 1.0.1.7, Jul 15, 2011
  */
 public final class Keys {
 
@@ -80,6 +80,16 @@ public final class Keys {
      * Key of page cache key.
      */
     public static final String PAGE_CACHE_KEY = "pageCacheKey";
+    
+    /**
+     * Key of HTTP servlet request.
+     */
+    public static final String HTTP_SERVLET_REQUEST = "httpServletRequest";
+    
+    /**
+     * Key of HTTP servlet response.
+     */
+    public static final String HTTP_SERVLET_RESPONSE = "httpServletResponse";
 
     /**
      * Private constructor.
