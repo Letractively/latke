@@ -167,7 +167,7 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
         final String[] acceptedMethods = method.split(",");
         boolean methodAccepted = false;
         for (int i = 0; i < acceptedMethods.length; i++) {
-            final String acceptedMethod = acceptedMethods[i];
+            final String acceptedMethod = acceptedMethods[i].trim();
             if (requestKey.getMethod().equals(acceptedMethod)) {
                 methodAccepted = true;
                 break;
@@ -177,7 +177,7 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
         boolean uriAccepted = false;
         final String[] acceptedURIs = requestURI.split(",");
         for (int i = 0; i < acceptedURIs.length; i++) {
-            final String acceptedURI = acceptedURIs[i];
+            final String acceptedURI = acceptedURIs[i].trim();
             if (requestKey.getRequestURI().equals(acceptedURI)) {
                 uriAccepted = true;
                 break;
