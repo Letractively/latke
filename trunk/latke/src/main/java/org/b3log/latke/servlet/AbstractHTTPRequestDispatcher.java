@@ -19,14 +19,11 @@ package org.b3log.latke.servlet;
 import java.util.logging.Level;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.b3log.latke.Keys;
 import org.b3log.latke.event.EventManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +32,7 @@ import org.json.JSONObject;
  * Abstract front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 15, 2011
+ * @version 1.0.0.1, Jul 16, 2011
  */
 public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
 
@@ -94,9 +91,9 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
             throw new ServletException(e);
         }
 
-        final Map<String, Object> context = new HashMap<String, Object>();
-        context.put(Keys.HTTP_SERVLET_REQUEST, request);
-        context.put(Keys.HTTP_SERVLET_RESPONSE, response);
+        final HTTPRequestContext context = new HTTPRequestContext();
+        context.setRequest(request);
+        context.setResponse(response);
 
         dispatch(context);
     }
@@ -105,11 +102,8 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
      * Dispatches with the specified context.
      * 
      * @param context the specified specified context
-     * // TODO: context example
-     * @return process result
      */
-    protected abstract Map<String, Object> dispatch(
-            final Map<String, Object> context);
+    protected abstract void dispatch(final HTTPRequestContext context);
 
     /**
      * Gets the query string(key1=value2&key2=value2&....) for the
@@ -156,5 +150,25 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
         ret = new JSONObject(sb.toString());
 
         return ret;
+    }
+
+    /**
+     * Matches.
+     * 
+     * @param requestKey request key
+     * @param method method
+     * @param requestURI request URI
+     * @return {@code true} if matches, returns {@code false} otherwise
+     */
+    // TODO: match strategy
+    protected boolean match(final RequestKey requestKey,
+                            final String method,
+                            final String requestURI) {
+        if (requestKey.getMethod().equals(method)
+            && requestKey.getRequestURI().equals(requestURI)) {
+            return true;
+        }
+
+        return false;
     }
 }
