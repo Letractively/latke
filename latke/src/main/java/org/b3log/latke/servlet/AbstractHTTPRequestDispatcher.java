@@ -164,11 +164,26 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
     protected boolean match(final RequestKey requestKey,
                             final String method,
                             final String requestURI) {
-        if (requestKey.getMethod().equals(method)
-            && requestKey.getRequestURI().equals(requestURI)) {
-            return true;
+        final String[] acceptedMethods = method.split(",");
+        boolean methodAccepted = false;
+        for (int i = 0; i < acceptedMethods.length; i++) {
+            final String acceptedMethod = acceptedMethods[i];
+            if (requestKey.getMethod().equals(acceptedMethod)) {
+                methodAccepted = true;
+                break;
+            }
         }
 
-        return false;
+        boolean uriAccepted = false;
+        final String[] acceptedURIs = requestURI.split(",");
+        for (int i = 0; i < acceptedURIs.length; i++) {
+            final String acceptedURI = acceptedURIs[i];
+            if (requestKey.getRequestURI().equals(acceptedURI)) {
+                uriAccepted = true;
+                break;
+            }
+        }
+
+        return methodAccepted && uriAccepted;
     }
 }
