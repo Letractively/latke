@@ -29,12 +29,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Abstract front controller for HTTP request dispatching.
+ * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jul 16, 2011
+ * @version 1.0.0.3, Jul 17, 2011
  */
-public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
+public final class HTTPRequestDispatcher extends HttpServlet {
 
     /**
      * Default serial version uid.
@@ -44,11 +44,15 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractHTTPRequestDispatcher.class.getName());
+            Logger.getLogger(HTTPRequestDispatcher.class.getName());
     /**
      * Event manager.
      */
     private EventManager eventManager = EventManager.getInstance();
+
+    static {
+        RequestProcessors.discover();
+    }
 
     /**
      * Sets the character encoding of the specified HTTP servlet request and the
@@ -60,8 +64,8 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
      * @throws UnsupportedEncodingException if can not set the character
      * encoding of the specified HTTP servlet request
      */
-    protected void init(final HttpServletRequest request,
-                        final HttpServletResponse response)
+    private void init(final HttpServletRequest request,
+                      final HttpServletResponse response)
             throws UnsupportedEncodingException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
@@ -69,16 +73,12 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
     }
 
     /**
-     * Using <a href="http://www.freemarker.org">FreeMarker</a> to process the
-     * specified HTTP servlet request and the specified HTTP servlet response
-     * for {@literal HTTP GET} method.
+     * Serves.
      *
      * @param request the specified HTTP servlet request
      * @param response the specified HTTP servlet response
      * @throws ServletException servlet exception
      * @throws IOException io exception
-     * @see #processFreemarkRequest(javax.servlet.http.HttpServletRequest,
-     *                              javax.servlet.http.HttpServletResponse)
      */
     @Override
     protected void service(final HttpServletRequest request,
@@ -103,7 +103,34 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
      * 
      * @param context the specified specified context
      */
-    protected abstract void dispatch(final HTTPRequestContext context);
+    private void dispatch(final HTTPRequestContext context) {
+        final HttpServletRequest request = context.getRequest();
+        final HttpServletResponse response = context.getResponse();
+
+        final String requestURI = request.getRequestURI();
+        final String method = request.getMethod();
+
+        LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]",
+                   new Object[]{requestURI, method});
+
+//        if (match(requestKey, "GET", "/test")) {
+//            ((org.b3log.latke.demo.hello.HelloProcessor)PROCESSING_OBJS.get("org.b3log.latke.demo.hello.HelloProcessor"))
+//                .test(context);
+//        }
+//        if (match(requestKey, "GET", "/, /index")) {
+//            ((org.b3log.latke.demo.hello.HelloProcessor)PROCESSING_OBJS.get("org.b3log.latke.demo.hello.HelloProcessor"))
+//                .index(context);
+//        }
+
+        final AbstractHTTPResponseRenderer renderer = context.getRenderer();
+        if (null == renderer) {
+            LOGGER.log(Level.WARNING, "Renderer is null");
+            // TODO: default renderer?
+            return;
+        }
+
+        renderer.render(context);
+    }
 
     /**
      * Gets the query string(key1=value2&key2=value2&....) for the
@@ -114,7 +141,7 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
      * query string, returns an empty json object;
      * @throws JSONException json exception
      */
-    protected final JSONObject getQueryStringJSONObject(
+    private JSONObject getQueryStringJSONObject(
             final HttpServletRequest request) throws JSONException {
         JSONObject ret = null;
         final String tmp = request.getQueryString();
@@ -150,40 +177,5 @@ public abstract class AbstractHTTPRequestDispatcher extends HttpServlet {
         ret = new JSONObject(sb.toString());
 
         return ret;
-    }
-
-    /**
-     * Matches.
-     * 
-     * @param requestKey request key
-     * @param method method
-     * @param requestURI request URI
-     * @return {@code true} if matches, returns {@code false} otherwise
-     */
-    // TODO: match strategy
-    protected boolean match(final RequestKey requestKey,
-                            final String method,
-                            final String requestURI) {
-        final String[] acceptedMethods = method.split(",");
-        boolean methodAccepted = false;
-        for (int i = 0; i < acceptedMethods.length; i++) {
-            final String acceptedMethod = acceptedMethods[i].trim();
-            if (requestKey.getMethod().equals(acceptedMethod)) {
-                methodAccepted = true;
-                break;
-            }
-        }
-
-        boolean uriAccepted = false;
-        final String[] acceptedURIs = requestURI.split(",");
-        for (int i = 0; i < acceptedURIs.length; i++) {
-            final String acceptedURI = acceptedURIs[i].trim();
-            if (requestKey.getRequestURI().equals(acceptedURI)) {
-                uriAccepted = true;
-                break;
-            }
-        }
-
-        return methodAccepted && uriAccepted;
     }
 }

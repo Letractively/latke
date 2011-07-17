@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.b3log.latke.annotation;
+package org.b3log.latke.servlet;
 
 /**
  * Enumerations of HTTP request methods.
