@@ -19,7 +19,9 @@ package org.b3log.latke.servlet;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +48,54 @@ public final class RequestProcessors {
      */
     private static Set<ProcessorMethod> processorMethods =
             new HashSet<ProcessorMethod>();
+    /**
+     * Processors.
+     */
+    private static Map<Method, Object> processors =
+            new HashMap<Method, Object>();
+
+    /**
+     * Invokes a processor method with the specified request URI, method and 
+     * context.
+     * 
+     * @param requestURI the specified request URI
+     * @param method the specified method
+     * @param context the specified context
+     * @return invoke result, returns {@code null} if invoke failed
+     */
+    public static Object invoke(final String requestURI, final String method,
+                                final HTTPRequestContext context) {
+        final ProcessorMethod processMethod = getProcessorMethod(requestURI,
+                                                                 method);
+
+        if (null == processMethod) {
+            LOGGER.log(Level.WARNING,
+                       "Can not find process method for request[requestURI={0}, method={1}]",
+                       new Object[]{requestURI, method});
+            return null;
+        }
+
+        final Method processorMethod = processMethod.getProcessorMethod();
+        Object processorObject = processors.get(processorMethod);
+
+        try {
+            if (null == processorObject) {
+                final Class<?> processorClass =
+                        processMethod.getProcessorClass();
+                final Object instance = processorClass.newInstance();
+
+                processors.put(processorMethod, instance);
+
+                processorObject = instance;
+            }
+
+            return processorMethod.invoke(processorObject, context);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "Invokes processor method failed", e);
+
+            return null;
+        }
+    }
 
     /**
      * Scans classpath to discover request processor classes via annotation
@@ -104,13 +154,13 @@ public final class RequestProcessors {
      * @param method the specified method
      * @return process method, returns {@code null} if not found
      */
-    public static Method getProcessMethod(final String requestURI,
-                                          final String method) {
+    private static ProcessorMethod getProcessorMethod(final String requestURI,
+                                                      final String method) {
         // TODO: Ant-style path pattern matching, caching
         for (final ProcessorMethod processorMethod : processorMethods) {
             if (method.equals(processorMethod.getMethod())
                 && requestURI.equals(processorMethod.getUriPattern())) {
-                return processorMethod.getProcessorMethod();
+                return processorMethod;
             }
         }
 
