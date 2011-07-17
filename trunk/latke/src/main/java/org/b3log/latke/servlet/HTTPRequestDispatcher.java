@@ -112,16 +112,11 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]",
                    new Object[]{requestURI, method});
-
-//        if (match(requestKey, "GET", "/test")) {
-//            ((org.b3log.latke.demo.hello.HelloProcessor)PROCESSING_OBJS.get("org.b3log.latke.demo.hello.HelloProcessor"))
-//                .test(context);
-//        }
-//        if (match(requestKey, "GET", "/, /index")) {
-//            ((org.b3log.latke.demo.hello.HelloProcessor)PROCESSING_OBJS.get("org.b3log.latke.demo.hello.HelloProcessor"))
-//                .index(context);
-//        }
-
+        
+        final Object processorMethodRet =
+                RequestProcessors.invoke(requestURI, method, context);
+        // XXX: processor method ret?
+       
         final AbstractHTTPResponseRenderer renderer = context.getRenderer();
         if (null == renderer) {
             LOGGER.log(Level.WARNING, "Renderer is null");
