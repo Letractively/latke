@@ -20,7 +20,9 @@ import java.util.logging.Level;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
 import freemarker.template.Template;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -41,17 +43,17 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.5, Jun 28, 2011
+ * @version 1.0.3.6, Jul 19, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
  *                     HttpServletRequest, HttpServletResponse)
  * @see Templates
  */
- // TODO: request mapping processing (Process HTTP GET/POST/etc should be configurable 
- //       rather than HTTP GET to FreeMarker and HTTP POST to AJAX at present). Refers 
- //       spring mvc request dispathing and servlet bean initailization.
- // TODO: include request processing
+// TODO: request mapping processing (Process HTTP GET/POST/etc should be configurable 
+//       rather than HTTP GET to FreeMarker and HTTP POST to AJAX at present). Refers 
+//       spring mvc request dispathing and servlet bean initailization.
+// TODO: include request processing
 public abstract class AbstractAction extends HttpServlet {
 
     /**
@@ -337,7 +339,8 @@ public abstract class AbstractAction extends HttpServlet {
         try {
             final JSONObject requestJSONObject = beforeDoAjaxAction(request,
                                                                     response);
-            LOGGER.log(Level.FINER, "Request json object[{0}]", requestJSONObject);
+            LOGGER.log(Level.FINER, "Request json object[{0}]",
+                       requestJSONObject);
             result = doAjaxAction(requestJSONObject, request, response);
             afterDoAjaxAction(request, response, result);
         } catch (final Exception e) {
@@ -418,22 +421,59 @@ public abstract class AbstractAction extends HttpServlet {
      * @return a json object
      * @throws ServletException servlet exception
      * @throws IOException io exception
-     * @throws JSONException json exception
      */
     private JSONObject beforeDoAjaxAction(final HttpServletRequest request,
                                           final HttpServletResponse response)
-            throws ServletException, IOException, JSONException {
+            throws ServletException, IOException {
         response.setContentType("application/json");
         final Map<?, ?> parameterMap = request.getParameterMap();
 
-        for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
-            LOGGER.log(Level.FINER, "AJAX request paramter[key={0}, value={1}]",
-                       new Object[]{entry.getKey(), entry.getValue()});
-            // XXX: "Why the ajax request hold arguments in key????
-            return new JSONObject(entry.getKey().toString());
-        }
+        try {
+            // Parses with parameter map
+            for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
+                LOGGER.log(Level.FINER,
+                           "AJAX request paramter[key={0}, value={1}]",
+                           new Object[]{entry.getKey(), entry.getValue()});
+                // XXX: "(GAE/J 1.5.0 and above) Why the ajax request hold arguments in key????
+                return new JSONObject(entry.getKey().toString());
+            }
 
-        return new JSONObject();
+            return new JSONObject();
+        } catch (final JSONException e) {
+            // Parses with request reader (GAE/J 1.4.3 and below)
+            final StringBuilder sb = new StringBuilder();
+            BufferedReader reader = null;
+
+            final String errMsg = "Can not parse request[requestURI=" + request.
+                    getRequestURI() + ", method=" + request.getMethod()
+                                  + "], returns an empty json object";
+            try {
+                try {
+                    reader = request.getReader();
+                } catch (final IllegalStateException illegalStateException) {
+                    reader = new BufferedReader(new InputStreamReader(
+                            request.getInputStream()));
+                }
+
+                String line = reader.readLine();
+                while (null != line) {
+                    sb.append(line);
+                    line = reader.readLine();
+                }
+                reader.close();
+
+                String tmp = sb.toString();
+                if (Strings.isEmptyOrNull(tmp)) {
+                    tmp = "{}";
+                }
+
+                return new JSONObject(tmp);
+            } catch (final Exception ex) {
+                LOGGER.log(Level.SEVERE, errMsg, ex);
+
+                return new JSONObject();
+            }
+        }
     }
 
     /**
