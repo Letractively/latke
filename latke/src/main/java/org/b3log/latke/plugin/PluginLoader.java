@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.plugin;
 
 import java.io.File;
@@ -43,7 +42,7 @@ import org.jabsorb.JSONRPCBridge;
  * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Jul 17, 2011
+ * @version 1.0.0.6, Jul 19, 2011
  */
 public final class PluginLoader {
 
@@ -74,34 +73,6 @@ public final class PluginLoader {
             AbstractServletListener.getWebRoot() + Plugin.PLUGINS;
 
     /**
-     * Loads plugins from directory {@literal $ webRoot}/plugins/}.
-     */
-    public static void load() {
-        final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
-
-        for (int i = 0; i < pluginsDirs.length; i++) {
-            final File pluginDir = pluginsDirs[i];
-            if (pluginDir.isDirectory() && !pluginDir.isHidden() && !pluginDir.
-                    getName().startsWith(".")) {
-                try {
-                    LOGGER.log(Level.INFO, "Loading plugin under directory[{0}]",
-                               pluginDir.getName());
-                    load(pluginDir);
-                } catch (final Exception e) {
-                    LOGGER.log(Level.WARNING,
-                               "Load plugin under directory["
-                               + pluginDir.getName() + "] failed", e);
-                }
-            } else {
-                LOGGER.log(Level.WARNING, "It[{0}] is not a directory under "
-                                          + "directory plugins, ignored",
-                           pluginDir.getName());
-            }
-
-        }
-    }
-
-    /**
      * Gets all plugins.
      * 
      * @return all plugins, returns an empty list if not found
@@ -112,7 +83,7 @@ public final class PluginLoader {
         Map<String, List<AbstractPlugin>> pluginMap =
                 PLUGINS.get(Plugin.PLUGINS);
         if (null == pluginMap || pluginMap.isEmpty()) {
-            LOGGER.info("Reloads plugins....");
+            LOGGER.info("Loads plugins....");
             load();
 
             pluginMap = PLUGINS.get(Plugin.PLUGINS);
@@ -141,6 +112,34 @@ public final class PluginLoader {
         }
 
         return ret;
+    }
+
+    /**
+     * Loads plugins from directory {@literal webRoot/plugins/}.
+     */
+    private static void load() {
+        final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
+
+        for (int i = 0; i < pluginsDirs.length; i++) {
+            final File pluginDir = pluginsDirs[i];
+            if (pluginDir.isDirectory() && !pluginDir.isHidden() && !pluginDir.
+                    getName().startsWith(".")) {
+                try {
+                    LOGGER.log(Level.INFO, "Loading plugin under directory[{0}]",
+                               pluginDir.getName());
+                    load(pluginDir);
+                } catch (final Exception e) {
+                    LOGGER.log(Level.WARNING,
+                               "Load plugin under directory["
+                               + pluginDir.getName() + "] failed", e);
+                }
+            } else {
+                LOGGER.log(Level.WARNING, "It[{0}] is not a directory under "
+                                          + "directory plugins, ignored",
+                           pluginDir.getName());
+            }
+
+        }
     }
 
     /**
