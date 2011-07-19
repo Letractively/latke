@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.b3log.latke.cache.Cache;
+import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.event.AbstractEventListener;
 import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
@@ -41,7 +43,7 @@ import org.jabsorb.JSONRPCBridge;
  * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jun 25, 2011
+ * @version 1.0.0.5, Jul 17, 2011
  */
 public final class PluginLoader {
 
@@ -51,10 +53,20 @@ public final class PluginLoader {
     private static final Logger LOGGER = Logger.getLogger(PluginLoader.class.
             getName());
     /**
-     * Plugins.
+     * Name of plugin cache.
      */
-    private static final Map<String, List<AbstractPlugin>> PLUGINS =
-            new HashMap<String, List<AbstractPlugin>>();
+    private static final String PLUGIN_CACHE_NAME = "pluginCache";
+    /**
+     * Plugins cache.
+     * 
+     * <p>
+     * Caches plugins with the key "plugins" and its value is the real holder, 
+     * a map:
+     * &lt;"hosting view name", plugins&gt;
+     * </p>
+     */
+    private static final Cache<String, Map<String, List<AbstractPlugin>>> PLUGINS =
+            CacheFactory.getCache(PLUGIN_CACHE_NAME);
     /**
      * Plugin root directory.
      */
@@ -97,7 +109,16 @@ public final class PluginLoader {
     public static List<AbstractPlugin> getPlugins() {
         final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
 
-        for (final Map.Entry<String, List<AbstractPlugin>> entry : PLUGINS.
+        Map<String, List<AbstractPlugin>> pluginMap =
+                PLUGINS.get(Plugin.PLUGINS);
+        if (null == pluginMap || pluginMap.isEmpty()) {
+            LOGGER.info("Reloads plugins....");
+            load();
+
+            pluginMap = PLUGINS.get(Plugin.PLUGINS);
+        }
+
+        for (final Map.Entry<String, List<AbstractPlugin>> entry : pluginMap.
                 entrySet()) {
             ret.addAll(entry.getValue());
         }
@@ -112,7 +133,9 @@ public final class PluginLoader {
      * @return a plugin, returns an empty list if not found
      */
     public static List<AbstractPlugin> getPlugins(final String viewName) {
-        final List<AbstractPlugin> ret = PLUGINS.get(viewName);
+        final Map<String, List<AbstractPlugin>> pluginMap = getPluginsMap();
+
+        final List<AbstractPlugin> ret = pluginMap.get(viewName);
         if (null == ret) {
             return Collections.emptyList();
         }
@@ -156,18 +179,23 @@ public final class PluginLoader {
      */
     private static void register(final AbstractPlugin plugin) {
         final String viewName = plugin.getViewName();
-        List<AbstractPlugin> list = PLUGINS.get(viewName);
+
+        final Map<String, List<AbstractPlugin>> pluginMap = getPluginsMap();
+
+        List<AbstractPlugin> list = pluginMap.get(viewName);
         if (null == list) {
             list = new ArrayList<AbstractPlugin>();
-            PLUGINS.put(viewName, list);
+            pluginMap.put(viewName, list);
         }
 
         list.add(plugin);
+        PLUGINS.put(Plugin.PLUGINS, pluginMap);
+
         LOGGER.log(Level.FINER,
                    "Registered plugin[name={0}, version={1}] for view[name={2}], "
                    + "[{3}] plugins totally", new Object[]{
                     plugin.getName(), plugin.getVersion(), viewName,
-                    PLUGINS.size()});
+                    pluginMap.size()});
     }
 
     /**
@@ -234,10 +262,11 @@ public final class PluginLoader {
             final String jsonRpcClassName = jsonRpcClassArray[i];
             if (Strings.isEmptyOrNull(jsonRpcClassName)) {
                 LOGGER.log(Level.INFO,
-                           "Not json rpc service to load for plugin[name={0}]",
+                           "No json rpc service to load for plugin[name={0}]",
                            plugin.getName());
                 return;
             }
+
             final Class<?> jsonRpcClass =
                     classLoader.loadClass(jsonRpcClassName);
             final Method getInstance = jsonRpcClass.getMethod("getInstance");
@@ -281,7 +310,7 @@ public final class PluginLoader {
             final String eventListenerClassName = eventListenerClassArray[i];
             if (Strings.isEmptyOrNull(eventListenerClassName)) {
                 LOGGER.log(Level.INFO,
-                           "Not event listener to load for plugin[name={0}]",
+                           "No event listener to load for plugin[name={0}]",
                            plugin.getName());
                 return;
             }
@@ -305,6 +334,29 @@ public final class PluginLoader {
                                     eventListener.getEventType(),
                                     plugin.getName()});
         }
+    }
+
+    /**
+     * Gets plugins holder map.
+     * 
+     * <p>
+     * If not found the plugin holder map in {@linkplain #PLUGINS cache}, 
+     * creates an empty map then put it into the cache and return.
+     * </p>
+     * 
+     * @return plugins holder map
+     */
+    private static Map<String, List<AbstractPlugin>> getPluginsMap() {
+        Map<String, List<AbstractPlugin>> ret = PLUGINS.get(Plugin.PLUGINS);
+        if (null == ret) {
+            ret = new HashMap<String, List<AbstractPlugin>>();
+
+            PLUGINS.put(Plugin.PLUGINS, ret);
+
+            LOGGER.log(Level.INFO, "Created an empty plugins holder map");
+        }
+
+        return ret;
     }
 
     /**

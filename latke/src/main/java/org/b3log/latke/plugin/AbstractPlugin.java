@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ import org.json.JSONObject;
  * Abstract plugin.
  * 
  * <p>
- *   <b>Note</b>: The subclass implementation of this abstract class MUST 
+ *   <b>Note</b>: The subclass extends from this abstract class MUST 
  *   has a static method named {@code getInstance} to obtain an instance of 
  *   this plugin. See 
  *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
@@ -51,9 +52,9 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Jun 26, 2011
+ * @version 1.0.0.6, Jul 17, 2011
  */
-public abstract class AbstractPlugin {
+public abstract class AbstractPlugin implements Serializable {
 
     /**
      * Logger.
@@ -91,7 +92,7 @@ public abstract class AbstractPlugin {
     /**
      * FreeMarker configuration.
      */
-    private Configuration configuration;
+    private transient Configuration configuration;
 
     /**
      * Gets an existing view name.
@@ -116,13 +117,20 @@ public abstract class AbstractPlugin {
 
     /**
      * Sets the directory of this plugin with the specified directory. 
-     * Initializes template engine.
+     * Initializes template engine configuration.
      * 
      * @param dir the specified directory
      */
     public void setDir(final String dir) {
         this.dir = dir;
 
+        initTemplateEngineCfg();
+    }
+
+    /**
+     * Initializes template engine configuration.
+     */
+    private void initTemplateEngineCfg() {
         configuration = new Configuration();
         configuration.setDefaultEncoding("UTF-8");
         try {
@@ -240,6 +248,10 @@ public abstract class AbstractPlugin {
      * @return plugin view content
      */
     private String getViewContent(final Map<String, Object> dataModel) {
+        if (null == configuration) {
+            initTemplateEngineCfg();
+        }
+
         try {
             final Template template =
                     configuration.getTemplate(Plugin.PLUGIN + ".ftl");
