@@ -72,16 +72,18 @@ public final class PluginLoader {
      */
     public static final String PLUGIN_ROOT =
             AbstractServletListener.getWebRoot() + Plugin.PLUGINS;
-    
+
     /**
-     * Loads plugins from files.
+     * Loads plugins from files. 
+     * 
+     * @return all plugins, returns an empty list if not found
      */
-    public static void load() {
+    public static List<AbstractPlugin> load() {
         PLUGINS.put(Plugin.PLUGINS, new HashMap<String, List<AbstractPlugin>>());
-        
-        load0();
+
+        return getPlugins();
     }
-    
+
     /**
      * Gets all plugins.
      * 
