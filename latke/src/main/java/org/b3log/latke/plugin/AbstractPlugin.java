@@ -52,7 +52,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jul 17, 2011
+ * @version 1.0.0.7, Jul 21, 2011
  */
 public abstract class AbstractPlugin implements Serializable {
 
@@ -61,6 +61,10 @@ public abstract class AbstractPlugin implements Serializable {
      */
     private static final Logger LOGGER =
             Logger.getLogger(AbstractPlugin.class.getName());
+    /**
+     * Id of this plugin.
+     */
+    private String id;
     /**
      * Name of this plugin.
      */
@@ -270,7 +274,7 @@ public abstract class AbstractPlugin implements Serializable {
     }
 
     /**
-     * Converts this plugin to a json object.
+     * Converts this plugin to a json object (plugin description).
      * 
      * @return a json object, for example, 
      * <pre>
@@ -278,7 +282,7 @@ public abstract class AbstractPlugin implements Serializable {
      *     "name": "",
      *     "version": "",
      *     "author": "",
-     *     "status": {@link PluginStatus}
+     *     "status": "" (Enumeration name of {@link PluginStatus})
      * }
      * </pre>
      * @throws JSONException if can not convert 
@@ -288,9 +292,27 @@ public abstract class AbstractPlugin implements Serializable {
         ret.put(Plugin.PLUGIN_NAME, getName());
         ret.put(Plugin.PLUGIN_VERSION, getVersion());
         ret.put(Plugin.PLUGIN_AUTHOR, getAuthor());
-        ret.put(Plugin.PLUGIN_STATUS, getStatus());
+        ret.put(Plugin.PLUGIN_STATUS, getStatus().name());
 
         return ret;
+    }
+    
+    /**
+     * Gets the id.
+     * 
+     * @return id
+     */
+    public String getId() {
+        return id;
+    }
+    
+    /**
+     * Sets the id with the specified id.
+     * 
+     * @param id the specified id
+     */
+    public void setId(final String id) {
+        this.id = id;
     }
 
     /**

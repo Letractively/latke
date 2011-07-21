@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.b3log.latke.cache.Cache;
-import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.event.AbstractEventListener;
 import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
@@ -43,7 +41,7 @@ import org.jabsorb.JSONRPCBridge;
  * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jul 19, 2011
+ * @version 1.0.0.7, Jul 21, 2011
  */
 public final class PluginLoader {
 
@@ -53,20 +51,14 @@ public final class PluginLoader {
     private static final Logger LOGGER = Logger.getLogger(PluginLoader.class.
             getName());
     /**
-     * Name of plugin cache.
-     */
-    private static final String PLUGIN_CACHE_NAME = "pluginCache";
-    /**
-     * Plugins cache.
+     * Plugins.
      * 
      * <p>
-     * Caches plugins with the key "plugins" and its value is the real holder, 
-     * a map:
      * &lt;"hosting view name", plugins&gt;
      * </p>
      */
-    private static final Cache<String, Map<String, List<AbstractPlugin>>> PLUGINS =
-            CacheFactory.getCache(PLUGIN_CACHE_NAME);
+    private static final Map<String, List<AbstractPlugin>> PLUGINS =
+            new HashMap<String, List<AbstractPlugin>>();
     /**
      * Plugin root directory.
      */
@@ -74,62 +66,11 @@ public final class PluginLoader {
             AbstractServletListener.getWebRoot() + Plugin.PLUGINS;
 
     /**
-     * Loads plugins from files. 
+     * Loads plugins from directory {@literal webRoot/plugins/}.
      * 
-     * @return all plugins, returns an empty list if not found
+     * @return loaded plugins
      */
     public static List<AbstractPlugin> load() {
-        PLUGINS.put(Plugin.PLUGINS, new HashMap<String, List<AbstractPlugin>>());
-
-        return getPlugins();
-    }
-
-    /**
-     * Gets all plugins.
-     * 
-     * @return all plugins, returns an empty list if not found
-     */
-    public static List<AbstractPlugin> getPlugins() {
-        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
-
-        Map<String, List<AbstractPlugin>> pluginMap =
-                PLUGINS.get(Plugin.PLUGINS);
-        if (null == pluginMap || pluginMap.isEmpty()) {
-            LOGGER.info("Loads plugins....");
-            load0();
-
-            pluginMap = PLUGINS.get(Plugin.PLUGINS);
-        }
-
-        for (final Map.Entry<String, List<AbstractPlugin>> entry : pluginMap.
-                entrySet()) {
-            ret.addAll(entry.getValue());
-        }
-
-        return ret;
-    }
-
-    /**
-     * Gets a plugin by the specified view name.
-     * 
-     * @param viewName the specified view name
-     * @return a plugin, returns an empty list if not found
-     */
-    public static List<AbstractPlugin> getPlugins(final String viewName) {
-        final Map<String, List<AbstractPlugin>> pluginMap = getPluginsMap();
-
-        final List<AbstractPlugin> ret = pluginMap.get(viewName);
-        if (null == ret) {
-            return Collections.emptyList();
-        }
-
-        return ret;
-    }
-
-    /**
-     * Loads plugins from directory {@literal webRoot/plugins/}.
-     */
-    private static void load0() {
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
 
         for (int i = 0; i < pluginsDirs.length; i++) {
@@ -150,8 +91,62 @@ public final class PluginLoader {
                                           + "directory plugins, ignored",
                            pluginDir.getName());
             }
-
         }
+        
+        return getPlugins();
+    }
+
+    /**
+     * Sets plugins with the specified plugins.
+     * 
+     * @param plugins the specified plugins
+     */
+    public static void set(final List<AbstractPlugin> plugins) {
+        PLUGINS.clear();
+        
+        for (final AbstractPlugin plugin : plugins) {
+            final String viewName = plugin.getViewName();
+            List<AbstractPlugin> list = PLUGINS.get(viewName);
+
+            if (null == list) {
+                list = new ArrayList<AbstractPlugin>();
+            }
+
+            list.add(plugin);
+
+            PLUGINS.put(viewName, list);
+        }
+    }
+
+    /**
+     * Gets all plugins.
+     * 
+     * @return all plugins, returns an empty list if not found
+     */
+    public static List<AbstractPlugin> getPlugins() {
+        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
+
+        for (final Map.Entry<String, List<AbstractPlugin>> entry : PLUGINS.
+                entrySet()) {
+            ret.addAll(entry.getValue());
+        }
+
+        return ret;
+    }
+
+    /**
+     * Gets a plugin by the specified view name.
+     * 
+     * @param viewName the specified view name
+     * @return a plugin, returns an empty list if not found
+     */
+    public static List<AbstractPlugin> getPlugins(final String viewName) {
+        final List<AbstractPlugin> ret = PLUGINS.get(viewName);
+        if (null == ret) {
+            return Collections.emptyList();
+        }
+
+        return ret;
     }
 
     /**
@@ -191,22 +186,19 @@ public final class PluginLoader {
     private static void register(final AbstractPlugin plugin) {
         final String viewName = plugin.getViewName();
 
-        final Map<String, List<AbstractPlugin>> pluginMap = getPluginsMap();
-
-        List<AbstractPlugin> list = pluginMap.get(viewName);
+        List<AbstractPlugin> list = PLUGINS.get(viewName);
         if (null == list) {
             list = new ArrayList<AbstractPlugin>();
-            pluginMap.put(viewName, list);
+            PLUGINS.put(viewName, list);
         }
 
         list.add(plugin);
-        PLUGINS.put(Plugin.PLUGINS, pluginMap);
 
         LOGGER.log(Level.FINER,
                    "Registered plugin[name={0}, version={1}] for view[name={2}], "
                    + "[{3}] plugins totally", new Object[]{
                     plugin.getName(), plugin.getVersion(), viewName,
-                    pluginMap.size()});
+                    PLUGINS.size()});
     }
 
     /**
@@ -345,29 +337,6 @@ public final class PluginLoader {
                                     eventListener.getEventType(),
                                     plugin.getName()});
         }
-    }
-
-    /**
-     * Gets plugins holder map.
-     * 
-     * <p>
-     * If not found the plugin holder map in {@linkplain #PLUGINS cache}, 
-     * creates an empty map then put it into the cache and return.
-     * </p>
-     * 
-     * @return plugins holder map
-     */
-    private static Map<String, List<AbstractPlugin>> getPluginsMap() {
-        Map<String, List<AbstractPlugin>> ret = PLUGINS.get(Plugin.PLUGINS);
-        if (null == ret) {
-            ret = new HashMap<String, List<AbstractPlugin>>();
-
-            PLUGINS.put(Plugin.PLUGINS, ret);
-
-            LOGGER.log(Level.INFO, "Created an empty plugins holder map");
-        }
-
-        return ret;
     }
 
     /**
