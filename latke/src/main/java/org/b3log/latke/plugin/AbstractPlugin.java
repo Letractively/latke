@@ -52,7 +52,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jul 21, 2011
+ * @version 1.0.0.8, Jul 22, 2011
  */
 public abstract class AbstractPlugin implements Serializable {
 
@@ -279,16 +279,18 @@ public abstract class AbstractPlugin implements Serializable {
      * @return a json object, for example, 
      * <pre>
      * {
+     *     "oId": "",
      *     "name": "",
      *     "version": "",
      *     "author": "",
-     *     "status": "" (Enumeration name of {@link PluginStatus})
+     *     "status": "" // Enumeration name of {@link PluginStatus}
      * }
      * </pre>
      * @throws JSONException if can not convert 
      */
     public JSONObject toJSONObject() throws JSONException {
         final JSONObject ret = new JSONObject();
+        ret.put(Keys.OBJECT_ID, getId());
         ret.put(Plugin.PLUGIN_NAME, getName());
         ret.put(Plugin.PLUGIN_VERSION, getVersion());
         ret.put(Plugin.PLUGIN_AUTHOR, getAuthor());
