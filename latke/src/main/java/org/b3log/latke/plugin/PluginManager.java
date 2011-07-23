@@ -23,11 +23,15 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.b3log.latke.cache.Cache;
+import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.event.AbstractEventListener;
 import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
@@ -40,24 +44,30 @@ import org.jabsorb.JSONRPCBridge;
  * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Jul 21, 2011
+ * @version 1.0.0.8, Jul 23, 2011
  */
-public final class PluginLoader {
+public final class PluginManager {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(PluginLoader.class.
+    private static final Logger LOGGER = Logger.getLogger(PluginManager.class.
             getName());
     /**
-     * Plugins.
+     * Plugin Cache.
+     */
+    private static final String PLUGIN_CACHE_NAME = "pluginCache";
+    /**
+     * Plugins cache.
      * 
      * <p>
+     * Caches plugins with the key "plugins" and its value is the real holder, 
+     * a map:
      * &lt;"hosting view name", plugins&gt;
      * </p>
      */
-    private static final Map<String, List<AbstractPlugin>> PLUGINS =
-            new HashMap<String, List<AbstractPlugin>>();
+    private final Cache<String, Map<String, Set<AbstractPlugin>>> pluginCache =
+            CacheFactory.getCache(PLUGIN_CACHE_NAME);
     /**
      * Plugin root directory.
      */
@@ -65,11 +75,83 @@ public final class PluginLoader {
             AbstractServletListener.getWebRoot() + Plugin.PLUGINS;
 
     /**
+     * Updates the specified plugin.
+     * 
+     * @param plugin the specified plugin
+     */
+    public void update(final AbstractPlugin plugin) {
+        final String viewName = plugin.getViewName();
+
+        Map<String, Set<AbstractPlugin>> holder =
+                pluginCache.get(PLUGIN_CACHE_NAME);
+        if (null == holder) {
+            LOGGER.info("Plugin cache miss, reload");
+            load();
+            holder = pluginCache.get(PLUGIN_CACHE_NAME);
+        }
+
+        final Set<AbstractPlugin> set = holder.get(viewName);
+        
+         // Refresh
+        set.remove(plugin);
+        set.add(plugin);
+        
+        pluginCache.put(PLUGIN_CACHE_NAME, holder);
+    }
+
+    /**
+     * Gets all plugins.
+     * 
+     * @return all plugins, returns an empty list if not found
+     */
+    public List<AbstractPlugin> getPlugins() {
+        Map<String, Set<AbstractPlugin>> holder =
+                pluginCache.get(PLUGIN_CACHE_NAME);
+        if (null == holder) {
+            LOGGER.info("Plugin cache miss, reload");
+            load();
+            holder = pluginCache.get(PLUGIN_CACHE_NAME);
+        }
+
+        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
+
+        for (final Map.Entry<String, Set<AbstractPlugin>> entry : holder.
+                entrySet()) {
+            ret.addAll(entry.getValue());
+        }
+
+        return ret;
+    }
+
+    /**
+     * Gets a plugin by the specified view name.
+     * 
+     * @param viewName the specified view name
+     * @return a plugin, returns an empty list if not found
+     */
+    public Set<AbstractPlugin> getPlugins(final String viewName) {
+        Map<String, Set<AbstractPlugin>> holder =
+                pluginCache.get(PLUGIN_CACHE_NAME);
+        if (null == holder) {
+            LOGGER.info("Plugin cache miss, reload");
+            load();
+            holder = pluginCache.get(PLUGIN_CACHE_NAME);
+        }
+
+        final Set<AbstractPlugin> ret = holder.get(viewName);
+        if (null == ret) {
+            return Collections.emptySet();
+        }
+
+        return ret;
+    }
+
+    /**
      * Loads plugins from directory {@literal webRoot/plugins/}.
      * 
-     * @return loaded plugins
+     * @return plugins, returns an empty list if not found
      */
-    public static List<AbstractPlugin> load() {
+    public List<AbstractPlugin> load() {
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
 
         for (int i = 0; i < pluginsDirs.length; i++) {
@@ -91,61 +173,8 @@ public final class PluginLoader {
                            pluginDir.getName());
             }
         }
-        
+
         return getPlugins();
-    }
-
-    /**
-     * Sets plugins with the specified plugins.
-     * 
-     * @param plugins the specified plugins
-     */
-    public static void set(final List<AbstractPlugin> plugins) {
-        PLUGINS.clear();
-        
-        for (final AbstractPlugin plugin : plugins) {
-            final String viewName = plugin.getViewName();
-            List<AbstractPlugin> list = PLUGINS.get(viewName);
-
-            if (null == list) {
-                list = new ArrayList<AbstractPlugin>();
-            }
-
-            list.add(plugin);
-
-            PLUGINS.put(viewName, list);
-        }
-    }
-
-    /**
-     * Gets all plugins.
-     * 
-     * @return all plugins, returns an empty list if not found
-     */
-    public static List<AbstractPlugin> getPlugins() {
-        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
-
-        for (final Map.Entry<String, List<AbstractPlugin>> entry : PLUGINS.
-                entrySet()) {
-            ret.addAll(entry.getValue());
-        }
-
-        return ret;
-    }
-
-    /**
-     * Gets a plugin by the specified view name.
-     * 
-     * @param viewName the specified view name
-     * @return a plugin, returns an empty list if not found
-     */
-    public static List<AbstractPlugin> getPlugins(final String viewName) {
-        final List<AbstractPlugin> ret = PLUGINS.get(viewName);
-        if (null == ret) {
-            return Collections.emptyList();
-        }
-
-        return ret;
     }
 
     /**
@@ -154,7 +183,7 @@ public final class PluginLoader {
      * @param pluginDir the specified plugin directory
      * @throws Exception exception
      */
-    private static void load(final File pluginDir) throws Exception {
+    private void load(final File pluginDir) throws Exception {
         final File classesFileDir = new File(pluginDir.getPath()
                                              + File.separator + "classes");
         final URL url = classesFileDir.toURI().toURL();
@@ -182,22 +211,31 @@ public final class PluginLoader {
      * 
      * @param plugin the specified plugin
      */
-    private static void register(final AbstractPlugin plugin) {
+    private void register(final AbstractPlugin plugin) {
         final String viewName = plugin.getViewName();
 
-        List<AbstractPlugin> list = PLUGINS.get(viewName);
-        if (null == list) {
-            list = new ArrayList<AbstractPlugin>();
-            PLUGINS.put(viewName, list);
+        Map<String, Set<AbstractPlugin>> holder =
+                pluginCache.get(PLUGIN_CACHE_NAME);
+        if (null == holder) {
+            LOGGER.info("Creates an empty plugin holder");
+            holder = new HashMap<String, Set<AbstractPlugin>>();
         }
 
-        list.add(plugin);
+        Set<AbstractPlugin> set = holder.get(viewName);
+        if (null == set) {
+            set = new HashSet<AbstractPlugin>();
+            holder.put(viewName, set);
+        }
+
+        set.add(plugin);
+
+        pluginCache.put(PLUGIN_CACHE_NAME, holder);
 
         LOGGER.log(Level.FINER,
                    "Registered plugin[name={0}, version={1}] for view[name={2}], "
                    + "[{3}] plugins totally", new Object[]{
                     plugin.getName(), plugin.getVersion(), viewName,
-                    PLUGINS.size()});
+                    holder.size()});
     }
 
     /**
@@ -226,6 +264,7 @@ public final class PluginLoader {
                                                          jsonRpcClasses});
         plugin.setAuthor(author);
         plugin.setName(name);
+        plugin.setId(name + "_" + version);
         plugin.setVersion(version);
         plugin.setDir(pluginDir.getPath());
         plugin.readLangs();
@@ -339,8 +378,37 @@ public final class PluginLoader {
     }
 
     /**
+     * Gets the {@link PluginManager} singleton.
+     * 
+     * @return a plugin manager singleton
+     */
+    public static PluginManager getInstance() {
+        return PluginManagerSingletonHolder.SINGLETON;
+    }
+
+    /**
+     * Plugin manager singleton holder.
+     *
+     * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+     * @version 1.0.0.0, Jul 23, 2011
+     */
+    private static final class PluginManagerSingletonHolder {
+
+        /**
+         * Singleton.
+         */
+        private static final PluginManager SINGLETON = new PluginManager();
+
+        /**
+         * Private default constructor.
+         */
+        private PluginManagerSingletonHolder() {
+        }
+    }
+
+    /**
      * Private default constructor.
      */
-    private PluginLoader() {
+    private PluginManager() {
     }
 }

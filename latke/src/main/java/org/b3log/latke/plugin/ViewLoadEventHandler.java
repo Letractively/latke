@@ -15,8 +15,8 @@
  */
 package org.b3log.latke.plugin;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.action.AbstractAction;
@@ -50,7 +50,8 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
         final String viewName = data.getViewName();
         final Map<String, Object> dataModel = data.getDataModel();
 
-        final List<AbstractPlugin> plugins = PluginLoader.getPlugins(viewName);
+        final Set<AbstractPlugin> plugins = 
+                PluginManager.getInstance().getPlugins(viewName);
         LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]",
                    new Object[]{plugins.size(), viewName});
         for (final AbstractPlugin plugin : plugins) {
