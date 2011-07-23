@@ -170,6 +170,12 @@ public final class PluginManager {
     public void load() {
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
         final List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
+        Map<String, Set<AbstractPlugin>> holder =
+                pluginCache.get(PLUGIN_CACHE_NAME);
+        if (null == holder) {
+            LOGGER.info("Creates an empty plugin holder");
+            holder = new HashMap<String, Set<AbstractPlugin>>();
+        }
 
         for (int i = 0; i < pluginsDirs.length; i++) {
             final File pluginDir = pluginsDirs[i];
@@ -179,7 +185,7 @@ public final class PluginManager {
                     LOGGER.log(Level.INFO, "Loading plugin under directory[{0}]",
                                pluginDir.getName());
 
-                    final AbstractPlugin plugin = load(pluginDir);
+                    final AbstractPlugin plugin = load(pluginDir, holder);
                     plugins.add(plugin);
                 } catch (final Exception e) {
                     LOGGER.log(Level.WARNING,
@@ -192,23 +198,29 @@ public final class PluginManager {
                            pluginDir.getName());
             }
         }
-
+        
         try {
             EventManager.getInstance().fireEventSynchronously(
                     new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, plugins));
         } catch (final EventException e) {
             throw new RuntimeException("Plugin load error", e);
         }
+        
+        pluginCache.put(PLUGIN_CACHE_NAME, holder);
     }
 
     /**
-     * Loads a plugin by the specified plugin directory.
+     * Loads a plugin by the specified plugin directory and put it into the 
+     * specified holder.
      * 
      * @param pluginDir the specified plugin directory
+     * @param holder the specified holder
      * @return loaded plugin
      * @throws Exception exception
      */
-    private AbstractPlugin load(final File pluginDir) throws Exception {
+    private AbstractPlugin load(final File pluginDir,
+                                final Map<String, Set<AbstractPlugin>> holder)
+            throws Exception {
         final File classesFileDir = new File(pluginDir.getPath()
                                              + File.separator + "classes");
         final URL url = classesFileDir.toURI().toURL();
@@ -228,25 +240,20 @@ public final class PluginManager {
         registerJSONRpcServices(props, classLoader, ret);
         registerEventListeners(props, classLoader, ret);
 
-        register(ret);
+        register(ret, holder);
 
         return ret;
     }
 
     /**
-     * Registers the specified plugin.
+     * Registers the specified plugin into the specified holder.
      * 
      * @param plugin the specified plugin
+     * @param holder the specified holder 
      */
-    private void register(final AbstractPlugin plugin) {
+    private void register(final AbstractPlugin plugin,
+                          final Map<String, Set<AbstractPlugin>> holder) {
         final String viewName = plugin.getViewName();
-
-        Map<String, Set<AbstractPlugin>> holder =
-                pluginCache.get(PLUGIN_CACHE_NAME);
-        if (null == holder) {
-            LOGGER.info("Creates an empty plugin holder");
-            holder = new HashMap<String, Set<AbstractPlugin>>();
-        }
 
         Set<AbstractPlugin> set = holder.get(viewName);
         if (null == set) {
@@ -255,8 +262,6 @@ public final class PluginManager {
         }
 
         set.add(plugin);
-
-        pluginCache.put(PLUGIN_CACHE_NAME, holder);
 
         LOGGER.log(Level.FINER,
                    "Registered plugin[name={0}, version={1}] for view[name={2}], "
