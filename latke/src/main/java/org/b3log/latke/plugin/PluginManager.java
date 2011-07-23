@@ -117,6 +117,10 @@ public final class PluginManager {
             LOGGER.info("Plugin cache miss, reload");
             load();
             holder = pluginCache.get(PLUGIN_CACHE_NAME);
+
+            if (null == holder) {
+                throw new IllegalStateException("Plugin cache state error!");
+            }
         }
 
         final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
@@ -142,6 +146,10 @@ public final class PluginManager {
             LOGGER.info("Plugin cache miss, reload");
             load();
             holder = pluginCache.get(PLUGIN_CACHE_NAME);
+
+            if (null == holder) {
+                throw new IllegalStateException("Plugin cache state error!");
+            }
         }
 
         final Set<AbstractPlugin> ret = holder.get(viewName);
@@ -192,7 +200,7 @@ public final class PluginManager {
                 entrySet()) {
             ret.addAll(entry.getValue());
         }
-        
+
         try {
             EventManager.getInstance().fireEventSynchronously(
                     new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, ret));
