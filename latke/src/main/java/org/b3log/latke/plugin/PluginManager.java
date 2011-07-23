@@ -33,6 +33,8 @@ import java.util.logging.Logger;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.event.AbstractEventListener;
+import org.b3log.latke.event.Event;
+import org.b3log.latke.event.EventException;
 import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.model.Plugin;
@@ -53,6 +55,10 @@ public final class PluginManager {
      */
     private static final Logger LOGGER = Logger.getLogger(PluginManager.class.
             getName());
+    /**
+     * Type of loaded event.
+     */
+    public static final String PLUGIN_LOADED_EVENT = "pluginLoadedEvt";
     /**
      * Plugin Cache.
      */
@@ -91,11 +97,11 @@ public final class PluginManager {
         }
 
         final Set<AbstractPlugin> set = holder.get(viewName);
-        
-         // Refresh
+
+        // Refresh
         set.remove(plugin);
         set.add(plugin);
-        
+
         pluginCache.put(PLUGIN_CACHE_NAME, holder);
     }
 
@@ -174,7 +180,15 @@ public final class PluginManager {
             }
         }
 
-        return getPlugins();
+        final List<AbstractPlugin> ret = getPlugins();
+        try {
+            EventManager.getInstance().fireEventSynchronously(
+                    new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, ret));
+        } catch (final EventException e) {
+            throw new RuntimeException("Plugin load error", e);
+        }
+
+        return ret;
     }
 
     /**
