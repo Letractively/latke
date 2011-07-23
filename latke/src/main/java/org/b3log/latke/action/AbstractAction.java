@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.action;
 
 import java.util.logging.Level;
@@ -426,53 +425,38 @@ public abstract class AbstractAction extends HttpServlet {
                                           final HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        final Map<?, ?> parameterMap = request.getParameterMap();
 
+        final StringBuilder sb = new StringBuilder();
+        BufferedReader reader = null;
+
+        final String errMsg = "Can not parse request[requestURI=" + request.
+                getRequestURI() + ", method=" + request.getMethod()
+                              + "], returns an empty json object";
         try {
-            // Parses with parameter map
-            for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
-                LOGGER.log(Level.FINER,
-                           "AJAX request paramter[key={0}, value={1}]",
-                           new Object[]{entry.getKey(), entry.getValue()});
-                // XXX: "(GAE/J 1.5.0 and above) Why the ajax request hold arguments in key????
-                return new JSONObject(entry.getKey().toString());
+            try {
+                reader = request.getReader();
+            } catch (final IllegalStateException illegalStateException) {
+                reader = new BufferedReader(new InputStreamReader(
+                        request.getInputStream()));
             }
+
+            String line = reader.readLine();
+            while (null != line) {
+                sb.append(line);
+                line = reader.readLine();
+            }
+            reader.close();
+
+            String tmp = sb.toString();
+            if (Strings.isEmptyOrNull(tmp)) {
+                tmp = "{}";
+            }
+
+            return new JSONObject(tmp);
+        } catch (final Exception ex) {
+            LOGGER.log(Level.SEVERE, errMsg, ex);
 
             return new JSONObject();
-        } catch (final JSONException e) {
-            // Parses with request reader (GAE/J 1.4.3 and below)
-            final StringBuilder sb = new StringBuilder();
-            BufferedReader reader = null;
-
-            final String errMsg = "Can not parse request[requestURI=" + request.
-                    getRequestURI() + ", method=" + request.getMethod()
-                                  + "], returns an empty json object";
-            try {
-                try {
-                    reader = request.getReader();
-                } catch (final IllegalStateException illegalStateException) {
-                    reader = new BufferedReader(new InputStreamReader(
-                            request.getInputStream()));
-                }
-
-                String line = reader.readLine();
-                while (null != line) {
-                    sb.append(line);
-                    line = reader.readLine();
-                }
-                reader.close();
-
-                String tmp = sb.toString();
-                if (Strings.isEmptyOrNull(tmp)) {
-                    tmp = "{}";
-                }
-
-                return new JSONObject(tmp);
-            } catch (final Exception ex) {
-                LOGGER.log(Level.SEVERE, errMsg, ex);
-
-                return new JSONObject();
-            }
         }
     }
 
