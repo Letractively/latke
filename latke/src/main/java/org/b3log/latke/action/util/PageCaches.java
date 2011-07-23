@@ -140,6 +140,10 @@ public final class PageCaches {
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
         final Map<String, ?> pages = (Map<String, ?>) CACHE.get(PAGES);
+        
+        if (null == pages) { // Occurs sometime on GAE
+            removeAll();
+        }
 
         // TODO: sort
 
