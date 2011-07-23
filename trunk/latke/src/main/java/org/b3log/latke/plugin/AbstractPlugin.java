@@ -43,6 +43,13 @@ import org.json.JSONObject;
  * Abstract plugin.
  * 
  * <p>
+ * Id of a plugin is {@linkplain #name name}_{@linkplain #version version}.
+ * See {@link PluginLoader#setPluginProps} for more details. If the id of one 
+ * plugin {@linkplain #equals(java.lang.Object) equals} to another's, 
+ * considering they are the same.
+ * </p>
+ * 
+ * <p>
  *   <b>Note</b>: The subclass extends from this abstract class MUST 
  *   has a static method named {@code getInstance} to obtain an instance of 
  *   this plugin. See 
@@ -51,7 +58,10 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Jul 22, 2011
+ * @version 1.0.0.9, Jul 23, 2011
+ * @see PluginLoader
+ * @see PluginStatus
+ * @see PluginType
  */
 public abstract class AbstractPlugin implements Serializable {
 
@@ -297,7 +307,7 @@ public abstract class AbstractPlugin implements Serializable {
 
         return ret;
     }
-    
+
     /**
      * Gets the id.
      * 
@@ -306,7 +316,7 @@ public abstract class AbstractPlugin implements Serializable {
     public String getId() {
         return id;
     }
-    
+
     /**
      * Sets the id with the specified id.
      * 
@@ -404,5 +414,27 @@ public abstract class AbstractPlugin implements Serializable {
      */
     public void addType(final PluginType type) {
         types.add(type);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractPlugin other = (AbstractPlugin) obj;
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 2;
+        hash = 2 + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
     }
 }
