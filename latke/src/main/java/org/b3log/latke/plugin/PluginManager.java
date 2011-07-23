@@ -180,7 +180,19 @@ public final class PluginManager {
             }
         }
 
-        final List<AbstractPlugin> ret = getPlugins();
+        final Map<String, Set<AbstractPlugin>> holder =
+                pluginCache.get(PLUGIN_CACHE_NAME);
+        if (null == holder) {
+            throw new IllegalStateException("Plugin cache state error!");
+        }
+
+        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
+
+        for (final Map.Entry<String, Set<AbstractPlugin>> entry : holder.
+                entrySet()) {
+            ret.addAll(entry.getValue());
+        }
+        
         try {
             EventManager.getInstance().fireEventSynchronously(
                     new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, ret));
