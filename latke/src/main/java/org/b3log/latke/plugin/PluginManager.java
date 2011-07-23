@@ -94,6 +94,10 @@ public final class PluginManager {
             LOGGER.info("Plugin cache miss, reload");
             load();
             holder = pluginCache.get(PLUGIN_CACHE_NAME);
+
+            if (null == holder) {
+                throw new IllegalStateException("Plugin cache state error!");
+            }
         }
 
         final Set<AbstractPlugin> set = holder.get(viewName);
@@ -162,11 +166,10 @@ public final class PluginManager {
 
     /**
      * Loads plugins from directory {@literal webRoot/plugins/}.
-     * 
-     * @return plugins, returns an empty list if not found
      */
-    public List<AbstractPlugin> load() {
+    public void load() {
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
+        final List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
 
         for (int i = 0; i < pluginsDirs.length; i++) {
             final File pluginDir = pluginsDirs[i];
@@ -175,7 +178,9 @@ public final class PluginManager {
                 try {
                     LOGGER.log(Level.INFO, "Loading plugin under directory[{0}]",
                                pluginDir.getName());
-                    load(pluginDir);
+
+                    final AbstractPlugin plugin = load(pluginDir);
+                    plugins.add(plugin);
                 } catch (final Exception e) {
                     LOGGER.log(Level.WARNING,
                                "Load plugin under directory["
@@ -188,36 +193,22 @@ public final class PluginManager {
             }
         }
 
-        final Map<String, Set<AbstractPlugin>> holder =
-                pluginCache.get(PLUGIN_CACHE_NAME);
-        if (null == holder) {
-            throw new IllegalStateException("Plugin cache state error!");
-        }
-
-        final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
-
-        for (final Map.Entry<String, Set<AbstractPlugin>> entry : holder.
-                entrySet()) {
-            ret.addAll(entry.getValue());
-        }
-
         try {
             EventManager.getInstance().fireEventSynchronously(
-                    new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, ret));
+                    new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, plugins));
         } catch (final EventException e) {
             throw new RuntimeException("Plugin load error", e);
         }
-
-        return ret;
     }
 
     /**
      * Loads a plugin by the specified plugin directory.
      * 
      * @param pluginDir the specified plugin directory
+     * @return loaded plugin
      * @throws Exception exception
      */
-    private void load(final File pluginDir) throws Exception {
+    private AbstractPlugin load(final File pluginDir) throws Exception {
         final File classesFileDir = new File(pluginDir.getPath()
                                              + File.separator + "classes");
         final URL url = classesFileDir.toURI().toURL();
@@ -231,13 +222,15 @@ public final class PluginManager {
 
         final String pluginClassName = props.getProperty(Plugin.PLUGIN_CLASS);
         final Class<?> pluginClass = classLoader.loadClass(pluginClassName);
-        final AbstractPlugin plugin = (AbstractPlugin) pluginClass.newInstance();
+        final AbstractPlugin ret = (AbstractPlugin) pluginClass.newInstance();
 
-        setPluginProps(pluginDir, plugin, props);
-        registerJSONRpcServices(props, classLoader, plugin);
-        registerEventListeners(props, classLoader, plugin);
+        setPluginProps(pluginDir, ret, props);
+        registerJSONRpcServices(props, classLoader, ret);
+        registerEventListeners(props, classLoader, ret);
 
-        register(plugin);
+        register(ret);
+
+        return ret;
     }
 
     /**
