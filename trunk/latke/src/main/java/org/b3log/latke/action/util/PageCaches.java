@@ -59,7 +59,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jul 3, 2011
+ * @version 1.0.0.7, Jul 23, 2011
  */
 public final class PageCaches {
 
@@ -140,7 +140,7 @@ public final class PageCaches {
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
         final Map<String, ?> pages = (Map<String, ?>) CACHE.get(PAGES);
-        
+
         if (null == pages) { // Occurs sometime on GAE
             removeAll();
         }
@@ -197,8 +197,13 @@ public final class PageCaches {
         CACHE.put(pageKey, cachedValue);
 
         @SuppressWarnings("unchecked")
-        final Map<String, JSONObject> pages =
+        Map<String, JSONObject> pages =
                 (Map<String, JSONObject>) CACHE.get(PAGES);
+        if (null == pages) {
+            pages = new HashMap<String, JSONObject>();
+            CACHE.put(PAGES, pages);
+        }
+
         JSONObject stat = pages.get(pageKey);
         if (null == stat) {
             stat = new JSONObject();
@@ -250,10 +255,7 @@ public final class PageCaches {
         CACHE.remove(pageKey);
         Templates.CACHE.clear();
 
-        @SuppressWarnings("unchecked")
-        final Map<String, JSONObject> keys =
-                (Map<String, JSONObject>) CACHE.get(PAGES);
-        keys.remove(pageKey);
+        syncKeys();
     }
 
     /**
