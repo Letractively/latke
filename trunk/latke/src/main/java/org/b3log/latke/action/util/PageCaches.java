@@ -270,6 +270,7 @@ public final class PageCaches {
         Templates.CACHE.clear();
 
         CACHE.put(PAGES, new HashMap<String, JSONObject>());
+        LOGGER.info("Removed all cache....");
     }
 
     /**
