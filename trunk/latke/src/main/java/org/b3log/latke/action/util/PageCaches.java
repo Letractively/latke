@@ -191,13 +191,13 @@ public final class PageCaches {
      * }
      * </pre>
      */
-    public static JSONObject get(final String pageCacheKey, 
+    public static JSONObject get(final String pageCacheKey,
                                  final boolean needUpdateStat) {
         final JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
-        
-        if (needUpdateStat && ret != null) {
+
+        if (needUpdateStat && null != ret) {
             try {
-                final long hitCount = ret.optLong(CACHED_HIT_COUNT);
+                final long hitCount = ret.getLong(CACHED_HIT_COUNT);
                 ret.put(CACHED_HIT_COUNT, hitCount + 1);
 
                 CACHE.put(pageCacheKey, ret);
@@ -220,7 +220,10 @@ public final class PageCaches {
      *     "cachedContent: "",
      *     "cachedOid": "",
      *     "cachedTitle": "",
-     *     "cachedType": ""
+     *     "cachedType": "",
+     *     "cachedBytesLength": int,
+     *     "cachedHitCount": long,
+     *     "cachedTime": long
      * }
      * </pre>
      */
@@ -239,6 +242,7 @@ public final class PageCaches {
                     AbstractCacheablePageAction.CACHED_CONTENT);
             final byte[] bytes = Serializer.serialize(content);
 
+            cachedValue.put(CACHED_HIT_COUNT, 1L);
             cachedValue.put(CACHED_BYTES_LENGTH, bytes.length);
             cachedValue.put(CACHED_TIME, System.currentTimeMillis());
         } catch (final Exception e) {
@@ -314,16 +318,11 @@ public final class PageCaches {
      * @param cachedPage the specified cached page
      */
     private static void check(final JSONObject cachedPage) {
-        final int numOfKeys = 4;
-        if (numOfKeys != cachedPage.length()) {
-            throw new IllegalArgumentException("Illegal arguments for caching page, "
-                                               + "resolve this bug first!");
-        }
-
         if (!cachedPage.has(AbstractCacheablePageAction.CACHED_CONTENT)
             || !cachedPage.has(AbstractCacheablePageAction.CACHED_OID)
             || !cachedPage.has(AbstractCacheablePageAction.CACHED_TITLE)
-            || !cachedPage.has(AbstractCacheablePageAction.CACHED_TYPE)) {
+            || !cachedPage.has(AbstractCacheablePageAction.CACHED_TYPE)
+            || !cachedPage.has(AbstractCacheablePageAction.CACHED_LINK)) {
             throw new IllegalArgumentException("Illegal arguments for caching page, "
                                                + "resolve this bug first!");
         }
