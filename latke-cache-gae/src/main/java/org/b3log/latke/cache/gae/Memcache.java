@@ -375,6 +375,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
                             return Class.forName(className, false, Thread.
                                     currentThread().getContextClassLoader());
                         } catch (final ClassNotFoundException ex) {
+                            // Try to load class via plugin class loaders
                             final Set<ClassLoader> classLoaders = PluginManager.getInstance().
                                     getClassLoaders();
 
@@ -391,6 +392,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
                                 }
                             }
 
+                            // super class resolve
                             return super.resolveClass(desc);
                         }
                     }
