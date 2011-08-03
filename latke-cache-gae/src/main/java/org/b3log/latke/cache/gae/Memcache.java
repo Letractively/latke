@@ -383,7 +383,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
                 try {
                     ret = ois.readObject();
                 } catch (final Exception e) {
-                    LOGGER.log(Level.SEVERE, "Read object failed, return null",
+                    LOGGER.log(Level.WARNING, "Read object failed, return null",
                                e);
                 } finally {
                     ois.close();
