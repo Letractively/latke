@@ -33,9 +33,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.util.Collection;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.cache.Cache;
+import org.b3log.latke.plugin.PluginManager;
 
 /**
  * Simple warper of <a href="http://code.google.com/appengine/docs/java/memcache/">
@@ -323,7 +325,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
      * @throws ClassNotFoundException class not found exception
      * @throws IOException io exception
      */
-    public static Object deserialize(final byte[] value, final int flag)
+    public Object deserialize(final byte[] value, final int flag)
             throws ClassNotFoundException, IOException {
         final Flag flagVal = Flag.fromInt(flag);
 
@@ -357,7 +359,6 @@ public final class Memcache<K, V> implements Cache<K, V> {
             case UTF8:
                 return new String(value, "UTF-8");
             case OBJECT:
-                System.out.println("value length: " + value.length);
                 if (value.length == 0) {
                     return null;
                 }
@@ -374,6 +375,22 @@ public final class Memcache<K, V> implements Cache<K, V> {
                             return Class.forName(className, false, Thread.
                                     currentThread().getContextClassLoader());
                         } catch (final ClassNotFoundException ex) {
+                            final Set<ClassLoader> classLoaders = PluginManager.getInstance().
+                                    getClassLoaders();
+
+                            for (final ClassLoader classLoader : classLoaders) {
+                                try {
+                                    return classLoader.loadClass(className);
+                                } catch (final ClassNotFoundException pluginClassNotFoundException) {
+                                    if (LOGGER.isLoggable(Level.FINEST)) {
+                                        LOGGER.log(Level.FINEST,
+                                                   "Can't load class[name={0}] via loader[{1}]",
+                                                   new Object[]{className,
+                                                                classLoader});
+                                    }
+                                }
+                            }
+
                             return super.resolveClass(desc);
                         }
                     }
