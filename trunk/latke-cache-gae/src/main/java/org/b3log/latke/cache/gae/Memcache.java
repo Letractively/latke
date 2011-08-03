@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.cache.Cache;
 
@@ -52,7 +53,7 @@ import org.b3log.latke.cache.Cache;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Jul 9, 2011
+ * @version 1.0.1.1, Aug 3, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -356,6 +357,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
             case UTF8:
                 return new String(value, "UTF-8");
             case OBJECT:
+                System.out.println("value length: " + value.length);
                 if (value.length == 0) {
                     return null;
                 }
@@ -380,12 +382,14 @@ public final class Memcache<K, V> implements Cache<K, V> {
                 Object ret = null;
                 try {
                     ret = ois.readObject();
+                } catch (final Exception e) {
+                    LOGGER.log(Level.SEVERE, "Read object failed, return null",
+                               e);
                 } finally {
                     ois.close();
                 }
 
                 return ret;
-
             default:
                 return null;
         }
