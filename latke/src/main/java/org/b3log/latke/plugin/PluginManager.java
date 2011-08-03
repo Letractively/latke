@@ -198,14 +198,14 @@ public final class PluginManager {
                            pluginDir.getName());
             }
         }
-        
+
         try {
             EventManager.getInstance().fireEventSynchronously(
                     new Event<List<AbstractPlugin>>(PLUGIN_LOADED_EVENT, plugins));
         } catch (final EventException e) {
             throw new RuntimeException("Plugin load error", e);
         }
-        
+
         pluginCache.put(PLUGIN_CACHE_NAME, holder);
     }
 
@@ -241,7 +241,7 @@ public final class PluginManager {
         registerEventListeners(props, classLoader, ret);
 
         register(ret, holder);
-
+        
         return ret;
     }
 
@@ -340,6 +340,9 @@ public final class PluginManager {
                 return;
             }
 
+            LOGGER.log(Level.FINER, "Loading json rpc service[className={0}]",
+                       jsonRpcClassName);
+
             final Class<?> jsonRpcClass =
                     classLoader.loadClass(jsonRpcClassName);
             final Method getInstance = jsonRpcClass.getMethod("getInstance");
@@ -387,6 +390,9 @@ public final class PluginManager {
                            plugin.getName());
                 return;
             }
+
+            LOGGER.log(Level.FINER, "Loading event listener[className={0}]",
+                       eventListenerClassName);
 
             LOGGER.log(Level.FINEST, "Loading event listener[class={0}]",
                        eventListenerClassName);
