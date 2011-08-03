@@ -79,6 +79,10 @@ public final class PluginManager {
      */
     public static final String PLUGIN_ROOT =
             AbstractServletListener.getWebRoot() + Plugin.PLUGINS;
+    /**
+     * Plugin class loaders.
+     */
+    private Set<ClassLoader> classLoaders = new HashSet<ClassLoader>();
 
     /**
      * Updates the specified plugin.
@@ -168,6 +172,8 @@ public final class PluginManager {
      * Loads plugins from directory {@literal webRoot/plugins/}.
      */
     public void load() {
+        classLoaders.clear();
+
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
         final List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
         Map<String, Set<AbstractPlugin>> holder =
@@ -228,6 +234,8 @@ public final class PluginManager {
                    url.getPath());
         final URLClassLoader classLoader = new URLClassLoader(new URL[]{url});
 
+        classLoaders.add(classLoader);
+
         final Properties props = new Properties();
         props.load(new FileInputStream(pluginDir.getPath() + File.separator
                                        + "plugin.properties"));
@@ -241,7 +249,7 @@ public final class PluginManager {
         registerEventListeners(props, classLoader, ret);
 
         register(ret, holder);
-        
+
         return ret;
     }
 
@@ -413,6 +421,15 @@ public final class PluginManager {
                                     eventListener.getEventType(),
                                     plugin.getName()});
         }
+    }
+
+    /**
+     * Gets the plugin class loaders.
+     * 
+     * @return plugin class loaders
+     */
+    public Set<ClassLoader> getClassLoaders() {
+        return Collections.unmodifiableSet(classLoaders);
     }
 
     /**
