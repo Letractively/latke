@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Jul 23, 2011
+ * @version 1.0.1.0, Aug 4, 2011
  * @see PluginLoader
  * @see PluginStatus
  * @see PluginType
@@ -152,6 +152,8 @@ public abstract class AbstractPlugin implements Serializable {
             Logger.getLogger(getClass().getName()).
                     log(Level.SEVERE, e.getMessage(), e);
         }
+        
+        LOGGER.log(Level.CONFIG, "Initialized template configuration");
     }
 
     /**
