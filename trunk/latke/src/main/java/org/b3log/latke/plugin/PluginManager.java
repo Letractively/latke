@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.event.AbstractEventListener;
@@ -227,24 +228,34 @@ public final class PluginManager {
     private AbstractPlugin load(final File pluginDir,
                                 final Map<String, Set<AbstractPlugin>> holder)
             throws Exception {
-        final File classesFileDir = new File(pluginDir.getPath()
-                                             + File.separator + "classes");
-        final URL url = classesFileDir.toURI().toURL();
-        LOGGER.log(Level.FINEST, "Loading class from URL[path={0}]",
-                   url.getPath());
-        final URLClassLoader classLoader = new URLClassLoader(new URL[]{url});
-
-        classLoaders.add(classLoader);
-
         final Properties props = new Properties();
         props.load(new FileInputStream(pluginDir.getPath() + File.separator
                                        + "plugin.properties"));
+
+        final File defaultClassesFileDir =
+                new File(pluginDir.getPath() + File.separator + "classes");
+        final URL defaultClassesFileDirURL =
+                defaultClassesFileDir.toURI().toURL();
+
+        final String webRoot =
+                StringUtils.substringBeforeLast(AbstractServletListener.
+                getWebRoot(), File.separator);
+        final String classesFileDirPath = webRoot
+                                          + props.getProperty("classesDirPath");
+        final File classesFileDir = new File(classesFileDirPath);
+        final URL classesFileDirURL = classesFileDir.toURI().toURL();
+
+        final URLClassLoader classLoader = new URLClassLoader(new URL[]{
+                    defaultClassesFileDirURL, classesFileDirURL});
+
+        classLoaders.add(classLoader);
 
         final String pluginClassName = props.getProperty(Plugin.PLUGIN_CLASS);
         final Class<?> pluginClass = classLoader.loadClass(pluginClassName);
         final AbstractPlugin ret = (AbstractPlugin) pluginClass.newInstance();
 
         setPluginProps(pluginDir, ret, props);
+
         registerJSONRpcServices(props, classLoader, ret);
         registerEventListeners(props, classLoader, ret);
 
@@ -295,13 +306,10 @@ public final class PluginManager {
         final String name = props.getProperty(Plugin.PLUGIN_NAME);
         final String version = props.getProperty(Plugin.PLUGIN_VERSION);
         final String types = props.getProperty(Plugin.PLUGIN_TYPES);
-        final String jsonRpcClasses = props.getProperty(
-                Plugin.PLUGIN_JSON_RPC_CLASSES);
         LOGGER.log(Level.FINEST,
-                   "Plugin[name={0}, author={1}, version={2}, types={3}, "
-                   + "jsonRpcClasses={4}]", new Object[]{name, author,
-                                                         version, types,
-                                                         jsonRpcClasses});
+                   "Plugin[name={0}, author={1}, version={2}, types={3}]",
+                   new Object[]{name, author, version, types});
+
         plugin.setAuthor(author);
         plugin.setName(name);
         plugin.setId(name + "_" + version);
@@ -353,6 +361,26 @@ public final class PluginManager {
 
             final Class<?> jsonRpcClass =
                     classLoader.loadClass(jsonRpcClassName);
+// On GAE production environment, we can ONLY reflect class that loadded from default classpath 
+// (WEB-INF/classes/, WEB-INF/lib/), classes loadded from other directories (i.e. /plugins/classes/)
+// can not get methods of their own via reflection. But on dev sandbox environment, 
+// we can reflect class methods both default classpath or customized directory.            
+//            
+//            Method[] methods = jsonRpcClass.getMethods();
+//            for (int j = 0; j < methods.length; j++) {
+//                final Method method = methods[j];
+//                LOGGER.severe("method: " + method);
+//            }
+//
+//            methods = jsonRpcClass.getDeclaredMethods();
+//            
+// On GAE production environment, declared method length will be equal to 0
+//            LOGGER.severe("declared method length: " + methods.length);
+//            for (int j = 0; j < methods.length; j++) {
+//                final Method method = methods[j];
+//                LOGGER.severe("declared method: " + method);
+//            }
+
             final Method getInstance = jsonRpcClass.getMethod("getInstance");
             final AbstractJSONRpcService jsonRpcService =
                     (AbstractJSONRpcService) getInstance.invoke(jsonRpcClass);
