@@ -42,7 +42,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.6, Jul 19, 2011
+ * @version 1.0.3.7, Aug 5, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -167,53 +167,6 @@ public abstract class AbstractAction extends HttpServlet {
         }
 
         processAjaxRequest(request, response);
-    }
-
-    /**
-     * Gets the query string(key1=value2&key2=value2&....) for the
-     * specified HTTP servlet request.
-     *
-     * @param request the specified HTTP servlet request
-     * @return a json object converts from query string, if can't convert the
-     * query string, returns an empty json object;
-     * @throws JSONException json exception
-     */
-    protected final JSONObject getQueryStringJSONObject(
-            final HttpServletRequest request) throws JSONException {
-        JSONObject ret = null;
-        final String tmp = request.getQueryString();
-        if (null == tmp) {
-            return new JSONObject();
-        }
-
-        LOGGER.log(Level.FINEST, "Client is using QueryString[{0}]", tmp);
-        final StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        final String[] split = tmp.split("&");
-        for (int i = 0; i < split.length; i++) {
-            final String query = split[i];
-            final String[] kv = query.split("=");
-            if (kv.length != 2) {
-                return new JSONObject();
-            }
-
-            final String key = kv[0];
-            final String value = kv[1];
-            sb.append("\"");
-            sb.append(key);
-            sb.append("\":");
-            sb.append("\"");
-            sb.append(value);
-            sb.append("\"");
-            if (i < split.length - 1) {
-                sb.append(",");
-            }
-        }
-        sb.append("}");
-
-        ret = new JSONObject(sb.toString());
-
-        return ret;
     }
 
     /**
