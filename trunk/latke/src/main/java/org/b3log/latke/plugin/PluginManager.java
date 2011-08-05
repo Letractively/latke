@@ -314,7 +314,7 @@ public final class PluginManager {
         plugin.setName(name);
         plugin.setId(name + "_" + version);
         plugin.setVersion(version);
-        plugin.setDir(pluginDir.getPath());
+        plugin.setDir(pluginDir);
         plugin.readLangs();
         final String[] typeArray = types.split(",");
         for (int i = 0; i < typeArray.length; i++) {

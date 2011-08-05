@@ -58,8 +58,8 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Aug 4, 2011
- * @see PluginLoader
+ * @version 1.0.1.1, Aug 5, 2011
+ * @see PluginManager
  * @see PluginStatus
  * @see PluginType
  */
@@ -89,7 +89,7 @@ public abstract class AbstractPlugin implements Serializable {
     /**
      * Directory of this plugin.
      */
-    private String dir;
+    private File dir;
     /**
      * Status of this plugin.
      */
@@ -124,7 +124,7 @@ public abstract class AbstractPlugin implements Serializable {
      * 
      * @return directory of this plugin
      */
-    public String getDir() {
+    public File getDir() {
         return dir;
     }
 
@@ -134,7 +134,7 @@ public abstract class AbstractPlugin implements Serializable {
      * 
      * @param dir the specified directory
      */
-    public void setDir(final String dir) {
+    public void setDir(final File dir) {
         this.dir = dir;
 
         initTemplateEngineCfg();
@@ -147,7 +147,7 @@ public abstract class AbstractPlugin implements Serializable {
         configuration = new Configuration();
         configuration.setDefaultEncoding("UTF-8");
         try {
-            configuration.setDirectoryForTemplateLoading(new File(dir));
+            configuration.setDirectoryForTemplateLoading(dir);
         } catch (final IOException e) {
             Logger.getLogger(getClass().getName()).
                     log(Level.SEVERE, e.getMessage(), e);
@@ -160,8 +160,7 @@ public abstract class AbstractPlugin implements Serializable {
      * Reads lang_xx.properties into field {@link #langs langs}.
      */
     public void readLangs() {
-        final File root = new File(dir);
-        final File[] langFiles = root.listFiles(new FilenameFilter() {
+        final File[] langFiles = dir.listFiles(new FilenameFilter() {
 
             @Override
             public boolean accept(final File dir, final String name) {
