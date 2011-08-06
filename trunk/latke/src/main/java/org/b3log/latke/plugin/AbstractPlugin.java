@@ -117,7 +117,9 @@ public abstract class AbstractPlugin implements Serializable {
     /**
      * Unplugs.
      */
-    public abstract void unplug();
+    public void unplug() {
+        LOGGER.log(Level.INFO, "Plugin[name={0}] unplugged", name);
+    }
 
     /**
      * Gets the directory of this plugin.
