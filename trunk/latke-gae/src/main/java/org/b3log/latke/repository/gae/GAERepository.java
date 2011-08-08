@@ -34,8 +34,8 @@ import org.json.JSONObject;
 public interface GAERepository extends Repository {
 
     /**
-     * Adds the specified json object with the {@linkplain #defaultParentKey
-     * default parent key}.
+     * Adds the specified json object with the specified parent key kind and 
+     * parent key name.
      *
      * @param jsonObject the specified json object
      * @param parentKeyKind the specified kind of the parent key of the
@@ -76,13 +76,8 @@ public interface GAERepository extends Repository {
             throws RepositoryException;
 
     /**
-     * Updates a certain json object by the specified id and the specified new
-     * json object.
-     *
-     * <p>
-     * The parent key of the entity to update is the {@linkplain #defaultParentKey
-     * default parent key}.
-     * </p>
+     * Updates a certain json object by the specified id, new json object, 
+     * parent key kind and parent key name.
      *
      * <p>
      *   Invokes this method for an non-existent entity will create a new entity
@@ -143,8 +138,8 @@ public interface GAERepository extends Repository {
             throws RepositoryException;
 
     /**
-     * Removes a json object by the specified id with the {@linkplain #defaultParentKey
-     * default parent key}.
+     * Removes a json object by the specified id, parent key kind and parent key 
+     * name.
      *
      * @param id the specified id
      * @param parentKeyKind the specified kind of the parent key of the
@@ -158,8 +153,8 @@ public interface GAERepository extends Repository {
             throws RepositoryException;
 
     /**
-     * Gets a json object by the specified id with the {@linkplain #defaultParentKey
-     * default parent key}.
+     * Gets a json object by the specified id, parent key kind and parent key 
+     * name.
      *
      * @param id the specified id
      * @param parentKeyKind the specified kind of the parent key of the
