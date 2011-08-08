@@ -27,7 +27,7 @@ import org.b3log.latke.RuntimeEnv;
 public final class MailServiceFactory {
 
     /**
-     * Caches.
+     * Mail service.
      */
     private static final MailService MAIL_SERVICE;
 
@@ -41,13 +41,13 @@ public final class MailServiceFactory {
                 case LOCAL:
                     mailServiceClass =
                             (Class<MailService>) Class.forName(
-                            "org.b3log.latke.mail.local.MailServiceImpl");
+                            "org.b3log.latke.mail.local.LocalMailService");
                     MAIL_SERVICE = mailServiceClass.newInstance();
                     break;
                 case GAE:
                     mailServiceClass =
                             (Class<MailService>) Class.forName(
-                            "org.b3log.latke.mail.gae.MailServiceImpl");
+                            "org.b3log.latke.mail.gae.GAEMailService");
                     MAIL_SERVICE = mailServiceClass.newInstance();
                     break;
                 default:

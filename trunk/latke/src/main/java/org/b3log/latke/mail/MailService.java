@@ -15,6 +15,9 @@
  */
 package org.b3log.latke.mail;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,8 +32,9 @@ public interface MailService {
      * Sends the specified message as a mail asynchronously.
      * 
      * @param message the specified message
+     * @throws IOException if internal errors 
      */
-    void send(final Message message);
+    void send(final Message message) throws IOException;
 
     /**
      * Mail message.
@@ -47,7 +51,7 @@ public interface MailService {
         /**
          * Recipients.
          */
-        private Set<String> recipients;
+        private Set<String> recipients = new HashSet<String>();
         /**
          * HTML body. 
          */
@@ -56,6 +60,24 @@ public interface MailService {
          * Subject.
          */
         private String subject;
+
+        /**
+         * Gets the recipients.
+         * 
+         * @return recipients
+         */
+        public Set<String> getRecipients() {
+            return Collections.unmodifiableSet(recipients);
+        }
+
+        /**
+         * Adds the specified recipient.
+         * 
+         * @param recipient the specified recipient
+         */
+        public void addRecipient(final String recipient) {
+            recipients.add(recipient);
+        }
 
         /**
          * Gets the HTML body.
