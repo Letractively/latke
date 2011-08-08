@@ -13,27 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.servlet;
+package org.b3log.latke.repository;
 
 /**
- * Enumerations of HTTP request methods.
- *
+ * Blob.
+ * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 11, 2011
+ * @version 1.0.0.1, Jan 20, 2011
  */
-public enum RequestMethod {
+public final class Blob {
 
     /**
-     * Indicates HTTP GET method.
+     * Bytes.
      */
-    GET,
-//    HEAD,
+    private byte[] bytes;
+
     /**
-     * Indicates HTTP POST method.
+     * Constructs a blob with the specified bytes.
+     * 
+     * @param bytes the specified bytes 
      */
-    POST,
-//    PUT,
-//    DELETE,
-//    OPTIONS,
-//    TRACE;
+    public Blob(final byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    /**
+     * Gets bytes.
+     * 
+     * @return bytes
+     */
+    public byte[] getBytes() {
+        return bytes;
+    }
 }

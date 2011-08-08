@@ -102,7 +102,7 @@ public final class LangPropsService {
     /**
      * Gets all language properties as labels from lang_(by the specified
      * locale).properties file. If not found lang_(locale).properties
-     * configurations, using {@link Latkes#getDefaultLocale()} instead.
+     * configurations, using {@link Latkes#getLocale()} instead.
      *
      * @param locale the specified locale
      * @return for example,
@@ -164,7 +164,7 @@ public final class LangPropsService {
     /**
      * Gets a value from baseName_locale.properties file with the specified key.
      * If not found baseName_(locale).properties configurations, using
-     * {@link Latkes#getDefaultLocale()} instead.
+     * {@link Latkes#getLocale()} instead.
      *
      * @param baseName base name of resource bundle, options as the following:
      * <ul>

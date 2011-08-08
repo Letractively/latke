@@ -111,7 +111,7 @@ public final class Latkes {
                        Latkes.getRuntimeEnv());
         } catch (final ClassNotFoundException e) {
             runtimeEnv = RuntimeEnv.LOCAL;
-            LOGGER.log(Level.INFO, "Latke is running on Locale",
+            LOGGER.log(Level.INFO, "Latke is running on [Local]",
                        Latkes.getRuntimeEnv());
         }
 

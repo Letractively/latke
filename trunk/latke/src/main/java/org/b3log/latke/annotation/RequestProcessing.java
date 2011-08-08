@@ -15,7 +15,7 @@
  */
 package org.b3log.latke.annotation;
 
-import org.b3log.latke.servlet.RequestMethod;
+import org.b3log.latke.servlet.HTTPRequestMethod;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -49,5 +49,5 @@ public @interface RequestProcessing {
     /**
      * The HTTP request methods the annotated method should process.
      */
-    RequestMethod[] method() default {RequestMethod.GET};
+    HTTPRequestMethod[] method() default {HTTPRequestMethod.GET};
 }
