@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.api.datastore.AsyncDatastoreService;
@@ -31,6 +30,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.utils.SystemProperty;
+import com.google.appengine.api.utils.SystemProperty.Environment.Value;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -44,9 +44,11 @@ import java.util.logging.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
+import org.b3log.latke.RuntimeMode;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
+import org.b3log.latke.repository.Blob;
 import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.RepositoryException;
@@ -117,10 +119,9 @@ public abstract class AbstractGAERepository implements GAERepository {
      */
     private boolean cacheEnabled = true;
     /**
-     * Instance replica id.
+     * Cache key prefix.
      */
-    public static final String INSTANCE_ID = SystemProperty.instanceReplicaId.
-            get() + "_";
+    public static final String CACHE_KEY_PREFIX = "repository";
 
     /**
      * Initializes cache.
@@ -136,6 +137,16 @@ public abstract class AbstractGAERepository implements GAERepository {
         }
 
         CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
+
+        LOGGER.info("Initializing runtime mode....");
+        final Value gaeEnvValue = SystemProperty.environment.value();
+        if (SystemProperty.Environment.Value.Production == gaeEnvValue) {
+            LOGGER.info("B3log Solo runs in [production] mode");
+            Latkes.setRuntimeMode(RuntimeMode.PRODUCTION);
+        } else {
+            LOGGER.info("B3log Solo runs in [development] mode");
+            Latkes.setRuntimeMode(RuntimeMode.DEVELOPMENT);
+        }
     }
 
     /**
@@ -182,7 +193,7 @@ public abstract class AbstractGAERepository implements GAERepository {
 
         if (cacheEnabled) {
             CACHE.removeAll(); // for query
-            final String key = INSTANCE_ID + ret;
+            final String key = CACHE_KEY_PREFIX + ret;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
                        "Added an object[cacheKey={0}] in repository cache[{1}]",
@@ -229,7 +240,7 @@ public abstract class AbstractGAERepository implements GAERepository {
 
         if (cacheEnabled) {
             CACHE.removeAll(); // for query
-            final String key = INSTANCE_ID + ret;
+            final String key = CACHE_KEY_PREFIX + ret;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
                        "Added an object[cacheKey={0}] in repository cache[{1}]",
@@ -311,7 +322,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                    new Object[]{id, getName()});
 
         if (cacheEnabled) {
-            final String key = INSTANCE_ID + id;
+            final String key = CACHE_KEY_PREFIX + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
                        "Updated an object[cacheKey={0}] in repository cache[{1}]",
@@ -343,7 +354,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                    new Object[]{id, getName()});
 
         if (cacheEnabled) {
-            final String key = INSTANCE_ID + id;
+            final String key = CACHE_KEY_PREFIX + id;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
                        "Updated an object[cacheKey={0}] in repository cache[{1}]",
@@ -403,7 +414,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         JSONObject ret = null;
 
         if (cacheEnabled) {
-            final String cacheKey = INSTANCE_ID + id;
+            final String cacheKey = CACHE_KEY_PREFIX + id;
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
                 LOGGER.log(Level.FINER,
@@ -424,7 +435,7 @@ public abstract class AbstractGAERepository implements GAERepository {
                        new Object[]{id, getName()});
 
             if (cacheEnabled) {
-                final String cacheKey = INSTANCE_ID + id;
+                final String cacheKey = CACHE_KEY_PREFIX + id;
                 CACHE.put(cacheKey, ret);
                 LOGGER.log(Level.FINER,
                            "Added an object[cacheKey={0}] in repository cache[{1}]",
@@ -462,7 +473,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         JSONObject ret = null;
 
         if (cacheEnabled) {
-            final String cacheKey = INSTANCE_ID + query.hashCode() + "_"
+            final String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
                                     + getName();
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
@@ -487,7 +498,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         }
 
         if (cacheEnabled) {
-            final String cacheKey = INSTANCE_ID + query.hashCode() + "_"
+            final String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
                                     + getName();
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
@@ -602,7 +613,8 @@ public abstract class AbstractGAERepository implements GAERepository {
 
     @Override
     public long count() {
-        final String cacheKey = INSTANCE_ID + getName() + REPOSITORY_CACHE_COUNT;
+        final String cacheKey = CACHE_KEY_PREFIX + getName()
+                                + REPOSITORY_CACHE_COUNT;
         if (cacheEnabled) {
             final Object o = CACHE.get(cacheKey);
             if (null != o) {
@@ -699,6 +711,11 @@ public abstract class AbstractGAERepository implements GAERepository {
                        || value instanceof Boolean
                        || SUPPORTED_TYPES.contains(value.getClass())) {
                 entity.setProperty(key, value);
+            } else if (value instanceof Blob) {
+                final Blob blob = (Blob) value;
+                entity.setProperty(key,
+                                   new com.google.appengine.api.datastore.Blob(
+                        blob.getBytes()));
             } else {
                 throw new RuntimeException("Need to add known data type[class="
                                            + value.getClass().getName() + "]");
