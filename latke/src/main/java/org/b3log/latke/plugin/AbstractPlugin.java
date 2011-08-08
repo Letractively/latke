@@ -235,7 +235,7 @@ public abstract class AbstractPlugin implements Serializable {
      * @param dataModel the specified data model
      */
     private void handleLangs(final Map<String, Object> dataModel) {
-        final Locale locale = Latkes.getDefaultLocale();
+        final Locale locale = Latkes.getLocale();
         final String language = locale.getLanguage();
         final String country = locale.getCountry();
         final String variant = locale.getVariant();

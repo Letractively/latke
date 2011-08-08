@@ -24,11 +24,12 @@ package org.b3log.latke;
 public enum RuntimeEnv {
 
     /**
-     * Indicates Latke runs on local.
+     * Indicates Latke runs on local (standard Servlet container).
      */
     LOCAL,
     /**
-     * Indicates Latke runs on Google app engine.
+     * Indicates Latke runs on <a href="http://code.google.com/appengine">
+     * Google App Engine</a>.
      */
     GAE,
 }

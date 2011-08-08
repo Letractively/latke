@@ -94,7 +94,7 @@ public final class Locales {
 
             if (!hasLocale(locale)) {
                 // using default
-                locale = Latkes.getDefaultLocale();
+                locale = Latkes.getLocale();
                 LOGGER.log(Level.FINER, "Using the default locale[{0}]",
                            locale.toString());
             } else {
