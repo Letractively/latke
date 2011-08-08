@@ -55,7 +55,7 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
     static {
         try {
             TEMPLATE_CFG.setDirectoryForTemplateLoading(new File(
-                    DefaultGAEServletListener.getWebRoot()));
+                    AbstractServletListener.getWebRoot()));
         } catch (final IOException e) {
             throw new RuntimeException("Can not find the template directory!", e);
         }

@@ -71,12 +71,12 @@ public final class LangPropsService {
                 LOGGER.log(Level.WARNING,
                            "{0}, using default locale[{1}] instead",
                            new Object[]{e.getMessage(),
-                                        Latkes.getDefaultLocale()});
+                                        Latkes.getLocale()});
 
                 try {
                     langBundle = ResourceBundle.getBundle(
                             Keys.LANGUAGE,
-                            Latkes.getDefaultLocale());
+                            Latkes.getLocale());
                 } catch (final MissingResourceException ex) {
                     LOGGER.log(Level.WARNING,
                                "{0}, using default lang.properties instead",
@@ -130,10 +130,10 @@ public final class LangPropsService {
         } catch (final MissingResourceException e) {
             LOGGER.log(Level.WARNING, "{0}, using default locale[{1}]  instead",
                        new Object[]{e.getMessage(),
-                                    Latkes.getDefaultLocale()});
+                                    Latkes.getLocale()});
 
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
-                                                  Latkes.getDefaultLocale());
+                                                  Latkes.getLocale());
         }
 
         final Enumeration<String> keys = langBundle.getKeys();
@@ -191,10 +191,10 @@ public final class LangPropsService {
         } catch (final MissingResourceException e) {
             LOGGER.log(Level.WARNING, "{0}, get it from default locale[{1}]",
                        new Object[]{e.getMessage(),
-                                    Latkes.getDefaultLocale()});
+                                    Latkes.getLocale()});
 
             return ResourceBundle.getBundle(
-                    baseName, Latkes.getDefaultLocale()).getString(key);
+                    baseName, Latkes.getLocale()).getString(key);
         }
     }
 

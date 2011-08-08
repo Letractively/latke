@@ -30,7 +30,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Jul 9, 2011
+ * @version 1.0.0.4, Aug 8, 2011
  */
 public final class Latkes {
 
@@ -40,10 +40,10 @@ public final class Latkes {
     private static final Logger LOGGER =
             Logger.getLogger(Latkes.class.getName());
     /**
-     * Default locale. Initializes this by
-     * {@link #setDefaultLocale(java.util.Locale)}.
+     * Locale. Initializes this by
+     * {@link #setLocale(java.util.Locale)}.
      */
-    private static Locale defaultLocale;
+    private static Locale locale;
     /**
      * Local repository path.
      */
@@ -92,22 +92,35 @@ public final class Latkes {
     }
 
     /**
-     * Checks environment settings.
+     * Initializes {@linkplain RuntimeEnv runtime environment}.
+     * 
+     * <p>
+     * If the GAERepository class (org.b3log.latke.repository.gae.GAERepository)
+     * is on the classpath, considered Latke is running on 
+     * <a href="http://code.google.com/appengine">Google App Engine</a>,
+     * otherwise, considered Latke is running on standard Servlet container.
+     * </p>
+     * 
+     * @see RuntimeEnv
      */
-    public static void check() {
+    public static void initRuntimeEnv() {
+        try {
+            Class.forName("org.b3log.latke.repository.gae.GAERepository");
+            runtimeEnv = RuntimeEnv.GAE;
+            LOGGER.log(Level.INFO, "Latke is running on [GAE]",
+                       Latkes.getRuntimeEnv());
+        } catch (final ClassNotFoundException e) {
+            runtimeEnv = RuntimeEnv.LOCAL;
+            LOGGER.log(Level.INFO, "Latke is running on Locale",
+                       Latkes.getRuntimeEnv());
+        }
+
         final RuntimeEnv env = getRuntimeEnv();
         if (env.equals(RuntimeEnv.LOCAL)) {
-            getRepositoryPath();
+            // TODO: getRepositoryPath();
+            throw new UnsupportedOperationException(
+                    "Not support Local Repository yet!");
         }
-    }
-
-    /**
-     * Sets the runtime environment with the specified environment.
-     *
-     * @param runtimeEnv the specified environment
-     */
-    public static void setRuntimeEnv(final RuntimeEnv runtimeEnv) {
-        Latkes.runtimeEnv = runtimeEnv;
     }
 
     /**
@@ -171,27 +184,27 @@ public final class Latkes {
     }
 
     /**
-     * Sets the default locale.
+     * Sets the locale with the specified locale.
      *
-     * @param locale a new default locale
+     * @param locale the specified locale
      */
-    public static void setDefaultLocale(final Locale locale) {
-        defaultLocale = locale;
+    public static void setLocale(final Locale locale) {
+        Latkes.locale = locale;
     }
 
     /**
-     * Gets the default locale. If the {@link #defaultLocale} has not been
+     * Gets the locale. If the {@link #locale} has not been
      * initialized, invoking this method will throw {@link RuntimeException}.
      *
-     * @return the default locale
+     * @return the locale
      */
-    public static Locale getDefaultLocale() {
-        if (null == defaultLocale) {
+    public static Locale getLocale() {
+        if (null == locale) {
             throw new RuntimeException(
                     "Default locale has not been initialized!");
         }
 
-        return defaultLocale;
+        return locale;
     }
 
     /**

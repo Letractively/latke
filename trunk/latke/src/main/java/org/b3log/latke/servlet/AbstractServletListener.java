@@ -56,11 +56,11 @@ public abstract class AbstractServletListener implements ServletContextListener,
      */
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
-        Latkes.check();
+        Latkes.initRuntimeEnv();
         LOGGER.info("Initializing the context....");
 
-        Latkes.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        LOGGER.log(Level.INFO, "Default locale[{0}]", Latkes.getDefaultLocale());
+        Latkes.setLocale(Locale.SIMPLIFIED_CHINESE);
+        LOGGER.log(Level.INFO, "Default locale[{0}]", Latkes.getLocale());
 
         final ServletContext servletContext =
                 servletContextEvent.getServletContext();
