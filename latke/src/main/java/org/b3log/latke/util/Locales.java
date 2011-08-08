@@ -68,7 +68,7 @@ public final class Locales {
      * <ol>
      *     <li>Gets from session of the specified request</li>
      *     <li>Gets from the specified request header</li>
-     *     <li>Using {@link Latkes#getDefaultLocale() server configuration}</li>
+     *     <li>Using {@link Latkes#getLocale() server configuration}</li>
      * </ol>
      *
      * @param request the specified request

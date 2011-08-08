@@ -180,11 +180,11 @@ public final class RequestProcessors {
 
         for (int i = 0; i < uriPatterns.length; i++) {
             final String uriPattern = uriPatterns[i];
-            final RequestMethod[] requestMethods =
+            final HTTPRequestMethod[] requestMethods =
                     requestProcessing.method();
 
             for (int j = 0; j < requestMethods.length; j++) {
-                final RequestMethod requestMethod = requestMethods[j];
+                final HTTPRequestMethod requestMethod = requestMethods[j];
 
                 final ProcessorMethod processorMethod =
                         new ProcessorMethod();

@@ -27,7 +27,7 @@ import java.util.Map;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.2, Jan 20, 2011
  */
-public class Query {
+public final class Query {
 
     /**
      * Default value of current page number.
