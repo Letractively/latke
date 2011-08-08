@@ -25,7 +25,7 @@ import org.b3log.latke.mail.MailService;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Aug 8, 2011
  */
-public class GAEMailService implements MailService {
+public final class GAEMailService implements MailService {
 
     /**
      * Mail service.
