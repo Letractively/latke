@@ -26,7 +26,7 @@ import org.b3log.latke.servlet.HTTPRequestMethod;
  * {@link URLFetchService}. 
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 8, 2011
+ * @version 1.0.0.1, Aug 9, 2011
  */
 public final class HTTPRequest {
 
@@ -35,7 +35,7 @@ public final class HTTPRequest {
      */
     private URL url;
     /**
-     * Payload.
+     * Payload. 
      */
     private byte[] payload;
     /**
@@ -66,7 +66,10 @@ public final class HTTPRequest {
     }
 
     /**
-     * Gets the payload.
+     * Gets the payload ({@linkplain HTTPRequestMethod#POST POST} data body).
+     * 
+     * <p>Certain HTTP methods ({@linkplain HTTPRequestMethod#GET GET}) will 
+     * not have any payload, and this method will return {@code null}.</p>
      * 
      * @return payload
      */
@@ -76,6 +79,11 @@ public final class HTTPRequest {
 
     /**
      * Sets the payload with the specified payload.
+     * 
+     * <p>
+     * This method should not be called for certain HTTP methods 
+     * (e.g. {@linkplain HTTPRequestMethod#GET}).
+     * </p>
      * 
      * @param payload the specified payload
      */
