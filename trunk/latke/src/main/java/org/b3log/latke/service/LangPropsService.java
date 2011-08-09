@@ -16,7 +16,6 @@
 package org.b3log.latke.service;
 
 import java.util.logging.Level;
-import org.b3log.latke.FwkStatusCodes;
 import org.b3log.latke.Keys;
 import org.b3log.latke.model.Label;
 import java.util.Enumeration;
@@ -108,7 +107,6 @@ public final class LangPropsService {
      * @return for example,
      * <pre>
      * {
-     *     "sc": "CHANGE_LOCALE_FAIL_NOT_FOUND",
      *     "msgs": {
      *         "localeNotFound":
      *             "Unsupported locale, using default locale(zh_CN) instead."
@@ -150,8 +148,6 @@ public final class LangPropsService {
 
                 labels.put(label);
             }
-
-            ret.put(Keys.STATUS_CODE, FwkStatusCodes.CHANGE_LOCALE_SUCC);
         } catch (final JSONException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
 

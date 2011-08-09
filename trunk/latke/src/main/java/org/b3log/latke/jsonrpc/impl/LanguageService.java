@@ -94,8 +94,7 @@ public final class LanguageService extends AbstractJSONRpcService {
      *             "labelId": "companyAddress",
      *             "labelText": "公司地址"
      *         }, ....
-     *     ],
-     *     "sc": "CHANGE_LOCALE_SUCC"
+     *     ]
      * }
      * </pre>
      * @throws ActionException action exception
