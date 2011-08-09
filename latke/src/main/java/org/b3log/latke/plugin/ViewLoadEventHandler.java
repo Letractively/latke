@@ -28,7 +28,7 @@ import org.b3log.latke.event.EventException;
  * FreeMarker view load event handler.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jun 23, 2011
+ * @version 1.0.0.3, Aug 9, 2011
  */
 public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEventData> {
 
@@ -50,12 +50,11 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
         final String viewName = data.getViewName();
         final Map<String, Object> dataModel = data.getDataModel();
 
-        final Set<AbstractPlugin> plugins = 
+        final Set<AbstractPlugin> plugins =
                 PluginManager.getInstance().getPlugins(viewName);
         LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]",
                    new Object[]{plugins.size(), viewName});
         for (final AbstractPlugin plugin : plugins) {
-            // TODO: Do not repeat plug, if plugged, consider page caching
             switch (plugin.getStatus()) {
                 case ENABLED:
                     plugin.plug(dataModel);
@@ -63,7 +62,9 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
                                plugin.getName());
                     break;
                 case DISABLED:
-                    // TODO: unplug
+                    plugin.unplug();
+                    LOGGER.log(Level.FINER, "Unplugged[name={0}]",
+                               plugin.getName());
                     break;
                 default:
                     throw new AssertionError(

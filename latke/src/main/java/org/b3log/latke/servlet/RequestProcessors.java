@@ -33,7 +33,7 @@ import org.b3log.latke.annotation.RequestProcessor;
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 17, 2011
+ * @version 1.0.0.1, Aug 9, 2011
  */
 public final class RequestProcessors {
 
@@ -100,7 +100,7 @@ public final class RequestProcessors {
      * Scans classpath to discover request processor classes via annotation
      * {@linkplain org.b3log.latke.annotation.RequestProcessor}.
      */
-    // TODO: only WEB-INF/classes at present
+    // XXX: only WEB-INF/classes at present, to consider WEB/INF/lib?
     public static void discover() {
         final String webRoot = AbstractServletListener.getWebRoot();
         final File classesDir = new File(webRoot + File.separator + "WEB-INF"
