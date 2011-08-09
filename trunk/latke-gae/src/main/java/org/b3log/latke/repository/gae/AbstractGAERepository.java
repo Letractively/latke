@@ -65,7 +65,7 @@ import org.json.JSONObject;
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.1, Feb 15, 2011
+ * @version 1.0.3.2, Aug 9, 2011
  */
 public abstract class AbstractGAERepository implements GAERepository {
 
@@ -87,7 +87,7 @@ public abstract class AbstractGAERepository implements GAERepository {
     /**
      * GAE datastore supported types.
      */
-    private static final Set<Class<?>> SUPPORTED_TYPES =
+    private static final Set<Class<?>> GAE_SUPPORTED_TYPES =
             DataTypeUtils.getSupportedTypes();
     /**
      * Eventual deadline time(seconds) used by read policy.
@@ -691,7 +691,9 @@ public abstract class AbstractGAERepository implements GAERepository {
         while (keys.hasNext()) {
             final String key = keys.next();
             final Object value = jsonObject.get(key);
-            if (!SUPPORTED_TYPES.contains(value.getClass())) {
+
+            if (!GAE_SUPPORTED_TYPES.contains(value.getClass())
+                && !(value instanceof Blob)) {
                 throw new RuntimeException("Unsupported type[class=" + value.
                         getClass().getName() + "] in Latke GAE repository");
             }
@@ -709,16 +711,13 @@ public abstract class AbstractGAERepository implements GAERepository {
             } else if (value instanceof Number
                        || value instanceof Date
                        || value instanceof Boolean
-                       || SUPPORTED_TYPES.contains(value.getClass())) {
+                       || GAE_SUPPORTED_TYPES.contains(value.getClass())) {
                 entity.setProperty(key, value);
             } else if (value instanceof Blob) {
                 final Blob blob = (Blob) value;
                 entity.setProperty(key,
                                    new com.google.appengine.api.datastore.Blob(
                         blob.getBytes()));
-            } else {
-                throw new RuntimeException("Need to add known data type[class="
-                                           + value.getClass().getName() + "]");
             }
         }
     }
