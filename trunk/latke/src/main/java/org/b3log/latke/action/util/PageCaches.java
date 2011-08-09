@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Aug 1, 2011
+ * @version 1.0.0.9, Aug 9, 2011
  */
 public final class PageCaches {
 
@@ -155,8 +155,6 @@ public final class PageCaches {
         if (null == keys) { // Occurs sometime on GAE
             removeAll();
         }
-
-        // TODO: sort
 
         return Collections.unmodifiableSet(keys);
     }
