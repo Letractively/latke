@@ -43,5 +43,5 @@ public interface URLFetchService {
      * @param request the specified request
      * @return future response 
      */
-    Future<?> fetchAsync(HTTPRequest request);
+    Future<?> fetchAsync(final HTTPRequest request);
 }
