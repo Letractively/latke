@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.cache.local.memory;
 
 import java.io.Serializable;
@@ -29,7 +28,7 @@ import org.b3log.latke.cache.local.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.5, Oct 27, 2010
+ * @version 1.0.2.6, Aug 9, 2011
  */
 public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         implements Serializable {
@@ -121,5 +120,15 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         setCachedCount(0);
         setMissCount(0);
         setHitCount(0);
+    }
+
+    @Override
+    public boolean contains(final K key) {
+        return null != get(key); // XXX: performance issue
+    }
+
+    @Override
+    public long inc(final K key, final long delta) {
+        throw new UnsupportedOperationException();
     }
 }
