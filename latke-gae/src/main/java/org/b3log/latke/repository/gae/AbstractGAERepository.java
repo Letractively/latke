@@ -138,6 +138,7 @@ public abstract class AbstractGAERepository implements GAERepository {
 
         CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
 
+        // TODO: Intializes the runtime mode at application startup
         LOGGER.info("Initializing runtime mode....");
         final Value gaeEnvValue = SystemProperty.environment.value();
         if (SystemProperty.Environment.Value.Production == gaeEnvValue) {
