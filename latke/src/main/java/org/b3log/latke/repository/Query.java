@@ -16,9 +16,9 @@
 package org.b3log.latke.repository;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,11 +49,11 @@ public final class Query {
      * Sorts.
      */
     private Map<String, SortDirection> sorts =
-            new HashMap<String, SortDirection>();
+            new LinkedHashMap<String, SortDirection>();
     /**
      * Filters.
      */
-    private Collection<Filter> filters = new ArrayList<Filter>();
+    private List<Filter> filters = new ArrayList<Filter>();
     /**
      * Initialization value for hashing.
      */
@@ -125,20 +125,8 @@ public final class Query {
      *
      * @return filters
      */
-    public Collection<Filter> getFilters() {
-        return Collections.unmodifiableCollection(filters);
-    }
-
-    /**
-     * Sets the filters with the specified filters.
-     *
-     * @param filters the specified filters
-     * @return the current query object
-     */
-    public Query setFilters(final Collection<Filter> filters) {
-        this.filters = filters;
-
-        return this;
+    public List<Filter> getFilters() {
+        return Collections.unmodifiableList(filters);
     }
 
     /**
@@ -175,18 +163,6 @@ public final class Query {
         return Collections.unmodifiableMap(sorts);
     }
 
-    /**
-     * Sets the sorts with the specified sorts.
-     *
-     * @param sorts the specified sorts
-     * @return the current query object
-     */
-    public Query setSorts(final Map<String, SortDirection> sorts) {
-        this.sorts = sorts;
-
-        return this;
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -206,8 +182,9 @@ public final class Query {
                                           equals(other.sorts))) {
             return false;
         }
-        if (this.filters != other.filters && (this.filters == null || !this.filters.
-                                              equals(other.filters))) {
+        if (this.filters != other.filters && (this.filters == null
+                                              || !this.filters.equals(
+                                              other.filters))) {
             return false;
         }
         return true;
