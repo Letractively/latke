@@ -17,8 +17,6 @@ package org.b3log.latke.urlfetch;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -27,61 +25,83 @@ import java.net.URLEncoder;
 import org.b3log.latke.servlet.HTTPRequestMethod;
 import org.b3log.latke.urlfetch.local.LocalURLFetchService;
 
+/**
+ * 
+ * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
+ * @version 0.0.0.1, Aug 10, 2011
+ * 
+ */
 public class UrlFetchTestCase {
 
-	public void testGetFetch() throws IOException {
+    /**
+     * 
+     * @throws IOException XXX
+     */
+    public void testGetFetch() throws IOException {
 
-		HTTPRequest request = new HTTPRequest();
-		request.setRequestMethod(HTTPRequestMethod.GET);
-		request.setURL(new URL("http://www.baidu.com"));
+        final HTTPRequest request = new HTTPRequest();
+        request.setRequestMethod(HTTPRequestMethod.GET);
+        request.setURL(new URL("http://www.baidu.com"));
 
-		LocalURLFetchService fetchService = new LocalURLFetchService();
-		HTTPResponse httpResponse = fetchService.fetch(request);
+        final LocalURLFetchService fetchService = new LocalURLFetchService();
+        final HTTPResponse httpResponse = fetchService.fetch(request);
 
-		printHttpREsponse(httpResponse);
-	}
+        printHttpREsponse(httpResponse);
+    }
 
-	public void testPostFetch() throws IOException {
+    /**
+     * 
+     * @throws IOException  XXX
+     */
+    public void testPostFetch() throws IOException {
 
-		HTTPRequest request = new HTTPRequest();
-		request.setRequestMethod(HTTPRequestMethod.POST);
-		request.setURL(new URL("https://passport.baidu.com/api/?login"));
+        final HTTPRequest request = new HTTPRequest();
+        request.setRequestMethod(HTTPRequestMethod.POST);
+        request.setURL(new URL("https://passport.baidu.com/api/?login"));
 
-	 
-		String content =URLEncoder.encode("username=yaoliceng&password=09101112", "UTF-8");
-		request.setPayload(content.getBytes());
+        final String content = URLEncoder.encode("username=yaoliceng&password=09101112", "UTF-8");
+        request.setPayload(content.getBytes());
 
-		LocalURLFetchService fetchService = new LocalURLFetchService();
-		HTTPResponse httpResponse = fetchService.fetch(request);
+        final LocalURLFetchService fetchService = new LocalURLFetchService();
+        final HTTPResponse httpResponse = fetchService.fetch(request);
 
-		printHttpREsponse(httpResponse);
-	}
+        printHttpREsponse(httpResponse);
+    }
 
-	private void printHttpREsponse(HTTPResponse httpResponse) throws IOException {
+    /**
+     * 
+     * @param httpResponse XXX
+     * @throws IOException XXX
+     */
+    private void printHttpREsponse(final HTTPResponse httpResponse) throws IOException {
 
-		System.out.println("responseCode == " + httpResponse.getResponseCode());
-		;
-		System.out.println("finalUrl == " + httpResponse.getFinalURL());
+        System.out.println("responseCode == " + httpResponse.getResponseCode());
+        System.out.println("finalUrl == " + httpResponse.getFinalURL());
 
-		for (HTTPHeader httpHeader : httpResponse.getHeaders()) {
-			System.out.println(httpHeader.getName() + " == " + httpHeader.getValue());
-		}
+        for (HTTPHeader httpHeader : httpResponse.getHeaders()) {
+            System.out.println(httpHeader.getName() + " == " + httpHeader.getValue());
+        }
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(
-				httpResponse.getContent())));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(
+                httpResponse.getContent())));
 
-		String lines;
-		while ((lines = reader.readLine()) != null) {
-			System.out.println(lines);
-		}
+        String lines;
+        while ((lines = reader.readLine()) != null) {
+            System.out.println(lines);
+        }
 
-	}
+    }
 
-	public static void main(String[] args) throws IOException {
+    /**
+     * 
+     * @param args XXX
+     * @throws IOException XXX
+     */
+    public static void main(final String[] args) throws IOException {
 
-		UrlFetchTestCase fetchTestCase = new UrlFetchTestCase();
-		//		fetchTestCase.testGetFetch();
-		fetchTestCase.testPostFetch();
-	}
+        final UrlFetchTestCase fetchTestCase = new UrlFetchTestCase();
+        // fetchTestCase.testGetFetch();
+        fetchTestCase.testPostFetch();
+    }
 
 }

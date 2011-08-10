@@ -34,33 +34,33 @@ import org.b3log.latke.urlfetch.URLFetchService;
  */
 public class LocalURLFetchService implements URLFetchService {
 
-	/**
-	 * Logger.
-	 */
-	private static final Logger LOGGER = Logger.getLogger(LocalURLFetchService.class.getName());
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LocalURLFetchService.class.getName());
 
-	@Override
-	public HTTPResponse fetch(final HTTPRequest request) throws IOException {
+    @Override
+    public HTTPResponse fetch(final HTTPRequest request) throws IOException {
 
-		try {
-			final HTTPRequestMethod requestMethod = request.getRequestMethod();
-			if (requestMethod == null) {
-				throw new ServiceException(" requestMethod  for URLFetch should not be null");
-			}
+        try {
+            final HTTPRequestMethod requestMethod = request.getRequestMethod();
+            if (requestMethod == null) {
+                throw new ServiceException(" requestMethod  for URLFetch should not be null");
+            }
 
-			return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(request);
+            return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(request);
 
-		} catch (final ServiceException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-			return null;
-		}
+        } catch (final ServiceException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            return null;
+        }
 
-	}
+    }
 
-	@Override
-	public Future<?> fetchAsync(final HTTPRequest request) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Future<?> fetchAsync(final HTTPRequest request) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

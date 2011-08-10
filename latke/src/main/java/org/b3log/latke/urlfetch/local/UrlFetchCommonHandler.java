@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.urlfetch.HTTPHeader;
@@ -31,83 +30,117 @@ import org.b3log.latke.urlfetch.HTTPResponse;
 /**
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
+ * @version 0.0.0.1, Aug 10, 2011
  * 
- *
  */
 public class UrlFetchCommonHandler {
 
-	protected HTTPResponse doFetch(HTTPRequest request) throws IOException, ServiceException {
+    /**
+     * @param request  the specified request
+     * @return {@link HTTPResponse}
+     * @throws IOException XXX
+     * @throws ServiceException XXX
+     */
+    protected HTTPResponse doFetch(final HTTPRequest request) throws IOException, ServiceException {
 
-		HttpURLConnection httpURLConnection = prepareConnection(request);
-		configConnection(httpURLConnection, request);
-		httpURLConnection.connect();
-		HTTPResponse httpResponse = resultConnection(httpURLConnection);
-		// httpURLConnection.disconnect();
+        final HttpURLConnection httpURLConnection = prepareConnection(request);
+        configConnection(httpURLConnection, request);
+        httpURLConnection.connect();
+        final HTTPResponse httpResponse = resultConnection(httpURLConnection);
+        // httpURLConnection.disconnect();
 
-		return httpResponse;
-	}
+        return httpResponse;
+    }
 
-	protected HttpURLConnection prepareConnection(HTTPRequest request) throws IOException, ServiceException {
+    /**
+     * 
+     * @param request XXX
+     * @return {@link HttpURLConnection}
+     * @throws IOException XXX
+     * @throws ServiceException XXX
+     */
+    protected HttpURLConnection prepareConnection(final HTTPRequest request) throws IOException, ServiceException {
 
-		if(request.getURL()==null){
-			throw new ServiceException("URL for URLFetch should not be null");
-		}
-		
-		HttpURLConnection connection = (HttpURLConnection) request.getURL().openConnection();
-		connection.setRequestMethod(request.getRequestMethod().toString());
-		
-		for (HTTPHeader httpHeader : request.getHeaders()) {
-			// XXX set or add
-			connection.setRequestProperty(httpHeader.getName(), httpHeader.getValue());
-		}
-		
-		
-		Properties prop = System.getProperties();
-		prop.setProperty("http.proxyHost", "10.1.2.188");
-		prop.setProperty("http.proxyPort", "80");
-		prop.setProperty("https.proxyHost", "10.1.2.188");
-		prop.setProperty("https.proxyPort", "80");
+        if (request.getURL() == null) {
+            throw new ServiceException("URL for URLFetch should not be null");
+        }
 
-		return connection;
-	}
+        final HttpURLConnection connection = (HttpURLConnection) request.getURL().openConnection();
+        connection.setRequestMethod(request.getRequestMethod().toString());
 
-	protected void configConnection(HttpURLConnection httpURLConnection, HTTPRequest request)
-			throws IOException {
+        for (HTTPHeader httpHeader : request.getHeaders()) {
+            // XXX set or add
+            connection.setRequestProperty(httpHeader.getName(), httpHeader.getValue());
+        }
 
-	};
+        // Properties prop = System.getProperties();
+        // prop.setProperty("http.proxyHost", "10.1.2.188");
+        // prop.setProperty("http.proxyPort", "80");
+        // prop.setProperty("https.proxyHost", "10.1.2.188");
+        // prop.setProperty("https.proxyPort", "80");
 
-	protected HTTPResponse resultConnection(HttpURLConnection httpURLConnection) throws IOException {
+        return connection;
+    }
 
-		HTTPResponse httpResponse = new HTTPResponse();
+    /**
+     * 
+     * @param httpURLConnection XXX
+     * @param request XXX
+     * @throws IOException XXX
+      */
+    protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
+            throws IOException {
 
-		httpResponse.setResponseCode(httpURLConnection.getResponseCode());
-		// httpResponse.setFinalURL(httpURLConnection.getURL());
-		httpResponse.setContent(InputStreamToByte(httpURLConnection.getInputStream()));
+    };
 
-		fillHttpResponseHeader(httpResponse, httpURLConnection.getHeaderFields());
+    /**
+     * 
+     * @param httpURLConnection XXX
+     * @return {@link HTTPResponse}
+     * @throws IOException XXX
+     */
+    protected HTTPResponse resultConnection(final HttpURLConnection httpURLConnection) throws IOException {
 
-		return httpResponse;
-	}
+        final HTTPResponse httpResponse = new HTTPResponse();
 
-	protected void fillHttpResponseHeader(HTTPResponse httpResponse,
-			Map<String, List<String>> headerFields) {
+        httpResponse.setResponseCode(httpURLConnection.getResponseCode());
+        // httpResponse.setFinalURL(httpURLConnection.getURL());
+        httpResponse.setContent(inputStreamToByte(httpURLConnection.getInputStream()));
 
-		for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
-			httpResponse.addHeader(new HTTPHeader(entry.getKey(), entry.getValue().toString()));
-		}
+        fillHttpResponseHeader(httpResponse, httpURLConnection.getHeaderFields());
 
-	}
+        return httpResponse;
+    }
 
-	// XXX need to move to 'util'
-	private byte[] InputStreamToByte(InputStream is) throws IOException {
-		ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-		int ch;
-		while ((ch = is.read()) != -1) {
-			bytestream.write(ch);
-		}
-		byte imgdata[] = bytestream.toByteArray();
-		bytestream.close();
-		return imgdata;
-	}
+    /**
+     * 
+     * @param httpResponse XXX
+     * @param headerFields XXX
+     */
+    protected void fillHttpResponseHeader(final HTTPResponse httpResponse, final Map<String, List<String>> headerFields) {
+
+        for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+            httpResponse.addHeader(new HTTPHeader(entry.getKey(), entry.getValue().toString()));
+        }
+
+    }
+
+    /**
+     * 
+     * @param is XXX
+     * @return {@link Byte[]}
+     * @throws IOException XXX
+     */
+    // XXX need to move to 'util'
+    private byte[] inputStreamToByte(final InputStream is) throws IOException {
+        final ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+        int ch;
+        while ((ch = is.read()) != -1) {
+            bytestream.write(ch);
+        }
+        final byte[] imgdata = bytestream.toByteArray();
+        bytestream.close();
+        return imgdata;
+    }
 
 }
