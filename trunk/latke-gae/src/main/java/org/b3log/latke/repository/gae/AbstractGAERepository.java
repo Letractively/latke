@@ -663,12 +663,12 @@ public abstract class AbstractGAERepository implements GAERepository {
             final Object v = property.getValue();
             if (v instanceof Text) {
                 final Text valueText = (Text) v;
-                LOGGER.log(Level.FINEST, "Put[key={0}, value={1}]",
-                           new Object[]{k, valueText});
                 jsonMap.put(k, valueText.getValue());
+            } else if (v instanceof com.google.appengine.api.datastore.Blob) {
+                final com.google.appengine.api.datastore.Blob blob =
+                        (com.google.appengine.api.datastore.Blob) v;
+                jsonMap.put(k, new Blob(blob.getBytes()));
             } else {
-                LOGGER.log(Level.FINEST, "Put[key={0}, value={1}]",
-                           new Object[]{k, v});
                 jsonMap.put(k, v);
             }
         }
