@@ -28,6 +28,12 @@ import org.b3log.latke.urlfetch.HTTPHeader;
 import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
 
+/**
+ * 
+ * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
+ * 
+ *
+ */
 public class UrlFetchCommonHandler {
 
 	protected HTTPResponse doFetch(HTTPRequest request) throws IOException, ServiceException {

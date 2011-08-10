@@ -40,17 +40,17 @@ public class LocalURLFetchService implements URLFetchService {
 	private static final Logger LOGGER = Logger.getLogger(LocalURLFetchService.class.getName());
 
 	@Override
-	public HTTPResponse fetch(HTTPRequest request) throws IOException {
+	public HTTPResponse fetch(final HTTPRequest request) throws IOException {
 
 		try {
-			HTTPRequestMethod requestMethod = request.getRequestMethod();
+			final HTTPRequestMethod requestMethod = request.getRequestMethod();
 			if (requestMethod == null) {
 				throw new ServiceException(" requestMethod  for URLFetch should not be null");
 			}
 
 			return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(request);
 
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 			return null;
 		}
@@ -58,7 +58,7 @@ public class LocalURLFetchService implements URLFetchService {
 	}
 
 	@Override
-	public Future<?> fetchAsync(HTTPRequest request) {
+	public Future<?> fetchAsync(final HTTPRequest request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
