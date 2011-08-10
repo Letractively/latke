@@ -21,24 +21,30 @@ import java.net.HttpURLConnection;
 
 import org.b3log.latke.urlfetch.HTTPRequest;
 
+/**
+ * 
+ * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
+ * @version 0.0.0.1, Aug 10, 2011
+ * 
+ */
 public class UrlFetchPostHandler extends UrlFetchCommonHandler {
 
-	@Override
-	protected void configConnection(HttpURLConnection httpURLConnection, HTTPRequest request)
-			throws IOException {
+    @Override
+    protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
+            throws IOException {
 
-		httpURLConnection.setDoOutput(true);
-		httpURLConnection.setUseCaches(false);
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setUseCaches(false);
 
-		if (request.getPayload() != null) {
-			
-			OutputStream outputStream = httpURLConnection.getOutputStream();
-			outputStream.write(request.getPayload());
+        if (request.getPayload() != null) {
 
-			outputStream.flush();
-			outputStream.close();
-		}
+            final OutputStream outputStream = httpURLConnection.getOutputStream();
+            outputStream.write(request.getPayload());
 
-	}
+            outputStream.flush();
+            outputStream.close();
+        }
+
+    }
 
 }
