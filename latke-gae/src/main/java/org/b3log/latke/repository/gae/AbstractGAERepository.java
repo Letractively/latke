@@ -32,7 +32,6 @@ import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.api.utils.SystemProperty.Environment.Value;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -486,7 +485,7 @@ public abstract class AbstractGAERepository implements GAERepository {
         }
 
         final int currentPageNum = query.getCurrentPageNum();
-        final Collection<Filter> filters = query.getFilters();
+        final List<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
         final Map<String, SortDirection> sorts = query.getSorts();
 
@@ -525,7 +524,7 @@ public abstract class AbstractGAERepository implements GAERepository {
     private JSONObject get(final int currentPageNum,
                            final int pageSize,
                            final Map<String, SortDirection> sorts,
-                           final Collection<Filter> filters)
+                           final List<Filter> filters)
             throws RepositoryException {
         final Query query = new Query(getName());
         for (final Filter filter : filters) {
@@ -559,7 +558,7 @@ public abstract class AbstractGAERepository implements GAERepository {
             query.addFilter(filter.getKey(), filterOperator, filter.getValue());
         }
 
-        for (Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
+        for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
             Query.SortDirection querySortDirection = null;
             if (sort.getValue().equals(SortDirection.ASCENDING)) {
                 querySortDirection = Query.SortDirection.ASCENDING;
