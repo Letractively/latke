@@ -16,7 +16,9 @@
 package org.b3log.latke.urlfetch.local;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +31,7 @@ import org.b3log.latke.urlfetch.URLFetchService;
 /**
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.1, Aug 10, 2011
+ * @version 0.0.0.2, Aug 15, 2011
  * 
  */
 public class LocalURLFetchService implements URLFetchService {
@@ -59,8 +61,18 @@ public class LocalURLFetchService implements URLFetchService {
 
     @Override
     public Future<?> fetchAsync(final HTTPRequest request) {
-        // TODO Auto-generated method stub
-        return null;
+
+        final FutureTask<HTTPResponse> futureTask = new FutureTask<HTTPResponse>(
+                new Callable<HTTPResponse>() {
+
+                    @Override
+                    public HTTPResponse call() throws Exception {
+                        return fetch(request);
+                    }
+                });
+
+        return futureTask;
+
     }
 
 }

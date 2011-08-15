@@ -18,22 +18,26 @@ package org.b3log.latke.urlfetch.local;
 import org.b3log.latke.servlet.HTTPRequestMethod;
 
 /**
+ * UrlFetchHandlerFactory to get  UrlFetchHandler.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.1, Aug 10, 2011
+ * @version 0.0.0.2, Aug 15, 2011
  * 
  */
 public final class UrlFetchHandlerFactory {
 
     /**
      * 
-     * @param requestMethod XXX
+     * @param requestMethod {@link HTTPRequestMethod}
      * @return {@link UrlFetchCommonHandler}
      */
     public static UrlFetchCommonHandler getFetchHandler(final HTTPRequestMethod requestMethod) {
 
         UrlFetchCommonHandler fetchHandler = null;
 
+        /**
+         * now just Distinguish POST and the others.
+         */
         switch (requestMethod) {
         case POST:
             fetchHandler = new UrlFetchPostHandler();
@@ -47,7 +51,7 @@ public final class UrlFetchHandlerFactory {
     }
 
     /**
-     * 
+     * private construction method.
      */
     private UrlFetchHandlerFactory() {
 
