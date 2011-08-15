@@ -22,13 +22,17 @@ import java.net.HttpURLConnection;
 import org.b3log.latke.urlfetch.HTTPRequest;
 
 /**
+ * Specific Handler for urlfetch.
+ * 
+ * match {@link HTTPRequestMethod}<br>POST</br>
+ * Override {@link #configConnection(HttpURLConnection, HTTPRequest)}
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.1, Aug 10, 2011
+ * @version 0.0.0.2, Aug 15, 2011
  * 
  */
 public class UrlFetchPostHandler extends UrlFetchCommonHandler {
-
+ 
     @Override
     protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
             throws IOException {

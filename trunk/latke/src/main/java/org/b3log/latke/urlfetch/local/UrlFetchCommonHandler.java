@@ -28,18 +28,28 @@ import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
 
 /**
+ * commonHandler for urlfetch.
+ *
+ * match {@link HTTPRequestMethod}<br>GET, HEAD</br>
+ * the core method is {@link #doFetch(HTTPRequest)}
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.1, Aug 10, 2011
+ * @version 0.0.0.2, Aug 15, 2011
  * 
  */
 public class UrlFetchCommonHandler {
 
     /**
+     * doFetch- the template method.
+     *  
+     * @see #prepareConnection(HTTPRequest) 
+     * @see #configConnection(HttpURLConnection, HTTPRequest)
+     * @see #resultConnection(HttpURLConnection)
+     * 
      * @param request  the specified request
      * @return {@link HTTPResponse}
-     * @throws IOException XXX
-     * @throws ServiceException XXX
+     * @throws IOException IOException from java.net
+     * @throws ServiceException serviceException from org.b3log.latke.urlfetch.local
      */
     protected HTTPResponse doFetch(final HTTPRequest request) throws IOException, ServiceException {
 
@@ -54,12 +64,13 @@ public class UrlFetchCommonHandler {
 
     /**
      * 
-     * @param request XXX
+     * @param request the specified HTTP request
      * @return {@link HttpURLConnection}
-     * @throws IOException XXX
-     * @throws ServiceException XXX
+     * @throws IOException IOException from java.net
+     * @throws ServiceException serviceException from org.b3log.latke.urlfetch.local
      */
-    protected HttpURLConnection prepareConnection(final HTTPRequest request) throws IOException, ServiceException {
+    protected HttpURLConnection prepareConnection(final HTTPRequest request) throws IOException,
+            ServiceException {
 
         if (request.getURL() == null) {
             throw new ServiceException("URL for URLFetch should not be null");
@@ -84,22 +95,23 @@ public class UrlFetchCommonHandler {
 
     /**
      * 
-     * @param httpURLConnection XXX
-     * @param request XXX
-     * @throws IOException XXX
+     * @param httpURLConnection {@link HttpURLConnection}
+     * @param request the specified HTTP request 
+     * @throws IOException IOException from java.net
       */
-    protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
-            throws IOException {
+    protected void configConnection(final HttpURLConnection httpURLConnection,
+            final HTTPRequest request) throws IOException {
 
     };
 
     /**
      * 
-     * @param httpURLConnection XXX
-     * @return {@link HTTPResponse}
-     * @throws IOException XXX
+     * @param httpURLConnection {@link HttpURLConnection}
+     * @return HTTPResponse the http response
+     * @throws IOException IOException from java.net
      */
-    protected HTTPResponse resultConnection(final HttpURLConnection httpURLConnection) throws IOException {
+    protected HTTPResponse resultConnection(final HttpURLConnection httpURLConnection)
+            throws IOException {
 
         final HTTPResponse httpResponse = new HTTPResponse();
 
@@ -114,10 +126,11 @@ public class UrlFetchCommonHandler {
 
     /**
      * 
-     * @param httpResponse XXX
-     * @param headerFields XXX
+     * @param httpResponse HTTP Rsponse
+     * @param headerFields headerFiedls in HTTP response
      */
-    protected void fillHttpResponseHeader(final HTTPResponse httpResponse, final Map<String, List<String>> headerFields) {
+    protected void fillHttpResponseHeader(final HTTPResponse httpResponse,
+            final Map<String, List<String>> headerFields) {
 
         for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
             httpResponse.addHeader(new HTTPHeader(entry.getKey(), entry.getValue().toString()));
@@ -127,9 +140,9 @@ public class UrlFetchCommonHandler {
 
     /**
      * 
-     * @param is XXX
+     * @param is {@link InputStream}
      * @return {@link Byte[]}
-     * @throws IOException XXX
+     * @throws IOException from java.io
      */
     // XXX need to move to 'util'
     private byte[] inputStreamToByte(final InputStream is) throws IOException {
