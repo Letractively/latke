@@ -22,10 +22,21 @@ import org.b3log.latke.mail.MailService.Message;
 import org.b3log.latke.mail.local.LocalMailService;
 import org.b3log.latke.mail.local.MailSender;
 
-public class JavaMailTestCase {
+/**
+ * 
+ * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
+ * @version 1.0.0.0, Aug 16, 2011
+ */
+public final class JavaMailTestCase {
 
+    /**
+     * XXX.
+     * 
+     * @param args xxx
+     * @throws IOException xxx
+     */
     public static void main(final String[] args) throws IOException {
-        MailSender.init("b3log_team", "b3logteam", "utf-8", "smtp.163.com", true);
+        MailSender.init("b3log_team", "b3logteam", "smtp.163.com", true);
         //MailSender.init("b3log_team", "b3logteam", "ISO_8859_1", "smtp.163.com");
         //MailSender.init("b3log_team", "b3logteam", "smtp.163.com");
         //MailSender.init("b3log_team", "b3logteam", "smtp.163.com", true);
@@ -33,7 +44,7 @@ public class JavaMailTestCase {
         //Latkes.initRuntimeEnv();
         //MailService mailService = MailServiceFactory.getMailService();
 
-        MailService mailService = new LocalMailService();
+        final MailService mailService = new LocalMailService();
         final Message message = new Message();
         message.setFrom("b3log_team@163.com");
         message.setSubject("又一次测试,iso_8859_1");
@@ -43,6 +54,11 @@ public class JavaMailTestCase {
         message.addRecipient("jiangzezhou1989@yahoo.com.cn");
         mailService.send(message);
         mailService.send(message);
+    }
 
+    /**
+     * Private default constructor.
+     */
+    private JavaMailTestCase() {
     }
 }

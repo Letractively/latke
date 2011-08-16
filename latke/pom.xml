@@ -16,7 +16,7 @@
     <description>Yet another simple web framework based on Java servlet technology.</description>
     <inceptionYear>2009</inceptionYear>
 
-	<!-- Version -->
+    <!-- Version -->
     <properties>
         <servlet.version>2.5</servlet.version>
         <freemarker.version>2.3.18</freemarker.version>
@@ -24,13 +24,13 @@
         <javax.mail.version>1.4</javax.mail.version>
         <commons-io.version>1.4</commons-io.version>
         <commons-lang.version>2.5</commons-lang.version>
-		<!-- Maven Plugin -->
+	<!-- Maven Plugin -->
         <maven-license-plugin.version>1.9.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
         <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
-		<!-- Unit Test -->
+	<!-- Unit Test -->
         <testng.version>5.9</testng.version>
-		<!-- -->
+	<!-- -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -268,7 +268,7 @@
                     </execution>
                 </executions>
             </plugin>
-			<!-- For source code style check -->
+	    <!-- For source code style check -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>

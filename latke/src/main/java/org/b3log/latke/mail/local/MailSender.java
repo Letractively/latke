@@ -66,40 +66,25 @@ public final class MailSender {
     /**
      * Assign values ​​to variables.
      * 
-     * @param username
-     * @param password
-     * @param encoding
-     * @param mailHost
-     * @param sessionDebug
+     * @param username xxx
+     * @param password xxx
+     * @param mailHost xxx
+     * @param debugSession xxx
      */
     public static void init(final String username, final String password,
-                            final String encoding, final String mailHost,
-                            final boolean sessionDebug) {
+                            final String mailHost, final boolean debugSession) {
         mailSender = new MailSender();
         mailSender.username = username;
         mailSender.password = password;
         mailSender.mailHost = mailHost;
-        mailSender.sessionDebug = sessionDebug;
-    }
-
-    /**
-     * Assign values ​​to variables.
-     * 
-     * @param username
-     * @param password
-     * @param mailHost
-     * @param debugSession
-     */
-    public static void init(final String username, final String password,
-                            final String mailHost, final boolean debugSession) {
-        init(username, password, null, mailHost, debugSession);
+        mailSender.sessionDebug = debugSession;
     }
 
     /**
      * Gets mailSender.
      * 
-     * @return mailSender
-     * @throws MessagingException  
+     * @return mailSender xxx
+     * @throws MessagingException   xxx
      */
     protected static MailSender getInstance()
             throws MessagingException {
@@ -114,9 +99,9 @@ public final class MailSender {
     /**
      * create java.mail.Message.
      * 
-     * @param message 
-     * @return java.mail.Message
-     * @throws MessagingException
+     * @param message  xxx
+     * @return java.mail.Message xxx
+     * @throws MessagingException xxx
      */
     public javax.mail.Message createMessage(final MailService.Message message)
             throws MessagingException {
@@ -131,7 +116,7 @@ public final class MailSender {
         props.put("mail.smtp.auth", "true");
 
         final Authenticator auth = new SMTPAuthenticator();
-        Session session = Session.getDefaultInstance(props, auth);
+        final Session session = Session.getDefaultInstance(props, auth);
         session.setDebug(this.sessionDebug);
         final MimeMessage mimeMessage = new MimeMessage(session);
         mimeMessage.setFrom(new InternetAddress(message.getFrom()));
@@ -146,9 +131,9 @@ public final class MailSender {
     /**
      * transport recipients to InternetAddress[].
      * 
-     * @param recipients
-     * @return
-     * @throws MessagingException
+     * @param recipients xxx
+     * @return xxx
+     * @throws MessagingException xxx
      */
     private InternetAddress[] transformRecipients(final Set<String> recipients)
             throws MessagingException {
@@ -156,7 +141,7 @@ public final class MailSender {
             throw new MessagingException(
                     "recipient for Mail should not be null");
         }
-        InternetAddress[] realRecipients =
+        final InternetAddress[] realRecipients =
                 new InternetAddress[recipients.size()];
         int i = 0;
         for (String recipient : recipients) {
@@ -168,9 +153,8 @@ public final class MailSender {
     /**
      * Sends email.
      * 
-     * @param message 
-     * @throws MessagingException
-     *             message exception
+     * @param message  xxx
+     * @throws MessagingException message exception
      */
     public void sendMail(final MailService.Message message)
             throws MessagingException {
