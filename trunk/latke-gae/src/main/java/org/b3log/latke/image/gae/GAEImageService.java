@@ -15,11 +15,11 @@
  */
 package org.b3log.latke.image.gae;
 
+import com.google.appengine.api.images.Composite;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
-import java.util.Collection;
-import org.b3log.latke.image.Composite;
-import org.b3log.latke.image.Composite.Anchor;
+import java.util.ArrayList;
+import java.util.List;
 import org.b3log.latke.image.Image;
 import org.b3log.latke.image.ImageService;
 
@@ -43,31 +43,38 @@ public final class GAEImageService implements ImageService {
                 ImagesServiceFactory.makeImage(data);
 
         final Image ret = new Image();
-        ret.setData(gaeImage.getImageData());
+        ret.setData(data);
 
         return ret;
     }
 
     @Override
-    public Composite makeComposite(final Image image,
-                                   final int xOffset, final int yOffset,
-                                   final float opacity, final Anchor anchor) {
-        throw new UnsupportedOperationException();
-    }
+    public Image makeImage(final List<Image> images) {
+        final List<Composite> composites = new ArrayList<Composite>();
 
-    @Override
-    public Image composite(final Collection<Composite> composites,
-                           final int width, final int height, final long color) {
-//        final Collection<com.google.appengine.api.images.Composite> gaeComposites =
-//                new ArrayList<com.google.appengine.api.images.Composite>();
-//        for (final Composite composite : composites) {
-//            final com.google.appengine.api.images.Composite gaeComposite =
-//                    new com.google.appengine.api.images.Composite();
-//        }
-//
-//        final com.google.appengine.api.images.Image gaeImage =
-//                SVC.composite(gaeComposites, width, width, color);
+        int width = 0;
+        int height = 0;
+        final int length = images.size();
+        for (int i = 0; i < length; i++) {
+            final Image image = images.get(i);
+            final byte[] imageData = image.getData();
+            final com.google.appengine.api.images.Image gaeImage =
+                    ImagesServiceFactory.makeImage(imageData);
 
-        throw new UnsupportedOperationException();
+            final Composite composite = ImagesServiceFactory.makeComposite(
+                    gaeImage, i * gaeImage.getWidth(), 0,
+                    1.0F, Composite.Anchor.TOP_LEFT);
+            composites.add(composite);
+
+            if (i == length - 1) { // Using the last clip as the dimension of eatch one
+                width = gaeImage.getWidth();
+                height = gaeImage.getHeight();
+            }
+        }
+
+        final com.google.appengine.api.images.Image gaeImage =
+                SVC.composite(composites, width * length, height, 0);
+
+        return makeImage(gaeImage.getImageData());
     }
 }
