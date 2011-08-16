@@ -53,7 +53,7 @@ public class LocalMailService implements MailService {
 			public void run() {
 
 				try {
-					MailSender.getInstance(message).sendMail(message);
+					MailSender.getInstance().sendMail(message);
 				} catch (final MessagingException ex) {
 					Logger.getLogger(LocalMailService.class.getName()).severe(
 							ex.getMessage());

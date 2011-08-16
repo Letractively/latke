@@ -79,7 +79,7 @@ public final class MailSender {
 	/**
 	 * mailSender.
 	 */
-	private static MailSender mailSender = new MailSender();
+	private static MailSender mailSender;
 
 	/**
 	 * private constructor.
@@ -100,6 +100,7 @@ public final class MailSender {
 	public static void init(final String username, final String password,
 			final String encoding, final String mailHost,
 			final boolean sessionDebug) {
+		mailSender = new MailSender();
 		mailSender.username = username;
 		mailSender.password = password;
 		mailSender.encoding = encoding == null ? DEFAULT_ENCODING : encoding;
@@ -155,7 +156,7 @@ public final class MailSender {
 	 * @return mailSender
 	 * @throws ServiceException
 	 */
-	protected static MailSender getInstance(MailService.Message message)
+	protected static MailSender getInstance()
 			throws MessagingException {
 		if (mailSender == null) {
 			throw new MessagingException("MailSender is not init...");
