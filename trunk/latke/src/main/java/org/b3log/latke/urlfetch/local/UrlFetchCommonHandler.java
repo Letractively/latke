@@ -116,7 +116,7 @@ public class UrlFetchCommonHandler {
         final HTTPResponse httpResponse = new HTTPResponse();
 
         httpResponse.setResponseCode(httpURLConnection.getResponseCode());
-        // httpResponse.setFinalURL(httpURLConnection.getURL());
+        httpResponse.setFinalURL(httpURLConnection.getURL());
         httpResponse.setContent(inputStreamToByte(httpURLConnection.getInputStream()));
 
         fillHttpResponseHeader(httpResponse, httpURLConnection.getHeaderFields());
