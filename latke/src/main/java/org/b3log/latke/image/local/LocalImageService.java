@@ -13,35 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.image;
+package org.b3log.latke.image.local;
 
 import java.util.List;
+import org.b3log.latke.image.Image;
+import org.b3log.latke.image.ImageService;
 
 /**
  * Image service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 16, 2011
+ * @version 1.0.0.0, Aug 16, 2011
  */
-public interface ImageService {
+public final class LocalImageService implements ImageService {
 
-    /**
-     * Makes an image with the specified data.
-     * 
-     * @param data the specified data
-     * @return image
-     */
-    Image makeImage(final byte[] data);
+    @Override
+    public Image makeImage(final List<Image> images) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-    /**
-     * Makes an image with the specified images from left to right respectively.
-     * 
-     * <p>
-     * Each of image of the specified images should have the same dimension.
-     * </p>
-     * 
-     * @param images the specified images
-     * @return image
-     */
-    Image makeImage(final List<Image> images);
+    @Override
+    public Image makeImage(final byte[] data) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -22,30 +22,27 @@ import org.b3log.latke.mail.MailService.Message;
 import org.b3log.latke.mail.local.LocalMailService;
 import org.b3log.latke.mail.local.MailSender;
 
-
 public class JavaMailTestCase {
-	
-	public static void main(String[] args) throws IOException {
-		
-		MailSender.init("b3log_team", "b3logteam", "utf-8", "smtp.163.com", true);
-		//MailSender.init("b3log_team", "b3logteam", "ISO_8859_1", "smtp.163.com");
-		//MailSender.init("b3log_team", "b3logteam", "smtp.163.com");
-		//MailSender.init("b3log_team", "b3logteam", "smtp.163.com", true);
-		
-		//Latkes.initRuntimeEnv();
-		//MailService mailService = MailServiceFactory.getMailService();
-		
-		MailService mailService = new LocalMailService();
-		final Message message = new Message();
-		message.setFrom("b3log_team@163.com");
-		message.setSubject("又一次测试,iso_8859_1");
-		message.setHtmlBody("<html><body><font color='red'>沮丧</font></body></html>");
-		message.addRecipient("jiangzezhou1989@163.com");
-		message.addRecipient("jiangzezhou1989@yahoo.com.cn");
-		mailService.send(message);
-		mailService.send(message);
 
-	}
+    public static void main(final String[] args) throws IOException {
+        MailSender.init("b3log_team", "b3logteam", "utf-8", "smtp.163.com", true);
+        //MailSender.init("b3log_team", "b3logteam", "ISO_8859_1", "smtp.163.com");
+        //MailSender.init("b3log_team", "b3logteam", "smtp.163.com");
+        //MailSender.init("b3log_team", "b3logteam", "smtp.163.com", true);
 
+        //Latkes.initRuntimeEnv();
+        //MailService mailService = MailServiceFactory.getMailService();
 
+        MailService mailService = new LocalMailService();
+        final Message message = new Message();
+        message.setFrom("b3log_team@163.com");
+        message.setSubject("又一次测试,iso_8859_1");
+        message.setHtmlBody(
+                "<html><body><font color='red'>沮丧</font></body></html>");
+        message.addRecipient("jiangzezhou1989@163.com");
+        message.addRecipient("jiangzezhou1989@yahoo.com.cn");
+        mailService.send(message);
+        mailService.send(message);
+
+    }
 }
