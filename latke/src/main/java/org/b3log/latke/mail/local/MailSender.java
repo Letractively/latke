@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2009, 2010, 2011, B3log Team
+
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +16,22 @@
  */
 package org.b3log.latke.mail.local;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Properties;
+
+
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
+
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.b3log.latke.mail.MailService;
-import org.b3log.latke.service.ServiceException;
 
 /**
  * Email sender.
@@ -41,60 +39,67 @@ import org.b3log.latke.service.ServiceException;
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  */
-public final class MailSender implements Runnable {
+public final class MailSender {
 
-	/** The default encoding: 'utf-8' */
+	/**
+	 * The default encoding:utf-8.
+	 */
 	public static final String DEFAULT_ENCODING = "utf-8";
 
-	/** The default debugSession: false */
+	/**
+	 * The default debugSession:false.
+	 */
 	public static final boolean DEFAULT_SESSION_DEBUG = false;
 
 	/**
-	 * set default encoding
+	 * set default encoding.
 	 */
 	private String encoding = DEFAULT_ENCODING;
 
 	/**
-	 * set default sessionDebug
+	 * set default sessionDebug.
 	 */
 	private boolean sessionDebug = DEFAULT_SESSION_DEBUG;
 
+	/**
+	 * mail host.
+	 */
 	private String mailHost;
 
 	/**
-	 * username of the mailHost account
+	 * username of the mailHost account.
 	 */
 	private String username;
 
 	/**
-	 * password of the mailHost account
+	 * password of the mailHost account.
 	 */
 	private String password;
 
-	private MailService.Message message;
-
-	private static MailSender mailSender;
+	/**
+	 * mailSender.
+	 */
+	private static MailSender mailSender = new MailSender();
 
 	/**
-	 * private constructor
+	 * private constructor.
 	 */
 	private MailSender() {
 
 	}
 
 	/**
-	 * Assign values ​​to variables
+	 * Assign values ​​to variables.
 	 * 
 	 * @param username
 	 * @param password
 	 * @param encoding
 	 * @param mailHost
-	 * @param debugSession
+	 * @param sessionDebug
 	 */
 	public static void init(final String username, final String password,
 			final String encoding, final String mailHost,
 			final boolean sessionDebug) {
-		mailSender = new MailSender();
 		mailSender.username = username;
 		mailSender.password = password;
 		mailSender.encoding = encoding == null ? DEFAULT_ENCODING : encoding;
@@ -105,7 +110,7 @@ public final class MailSender implements Runnable {
 	}
 
 	/**
-	 * Assign values ​​to variables
+	 * Assign values ​​to variables.
 	 * 
 	 * @param username
 	 * @param password
@@ -117,7 +122,7 @@ public final class MailSender implements Runnable {
 	}
 
 	/**
-	 * Assign values ​​to variables
+	 * Assign values ​​to variables.
 	 * 
 	 * @param username
 	 * @param password
@@ -130,7 +135,7 @@ public final class MailSender implements Runnable {
 	}
 
 	/**
-	 * Assign values ​​to variables
+	 * Assign values ​​to variables.
 	 * 
 	 * @param username
 	 * @param password
@@ -151,24 +156,27 @@ public final class MailSender implements Runnable {
 	 * @throws ServiceException
 	 */
 	protected static MailSender getInstance(MailService.Message message)
-			throws ServiceException {
+			throws MessagingException {
 		if (mailSender == null) {
-			throw new ServiceException("MailSender is not init...");
+			throw new MessagingException("MailSender is not init...");
+
 		}
-		mailSender.message = message;
+
 		return mailSender;
 	}
 
 	/**
-	 * create java.mail.Message
+	 * create java.mail.Message.
 	 * 
 	 * @return java.mail.Message
 	 * @throws MessagingException
 	 */
-	public javax.mail.Message createMessage() throws MessagingException {
+	public javax.mail.Message createMessage(MailService.Message message)
+			throws MessagingException {
 
 		/*
-		 * Properties used to construct a email sending connection protocal.
+		 * Properties used to construct a email.
+		 * sending connection protocal
 		 */
 
 		final Properties props = new Properties();
@@ -191,7 +199,7 @@ public final class MailSender implements Runnable {
 	}
 
 	/**
-	 * transport recipients to InternetAddress[]
+	 * transport recipients to InternetAddress[].
 	 * 
 	 * @param recipients
 	 * @return
@@ -218,20 +226,10 @@ public final class MailSender implements Runnable {
 	 * @throws MessagingException
 	 *             message exception
 	 */
-	public void sendMail() throws MessagingException {
+	public void sendMail(MailService.Message message) throws MessagingException {
 
-		Transport.send(createMessage());
+		Transport.send(createMessage(message));
 
-	}
-
-	@Override
-	public void run() {
-		try {
-			sendMail();
-		} catch (final MessagingException ex) {
-			Logger.getLogger(MailSender.class.getName())
-					.severe(ex.getMessage());
-		}
 	}
 
 	/**
