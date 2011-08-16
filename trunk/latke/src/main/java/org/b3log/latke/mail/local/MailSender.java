@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2009, 2010, 2011, B3log Team
-
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +16,15 @@
 package org.b3log.latke.mail.local;
 
 import java.util.Properties;
-
-
 import java.util.Set;
-
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
-
 import org.b3log.latke.mail.MailService;
 
 /**
@@ -38,211 +32,160 @@ import org.b3log.latke.mail.MailService;
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.0, Aug 16, 2011
  */
 public final class MailSender {
 
-	/**
-	 * The default encoding:utf-8.
-	 */
-	public static final String DEFAULT_ENCODING = "utf-8";
+    /**
+     * set default sessionDebug.
+     */
+    private boolean sessionDebug = false;
+    /**
+     * mail host.
+     */
+    private String mailHost;
+    /**
+     * username of the mailHost account.
+     */
+    private String username;
+    /**
+     * password of the mailHost account.
+     */
+    private String password;
+    /**
+     * mailSender.
+     */
+    private static MailSender mailSender;
 
-	/**
-	 * The default debugSession:false.
-	 */
-	public static final boolean DEFAULT_SESSION_DEBUG = false;
+    /**
+     * private constructor.
+     */
+    private MailSender() {
+    }
 
-	/**
-	 * set default encoding.
-	 */
-	private String encoding = DEFAULT_ENCODING;
+    /**
+     * Assign values ​​to variables.
+     * 
+     * @param username
+     * @param password
+     * @param encoding
+     * @param mailHost
+     * @param sessionDebug
+     */
+    public static void init(final String username, final String password,
+                            final String encoding, final String mailHost,
+                            final boolean sessionDebug) {
+        mailSender = new MailSender();
+        mailSender.username = username;
+        mailSender.password = password;
+        mailSender.mailHost = mailHost;
+        mailSender.sessionDebug = sessionDebug;
+    }
 
-	/**
-	 * set default sessionDebug.
-	 */
-	private boolean sessionDebug = DEFAULT_SESSION_DEBUG;
+    /**
+     * Assign values ​​to variables.
+     * 
+     * @param username
+     * @param password
+     * @param mailHost
+     * @param debugSession
+     */
+    public static void init(final String username, final String password,
+                            final String mailHost, final boolean debugSession) {
+        init(username, password, null, mailHost, debugSession);
+    }
 
-	/**
-	 * mail host.
-	 */
-	private String mailHost;
+    /**
+     * Gets mailSender.
+     * 
+     * @return mailSender
+     * @throws MessagingException  
+     */
+    protected static MailSender getInstance()
+            throws MessagingException {
+        if (mailSender == null) {
+            throw new MessagingException("MailSender is not init...");
 
-	/**
-	 * username of the mailHost account.
-	 */
-	private String username;
+        }
 
-	/**
-	 * password of the mailHost account.
-	 */
-	private String password;
+        return mailSender;
+    }
 
-	/**
-	 * mailSender.
-	 */
-	private static MailSender mailSender;
+    /**
+     * create java.mail.Message.
+     * 
+     * @param message 
+     * @return java.mail.Message
+     * @throws MessagingException
+     */
+    public javax.mail.Message createMessage(final MailService.Message message)
+            throws MessagingException {
 
-	/**
-	 * private constructor.
-	 */
-	private MailSender() {
+        /*
+         * Properties used to construct a email.
+         * sending connection protocal
+         */
 
-	}
+        final Properties props = new Properties();
+        props.put("mail.smtp.host", this.mailHost);
+        props.put("mail.smtp.auth", "true");
 
-	/**
-	 * Assign values ​​to variables.
-	 * 
-	 * @param username
-	 * @param password
-	 * @param encoding
-	 * @param mailHost
-	 * @param sessionDebug
-	 */
-	public static void init(final String username, final String password,
-			final String encoding, final String mailHost,
-			final boolean sessionDebug) {
-		mailSender = new MailSender();
-		mailSender.username = username;
-		mailSender.password = password;
-		mailSender.encoding = encoding == null ? DEFAULT_ENCODING : encoding;
-		mailSender.mailHost = mailHost;
-		mailSender.sessionDebug = sessionDebug == false ? DEFAULT_SESSION_DEBUG
-				: sessionDebug;
+        final Authenticator auth = new SMTPAuthenticator();
+        Session session = Session.getDefaultInstance(props, auth);
+        session.setDebug(this.sessionDebug);
+        final MimeMessage mimeMessage = new MimeMessage(session);
+        mimeMessage.setFrom(new InternetAddress(message.getFrom()));
+        mimeMessage.setSubject(message.getSubject());
+        mimeMessage.setContent(message.getHtmlBody(), "text/html;charset=UTF-8");
+        mimeMessage.addRecipients(RecipientType.TO,
+                                  transformRecipients(message.getRecipients()));
 
-	}
+        return mimeMessage;
+    }
 
-	/**
-	 * Assign values ​​to variables.
-	 * 
-	 * @param username
-	 * @param password
-	 * @param mailHost
-	 */
-	public static void init(final String username, final String password,
-			final String mailHost) {
-		init(username, password, null, mailHost, false);
-	}
+    /**
+     * transport recipients to InternetAddress[].
+     * 
+     * @param recipients
+     * @return
+     * @throws MessagingException
+     */
+    private InternetAddress[] transformRecipients(final Set<String> recipients)
+            throws MessagingException {
+        if (recipients.isEmpty()) {
+            throw new MessagingException(
+                    "recipient for Mail should not be null");
+        }
+        InternetAddress[] realRecipients =
+                new InternetAddress[recipients.size()];
+        int i = 0;
+        for (String recipient : recipients) {
+            realRecipients[i++] = new InternetAddress(recipient);
+        }
+        return realRecipients;
+    }
 
-	/**
-	 * Assign values ​​to variables.
-	 * 
-	 * @param username
-	 * @param password
-	 * @param mailHost
-	 * @param debugSession
-	 */
-	public static void init(final String username, final String password,
-			final String mailHost, boolean debugSession) {
-		init(username, password, null, mailHost, debugSession);
-	}
+    /**
+     * Sends email.
+     * 
+     * @param message 
+     * @throws MessagingException
+     *             message exception
+     */
+    public void sendMail(final MailService.Message message)
+            throws MessagingException {
+        Transport.send(createMessage(message));
+    }
 
-	/**
-	 * Assign values ​​to variables.
-	 * 
-	 * @param username
-	 * @param password
-	 * @param encoding
-	 * @param mailHost
-	 */
-	public static void init(final String username, final String password,
-			final String encoding, final String mailHost) {
-		init(username, password, encoding, mailHost, false);
+    /**
+     * Inner class for Authenticator.
+     */
+    private class SMTPAuthenticator extends Authenticator {
 
-	}
-
-	/**
-	 * Gets mailSender.
-	 * 
-	 * @param message
-	 * @return mailSender
-	 * @throws ServiceException
-	 */
-	protected static MailSender getInstance()
-			throws MessagingException {
-		if (mailSender == null) {
-			throw new MessagingException("MailSender is not init...");
-
-		}
-
-		return mailSender;
-	}
-
-	/**
-	 * create java.mail.Message.
-	 * 
-	 * @return java.mail.Message
-	 * @throws MessagingException
-	 */
-	public javax.mail.Message createMessage(MailService.Message message)
-			throws MessagingException {
-
-		/*
-		 * Properties used to construct a email.
-		 * sending connection protocal
-		 */
-
-		final Properties props = new Properties();
-		props.put("mail.smtp.host", this.mailHost);
-		props.put("mail.smtp.auth", "true");
-
-		final Authenticator auth = new SMTPAuthenticator();
-		Session session = Session.getDefaultInstance(props, auth);
-		session.setDebug(this.sessionDebug);
-		final MimeMessage mimeMessage = new MimeMessage(session);
-		mimeMessage.setFrom(new InternetAddress(message.getFrom()));
-		mimeMessage.setSubject(message.getSubject());
-		mimeMessage.setContent(message.getHtmlBody(), "text/html;charset="
-				+ this.encoding);
-
-		mimeMessage.addRecipients(RecipientType.TO,
-				transformRecipients(message.getRecipients()));
-
-		return mimeMessage;
-	}
-
-	/**
-	 * transport recipients to InternetAddress[].
-	 * 
-	 * @param recipients
-	 * @return
-	 * @throws MessagingException
-	 */
-	private InternetAddress[] transformRecipients(Set<String> recipients)
-			throws MessagingException {
-		if (recipients.size() == 0) {
-			throw new MessagingException(
-					"recipient for Mail should not be null");
-		}
-		InternetAddress[] realRecipients = new InternetAddress[recipients
-				.size()];
-		int i = 0;
-		for (String recipient : recipients) {
-			realRecipients[i++] = new InternetAddress(recipient);
-		}
-		return realRecipients;
-	}
-
-	/**
-	 * Sends email.
-	 * 
-	 * @throws MessagingException
-	 *             message exception
-	 */
-	public void sendMail(MailService.Message message) throws MessagingException {
-
-		Transport.send(createMessage(message));
-
-	}
-
-	/**
-	 * Inner class for Authenticator.
-	 */
-	private class SMTPAuthenticator extends Authenticator {
-
-		@Override
-		public PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(MailSender.this.username,
-					MailSender.this.password);
-		}
-	}
-
+        @Override
+        public PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(MailSender.this.username,
+                                              MailSender.this.password);
+        }
+    }
 }

@@ -277,13 +277,13 @@
                     <configLocation>${basedir}/src/main/resources/etc/beyondtrack_checks.xml</configLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <excludes>
-						org/json/*.java
+                        org/json/*.java
                     </excludes>
                     <consoleOutput>true</consoleOutput>
                     <failOnViolation>true</failOnViolation>
                     <failsOnError>true</failsOnError>
                     <encoding>UTF-8</encoding>
-					<!-- Do NOT skip code style check before committing -->
+                    <!-- Do NOT skip code style check before committing -->
                     <skip>false</skip>
                 </configuration>
                 <executions>

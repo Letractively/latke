@@ -26,41 +26,28 @@ import javax.mail.MessagingException;
 import org.b3log.latke.mail.MailService;
 
 /**
- * Production implementation of the {@link MailService} interface.
+ * Implementation of the {@link MailService} interface.
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
+ * @version 1.0.0.0, Aug 16, 2011
  */
-public class LocalMailService implements MailService {
+public final class LocalMailService implements MailService {
 
-	@Override
-	public void send(final Message message) throws IOException {
+    @Override
+    public void send(final Message message) throws IOException {
+        new Thread(new Runnable() {
 
-		sendMailByAsynchronous(message);
-		
-	}
+            @Override
+            public void run() {
 
-	
+                try {
+                    MailSender.getInstance().sendMail(message);
+                } catch (final MessagingException ex) {
+                    Logger.getLogger(LocalMailService.class.getName()).severe(
+                            ex.getMessage());
+                }
 
-	/**
-	 * Asynchronous send mails.
-	 * 
-	 * @param message
-	 */
-	private void sendMailByAsynchronous(final Message message) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-					MailSender.getInstance().sendMail(message);
-				} catch (final MessagingException ex) {
-					Logger.getLogger(LocalMailService.class.getName()).severe(
-							ex.getMessage());
-				}
-
-			}
-		});
-	}
-
+            }
+        }).start();
+    }
 }
