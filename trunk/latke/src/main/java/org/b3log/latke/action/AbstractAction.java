@@ -42,7 +42,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.7, Aug 5, 2011
+ * @version 1.0.3.8, Aug 18, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -180,7 +180,8 @@ public abstract class AbstractAction extends HttpServlet {
      * obtained substring:
      *   <ul>
      *     <li>is empty or null, returns "index.ftl"</li>
-     *     <li>else if it ends with ".do", replace ".do" with ".ftl" then return it</li>
+     *     <li>else if it ends with ".do" or ".html", replace ".do"/".html" 
+     *     with ".ftl" then return it</li>
      *     <li>else appends ".ftl" on it then return it</li>
      *   </ul>
      * </p>
@@ -197,6 +198,10 @@ public abstract class AbstractAction extends HttpServlet {
             ret = "index.ftl";
         } else if (ret.endsWith(".do")) { // "xxx.do" -> "xxx.ftl"
             idx = ret.lastIndexOf(".do");
+            ret = ret.substring(0, idx);
+            ret += ".ftl";
+        } else if (ret.endsWith(".html")) { // "xxx.html" -> "xxx.ftl"
+            idx = ret.lastIndexOf(".html");
             ret = ret.substring(0, idx);
             ret += ".ftl";
         } else { // "xxx" -> "xxx.ftl"
