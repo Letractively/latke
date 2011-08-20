@@ -64,7 +64,7 @@ import org.json.JSONObject;
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.2, Aug 9, 2011
+ * @version 1.0.3.3, Aug 20, 2011
  */
 public abstract class AbstractGAERepository implements GAERepository {
 
@@ -528,8 +528,6 @@ public abstract class AbstractGAERepository implements GAERepository {
             throws RepositoryException {
         final Query query = new Query(getName());
         for (final Filter filter : filters) {
-            query.addSort(filter.getKey(), Query.SortDirection.DESCENDING);
-
             Query.FilterOperator filterOperator = null;
             switch (filter.getOperator()) {
                 case EQUAL:
@@ -565,7 +563,7 @@ public abstract class AbstractGAERepository implements GAERepository {
             } else {
                 querySortDirection = Query.SortDirection.DESCENDING;
             }
-
+            
             query.addSort(sort.getKey(), querySortDirection);
         }
 
