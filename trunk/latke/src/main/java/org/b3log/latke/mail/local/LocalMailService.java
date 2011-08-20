@@ -19,35 +19,46 @@ import java.io.IOException;
 
 
 
+
+
+
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
 
 import org.b3log.latke.mail.MailService;
 
+
 /**
  * Implementation of the {@link MailService} interface.
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
- * @version 1.0.0.0, Aug 16, 2011
+ * @version 0.0.0.2, Aug 20, 2011
  */
 public final class LocalMailService implements MailService {
 
     @Override
     public void send(final Message message) throws IOException {
-        new Thread(new Runnable() {
-
+        
+        final ExecutorService threadExector = Executors.newCachedThreadPool();
+        threadExector.execute(new Thread(new Runnable() {
+            
             @Override
             public void run() {
-
                 try {
-                    MailSender.getInstance().sendMail(message);
+                    new MailSender().sendMail(message);
                 } catch (final MessagingException ex) {
-                    Logger.getLogger(LocalMailService.class.getName()).severe(
-                            ex.getMessage());
+                    
+                    Logger.getLogger(LocalMailService.class.getName())
+                    .severe(ex.getMessage());
                 }
-
+                
             }
-        }).start();
+        }));
     }
+    
+   
 }
