@@ -15,8 +15,14 @@
  */
 package org.b3log.latke.mail.local;
 
+
 import java.util.Properties;
+
+
+
 import java.util.Set;
+import java.util.logging.Logger;
+
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -26,102 +32,163 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 import org.b3log.latke.mail.MailService;
+import org.b3log.latke.util.PropertyReader;
 
 /**
  * Email sender.
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 16, 2011
+ * @version 0.0.0.2, Aug 20, 2011
  */
 public final class MailSender {
-
+    
     /**
-     * set default sessionDebug.
+     * Mail property.
      */
-    private boolean sessionDebug = false;
+    private final Properties mailProperty;
+    
     /**
-     * mail host.
+     * Protected constructor.
+     * Get mail properties of the sender
+     * <p>mail properties example</p>
+     * <pre>
+     *     <code>mail.username=username</code>
+     *     <code>mail.password=password</code>
+     *     <code>mail.smtp.host=smtp.xxx.com</code>
+     *     <code>mail.smtp.auth=true</code>
+     *     <code>mail.debug=false</code>
+     *  </pre>
+     *  mail properties should be in the directory WEB-INF/classes/mail.properties
      */
-    private String mailHost;
-    /**
-     * username of the mailHost account.
-     */
-    private String username;
-    /**
-     * password of the mailHost account.
-     */
-    private String password;
-    /**
-     * mailSender.
-     */
-    private static MailSender mailSender;
-
-    /**
-     * private constructor.
-     */
-    private MailSender() {
+    protected MailSender() {
+        mailProperty = PropertyReader.getProperties("mail.properties");
+        
     }
 
-    /**
-     * Assign values ​​to variables.
-     * 
-     * @param username xxx
-     * @param password xxx
-     * @param mailHost xxx
-     * @param debugSession xxx
-     */
-    public static void init(final String username, final String password,
-                            final String mailHost, final boolean debugSession) {
-        mailSender = new MailSender();
-        mailSender.username = username;
-        mailSender.password = password;
-        mailSender.mailHost = mailHost;
-        mailSender.sessionDebug = debugSession;
+   /**
+    * Create session based on the mail properties.
+    * 
+    * @return session session from mail properties
+    */
+    private Session getSession() {
+        final Properties props = new Properties();
+        props.setProperty("mail.smtp.host", getHost());
+        props.setProperty("mail.smtp.auth", getAuth());
+        final Session session = Session.getDefaultInstance(props
+                , new SMTPAuthenticator());
+        session.setDebug(getDebug());
+        return session;
     }
-
+    
     /**
-     * Gets mailSender.
+     * Get session debug from mail properties.
      * 
-     * @return mailSender xxx
-     * @throws MessagingException   xxx
+     * @return session debug
      */
-    protected static MailSender getInstance()
-            throws MessagingException {
-        if (mailSender == null) {
-            throw new MessagingException("MailSender is not init...");
-
+    private boolean getDebug() {
+        String debugStr = mailProperty.getProperty("mail.debug");
+        if (debugStr == null) {
+            return false;
         }
-
-        return mailSender;
+        debugStr = debugStr.trim();
+        if (debugStr.equals("")) {
+            return false;
+        }
+        final boolean debug = Boolean.valueOf(debugStr);
+        
+        return debug;
+       
+    }
+    
+    /**
+     * Get mail smtp host form mail properties.
+     * 
+     * @return mail host
+     */
+    private String getHost() {
+        String host = "";
+        try {
+            host =  mailProperty.getProperty("mail.smtp.host").trim();
+        } catch (final NullPointerException ex) {
+            Logger.getLogger(MailSender.class.getName())
+            .severe(ex.getMessage());
+        }
+        
+        return host;
+    }
+    
+    /**
+     * Get mail smtp auth from mail properties.
+     * 
+     * @return mail smtp auth
+     */
+    private String getAuth() {
+        String auth = "";
+        try {
+            auth =  mailProperty.getProperty("mail.smtp.auth").trim();
+        } catch (final NullPointerException ex) {
+            Logger.getLogger(MailSender.class.getName())
+            .severe(ex.getMessage());
+        }
+                
+        return auth;
+    }
+    
+    /**
+     * Get mail username form mail properties.
+     * 
+     * @return mail username
+     */
+    private String getUsername() {
+        String username = "";
+        try {
+            username =  mailProperty.getProperty("mail.username").trim();
+        } catch (final NullPointerException ex) {
+            Logger.getLogger(MailSender.class.getName())
+            .severe(ex.getMessage());
+        }
+        return username;
+    }
+    
+    /**
+     * Gets mail password from mail properties.
+     * 
+     * @return mail password
+     */
+    private String getPassword() {
+        String password = "";
+        try {
+            password = mailProperty.getProperty("mail.password").trim();
+        } catch (final NullPointerException ex) {
+            Logger.getLogger(MailSender.class.getName())
+            .severe(ex.getMessage());
+        }
+        return password;
     }
 
     /**
-     * create java.mail.Message.
+     * Create java.mail.Message with the specified message.
      * 
-     * @param message  xxx
-     * @return java.mail.Message xxx
-     * @throws MessagingException xxx
+     * @param message  the specified message
+     * @return java.mail.Message mimeMessage
+     * @throws MessagingException messageException from javax.mail
      */
     public javax.mail.Message createMessage(final MailService.Message message)
             throws MessagingException {
-
-        /*
-         * Properties used to construct a email.
-         * sending connection protocal
-         */
-
-        final Properties props = new Properties();
-        props.put("mail.smtp.host", this.mailHost);
-        props.put("mail.smtp.auth", "true");
-
-        final Authenticator auth = new SMTPAuthenticator();
-        final Session session = Session.getDefaultInstance(props, auth);
-        session.setDebug(this.sessionDebug);
-        final MimeMessage mimeMessage = new MimeMessage(session);
+        if (message == null) {
+            throw new MessagingException("message should not be null");
+        }
+        final MimeMessage mimeMessage = new MimeMessage(getSession());
         mimeMessage.setFrom(new InternetAddress(message.getFrom()));
-        mimeMessage.setSubject(message.getSubject());
-        mimeMessage.setContent(message.getHtmlBody(), "text/html;charset=UTF-8");
+        final String subject = message.getSubject();                   
+        mimeMessage.setSubject(subject != null
+                ? subject : ""
+               );
+        final String htmlBody = message.getHtmlBody();
+        mimeMessage.setContent(htmlBody != null
+                ? htmlBody :""
+                , "text/html;charset=UTF-8");
         mimeMessage.addRecipients(RecipientType.TO,
                                   transformRecipients(message.getRecipients()));
 
@@ -129,11 +196,11 @@ public final class MailSender {
     }
 
     /**
-     * transport recipients to InternetAddress[].
+     * Transport recipients to InternetAddress array.
      * 
-     * @param recipients xxx
-     * @return xxx
-     * @throws MessagingException xxx
+     * @param recipients the set of all recipients
+     * @return  InternetAddress array of all recipients internetAddress
+     * @throws MessagingException messagingException from javax.mail
      */
     private InternetAddress[] transformRecipients(final Set<String> recipients)
             throws MessagingException {
@@ -153,7 +220,7 @@ public final class MailSender {
     /**
      * Sends email.
      * 
-     * @param message  xxx
+     * @param message  the specified message
      * @throws MessagingException message exception
      */
     public void sendMail(final MailService.Message message)
@@ -168,8 +235,8 @@ public final class MailSender {
 
         @Override
         public PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(MailSender.this.username,
-                                              MailSender.this.password);
+            return new PasswordAuthentication(MailSender.this.getUsername(),
+                    MailSender.this.getPassword());
         }
     }
 }

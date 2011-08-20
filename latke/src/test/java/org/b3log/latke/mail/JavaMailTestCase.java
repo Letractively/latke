@@ -18,9 +18,13 @@ package org.b3log.latke.mail;
 import java.io.IOException;
 
 
+
+
+
 import org.b3log.latke.mail.MailService.Message;
 import org.b3log.latke.mail.local.LocalMailService;
-import org.b3log.latke.mail.local.MailSender;
+
+
 
 /**
  * 
@@ -30,32 +34,21 @@ import org.b3log.latke.mail.local.MailSender;
 public final class JavaMailTestCase {
 
     /**
-     * XXX.
+     * Test localMailService.
      * 
-     * @param args xxx
-     * @throws IOException xxx
+     * @param args string array
+     * @throws IOException IOException from java.io
      */
     public static void main(final String[] args) throws IOException {
-        MailSender.init("b3log_team", "b3logteam", "smtp.163.com", true);
-        //MailSender.init("b3log_team", "b3logteam", "ISO_8859_1", "smtp.163.com");
-        //MailSender.init("b3log_team", "b3logteam", "smtp.163.com");
-        //MailSender.init("b3log_team", "b3logteam", "smtp.163.com", true);
-
-        //Latkes.initRuntimeEnv();
-        //MailService mailService = MailServiceFactory.getMailService();
-
-        final MailService mailService = new LocalMailService();
         final Message message = new Message();
-        message.setFrom("b3log_team@163.com");
-        message.setSubject("又一次测试,iso_8859_1");
-        message.setHtmlBody(
-                "<html><body><font color='red'>沮丧</font></body></html>");
-        message.addRecipient("jiangzezhou1989@163.com");
+        message.setFrom("jiangzezhou1989@163.com");
+        message.setSubject("dd");
+        message.setHtmlBody("<htmL><body>测试</body><html>");
         message.addRecipient("jiangzezhou1989@yahoo.com.cn");
-        mailService.send(message);
-        mailService.send(message);
+        new LocalMailService().send(message);
     }
 
+    
     /**
      * Private default constructor.
      */
