@@ -18,13 +18,12 @@ package org.b3log.latke.urlfetch.local;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-
 import org.b3log.latke.urlfetch.HTTPRequest;
 
 /**
  * Specific Handler for urlfetch.
  * 
- * match {@link HTTPRequestMethod}<br>POST</br>
+ * match {@link org.b3log.latke.servlet.HTTPRequestMethod}<br>POST</br>
  * Override {@link #configConnection(HttpURLConnection, HTTPRequest)}
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>

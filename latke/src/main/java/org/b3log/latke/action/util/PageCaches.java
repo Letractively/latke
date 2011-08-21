@@ -259,7 +259,7 @@ public final class PageCaches {
     }
 
     /**
-     * Synchronizes the {@linkplain #PAGES keys} collection and cached page
+     * Synchronizes the {@linkplain #KEYS keys} collection and cached page
      * objects.
      */
     public static void syncKeys() {

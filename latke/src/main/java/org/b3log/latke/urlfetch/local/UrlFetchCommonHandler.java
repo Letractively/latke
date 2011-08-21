@@ -28,7 +28,7 @@ import org.b3log.latke.urlfetch.HTTPResponse;
 /**
  * commonHandler for urlfetch.
  *
- * match {@link HTTPRequestMethod}<br>GET, HEAD</br>
+ * match {@link org.b3log.latke.servlet.HTTPRequestMethod}<br>GET, HEAD</br>
  * the core method is {@link #doFetch(HTTPRequest)}
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
@@ -138,7 +138,7 @@ class UrlFetchCommonHandler {
     /**
      * 
      * @param is {@link InputStream}
-     * @return {@link Byte[]}
+     * @return Byte[]
      * @throws IOException from java.io
      */
     // XXX need to move to 'util'
