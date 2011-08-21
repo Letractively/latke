@@ -44,7 +44,7 @@ import org.json.JSONObject;
  * 
  * <p>
  * Id of a plugin is {@linkplain #name name}_{@linkplain #version version}.
- * See {@link PluginLoader#setPluginProps} for more details. If the id of one 
+ * See {@link PluginManager#setPluginProps} for more details. If the id of one 
  * plugin {@linkplain #equals(java.lang.Object) equals} to another's, 
  * considering they are the same.
  * </p>
