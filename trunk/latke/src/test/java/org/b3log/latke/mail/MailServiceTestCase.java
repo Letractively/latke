@@ -16,42 +16,39 @@
 package org.b3log.latke.mail;
 
 import java.io.IOException;
-
-
-
-
-
+import org.b3log.latke.Latkes;
 import org.b3log.latke.mail.MailService.Message;
-import org.b3log.latke.mail.local.LocalMailService;
-
-
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
- * @version 1.0.0.0, Aug 16, 2011
+ * @version 1.0.0.1, Aug 21, 2011
  */
-public final class JavaMailTestCase {
+public final class MailServiceTestCase {
+
+    static {
+        Latkes.initRuntimeEnv();
+    }
 
     /**
-     * Test localMailService.
+     * Tests mail sending.
      * 
-     * @param args string array
-     * @throws IOException IOException from java.io
+     * @throws IOException if error
      */
-    public static void main(final String[] args) throws IOException {
+    @Test
+    public void testSendMail() throws IOException {
+        System.out.println("testSendMail");
+        final MailService mailService =
+                MailServiceFactory.getMailService();
+
         final Message message = new Message();
-        message.setFrom("jiangzezhou1989@163.com");
+        message.setFrom("b3log.solo@163.com");
         message.setSubject("dd");
         message.setHtmlBody("<htmL><body>测试</body><html>");
         message.addRecipient("jiangzezhou1989@yahoo.com.cn");
-        new LocalMailService().send(message);
-    }
+        message.addRecipient("DL88250@gmail.com");
 
-    
-    /**
-     * Private default constructor.
-     */
-    private JavaMailTestCase() {
+        mailService.send(message);
     }
 }

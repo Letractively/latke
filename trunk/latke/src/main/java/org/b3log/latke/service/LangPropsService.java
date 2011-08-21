@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Jan 12, 2011
+ * @version 1.0.1.3, Aug 21, 2011
  */
 public final class LangPropsService {
 
@@ -54,17 +54,14 @@ public final class LangPropsService {
      *
      * @param locale the specified locale
      * @return a map of language configurations
-     * @throws ServiceException service exception
      */
-    public Map<String, String> getAll(final Locale locale) throws
-            ServiceException {
+    public Map<String, String> getAll(final Locale locale) {
         Map<String, String> ret = LANGS.get(locale);
 
         if (null == ret) {
             ret = new HashMap<String, String>();
             ResourceBundle langBundle = null;
             try {
-
                 langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
             } catch (final MissingResourceException e) {
                 LOGGER.log(Level.WARNING,
@@ -117,9 +114,8 @@ public final class LangPropsService {
      *     ]
      * }
      * </pre>
-     * @throws ServiceException service exception
      */
-    public JSONObject getLabels(final Locale locale) throws ServiceException {
+    public JSONObject getLabels(final Locale locale) {
         final JSONObject ret = new JSONObject();
         ResourceBundle langBundle = null;
 
@@ -150,8 +146,6 @@ public final class LangPropsService {
             }
         } catch (final JSONException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
-            throw new ServiceException(e);
         }
 
         return ret;

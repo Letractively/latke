@@ -115,12 +115,7 @@ public final class Latkes {
                        Latkes.getRuntimeEnv());
         }
 
-        final RuntimeEnv env = getRuntimeEnv();
-        if (env.equals(RuntimeEnv.LOCAL)) {
-            // TODO: getRepositoryPath();
-            throw new UnsupportedOperationException(
-                    "Not support Local Repository yet!");
-        }
+        // TODO: getRepositoryPath();
     }
 
     /**

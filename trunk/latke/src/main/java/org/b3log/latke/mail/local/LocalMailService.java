@@ -16,21 +16,9 @@
 package org.b3log.latke.mail.local;
 
 import java.io.IOException;
-
-
-
-
-
-
-
-
-
 import java.util.logging.Logger;
-
 import javax.mail.MessagingException;
-
 import org.b3log.latke.mail.MailService;
-
 
 /**
  * Implementation of the {@link MailService} interface.
@@ -42,22 +30,19 @@ public final class LocalMailService implements MailService {
 
     @Override
     public void send(final Message message) throws IOException {
-        
-          new Thread(new Runnable() {
-            
+        // TODO: zezhou jiang, throws ioexception while send fails
+
+        new Thread(new Runnable() {
+
             @Override
             public void run() {
                 try {
                     new MailSender().sendMail(message);
                 } catch (final MessagingException ex) {
-                    
-                    Logger.getLogger(LocalMailService.class.getName())
-                    .severe(ex.getMessage());
+                    Logger.getLogger(LocalMailService.class.getName()).severe(ex.
+                            getMessage());
                 }
-                
             }
         }).start();
     }
-    
-   
 }

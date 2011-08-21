@@ -21,8 +21,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
-
-import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.urlfetch.HTTPHeader;
 import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
@@ -37,7 +35,7 @@ import org.b3log.latke.urlfetch.HTTPResponse;
  * @version 0.0.0.2, Aug 15, 2011
  * 
  */
-public class UrlFetchCommonHandler {
+class UrlFetchCommonHandler {
 
     /**
      * doFetch- the template method.
@@ -49,17 +47,16 @@ public class UrlFetchCommonHandler {
      * @param request  the specified request
      * @return {@link HTTPResponse}
      * @throws IOException IOException from java.net
-     * @throws ServiceException serviceException from org.b3log.latke.urlfetch.local
      */
-    protected HTTPResponse doFetch(final HTTPRequest request) throws IOException, ServiceException {
+    protected HTTPResponse doFetch(final HTTPRequest request) throws IOException {
 
         final HttpURLConnection httpURLConnection = prepareConnection(request);
         configConnection(httpURLConnection, request);
         httpURLConnection.connect();
-        final HTTPResponse httpResponse = resultConnection(httpURLConnection);
+        final HTTPResponse ret = resultConnection(httpURLConnection);
         // httpURLConnection.disconnect();
 
-        return httpResponse;
+        return ret;
     }
 
     /**
@@ -67,21 +64,21 @@ public class UrlFetchCommonHandler {
      * @param request the specified HTTP request
      * @return {@link HttpURLConnection}
      * @throws IOException IOException from java.net
-     * @throws ServiceException serviceException from org.b3log.latke.urlfetch.local
      */
-    protected HttpURLConnection prepareConnection(final HTTPRequest request) throws IOException,
-            ServiceException {
-
+    protected HttpURLConnection prepareConnection(final HTTPRequest request)
+            throws IOException {
         if (request.getURL() == null) {
-            throw new ServiceException("URL for URLFetch should not be null");
+            throw new IOException("URL for URLFetch should not be null");
         }
 
-        final HttpURLConnection connection = (HttpURLConnection) request.getURL().openConnection();
-        connection.setRequestMethod(request.getRequestMethod().toString());
+        final HttpURLConnection ret =
+                (HttpURLConnection) request.getURL().openConnection();
+        ret.setRequestMethod(request.getRequestMethod().toString());
 
         for (HTTPHeader httpHeader : request.getHeaders()) {
             // XXX set or add
-            connection.setRequestProperty(httpHeader.getName(), httpHeader.getValue());
+            ret.setRequestProperty(httpHeader.getName(), httpHeader.
+                    getValue());
         }
 
         // Properties prop = System.getProperties();
@@ -90,7 +87,7 @@ public class UrlFetchCommonHandler {
         // prop.setProperty("https.proxyHost", "10.1.2.188");
         // prop.setProperty("https.proxyPort", "80");
 
-        return connection;
+        return ret;
     }
 
     /**
@@ -98,11 +95,11 @@ public class UrlFetchCommonHandler {
      * @param httpURLConnection {@link HttpURLConnection}
      * @param request the specified HTTP request 
      * @throws IOException IOException from java.net
-      */
+     */
     protected void configConnection(final HttpURLConnection httpURLConnection,
-            final HTTPRequest request) throws IOException {
-
-    };
+                                    final HTTPRequest request) throws
+            IOException {
+    }
 
     /**
      * 
@@ -110,18 +107,19 @@ public class UrlFetchCommonHandler {
      * @return HTTPResponse the http response
      * @throws IOException IOException from java.net
      */
-    protected HTTPResponse resultConnection(final HttpURLConnection httpURLConnection)
+    protected HTTPResponse resultConnection(
+            final HttpURLConnection httpURLConnection)
             throws IOException {
+        final HTTPResponse ret = new HTTPResponse();
 
-        final HTTPResponse httpResponse = new HTTPResponse();
+        ret.setResponseCode(httpURLConnection.getResponseCode());
+        ret.setFinalURL(httpURLConnection.getURL());
+        ret.setContent(inputStreamToByte(httpURLConnection.
+                getInputStream()));
 
-        httpResponse.setResponseCode(httpURLConnection.getResponseCode());
-        httpResponse.setFinalURL(httpURLConnection.getURL());
-        httpResponse.setContent(inputStreamToByte(httpURLConnection.getInputStream()));
+        fillHttpResponseHeader(ret, httpURLConnection.getHeaderFields());
 
-        fillHttpResponseHeader(httpResponse, httpURLConnection.getHeaderFields());
-
-        return httpResponse;
+        return ret;
     }
 
     /**
@@ -130,12 +128,11 @@ public class UrlFetchCommonHandler {
      * @param headerFields headerFiedls in HTTP response
      */
     protected void fillHttpResponseHeader(final HTTPResponse httpResponse,
-            final Map<String, List<String>> headerFields) {
-
+                                          final Map<String, List<String>> headerFields) {
         for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
-            httpResponse.addHeader(new HTTPHeader(entry.getKey(), entry.getValue().toString()));
+            httpResponse.addHeader(new HTTPHeader(entry.getKey(),
+                                                  entry.getValue().toString()));
         }
-
     }
 
     /**
@@ -151,9 +148,10 @@ public class UrlFetchCommonHandler {
         while ((ch = is.read()) != -1) {
             bytestream.write(ch);
         }
-        final byte[] imgdata = bytestream.toByteArray();
+        
+        final byte[] ret = bytestream.toByteArray();
         bytestream.close();
-        return imgdata;
-    }
 
+        return ret;
+    }
 }
