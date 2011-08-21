@@ -21,40 +21,39 @@ import org.b3log.latke.servlet.HTTPRequestMethod;
  * UrlFetchHandlerFactory to get  UrlFetchHandler.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.2, Aug 15, 2011
+ * @version 0.0.0.3, Aug 21, 2011
  * 
  */
-public final class UrlFetchHandlerFactory {
+final class UrlFetchHandlerFactory {
 
     /**
      * 
      * @param requestMethod {@link HTTPRequestMethod}
      * @return {@link UrlFetchCommonHandler}
      */
-    public static UrlFetchCommonHandler getFetchHandler(final HTTPRequestMethod requestMethod) {
+    public static UrlFetchCommonHandler getFetchHandler(
+            final HTTPRequestMethod requestMethod) {
+        UrlFetchCommonHandler ret = null;
 
-        UrlFetchCommonHandler fetchHandler = null;
-
-        /**
+        /*
          * now just Distinguish POST and the others.
          */
         switch (requestMethod) {
-        case POST:
-            fetchHandler = new UrlFetchPostHandler();
-            break;
-        default:
-            fetchHandler = new UrlFetchCommonHandler();
-            break;
+            case POST:
+                ret = new UrlFetchPostHandler();
+                break;
+            default:
+                ret = new UrlFetchCommonHandler();
+                break;
 
         }
-        return fetchHandler;
+
+        return ret;
     }
 
     /**
-     * private construction method.
+     * Private construction method.
      */
     private UrlFetchHandlerFactory() {
-
     }
-
 }

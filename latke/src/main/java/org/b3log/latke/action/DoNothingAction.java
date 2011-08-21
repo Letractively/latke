@@ -18,12 +18,10 @@ package org.b3log.latke.action;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.service.LangPropsService;
-import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Locales;
 import org.json.JSONObject;
 
@@ -57,16 +55,11 @@ public class DoNothingAction extends AbstractAction {
         LOGGER.finest("Do nothing action[FreeMarker action]");
         final Map<String, Object> ret = new HashMap<String, Object>();
 
-        try {
-            final Locale locale = Locales.getLocale(request);
-            Locales.setLocale(request, locale);
+        final Locale locale = Locales.getLocale(request);
+        Locales.setLocale(request, locale);
 
-            final Map<String, String> langs = langPropsService.getAll(locale);
-            ret.putAll(langs);
-        } catch (final ServiceException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ActionException("Language model fill error");
-        }
+        final Map<String, String> langs = langPropsService.getAll(locale);
+        ret.putAll(langs);
 
         return ret;
     }

@@ -31,18 +31,19 @@ import org.b3log.latke.urlfetch.HTTPRequest;
  * @version 0.0.0.2, Aug 15, 2011
  * 
  */
-public class UrlFetchPostHandler extends UrlFetchCommonHandler {
- 
-    @Override
-    protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
-            throws IOException {
+class UrlFetchPostHandler extends UrlFetchCommonHandler {
 
+    @Override
+    protected void configConnection(final HttpURLConnection httpURLConnection,
+                                    final HTTPRequest request)
+            throws IOException {
         httpURLConnection.setDoOutput(true);
         httpURLConnection.setUseCaches(false);
 
         if (request.getPayload() != null) {
 
-            final OutputStream outputStream = httpURLConnection.getOutputStream();
+            final OutputStream outputStream =
+                    httpURLConnection.getOutputStream();
             outputStream.write(request.getPayload());
 
             outputStream.flush();
@@ -50,5 +51,4 @@ public class UrlFetchPostHandler extends UrlFetchCommonHandler {
         }
 
     }
-
 }

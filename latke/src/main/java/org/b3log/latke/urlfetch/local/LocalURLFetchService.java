@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.servlet.HTTPRequestMethod;
 import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
@@ -31,38 +28,32 @@ import org.b3log.latke.urlfetch.URLFetchService;
 /**
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.2, Aug 15, 2011
- * 
+ * @version 0.0.0.3, Aug 21, 2011
  */
-public class LocalURLFetchService implements URLFetchService {
+public final class LocalURLFetchService implements URLFetchService {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(LocalURLFetchService.class.getName());
+    private static final Logger LOGGER =
+            Logger.getLogger(LocalURLFetchService.class.getName());
 
     @Override
     public HTTPResponse fetch(final HTTPRequest request) throws IOException {
-
-        try {
-            final HTTPRequestMethod requestMethod = request.getRequestMethod();
-            if (requestMethod == null) {
-                throw new ServiceException(" requestMethod  for URLFetch should not be null");
-            }
-
-            return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(request);
-
-        } catch (final ServiceException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            return null;
+        final HTTPRequestMethod requestMethod = request.getRequestMethod();
+        if (requestMethod == null) {
+            throw new IOException(
+                    "RequestMethod  for URLFetch should not be null");
         }
 
+        return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(
+                request);
     }
 
     @Override
     public Future<?> fetchAsync(final HTTPRequest request) {
-
-        final FutureTask<HTTPResponse> futureTask = new FutureTask<HTTPResponse>(
+        final FutureTask<HTTPResponse> futureTask =
+                new FutureTask<HTTPResponse>(
                 new Callable<HTTPResponse>() {
 
                     @Override
@@ -74,5 +65,4 @@ public class LocalURLFetchService implements URLFetchService {
         return futureTask;
 
     }
-
 }

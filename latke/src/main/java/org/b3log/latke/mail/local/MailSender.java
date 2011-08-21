@@ -15,14 +15,10 @@
  */
 package org.b3log.latke.mail.local;
 
-
 import java.util.Properties;
-
-
-
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -31,8 +27,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
-import org.b3log.latke.mail.MailService;
-import org.b3log.latke.util.PropertyReader;
+import org.b3log.latke.mail.MailService.Message;
 
 /**
  * Email sender.
@@ -41,158 +36,108 @@ import org.b3log.latke.util.PropertyReader;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 0.0.0.2, Aug 20, 2011
  */
-public final class MailSender {
-    
-    /**
-     * Mail property.
-     */
-    private final Properties mailProperty;
-    
-    /**
-     * Protected constructor.
-     * Get mail properties of the sender
-     * <p>mail properties example</p>
-     * <pre>
-     *     <code>mail.username=username</code>
-     *     <code>mail.password=password</code>
-     *     <code>mail.smtp.host=smtp.xxx.com</code>
-     *     <code>mail.smtp.auth=true</code>
-     *     <code>mail.debug=false</code>
-     *  </pre>
-     *  mail properties should be in the directory WEB-INF/classes/mail.properties
-     */
-    protected MailSender() {
-        mailProperty = PropertyReader.getProperties("mail.properties");
-        
-    }
+final class MailSender {
 
-   /**
-    * Create session based on the mail properties.
-    * 
-    * @return session session from mail properties
-    */
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(MailSender.class.getName());
+    /**
+     * Mail configurations.
+     * 
+     * <ul>
+     *   <li>mail.user</li>
+     *   <li>mail.password</li>
+     *   <li>mail.smtp.host</li>
+     *   <li>mail.smtp.auth</li>
+     *   <li>mail.debug</li>
+     * </ul>
+     */
+    private final ResourceBundle mailProperties = ResourceBundle.getBundle(
+            "mail");
+
+    /**
+     * Create session based on the mail properties.
+     * 
+     * @return session session from mail properties
+     */
     private Session getSession() {
         final Properties props = new Properties();
         props.setProperty("mail.smtp.host", getHost());
-        props.setProperty("mail.smtp.auth", getAuth());
-        final Session session = Session.getDefaultInstance(props
-                , new SMTPAuthenticator());
-        session.setDebug(getDebug());
-        return session;
+        props.setProperty("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        final Session ret =
+                Session.getDefaultInstance(props, new SMTPAuthenticator());
+        ret.setDebug(getDebug());
+
+        return ret;
     }
-    
+
     /**
      * Get session debug from mail properties.
      * 
      * @return session debug
      */
     private boolean getDebug() {
-        String debugStr = mailProperty.getProperty("mail.debug");
-        if (debugStr == null) {
-            return false;
-        }
-        debugStr = debugStr.trim();
-        if (debugStr.equals("")) {
-            return false;
-        }
-        final boolean debug = Boolean.valueOf(debugStr);
-        
-        return debug;
-       
+        final String debugStr = mailProperties.getString("mail.debug");
+
+        return Boolean.valueOf(debugStr);
     }
-    
+
     /**
      * Get mail smtp host form mail properties.
      * 
      * @return mail host
      */
     private String getHost() {
-        String host = "";
-        try {
-            host =  mailProperty.getProperty("mail.smtp.host").trim();
-        } catch (final NullPointerException ex) {
-            Logger.getLogger(MailSender.class.getName())
-            .severe(ex.getMessage());
-        }
-        
-        return host;
+        return mailProperties.getString("mail.smtp.host");
     }
-    
+
     /**
-     * Get mail smtp auth from mail properties.
+     * Get mail user form mail properties.
      * 
-     * @return mail smtp auth
+     * @return mail user
      */
-    private String getAuth() {
-        String auth = "";
-        try {
-            auth =  mailProperty.getProperty("mail.smtp.auth").trim();
-        } catch (final NullPointerException ex) {
-            Logger.getLogger(MailSender.class.getName())
-            .severe(ex.getMessage());
-        }
-                
-        return auth;
+    private String getUser() {
+        return mailProperties.getString("mail.user");
     }
-    
-    /**
-     * Get mail username form mail properties.
-     * 
-     * @return mail username
-     */
-    private String getUsername() {
-        String username = "";
-        try {
-            username =  mailProperty.getProperty("mail.username").trim();
-        } catch (final NullPointerException ex) {
-            Logger.getLogger(MailSender.class.getName())
-            .severe(ex.getMessage());
-        }
-        return username;
-    }
-    
+
     /**
      * Gets mail password from mail properties.
      * 
      * @return mail password
      */
     private String getPassword() {
-        String password = "";
-        try {
-            password = mailProperty.getProperty("mail.password").trim();
-        } catch (final NullPointerException ex) {
-            Logger.getLogger(MailSender.class.getName())
-            .severe(ex.getMessage());
-        }
-        return password;
+        return mailProperties.getString("mail.password");
     }
 
     /**
-     * Create java.mail.Message with the specified message.
+     * Converts the specified message into a {@link javax.mail.Message 
+     * javax.mail.Message}.
      * 
-     * @param message  the specified message
-     * @return java.mail.Message mimeMessage
-     * @throws MessagingException messageException from javax.mail
+     * @param message the specified message
+     * @return a {@link javax.mail.internet.MimeMessage}
+     * @throws MessagingException if converts error 
      */
-    public javax.mail.Message createMessage(final MailService.Message message)
-            throws MessagingException {
+    public javax.mail.Message convert2JavaMailMsg(
+            final Message message) throws MessagingException {
         if (message == null) {
-            throw new MessagingException("message should not be null");
+            return null;
         }
-        final MimeMessage mimeMessage = new MimeMessage(getSession());
-        mimeMessage.setFrom(new InternetAddress(message.getFrom()));
-        final String subject = message.getSubject();                   
-        mimeMessage.setSubject(subject != null
-                ? subject : ""
-               );
-        final String htmlBody = message.getHtmlBody();
-        mimeMessage.setContent(htmlBody != null
-                ? htmlBody :""
-                , "text/html;charset=UTF-8");
-        mimeMessage.addRecipients(RecipientType.TO,
-                                  transformRecipients(message.getRecipients()));
 
-        return mimeMessage;
+        final MimeMessage ret = new MimeMessage(getSession());
+        ret.setFrom(new InternetAddress(message.getFrom()));
+        final String subject = message.getSubject();
+        ret.setSubject(subject != null ? subject : "");
+        final String htmlBody = message.getHtmlBody();
+        ret.setContent(htmlBody != null
+                       ? htmlBody : "", "text/html;charset=UTF-8");
+        ret.addRecipients(RecipientType.TO,
+                          transformRecipients(message.getRecipients()));
+
+        return ret;
     }
 
     /**
@@ -206,15 +151,18 @@ public final class MailSender {
             throws MessagingException {
         if (recipients.isEmpty()) {
             throw new MessagingException(
-                    "recipient for Mail should not be null");
+                    "recipients of mail should not be empty");
         }
-        final InternetAddress[] realRecipients =
+
+        final InternetAddress[] ret =
                 new InternetAddress[recipients.size()];
         int i = 0;
         for (String recipient : recipients) {
-            realRecipients[i++] = new InternetAddress(recipient);
+            ret[i] = new InternetAddress(recipient);
+            i++;
         }
-        return realRecipients;
+
+        return ret;
     }
 
     /**
@@ -223,9 +171,10 @@ public final class MailSender {
      * @param message  the specified message
      * @throws MessagingException message exception
      */
-    public void sendMail(final MailService.Message message)
+    void sendMail(final Message message)
             throws MessagingException {
-        Transport.send(createMessage(message));
+        final javax.mail.Message msg = convert2JavaMailMsg(message);
+        Transport.send(msg);
     }
 
     /**
@@ -235,8 +184,8 @@ public final class MailSender {
 
         @Override
         public PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(MailSender.this.getUsername(),
-                    MailSender.this.getPassword());
+            return new PasswordAuthentication(getUser(),
+                                              getPassword());
         }
     }
 }

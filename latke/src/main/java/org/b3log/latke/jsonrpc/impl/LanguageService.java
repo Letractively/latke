@@ -19,7 +19,6 @@ import java.util.logging.Level;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.ActionException;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
-import org.b3log.latke.service.ServiceException;
 import java.util.Locale;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -115,9 +114,6 @@ public final class LanguageService extends AbstractJSONRpcService {
                        new Object[]{locale, request.getSession().getId()});
 
             return ret;
-        } catch (final ServiceException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ActionException(e);
         } catch (final JSONException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
