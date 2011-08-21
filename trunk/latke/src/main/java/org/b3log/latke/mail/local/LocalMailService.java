@@ -23,8 +23,8 @@ import java.io.IOException;
 
 
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+
 import java.util.logging.Logger;
 
 import javax.mail.MessagingException;
@@ -43,8 +43,7 @@ public final class LocalMailService implements MailService {
     @Override
     public void send(final Message message) throws IOException {
         
-        final ExecutorService threadExector = Executors.newCachedThreadPool();
-        threadExector.execute(new Thread(new Runnable() {
+          new Thread(new Runnable() {
             
             @Override
             public void run() {
@@ -57,7 +56,7 @@ public final class LocalMailService implements MailService {
                 }
                 
             }
-        }));
+        }).start();
     }
     
    
