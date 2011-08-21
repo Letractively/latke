@@ -79,7 +79,6 @@ public final class LangPropsService {
                                new Object[]{e.getMessage()});
                     langBundle = ResourceBundle.getBundle(Keys.LANGUAGE);
                 }
-
             }
 
             final Enumeration<String> keys = langBundle.getKeys();
