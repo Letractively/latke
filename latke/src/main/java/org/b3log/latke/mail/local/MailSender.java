@@ -50,6 +50,7 @@ final class MailSender {
      *   <li>mail.user</li>
      *   <li>mail.password</li>
      *   <li>mail.smtp.host</li>
+     *   <li>mail.smtp.port</li>
      *   <li>mail.smtp.auth</li>
      *   <li>mail.debug</li>
      * </ul>
@@ -66,6 +67,7 @@ final class MailSender {
         final Properties props = new Properties();
         props.setProperty("mail.smtp.host", getHost());
         props.setProperty("mail.smtp.auth", "true");
+        props.setProperty("mail.smtp.port", getPort());
         props.put("mail.smtp.starttls.enable", "true");
 
         final Session ret =
@@ -87,9 +89,9 @@ final class MailSender {
     }
 
     /**
-     * Get mail smtp host form mail properties.
+     * Get mail SMTP host form mail properties.
      * 
-     * @return mail host
+     * @return mail SMTP host
      */
     private String getHost() {
         return mailProperties.getString("mail.smtp.host");
@@ -111,6 +113,15 @@ final class MailSender {
      */
     private String getPassword() {
         return mailProperties.getString("mail.password");
+    }
+    
+    /**
+     * Gets mail SMTP port from mail properties.
+     * 
+     * @return mail SMTP port
+     */
+    private String getPort() {
+        return mailProperties.getString("mail.smtp.port");
     }
 
     /**

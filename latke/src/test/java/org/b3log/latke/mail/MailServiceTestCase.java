@@ -26,6 +26,10 @@ import org.testng.annotations.Test;
  * @version 1.0.0.1, Aug 21, 2011
  */
 public final class MailServiceTestCase {
+    /**
+     * T.
+     */
+    private static final int T = 10000;
 
     static {
         Latkes.initRuntimeEnv();
@@ -35,9 +39,10 @@ public final class MailServiceTestCase {
      * Tests mail sending.
      * 
      * @throws IOException if error
+     * @throws InterruptedException s 
      */
     @Test
-    public void testSendMail() throws IOException {
+    public void testSendMail() throws IOException, InterruptedException {
         System.out.println("testSendMail");
         final MailService mailService =
                 MailServiceFactory.getMailService();
@@ -50,5 +55,8 @@ public final class MailServiceTestCase {
         message.addRecipient("DL88250@gmail.com");
 
         mailService.send(message);
+        
+        
+        Thread.sleep(T);
     }
 }
