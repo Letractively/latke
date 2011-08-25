@@ -16,8 +16,8 @@
 package org.b3log.latke.action.util;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Aug 9, 2011
+ * @version 1.0.1.0, Aug 24, 2011
  */
 public final class PageCaches {
 
@@ -114,7 +114,7 @@ public final class PageCaches {
         @SuppressWarnings("unchecked")
         Set<String> keys = (Set<String>) CACHE.get(KEYS);
         if (null == keys) {
-            keys = new HashSet<String>();
+            keys = new LinkedHashSet<String>();
             CACHE.put(KEYS, keys);
         }
     }
@@ -231,7 +231,7 @@ public final class PageCaches {
         @SuppressWarnings("unchecked")
         Set<String> keys = (Set<String>) CACHE.get(KEYS);
         if (null == keys) {
-            keys = new HashSet<String>();
+            keys = new LinkedHashSet<String>();
             CACHE.put(KEYS, keys);
         }
 
@@ -306,7 +306,7 @@ public final class PageCaches {
         CACHE.removeAll();
         Templates.CACHE.clear();
 
-        CACHE.put(KEYS, new HashSet<String>());
+        CACHE.put(KEYS, new LinkedHashSet<String>());
         LOGGER.info("Removed all cache....");
     }
 
