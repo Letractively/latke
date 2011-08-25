@@ -192,7 +192,6 @@ public abstract class AbstractGAERepository implements GAERepository {
                    new Object[]{ret, getName()});
 
         if (cacheEnabled) {
-            CACHE.removeAll(); // for query
             final String key = CACHE_KEY_PREFIX + ret;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
@@ -239,7 +238,6 @@ public abstract class AbstractGAERepository implements GAERepository {
                    new Object[]{ret, getName()});
 
         if (cacheEnabled) {
-            CACHE.removeAll(); // for query
             final String key = CACHE_KEY_PREFIX + ret;
             CACHE.put(key, jsonObject);
             LOGGER.log(Level.FINER,
@@ -387,7 +385,6 @@ public abstract class AbstractGAERepository implements GAERepository {
                    new Object[]{id, getName()});
 
         if (cacheEnabled) {
-            CACHE.removeAll(); // for query
             LOGGER.log(Level.FINER,
                        "Clear all objects in repository cache[{1}]",
                        getName());
