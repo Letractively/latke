@@ -89,10 +89,6 @@ public abstract class AbstractGAERepository implements GAERepository {
     private static final Set<Class<?>> GAE_SUPPORTED_TYPES =
             DataTypeUtils.getSupportedTypes();
     /**
-     * Eventual deadline time(seconds) used by read policy.
-     */
-    private static final double EVENTUAL_DEADLINE = 5.0;
-    /**
      * Default parent key. Kind is {@code "parentKind"}, name is
      * {@code "parentKeyName"}.
      */
@@ -560,7 +556,7 @@ public abstract class AbstractGAERepository implements GAERepository {
             } else {
                 querySortDirection = Query.SortDirection.DESCENDING;
             }
-            
+
             query.addSort(sort.getKey(), querySortDirection);
         }
 
