@@ -19,9 +19,16 @@ package org.b3log.latke.repository;
  * Transaction.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Dec 8, 2010
+ * @version 1.0.0.1, Sep 3, 2011
  */
 public interface Transaction {
+    
+    /**
+     * Gets the id of this transaction.
+     * 
+     * @return id
+     */
+    String getId();
 
     /**
      * Commits this transaction.
