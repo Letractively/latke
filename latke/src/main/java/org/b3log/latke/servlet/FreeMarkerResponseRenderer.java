@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Jul 16, 2011
  */
+// TODO: i18n handling
 public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRenderer {
 
     /**
