@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.gae;
 
 import java.util.ConcurrentModificationException;
@@ -26,7 +25,7 @@ import org.b3log.latke.repository.Transaction;
  * {@link com.google.appengine.api.datastore.Transaction} simply.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Mar 7, 2011
+ * @version 1.0.0.2, Sep 3, 2011
  */
 public final class GAETransaction implements Transaction {
 
@@ -55,6 +54,11 @@ public final class GAETransaction implements Transaction {
     public GAETransaction(
             final com.google.appengine.api.datastore.Transaction appEngineDatastoreTx) {
         this.appEngineDatastoreTx = appEngineDatastoreTx;
+    }
+
+    @Override
+    public String getId() {
+        return appEngineDatastoreTx.getId();
     }
 
     /**
