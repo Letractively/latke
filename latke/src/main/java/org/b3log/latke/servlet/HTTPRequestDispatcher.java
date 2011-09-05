@@ -15,6 +15,9 @@
  */
 package org.b3log.latke.servlet;
 
+import org.b3log.latke.Keys;
+import org.b3log.latke.action.util.PageCaches;
+import org.b3log.latke.util.Strings;
 import java.util.logging.Level;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,10 +26,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.event.EventManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
+
 /**
  * Front controller for HTTP request dispatching.
  *
@@ -85,6 +90,18 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             throws ServletException, IOException {
         final long startTimeMillis = System.currentTimeMillis();
         request.setAttribute(START_TIME_MILLIS, startTimeMillis);
+
+        if (Latkes.isPageCacheEnabled()) {
+            final String requestURI = request.getRequestURI();
+            final String queryString = request.getQueryString();
+            String pageCacheKey =
+                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            if (Strings.isEmptyOrNull(pageCacheKey)) {
+                pageCacheKey = PageCaches.getPageCacheKey(requestURI,
+                                                          queryString);
+                request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
+            }
+        }
 
         try {
             init(request, response);
