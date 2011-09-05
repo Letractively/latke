@@ -15,9 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
-import freemarker.template.Configuration;
 import freemarker.template.Template;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -25,12 +23,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.util.freemarker.Templates;
 
 /**
  * <a href="http://freemarker.org">FreeMarker</a> HTTP response renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 16, 2011
+ * @version 1.0.0.1, Sep 5, 2011
  */
 // TODO: i18n handling
 public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRenderer {
@@ -48,19 +47,6 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
      * Data model.
      */
     private Map<String, Object> dataModel = new HashMap<String, Object>();
-    /**
-     * FreeMarker configuration.
-     */
-    private static final Configuration TEMPLATE_CFG = new Configuration();
-
-    static {
-        try {
-            TEMPLATE_CFG.setDirectoryForTemplateLoading(new File(
-                    AbstractServletListener.getWebRoot()));
-        } catch (final IOException e) {
-            throw new RuntimeException("Can not find the template directory!", e);
-        }
-    }
 
     @Override
     public void render(final HTTPRequestContext context) {
@@ -68,7 +54,8 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
         try {
             final PrintWriter writer = response.getWriter();
             // TODO: caching
-            final Template template = TEMPLATE_CFG.getTemplate(templateName);
+            final Template template =
+                    Templates.CONFIGURATION.getTemplate(templateName);
 
             template.process(dataModel, writer);
             writer.close();
