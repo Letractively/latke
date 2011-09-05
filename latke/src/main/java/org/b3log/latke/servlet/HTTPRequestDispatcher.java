@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.event.EventManager;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 /**
  * Front controller for HTTP request dispatching.
  *
@@ -83,6 +83,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     protected void service(final HttpServletRequest request,
                            final HttpServletResponse response)
             throws ServletException, IOException {
+        final long startTimeMillis = System.currentTimeMillis();
+        request.setAttribute(START_TIME_MILLIS, startTimeMillis);
+
         try {
             init(request, response);
         } catch (final IOException e) {
@@ -111,11 +114,11 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]",
                    new Object[]{requestURI, method});
-        
+
         final Object processorMethodRet =
                 RequestProcessors.invoke(requestURI, method, context);
         // XXX: processor method ret?
-       
+
         final AbstractHTTPResponseRenderer renderer = context.getRenderer();
         if (null == renderer) {
             LOGGER.log(Level.WARNING, "Renderer is null");
