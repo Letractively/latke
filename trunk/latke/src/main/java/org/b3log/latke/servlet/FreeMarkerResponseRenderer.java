@@ -38,9 +38,8 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * <a href="http://freemarker.org">FreeMarker</a> HTTP response renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Sep 5, 2011
+ * @version 1.0.0.2, Sep 6, 2011
  */
-// TODO: i18n handling
 public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRenderer {
 
     /**
@@ -61,8 +60,6 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
         try {
-            final PrintWriter writer = response.getWriter();
-            // TODO: caching
             final Template template =
                     Templates.CONFIGURATION.getTemplate(templateName);
 
