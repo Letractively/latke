@@ -36,7 +36,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Jul 17, 2011
+ * @version 1.0.0.4, Sep 6, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -122,7 +122,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * 
      * @param context the specified specified context
      */
-    private void dispatch(final HTTPRequestContext context) {
+    public static void dispatch(final HTTPRequestContext context) {
         final HttpServletRequest request = context.getRequest();
         final HttpServletResponse response = context.getResponse();
 
