@@ -20,7 +20,6 @@ import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.util.Strings;
 import java.util.logging.Level;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -59,24 +58,6 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     }
 
     /**
-     * Sets the character encoding of the specified HTTP servlet request and the
-     * specified HTTP servlet response to "UTF-8", sets the content type of the
-     * specified HTTP servlet response to "text/html".
-     *
-     * @param request the specified HTTP servlet request
-     * @param response the specified HTTP servlet response
-     * @throws UnsupportedEncodingException if can not set the character
-     * encoding of the specified HTTP servlet request
-     */
-    private void init(final HttpServletRequest request,
-                      final HttpServletResponse response)
-            throws UnsupportedEncodingException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
-    }
-
-    /**
      * Serves.
      *
      * @param request the specified HTTP servlet request
@@ -103,12 +84,8 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             }
         }
 
-        try {
-            init(request, response);
-        } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new ServletException(e);
-        }
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
 
         final HTTPRequestContext context = new HTTPRequestContext();
         context.setRequest(request);
@@ -125,6 +102,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     public static void dispatch(final HTTPRequestContext context) {
         final HttpServletRequest request = context.getRequest();
         final HttpServletResponse response = context.getResponse();
+
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
 
         String requestURI = (String) request.getAttribute("requestURI");
         if (Strings.isEmptyOrNull(requestURI)) {
