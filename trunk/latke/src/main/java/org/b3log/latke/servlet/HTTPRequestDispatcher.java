@@ -126,8 +126,15 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         final HttpServletRequest request = context.getRequest();
         final HttpServletResponse response = context.getResponse();
 
-        final String requestURI = request.getRequestURI();
-        final String method = request.getMethod();
+        String requestURI = (String) request.getAttribute("requestURI");
+        if (Strings.isEmptyOrNull(requestURI)) {
+            requestURI = request.getRequestURI();
+        }
+
+        String method = (String) request.getAttribute("method");
+        if (Strings.isEmptyOrNull(method)) {
+            method = request.getMethod();
+        }
 
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]",
                    new Object[]{requestURI, method});
