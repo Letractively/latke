@@ -49,7 +49,6 @@ import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Blob;
 import org.b3log.latke.repository.Filter;
-import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
@@ -63,8 +62,21 @@ import org.json.JSONObject;
  * <a href="http://code.google.com/appengine/docs/java/javadoc/com/google/appengine/api/datastore/package-summary.html">
  * The Datastore Java API(Low-level API)</a> of GAE.
  * 
+ * <p>
+ * The invocation of {@link #add(org.json.JSONObject) add}, 
+ * {@link #update(java.lang.String, org.json.JSONObject) update} and
+ * {@link #remove(java.lang.String) remove} MUST in a transaction. 
+ * Invocation of method {@link #get(java.lang.String) get} (by id) in a 
+ * transaction will try to get object from cache of the transaction, if not hit,
+ * retrieve object from transaction snapshot; if the invocation made is not in
+ * a transaction, retrieve object from datastore directly. See 
+ * <a href="http://88250.b3log.org/transaction_isolation.html">GAE 事务隔离</a>
+ * for more details.
+ * </p>
+ * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.3, Aug 20, 2011
+ * @version 1.0.3.4, Sep 7, 2011
+ * @see GAETransaction
  */
 public abstract class AbstractGAERepository implements GAERepository {
 
@@ -117,6 +129,11 @@ public abstract class AbstractGAERepository implements GAERepository {
      * Cache key prefix.
      */
     public static final String CACHE_KEY_PREFIX = "repository";
+    /**
+     * The current transaction.
+     */
+    public static final ThreadLocal<GAETransaction> TX =
+            new InheritableThreadLocal<GAETransaction>();
 
     /**
      * Initializes cache.
@@ -155,13 +172,32 @@ public abstract class AbstractGAERepository implements GAERepository {
      */
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-        return add(jsonObject,
-                   defaultParentKey.getKind(), defaultParentKey.getName());
+        final GAETransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException("Invoking add() outside a transaction");
+        }
+
+        final String ret = add(jsonObject,
+                               defaultParentKey.getKind(), defaultParentKey.
+                getName());
+
+        currentTransaction.putUncommitted(ret, jsonObject);
+
+        return ret;
     }
 
-    @Override
-    public String add(final JSONObject jsonObject,
-                      final String parentKeyKind, final String parentKeyName)
+    /**
+     * Adds.
+     * 
+     * @param jsonObject the specified json object
+     * @param parentKeyKind the specified parent key kind
+     * @param parentKeyName the specified parent key name
+     * @return id
+     * @throws RepositoryException repository exception
+     */
+    private String add(final JSONObject jsonObject,
+                       final String parentKeyKind, final String parentKeyName)
             throws RepositoryException {
         String ret = null;
         try {
@@ -205,10 +241,18 @@ public abstract class AbstractGAERepository implements GAERepository {
                         defaultParentKey.getKind(), defaultParentKey.getName());
     }
 
-    @Override
-    public String addAsync(final JSONObject jsonObject,
-                           final String parentKeyKind,
-                           final String parentKeyName)
+    /**
+     * Adds async.
+     * 
+     * @param jsonObject the specified json object
+     * @param parentKeyKind the specified parent key kind
+     * @param parentKeyName the specified parent key name
+     * @return id
+     * @throws RepositoryException repository exception
+     */
+    private String addAsync(final JSONObject jsonObject,
+                            final String parentKeyKind,
+                            final String parentKeyName)
             throws RepositoryException {
         String ret = null;
         try {
@@ -280,22 +324,30 @@ public abstract class AbstractGAERepository implements GAERepository {
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
+        final GAETransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking update() outside a transaction");
+        }
+
         update(id, jsonObject,
-               defaultParentKey.getKind(),
-               defaultParentKey.getName());
+               defaultParentKey.getKind(), defaultParentKey.getName());
+
+        currentTransaction.putUncommitted(id, jsonObject);
     }
 
-    @Override
-    public void updateAsync(final String id, final JSONObject jsonObject)
-            throws RepositoryException {
-        updateAsync(id, jsonObject,
-                    defaultParentKey.getKind(),
-                    defaultParentKey.getName());
-    }
-
-    @Override
-    public void update(final String id, final JSONObject jsonObject,
-                       final String parentKeyKind, final String parentKeyName)
+    /**
+     * Updates.
+     * 
+     * @param id the specified id
+     * @param jsonObject the specified json object
+     * @param parentKeyKind the specified parent key kind
+     * @param parentKeyName the specified parent key name
+     * @throws RepositoryException repository exception
+     */
+    private void update(final String id, final JSONObject jsonObject,
+                        final String parentKeyKind, final String parentKeyName)
             throws RepositoryException {
         try {
             jsonObject.put(Keys.OBJECT_ID, id);
@@ -325,9 +377,25 @@ public abstract class AbstractGAERepository implements GAERepository {
     }
 
     @Override
-    public void updateAsync(final String id, final JSONObject jsonObject,
-                            final String parentKeyKind,
-                            final String parentKeyName)
+    public void updateAsync(final String id, final JSONObject jsonObject)
+            throws RepositoryException {
+        updateAsync(id, jsonObject,
+                    defaultParentKey.getKind(),
+                    defaultParentKey.getName());
+    }
+
+    /**
+     * Updates async.
+     * 
+     * @param id the specified id
+     * @param jsonObject the specified json object
+     * @param parentKeyKind the specified parent key kind
+     * @param parentKeyName the specified parent key name
+     * @throws RepositoryException repository exception
+     */
+    private void updateAsync(final String id, final JSONObject jsonObject,
+                             final String parentKeyKind,
+                             final String parentKeyName)
             throws RepositoryException {
         try {
             jsonObject.put(Keys.OBJECT_ID, id);
@@ -365,12 +433,28 @@ public abstract class AbstractGAERepository implements GAERepository {
      */
     @Override
     public void remove(final String id) throws RepositoryException {
+        final GAETransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking remove() outside a transaction");
+        }
+
         remove(id, defaultParentKey.getKind(), defaultParentKey.getName());
+
+        currentTransaction.putUncommitted(id, null);
     }
 
-    @Override
-    public void remove(final String id,
-                       final String parentKeyKind, final String parentKeyName)
+    /**
+     * Remmoves.
+     * 
+     * @param id the specified id
+     * @param parentKeyKind the specified parent key kind
+     * @param parentKeyName the specified parent key name
+     * @throws RepositoryException repository exception
+     */
+    private void remove(final String id,
+                        final String parentKeyKind, final String parentKeyName)
             throws RepositoryException {
 
         final Key parentKey = KeyFactory.createKey(parentKeyKind, parentKeyName);
@@ -392,17 +476,44 @@ public abstract class AbstractGAERepository implements GAERepository {
      * default parent key}.
      *
      * @param id the specified id
-     * @return a json object, {@code null} if not found
+     * @return a json object, returns {@code null} if not found
      * @throws RepositoryException repository exception
      */
     @Override
     public JSONObject get(final String id) throws RepositoryException {
-        return get(id, defaultParentKey.getKind(), defaultParentKey.getName());
+        final GAETransaction currentTransaction = TX.get();
+        if (null == currentTransaction) {
+            // Gets outside a transaction
+            return get(id, defaultParentKey.getKind(),
+                       defaultParentKey.getName());
+        }
+
+        // Works in a transaction....
+
+        if (!currentTransaction.hasUncommitted(id)) {
+            // Has not mainipulat the object in the current transaction
+            // Gets from transaction snapshot view
+            return get(id, defaultParentKey.getKind(),
+                       defaultParentKey.getName());
+        }
+
+        // The returned value may be null if it has been set to null in the 
+        // current transaction
+        return currentTransaction.getUncommitted(id);
     }
 
-    @Override
-    public JSONObject get(final String id,
-                          final String parentKeyKind, final String parentKeyName)
+    /**
+     * Gets.
+     * 
+     * @param id the specified id
+     * @param parentKeyKind the specified parent key kind
+     * @param parentKeyName the specified parent key name
+     * @return a json object, returns {@code null} if not found
+     * @throws RepositoryException repository exception
+     */
+    private JSONObject get(final String id,
+                           final String parentKeyKind,
+                           final String parentKeyName)
             throws RepositoryException {
         JSONObject ret = null;
 
@@ -792,11 +903,18 @@ public abstract class AbstractGAERepository implements GAERepository {
     }
 
     @Override
-    public Transaction beginTransaction() {
-        final com.google.appengine.api.datastore.Transaction tx =
+    public GAETransaction beginTransaction() {
+        if (null != TX.get()) {
+            return TX.get(); // Using 'the current transaction'
+        }
+
+        final com.google.appengine.api.datastore.Transaction gaeTx =
                 datastoreService.beginTransaction();
 
-        return new GAETransaction(tx);
+        final GAETransaction ret = new GAETransaction(gaeTx);
+        TX.set(ret);
+
+        return ret;
     }
 
     /**
