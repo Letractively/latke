@@ -58,7 +58,7 @@ public interface Repository {
      * Gets a json object by the specified id.
      *
      * @param id the specified id
-     * @return a json object, {@code null} if not found
+     * @return a json object, returns {@code null} if not found
      * @throws RepositoryException repository exception
      */
     JSONObject get(final String id) throws RepositoryException;
