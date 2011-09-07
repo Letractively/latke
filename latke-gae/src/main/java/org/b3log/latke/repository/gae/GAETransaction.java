@@ -16,16 +16,29 @@
 package org.b3log.latke.repository.gae;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.repository.Transaction;
+import org.json.JSONObject;
 
 /**
  * Google App Engine datastore transaction. Just wraps
  * {@link com.google.appengine.api.datastore.Transaction} simply.
+ * 
+ * <p>
+ * In this transaction, the caller can {@link org.b3log.latke.repository.Repository#get(java.lang.String) 
+ * get data} (by id) for retrieving previous writes. Because the
+ * {@link #add(org.json.JSONObject) add}, 
+ * {@link #update(java.lang.String, org.json.JSONObject) update} and
+ * {@link #remove(java.lang.String) remove} will effect on the
+ * {@link  #cache transaction cache}, operation results specified by id.
+ * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Sep 3, 2011
+ * @version 1.0.0.3, Sep 7, 2011
+ * @see AbstractGAERepository
  */
 public final class GAETransaction implements Transaction {
 
@@ -42,6 +55,24 @@ public final class GAETransaction implements Transaction {
      * Times of commit retries.
      */
     public static final int COMMIT_RETRIES = 3;
+    /**
+     * Transaction cache.
+     * 
+     * <p>
+     * The cache is used to maintain transactional 
+     * {@link org.b3log.latke.repository.Repository#add(org.json.JSONObject) add}, 
+     * {@link org.b3log.latke.repository.Repository#update(java.lang.String, org.json.JSONObject) update} 
+     * and {@link org.b3log.latke.repository.Repository#remove(java.lang.String) remove} uncommitted 
+     * effects on datastore for subsequent 
+     * {@link org.b3log.latke.repository.Repository#get(java.lang.String) get} (by id) queries can retrieve
+     * the result made before.
+     * </p>
+     * 
+     * <p>
+     * Holds data like &lt;oId, json&gt;.
+     * </p>
+     */
+    private Map<String, JSONObject> cache = new HashMap<String, JSONObject>();
 
     /**
      * Constructs a {@link GAETransaction} object with the specified Google App
@@ -62,6 +93,39 @@ public final class GAETransaction implements Transaction {
     }
 
     /**
+     * Gets a json object from uncommitted transaction cache with the specified 
+     * id.
+     * 
+     * @param id the specified id
+     * @return json object, returns {@code null} if not found
+     */
+    public JSONObject getUncommitted(final String id) {
+        return cache.get(id);
+    }
+
+    /**
+     * Determines the specified id is in transaction cache or not.
+     * 
+     * @param id the specified id
+     * @return {@code true} if in transaction cache, returns {@code false} 
+     * otherwise
+     */
+    public boolean hasUncommitted(final String id) {
+        return cache.containsKey(id);
+    }
+
+    /**
+     * Puts the specified uncommitted json object into transaction cache with 
+     * the specified id.
+     * 
+     * @param id the specified id
+     * @param jsonObject the specified uncommitted json object
+     */
+    public void putUncommitted(final String id, final JSONObject jsonObject) {
+        cache.put(id, jsonObject);
+    }
+
+    /**
      * Commits this transaction with {@value #COMMIT_RETRIES} times of retries.
      *
      * <p>
@@ -77,6 +141,11 @@ public final class GAETransaction implements Transaction {
         while (true) {
             try {
                 appEngineDatastoreTx.commit();
+
+                // Committed, clears cache and transaction thread var in repository
+                cache.clear();
+                AbstractGAERepository.TX.set(null);
+
                 break;
             } catch (final ConcurrentModificationException e) {
                 if (retries == 0) {
@@ -95,6 +164,10 @@ public final class GAETransaction implements Transaction {
     @Override
     public void rollback() {
         appEngineDatastoreTx.rollback();
+
+        // Rollbacked, clears cache and transaction thread var in repository
+        cache.clear();
+        AbstractGAERepository.TX.set(null);
     }
 
     @Override

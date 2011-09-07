@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.gae;
 
 import org.b3log.latke.repository.Repository;
@@ -29,25 +28,9 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jan 30, 2011
+ * @version 1.0.0.2, Sep 7, 2011
  */
 public interface GAERepository extends Repository {
-
-    /**
-     * Adds the specified json object with the specified parent key kind and 
-     * parent key name.
-     *
-     * @param jsonObject the specified json object
-     * @param parentKeyKind the specified kind of the parent key of the
-     * specified json object
-     * @param parentKeyName the specified name of the parent key of the
-     * specified json object
-     * @return the generated object id
-     * @throws RepositoryException repository exception
-     */
-    String add(final JSONObject jsonObject,
-               final String parentKeyKind, final String parentKeyName)
-            throws RepositoryException;
 
     /**
      * The asynchronous version of interface {@linkplain #add(org.json.JSONObject)}.
@@ -60,57 +43,6 @@ public interface GAERepository extends Repository {
             throws RepositoryException;
 
     /**
-     * The asynchronous version of interface
-     * {@linkplain #add(org.json.JSONObject, java.lang.String, java.lang.String)}.
-     *
-     * @param jsonObject the specified json object
-     * @param parentKeyKind the specified kind of the parent key of the
-     * specified json object
-     * @param parentKeyName the specified name of the parent key of the
-     * specified json object
-     * @return the generated object id
-     * @throws RepositoryException repository exception
-     */
-    String addAsync(final JSONObject jsonObject,
-                    final String parentKeyKind, final String parentKeyName)
-            throws RepositoryException;
-
-    /**
-     * Updates a certain json object by the specified id, new json object, 
-     * parent key kind and parent key name.
-     *
-     * <p>
-     *   Invokes this method for an non-existent entity will create a new entity
-     *   in database, as the same effect of method {@linkplain #add(org.json.JSONObject)}.
-     * </p>
-     *
-     * <p>
-     *   Update algorithm steps:
-     *   <ol>
-     *     <li>Sets the specified id into the specified new json object</li>
-     *     <li>Creates a new entity with the specified id</li>
-     *     <li>Puts the entity into database</li>
-     *   </ol>
-     * </p>
-     *
-     * <p>
-     *   <b>Note</b>: the specified id is NOT the key of a database record, but
-     *   the value of "oId" stored in database value entry of a record.
-     * </p>
-     *
-     * @param id the specified id
-     * @param jsonObject the specified new json object
-     * @param parentKeyKind the specified kind of the parent key of the
-     * specified json object
-     * @param parentKeyName the specified name of the parent key of the
-     * specified json object
-     * @throws RepositoryException repository exception
-     */
-    void update(final String id, final JSONObject jsonObject,
-                final String parentKeyKind, final String parentKeyName)
-            throws RepositoryException;
-
-    /**
      * The asynchronous version of interface 
      * {@linkplain #update(java.lang.String, org.json.JSONObject)}. 
      *
@@ -119,52 +51,5 @@ public interface GAERepository extends Repository {
      * @throws RepositoryException repository exception
      */
     void updateAsync(final String id, final JSONObject jsonObject)
-            throws RepositoryException;
-
-    /**
-     * The asynchronous version of interface
-     * {@linkplain #update(java.lang.String, org.json.JSONObject, java.lang.String, java.lang.String)}.
-     *
-     * @param id the specified id
-     * @param jsonObject the specified new json object
-     * @param parentKeyKind the specified kind of the parent key of the
-     * specified json object
-     * @param parentKeyName the specified name of the parent key of the
-     * specified json object
-     * @throws RepositoryException repository exception
-     */
-    void updateAsync(final String id, final JSONObject jsonObject,
-                     final String parentKeyKind, final String parentKeyName)
-            throws RepositoryException;
-
-    /**
-     * Removes a json object by the specified id, parent key kind and parent key 
-     * name.
-     *
-     * @param id the specified id
-     * @param parentKeyKind the specified kind of the parent key of the
-     * specified json object
-     * @param parentKeyName the specified name of the parent key of the
-     * specified json object
-     * @throws RepositoryException repository exception
-     */
-    void remove(final String id,
-                final String parentKeyKind, final String parentKeyName)
-            throws RepositoryException;
-
-    /**
-     * Gets a json object by the specified id, parent key kind and parent key 
-     * name.
-     *
-     * @param id the specified id
-     * @param parentKeyKind the specified kind of the parent key of the
-     * specified json object
-     * @param parentKeyName the specified name of the parent key of the
-     * specified json object
-     * @return a json object, {@code null} if not found
-     * @throws RepositoryException repository exception
-     */
-    JSONObject get(final String id,
-                   final String parentKeyKind, final String parentKeyName)
             throws RepositoryException;
 }
