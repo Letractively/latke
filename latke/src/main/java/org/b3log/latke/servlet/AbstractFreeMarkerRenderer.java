@@ -35,18 +35,19 @@ import org.b3log.latke.util.freemarker.Templates;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 
 /**
- * <a href="http://freemarker.org">FreeMarker</a> HTTP response renderer.
+ * Abstract <a href="http://freemarker.org">FreeMarker</a> HTTP response 
+ * renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.2, Sep 6, 2011
  */
-public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRenderer {
+public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRenderer {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(FreeMarkerResponseRenderer.class.getName());
+            Logger.getLogger(AbstractFreeMarkerRenderer.class.getName());
     /**
      * Template name.
      */
@@ -56,6 +57,12 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
      */
     private Map<String, Object> dataModel = new HashMap<String, Object>();
 
+    /**
+     * Invoked after render.
+     */
+    protected void afterRender() {
+    }
+
     @Override
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
@@ -64,6 +71,8 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
                     Templates.CONFIGURATION.getTemplate(templateName);
 
             render(context.getRequest(), response, dataModel, template);
+
+            afterRender();
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "FreeMarker renders error", e);
 
