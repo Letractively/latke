@@ -75,7 +75,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.4, Sep 7, 2011
+ * @version 1.0.3.5, Sep 8, 2011
  * @see GAETransaction
  */
 public abstract class AbstractGAERepository implements GAERepository {
@@ -223,14 +223,6 @@ public abstract class AbstractGAERepository implements GAERepository {
         LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
                    new Object[]{ret, getName()});
 
-        if (cacheEnabled) {
-            final String key = CACHE_KEY_PREFIX + ret;
-            CACHE.put(key, jsonObject);
-            LOGGER.log(Level.FINER,
-                       "Added an object[cacheKey={0}] in repository cache[{1}]",
-                       new Object[]{key, getName()});
-        }
-
         return ret;
     }
 
@@ -276,14 +268,6 @@ public abstract class AbstractGAERepository implements GAERepository {
 
         LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
                    new Object[]{ret, getName()});
-
-        if (cacheEnabled) {
-            final String key = CACHE_KEY_PREFIX + ret;
-            CACHE.put(key, jsonObject);
-            LOGGER.log(Level.FINER,
-                       "Added an object[cacheKey={0}] in repository cache[{1}]",
-                       new Object[]{key, getName()});
-        }
 
         return ret;
     }
@@ -366,14 +350,6 @@ public abstract class AbstractGAERepository implements GAERepository {
         LOGGER.log(Level.FINER,
                    "Updated an object[oId={0}] in repository[name={1}]",
                    new Object[]{id, getName()});
-
-        if (cacheEnabled) {
-            final String key = CACHE_KEY_PREFIX + id;
-            CACHE.put(key, jsonObject);
-            LOGGER.log(Level.FINER,
-                       "Updated an object[cacheKey={0}] in repository cache[{1}]",
-                       new Object[]{key, getName()});
-        }
     }
 
     @Override
@@ -414,14 +390,6 @@ public abstract class AbstractGAERepository implements GAERepository {
         LOGGER.log(Level.FINER,
                    "Updated an object[oId={0}] in repository[name={1}]",
                    new Object[]{id, getName()});
-
-        if (cacheEnabled) {
-            final String key = CACHE_KEY_PREFIX + id;
-            CACHE.put(key, jsonObject);
-            LOGGER.log(Level.FINER,
-                       "Updated an object[cacheKey={0}] in repository cache[{1}]",
-                       new Object[]{key, getName()});
-        }
     }
 
     /**
@@ -463,12 +431,6 @@ public abstract class AbstractGAERepository implements GAERepository {
         LOGGER.log(Level.FINER,
                    "Removed an object[oId={0}] from repository[name={1}]",
                    new Object[]{id, getName()});
-
-        if (cacheEnabled) {
-            LOGGER.log(Level.FINER,
-                       "Clear all objects in repository cache[{1}]",
-                       getName());
-        }
     }
 
     /**
