@@ -22,6 +22,7 @@ package org.b3log.latke.servlet;
  * @version 1.0.0.0, Jul 16, 2011
  */
 public abstract class AbstractHTTPResponseRenderer {
+
     /**
      * Renders with the specified HTTP request context.
      * 
