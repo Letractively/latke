@@ -114,13 +114,6 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
             template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
 
-            final String cachedPageKey =
-                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
-
-            LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
-                       cachedPageKey);
-
-            final JSONObject cachedValue = new JSONObject();
             final StringBuilder pageContentBuilder =
                     new StringBuilder(stringWriter.toString());
 
@@ -135,23 +128,31 @@ public final class FreeMarkerResponseRenderer extends AbstractHTTPResponseRender
             pageContentBuilder.append(msg);
 
             final String pageContent = pageContentBuilder.toString();
-            check(request, pageContent);
-
-            cachedValue.put(CACHED_CONTENT, pageContent);
-            cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
-            cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
-            cachedValue.put(CACHED_TITLE, request.getAttribute(CACHED_TITLE));
-            cachedValue.put(CACHED_LINK, request.getAttribute(CACHED_LINK));
-
-            writer.write(pageContent);
-            writer.flush();
-            writer.close();
 
             if (Latkes.isPageCacheEnabled()) {
+                final String cachedPageKey =
+                        (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+
+                LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
+                           cachedPageKey);
+
+                check(request, pageContent);
+
+                final JSONObject cachedValue = new JSONObject();
+                cachedValue.put(CACHED_CONTENT, pageContent);
+                cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
+                cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
+                cachedValue.put(CACHED_TITLE, request.getAttribute(CACHED_TITLE));
+                cachedValue.put(CACHED_LINK, request.getAttribute(CACHED_LINK));
+
                 PageCaches.put(cachedPageKey, cachedValue);
                 LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                            cachedPageKey);
             }
+
+            writer.write(pageContent);
+            writer.flush();
+            writer.close();
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new ActionException(e);
