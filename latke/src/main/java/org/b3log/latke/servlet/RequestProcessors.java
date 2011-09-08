@@ -28,12 +28,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.annotation.RequestProcessing;
 import org.b3log.latke.annotation.RequestProcessor;
+import org.b3log.latke.util.AntPathMatcher;
 
 /**
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Aug 9, 2011
+ * @version 1.0.0.2, Sep 8, 2011
  */
 public final class RequestProcessors {
 
@@ -155,10 +156,10 @@ public final class RequestProcessors {
      */
     private static ProcessorMethod getProcessorMethod(final String requestURI,
                                                       final String method) {
-        // TODO: Ant-style path pattern matching, caching
         for (final ProcessorMethod processorMethod : processorMethods) {
             if (method.equals(processorMethod.getMethod())
-                && requestURI.equals(processorMethod.getUriPattern())) {
+                && AntPathMatcher.match(processorMethod.getURIPattern(),
+                                        requestURI)) {
                 return processorMethod;
             }
         }
@@ -191,7 +192,7 @@ public final class RequestProcessors {
                 processorMethods.add(processorMethod);
 
                 processorMethod.setMethod(requestMethod.name());
-                processorMethod.setUriPattern(uriPattern);
+                processorMethod.setURIPattern(uriPattern);
                 processorMethod.setProcessorClass(clz);
                 processorMethod.setProcessorMethod(method);
             }
@@ -289,7 +290,7 @@ final class ProcessorMethod {
      * 
      * @return URI pattern
      */
-    public String getUriPattern() {
+    public String getURIPattern() {
         return uriPattern;
     }
 
@@ -298,7 +299,7 @@ final class ProcessorMethod {
      * 
      * @param uriPattern the specified URI pattern
      */
-    public void setUriPattern(final String uriPattern) {
+    public void setURIPattern(final String uriPattern) {
         this.uriPattern = uriPattern;
     }
 }
