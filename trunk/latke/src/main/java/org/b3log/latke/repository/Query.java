@@ -17,9 +17,12 @@ package org.b3log.latke.repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Query.
@@ -200,5 +203,33 @@ public final class Query {
                + (this.filters != null ? this.filters.hashCode() : 0);
 
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder stringBuilder =
+                new StringBuilder("currentPageNum=").append(currentPageNum).
+                append(", pageSize=").append(pageSize).append(", sorts=[");
+
+        final Set<Entry<String, SortDirection>> entrySet = sorts.entrySet();
+        final Iterator<Entry<String, SortDirection>> iterator =
+                entrySet.iterator();
+        while (iterator.hasNext()) {
+            final Entry<String, SortDirection> sort = iterator.next();
+            stringBuilder.append("[key=").append(sort.getKey()).append(
+                    ", direction=").append(sort.getValue().name()).append("]");
+
+            if (iterator.hasNext()) {
+                stringBuilder.append(", ");
+            }
+        }
+
+        stringBuilder.append("], filters=[");
+        for (final Filter filter : filters) {
+            stringBuilder.append(filter.toString());
+        }
+        stringBuilder.append("]");
+
+        return stringBuilder.toString();
     }
 }
