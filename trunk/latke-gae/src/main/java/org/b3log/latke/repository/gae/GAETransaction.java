@@ -75,9 +75,9 @@ public final class GAETransaction implements Transaction {
      */
     private Map<String, JSONObject> cache = new HashMap<String, JSONObject>();
     /**
-     * Flag of clear gloabal cache.
+     * Flag of clear query cache.
      */
-    private boolean clearGloabalCache;
+    private boolean clearQueryCache = true;
 
     /**
      * Constructs a {@link GAETransaction} object with the specified Google App
@@ -135,7 +135,7 @@ public final class GAETransaction implements Transaction {
      * 
      * <p>
      * If the transaction committed, clears all transaction cache. If the {@link 
-     * #clearGloabalCache flag} is {@code true}, clears global cache regions.
+     * #clearQueryCache flag} is {@code true}, clears global cache regions.
      * </p>
      *
      * <p>
@@ -158,7 +158,7 @@ public final class GAETransaction implements Transaction {
                 cache.clear();
                 AbstractGAERepository.TX.set(null);
 
-                if (clearGloabalCache) {
+                if (clearQueryCache) {
                     PageCaches.removeAll();
                 }
 
@@ -192,7 +192,7 @@ public final class GAETransaction implements Transaction {
     }
 
     @Override
-    public void setClearGloabalCache(final boolean flag) {
-        this.clearGloabalCache = flag;
+    public void clearQueryCache(final boolean flag) {
+        this.clearQueryCache = flag;
     }
 }
