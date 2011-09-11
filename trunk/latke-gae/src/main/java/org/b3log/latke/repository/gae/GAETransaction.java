@@ -18,6 +18,7 @@ package org.b3log.latke.repository.gae;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.action.util.PageCaches;
@@ -153,6 +154,13 @@ public final class GAETransaction implements Transaction {
         while (true) {
             try {
                 appEngineDatastoreTx.commit();
+
+                // Flushes transaction cache into global query (by id) cache.
+                for (final Entry<String, JSONObject> cached : cache.entrySet()) {
+                    final String cacheKey = AbstractGAERepository.CACHE_KEY_PREFIX
+                                            + cached.getKey();
+                    PageCaches.put(cacheKey, cached.getValue());
+                }
 
                 // Committed, clears cache and transaction thread var in repository
                 cache.clear();
