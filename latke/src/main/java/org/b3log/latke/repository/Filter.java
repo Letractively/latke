@@ -19,7 +19,7 @@ package org.b3log.latke.repository;
  * Filter.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jan 20, 2011
+ * @version 1.0.0.2, Sep 11, 2011
  */
 public final class Filter {
 
@@ -98,7 +98,7 @@ public final class Filter {
 
         final Filter other = (Filter) obj;
         if ((this.key == null) ? (other.key != null)
-                : !this.key.equals(other.key)) {
+            : !this.key.equals(other.key)) {
             return false;
         }
         if (this.operator != other.operator) {
@@ -121,5 +121,14 @@ public final class Filter {
         hash = BASE * hash + (this.value != null ? this.value.hashCode() : 0);
 
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder stringBuilder = new StringBuilder("key=");
+        stringBuilder.append(key).append(", operator=").append(operator.name()).
+                append(", value=").append(value.toString());
+
+        return stringBuilder.toString();
     }
 }
