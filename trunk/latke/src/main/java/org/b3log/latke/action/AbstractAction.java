@@ -42,7 +42,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.8, Aug 18, 2011
+ * @version 1.0.3.9, Sep 11, 2011
  * @see #doFreeMarkerAction(freemarker.template.Template,
  *                        HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
@@ -294,8 +294,8 @@ public abstract class AbstractAction extends HttpServlet {
 
         JSONObject result = null;
         try {
-            final JSONObject requestJSONObject = beforeDoAjaxAction(request,
-                                                                    response);
+            final JSONObject requestJSONObject =
+                    parseRequestJSONObject(request, response);
             LOGGER.log(Level.FINER, "Request json object[{0}]",
                        requestJSONObject);
             result = doAjaxAction(requestJSONObject, request, response);
@@ -379,8 +379,8 @@ public abstract class AbstractAction extends HttpServlet {
      * @throws ServletException servlet exception
      * @throws IOException io exception
      */
-    private JSONObject beforeDoAjaxAction(final HttpServletRequest request,
-                                          final HttpServletResponse response)
+    public static JSONObject parseRequestJSONObject(
+            final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
 
