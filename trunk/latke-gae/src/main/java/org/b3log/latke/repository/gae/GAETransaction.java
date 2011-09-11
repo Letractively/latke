@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.repository.Transaction;
 import org.json.JSONObject;
 
@@ -37,7 +38,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Sep 7, 2011
+ * @version 1.0.0.4, Sep 11, 2011
  * @see AbstractGAERepository
  */
 public final class GAETransaction implements Transaction {
@@ -127,12 +128,19 @@ public final class GAETransaction implements Transaction {
 
     /**
      * Commits this transaction with {@value #COMMIT_RETRIES} times of retries.
+     * 
+     * <p>
+     * If the transaction committed, clears all transaction cache and global 
+     * cache.
+     * </p>
      *
      * <p>
      * <b>Throws</b>:<br/>
      * {@link java.util.ConcurrentModificationException} - if commits failed
      * </p>
      * @see #COMMIT_RETRIES
+     * @see #cache
+     * @see PageCaches#removeAll() 
      */
     @Override
     public void commit() {
@@ -145,6 +153,8 @@ public final class GAETransaction implements Transaction {
                 // Committed, clears cache and transaction thread var in repository
                 cache.clear();
                 AbstractGAERepository.TX.set(null);
+                // Clears all cache regions
+                PageCaches.removeAll();
 
                 break;
             } catch (final ConcurrentModificationException e) {

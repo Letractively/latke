@@ -226,52 +226,6 @@ public abstract class AbstractGAERepository implements GAERepository {
         return ret;
     }
 
-    @Override
-    public String addAsync(final JSONObject jsonObject)
-            throws RepositoryException {
-        return addAsync(jsonObject,
-                        defaultParentKey.getKind(), defaultParentKey.getName());
-    }
-
-    /**
-     * Adds async.
-     * 
-     * @param jsonObject the specified json object
-     * @param parentKeyKind the specified parent key kind
-     * @param parentKeyName the specified parent key name
-     * @return id
-     * @throws RepositoryException repository exception
-     */
-    private String addAsync(final JSONObject jsonObject,
-                            final String parentKeyKind,
-                            final String parentKeyName)
-            throws RepositoryException {
-        String ret = null;
-        try {
-            if (!jsonObject.has(Keys.OBJECT_ID)) {
-                ret = genTimeMillisId();
-                jsonObject.put(Keys.OBJECT_ID, ret);
-            } else {
-                ret = jsonObject.getString(Keys.OBJECT_ID);
-            }
-
-            final Key parentKey = KeyFactory.createKey(parentKeyKind,
-                                                       parentKeyName);
-            final Entity entity = new Entity(getName(), ret, parentKey);
-            setProperties(entity, jsonObject);
-
-            asyncDatastoreService.put(entity);
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new RepositoryException(e);
-        }
-
-        LOGGER.log(Level.FINER, "Added an object[oId={0}] in repository[{1}]",
-                   new Object[]{ret, getName()});
-
-        return ret;
-    }
-
     /**
      * Updates a certain json object by the specified id and the specified new
      * json object.
@@ -342,46 +296,6 @@ public abstract class AbstractGAERepository implements GAERepository {
             setProperties(entity, jsonObject);
 
             datastoreService.put(entity);
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new RepositoryException(e);
-        }
-
-        LOGGER.log(Level.FINER,
-                   "Updated an object[oId={0}] in repository[name={1}]",
-                   new Object[]{id, getName()});
-    }
-
-    @Override
-    public void updateAsync(final String id, final JSONObject jsonObject)
-            throws RepositoryException {
-        updateAsync(id, jsonObject,
-                    defaultParentKey.getKind(),
-                    defaultParentKey.getName());
-    }
-
-    /**
-     * Updates async.
-     * 
-     * @param id the specified id
-     * @param jsonObject the specified json object
-     * @param parentKeyKind the specified parent key kind
-     * @param parentKeyName the specified parent key name
-     * @throws RepositoryException repository exception
-     */
-    private void updateAsync(final String id, final JSONObject jsonObject,
-                             final String parentKeyKind,
-                             final String parentKeyName)
-            throws RepositoryException {
-        try {
-            jsonObject.put(Keys.OBJECT_ID, id);
-
-            final Key parentKey = KeyFactory.createKey(parentKeyKind,
-                                                       parentKeyName);
-            final Entity entity = new Entity(getName(), id, parentKey);
-            setProperties(entity, jsonObject);
-
-            asyncDatastoreService.put(entity);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
