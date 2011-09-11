@@ -17,12 +17,12 @@ package org.b3log.latke.repository;
 
 /**
  * Transaction.
- *
+ * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Sep 3, 2011
+ * @version 1.0.0.2, Sep 11, 2011
  */
 public interface Transaction {
-    
+
     /**
      * Gets the id of this transaction.
      * 
@@ -59,4 +59,16 @@ public interface Transaction {
      * otherwise
      */
     boolean isActive();
+
+    /**
+     * If the specified flat is {@code true}, clears the global cache regions
+     * if committed.
+     * 
+     * <p>
+     * Default is {@code true}, it means clears cache if committed.
+     * </p>
+     * 
+     * @param flag the specified flag
+     */
+    void setClearGloabalCache(final boolean flag);
 }
