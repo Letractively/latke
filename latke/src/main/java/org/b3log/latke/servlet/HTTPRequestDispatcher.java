@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.event.EventManager;
+import org.b3log.latke.servlet.renderer.DonothingRender;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
@@ -123,11 +124,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                 RequestProcessors.invoke(requestURI, method, context);
         // XXX: processor method ret?
 
-        final AbstractHTTPResponseRenderer renderer = context.getRenderer();
+        AbstractHTTPResponseRenderer renderer = context.getRenderer();
         if (null == renderer) {
-            LOGGER.log(Level.WARNING, "Renderer is null");
-            // TODO: default renderer?
-            return;
+            renderer = new DonothingRender();
         }
 
         renderer.render(context);
