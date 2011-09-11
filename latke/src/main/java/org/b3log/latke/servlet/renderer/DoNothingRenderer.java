@@ -24,7 +24,7 @@ import org.b3log.latke.servlet.HTTPRequestContext;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Sep 11, 2011
  */
-public final class DonothingRender extends AbstractHTTPResponseRenderer {
+public final class DoNothingRenderer extends AbstractHTTPResponseRenderer {
 
     @Override
     public void render(final HTTPRequestContext context) {
