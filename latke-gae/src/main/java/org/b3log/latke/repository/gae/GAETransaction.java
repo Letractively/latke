@@ -159,7 +159,7 @@ public final class GAETransaction implements Transaction {
                 for (final Entry<String, JSONObject> cached : cache.entrySet()) {
                     final String cacheKey = AbstractGAERepository.CACHE_KEY_PREFIX
                                             + cached.getKey();
-                    PageCaches.put(cacheKey, cached.getValue());
+                    AbstractGAERepository.CACHE.put(cacheKey, cached.getValue());
                 }
 
                 // Committed, clears cache and transaction thread var in repository
