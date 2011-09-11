@@ -38,7 +38,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Sep 11, 2011
+ * @version 1.0.0.5, Sep 11, 2011
  * @see AbstractGAERepository
  */
 public final class GAETransaction implements Transaction {
@@ -74,6 +74,10 @@ public final class GAETransaction implements Transaction {
      * </p>
      */
     private Map<String, JSONObject> cache = new HashMap<String, JSONObject>();
+    /**
+     * Flag of clear gloabal cache.
+     */
+    private boolean clearGloabalCache;
 
     /**
      * Constructs a {@link GAETransaction} object with the specified Google App
@@ -130,8 +134,8 @@ public final class GAETransaction implements Transaction {
      * Commits this transaction with {@value #COMMIT_RETRIES} times of retries.
      * 
      * <p>
-     * If the transaction committed, clears all transaction cache and global 
-     * cache.
+     * If the transaction committed, clears all transaction cache. If the {@link 
+     * #clearGloabalCache flag} is {@code true}, clears global cache regions.
      * </p>
      *
      * <p>
@@ -153,8 +157,10 @@ public final class GAETransaction implements Transaction {
                 // Committed, clears cache and transaction thread var in repository
                 cache.clear();
                 AbstractGAERepository.TX.set(null);
-                // Clears all cache regions
-                PageCaches.removeAll();
+
+                if (clearGloabalCache) {
+                    PageCaches.removeAll();
+                }
 
                 break;
             } catch (final ConcurrentModificationException e) {
@@ -183,5 +189,10 @@ public final class GAETransaction implements Transaction {
     @Override
     public boolean isActive() {
         return appEngineDatastoreTx.isActive();
+    }
+
+    @Override
+    public void setClearGloabalCache(final boolean flag) {
+        this.clearGloabalCache = flag;
     }
 }
