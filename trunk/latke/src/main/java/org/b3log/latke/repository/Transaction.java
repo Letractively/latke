@@ -61,8 +61,8 @@ public interface Transaction {
     boolean isActive();
 
     /**
-     * If the specified flat is {@code true}, clears the global cache regions
-     * if committed.
+     * If the specified flat is {@code true}, clears the global query cache 
+     * regions if committed.
      * 
      * <p>
      * Default is {@code true}, it means clears cache if committed.
@@ -70,5 +70,5 @@ public interface Transaction {
      * 
      * @param flag the specified flag
      */
-    void setClearGloabalCache(final boolean flag);
+    void clearQueryCache(final boolean flag);
 }
