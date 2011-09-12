@@ -24,18 +24,18 @@ import org.b3log.latke.servlet.AbstractHTTPResponseRenderer;
 import org.b3log.latke.servlet.HTTPRequestContext;
 
 /**
- * HTML HTTP response renderer.
+ * Atom HTTP response renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 11, 2011
+ * @version 1.0.0.0, Sep 12, 2011
  */
-public final class TextHTMLRenderer extends AbstractHTTPResponseRenderer {
+public final class AtomRenderer extends AbstractHTTPResponseRenderer {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(TextHTMLRenderer.class.getName());
+            Logger.getLogger(AtomRenderer.class.getName());
     /**
      * Content to render.
      */
@@ -54,7 +54,7 @@ public final class TextHTMLRenderer extends AbstractHTTPResponseRenderer {
     public void render(final HTTPRequestContext context) {
         try {
             final HttpServletResponse response = context.getResponse();
-            response.setContentType("text/html");
+            response.setContentType("application/atom+xml");
             response.setCharacterEncoding("UTF-8");
 
             final PrintWriter writer = response.getWriter();
