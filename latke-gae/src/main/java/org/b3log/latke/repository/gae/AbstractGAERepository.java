@@ -75,7 +75,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.5, Sep 8, 2011
+ * @version 1.0.3.6, Sep 12, 2011
  * @see GAETransaction
  */
 public abstract class AbstractGAERepository implements GAERepository {
@@ -780,14 +780,20 @@ public abstract class AbstractGAERepository implements GAERepository {
 
     @Override
     public GAETransaction beginTransaction() {
-        if (null != TX.get()) {
-            return TX.get(); // Using 'the current transaction'
+        GAETransaction ret = TX.get();
+        if (null != ret) {
+            LOGGER.log(Level.FINER,
+                       "There is a transaction[isActive={0}] in current thread",
+                       ret.isActive());
+            if (ret.isActive()) {
+                return TX.get(); // Using 'the current transaction'
+            }
         }
 
         final com.google.appengine.api.datastore.Transaction gaeTx =
                 datastoreService.beginTransaction();
 
-        final GAETransaction ret = new GAETransaction(gaeTx);
+        ret = new GAETransaction(gaeTx);
         TX.set(ret);
 
         return ret;
