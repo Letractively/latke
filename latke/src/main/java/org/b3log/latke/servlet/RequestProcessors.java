@@ -17,9 +17,12 @@ package org.b3log.latke.servlet;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -156,7 +159,8 @@ public final class RequestProcessors {
      */
     private static ProcessorMethod getProcessorMethod(final String requestURI,
                                                       final String method) {
-        ProcessorMethod ret = null;
+        final List<ProcessorMethod> matches = new ArrayList<ProcessorMethod>();
+        int i = 0;
         for (final ProcessorMethod processorMethod : processorMethods) {
             if (method.equals(processorMethod.getMethod())) {
                 if (requestURI.equals(processorMethod.getURIPattern())) {
@@ -165,12 +169,39 @@ public final class RequestProcessors {
 
                 if (AntPathMatcher.match(processorMethod.getURIPattern(),
                                          requestURI)) {
-                    ret = processorMethod;
+                    i++;
+                    matches.add(processorMethod);
                 }
             }
         }
 
-        return ret;
+        if (i > 1) {
+            final StringBuilder stringBuilder = new StringBuilder(
+                    "Can not determine request method for configured methods[");
+            final Iterator<ProcessorMethod> iterator = matches.iterator();
+            while (iterator.hasNext()) {
+                final ProcessorMethod processMethod = iterator.next();
+
+                stringBuilder.append("[className=");
+                stringBuilder.append(processMethod.getProcessorMethod().
+                        getDeclaringClass().getSimpleName());
+                stringBuilder.append(", methodName=");
+                stringBuilder.append(
+                        processMethod.getProcessorMethod().getName());
+                stringBuilder.append(", patterns=");
+                stringBuilder.append(processMethod.getURIPattern());
+                stringBuilder.append("]");
+
+                if (iterator.hasNext()) {
+                    stringBuilder.append(", ");
+                }
+            }
+            stringBuilder.append("]");
+
+            LOGGER.warning(stringBuilder.toString());
+        }
+
+        return matches.get(0);
     }
 
     /**
