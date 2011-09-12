@@ -34,7 +34,7 @@ import org.b3log.latke.util.AntPathMatcher;
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Sep 8, 2011
+ * @version 1.0.0.3, Sep 12, 2011
  */
 public final class RequestProcessors {
 
@@ -157,10 +157,15 @@ public final class RequestProcessors {
     private static ProcessorMethod getProcessorMethod(final String requestURI,
                                                       final String method) {
         for (final ProcessorMethod processorMethod : processorMethods) {
-            if (method.equals(processorMethod.getMethod())
-                && AntPathMatcher.match(processorMethod.getURIPattern(),
-                                        requestURI)) {
-                return processorMethod;
+            if (method.equals(processorMethod.getMethod())) {
+                if (requestURI.equals(processorMethod.getURIPattern())) {
+                    return processorMethod;
+                }
+
+                if (AntPathMatcher.match(processorMethod.getURIPattern(),
+                                         requestURI)) {
+                    return processorMethod;
+                }
             }
         }
 
