@@ -156,6 +156,7 @@ public final class RequestProcessors {
      */
     private static ProcessorMethod getProcessorMethod(final String requestURI,
                                                       final String method) {
+        ProcessorMethod ret = null;
         for (final ProcessorMethod processorMethod : processorMethods) {
             if (method.equals(processorMethod.getMethod())) {
                 if (requestURI.equals(processorMethod.getURIPattern())) {
@@ -164,12 +165,12 @@ public final class RequestProcessors {
 
                 if (AntPathMatcher.match(processorMethod.getURIPattern(),
                                          requestURI)) {
-                    return processorMethod;
+                    ret = processorMethod;
                 }
             }
         }
 
-        return null;
+        return ret;
     }
 
     /**
