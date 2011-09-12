@@ -47,7 +47,7 @@ public final class PNGRenderer extends AbstractHTTPResponseRenderer {
      * 
      * @param image the specified image
      */
-    public void setContent(final Image image) {
+    public void setImage(final Image image) {
         this.image = image;
     }
 
