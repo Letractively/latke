@@ -61,7 +61,7 @@ public interface Transaction {
     boolean isActive();
 
     /**
-     * If the specified flat is {@code true}, clears the global query cache 
+     * If the specified flag is {@code true}, clears the global query cache 
      * regions if committed.
      * 
      * <p>
