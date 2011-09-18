@@ -15,14 +15,20 @@
  */
 package org.b3log.latke.repository;
 
+import java.io.Serializable;
+
 /**
  * Blob.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Jan 20, 2011
+ * @version 1.0.0.2, Jan 18, 2011
  */
-public final class Blob {
+public final class Blob implements Serializable {
 
+    /**
+     * Default serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * Bytes.
      */
