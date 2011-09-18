@@ -35,7 +35,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Sep 6, 2011
+ * @version 1.0.0.3, Sep 18, 2011
  */
 public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRenderer {
 
@@ -55,9 +55,12 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
 
     /**
      * Invoked after render.
+     * 
+     * @param context the specified context
+     * @throws Exception exception 
      */
-    protected void afterRender() {
-    }
+    protected abstract void afterRender(final HTTPRequestContext context)
+            throws Exception;
 
     @Override
     public void render(final HTTPRequestContext context) {
@@ -68,7 +71,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
 
             doRender(context.getRequest(), response, dataModel, template);
 
-            afterRender();
+            afterRender(context);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "FreeMarker renders error", e);
 
@@ -103,8 +106,8 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
      */
     @SuppressWarnings("unchecked")
     protected void doRender(final HttpServletRequest request,
-                        final HttpServletResponse response,
-                        final Map<?, ?> dataModel, final Template template)
+                            final HttpServletResponse response,
+                            final Map<?, ?> dataModel, final Template template)
             throws ActionException {
         try {
             final PrintWriter writer = response.getWriter();
@@ -132,6 +135,8 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
             pageContentBuilder.append(msg);
 
             final String pageContent = pageContentBuilder.toString();
+
+            request.setAttribute(CACHED_CONTENT, pageContent);
 
             writer.write(pageContent);
             writer.flush();
