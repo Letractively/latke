@@ -36,7 +36,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Sep 6, 2011
+ * @version 1.0.0.5, Sep 19, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -85,7 +85,8 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             }
         }
 
-        response.setContentType("text/html");
+        request.setCharacterEncoding("UTF-8");
+        
         response.setCharacterEncoding("UTF-8");
 
         final HTTPRequestContext context = new HTTPRequestContext();
@@ -103,9 +104,6 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     public static void dispatch(final HTTPRequestContext context) {
         final HttpServletRequest request = context.getRequest();
         final HttpServletResponse response = context.getResponse();
-
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
 
         String requestURI = (String) request.getAttribute("requestURI");
         if (Strings.isEmptyOrNull(requestURI)) {
