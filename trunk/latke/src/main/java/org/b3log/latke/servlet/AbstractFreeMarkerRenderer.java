@@ -65,6 +65,9 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     @Override
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+
         try {
             final Template template =
                     Templates.CONFIGURATION.getTemplate(templateName);
