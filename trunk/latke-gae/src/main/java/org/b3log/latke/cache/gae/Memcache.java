@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.cache.gae;
 
 import com.google.appengine.api.memcache.InvalidValueException;
@@ -55,7 +54,7 @@ import org.b3log.latke.plugin.PluginManager;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Aug 3, 2011
+ * @version 1.0.1.2, Sep 20, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -121,7 +120,7 @@ public final class Memcache<K, V> implements Cache<K, V> {
 
         if (null == value) {
             throw new IllegalArgumentException(
-                    "The specified value can not be null!");
+                    "The specified value can not be null![key=" + key + "]");
         }
 
         memcacheService.put(key, value);
@@ -376,7 +375,8 @@ public final class Memcache<K, V> implements Cache<K, V> {
                                     currentThread().getContextClassLoader());
                         } catch (final ClassNotFoundException ex) {
                             // Try to load class via plugin class loaders
-                            final Set<ClassLoader> classLoaders = PluginManager.getInstance().
+                            final Set<ClassLoader> classLoaders = PluginManager.
+                                    getInstance().
                                     getClassLoaders();
 
                             for (final ClassLoader classLoader : classLoaders) {
