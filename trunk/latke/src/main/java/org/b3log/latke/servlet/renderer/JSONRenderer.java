@@ -28,7 +28,7 @@ import org.b3log.latke.servlet.HTTPRequestContext;
  * <a href="http://json.org">JSON</a> HTTP response renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 11, 2011
+ * @version 1.0.0.1, Sep 20, 2011
  */
 public final class JSONRenderer extends AbstractHTTPResponseRenderer {
 
@@ -41,6 +41,14 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
      * JSON object to render.
      */
     private JSONObject jsonObject;
+    /**
+     * Determines whether render as JSONP.
+     */
+    private boolean isJSONP;
+    /**
+     * JSONP callback function name.
+     */
+    private String callback = "callback";
 
     /**
      * Sets the json object to render with the specified json object.
@@ -51,6 +59,34 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
         this.jsonObject = jsonObject;
     }
 
+    /**
+     * Sets whether render as JSONP.
+     * 
+     * @param isJSONP {@code true} for JSONP, {@code false} otherwise
+     * @return this 
+     */
+    public JSONRenderer setJSONP(final boolean isJSONP) {
+        this.isJSONP = isJSONP;
+        
+        return this;
+    }
+    
+    /**
+     * Sets JSONP callback function.
+     * 
+     * <p>
+     * Invokes this method will set {@link #isJSONP} to {@code true} 
+     * automatically.
+     * </p>
+     * 
+     * @param callback the specified callback function name
+     */
+    public void setCallback(final String callback) {
+        this.callback = callback;
+        
+        setJSONP(true);
+    }
+
     @Override
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
@@ -59,7 +95,13 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
 
         try {
             final PrintWriter writer = response.getWriter();
-            writer.println(jsonObject);
+
+            if (!isJSONP) {
+                writer.println(jsonObject);
+            } else {
+                writer.print(callback + "(" + jsonObject + ")");
+            }
+            
             writer.close();
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "FreeMarker renders error", e);
