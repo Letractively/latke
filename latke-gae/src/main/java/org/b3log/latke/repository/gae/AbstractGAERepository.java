@@ -132,7 +132,7 @@ public abstract class AbstractGAERepository implements GAERepository {
     /**
      * Query chunk size.
      */
-    private static final int QUERY_CHUNK_SIZE = 100;
+    private static final int QUERY_CHUNK_SIZE = 50;
     /**
      * The current transaction.
      */
