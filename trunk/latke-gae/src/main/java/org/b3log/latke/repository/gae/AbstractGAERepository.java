@@ -75,7 +75,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.6, Sep 12, 2011
+ * @version 1.0.3.7, Sep 22, 2011
  * @see GAETransaction
  */
 public abstract class AbstractGAERepository implements GAERepository {
@@ -129,6 +129,10 @@ public abstract class AbstractGAERepository implements GAERepository {
      * Cache key prefix.
      */
     public static final String CACHE_KEY_PREFIX = "repository";
+    /**
+     * Query chunk size.
+     */
+    private static final int QUERY_CHUNK_SIZE = 100;
     /**
      * The current transaction.
      */
@@ -739,7 +743,8 @@ public abstract class AbstractGAERepository implements GAERepository {
             final int offset = pageSize * (currentPageNum - 1);
             final QueryResultList<Entity> queryResultList =
                     preparedQuery.asQueryResultList(
-                    withOffset(offset).limit(pageSize));
+                    withOffset(offset).limit(pageSize).chunkSize(
+                    QUERY_CHUNK_SIZE));
 
             final JSONArray results = new JSONArray();
             ret.put(Keys.RESULTS, results);
