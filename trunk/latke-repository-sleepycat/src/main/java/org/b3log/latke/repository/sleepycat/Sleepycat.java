@@ -142,7 +142,7 @@ public final class Sleepycat {
 
         ENV.close();
         LOGGER.info("Closed data store envionment");
-        LOGGER.info("SleepCat has been shutdown");
+        LOGGER.info("SleepyCat has been shutdown");
     }
 
     /**

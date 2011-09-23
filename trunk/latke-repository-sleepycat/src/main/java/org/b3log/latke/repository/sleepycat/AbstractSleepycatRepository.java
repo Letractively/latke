@@ -105,7 +105,7 @@ public abstract class AbstractSleepycatRepository implements Repository {
 
 
             final OperationStatus operationStatus = database.putNoOverwrite(
-                    currentTransaction.getSleepcatTransaction(), entryKey, data);
+                    currentTransaction.getSleepycatTransaction(), entryKey, data);
 
             switch (operationStatus) {
                 case KEYEXIST:
