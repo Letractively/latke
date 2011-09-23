@@ -36,7 +36,18 @@ public class SleepycatTransaction implements Transaction {
      * Flag of clear query cache.
      */
     private boolean clearQueryCache = true;
-    
+
+    /**
+     * Constructs a {@link SleepycatTransaction} object with the specified Sleeypcat
+     * database transaction {@link com.sleepycat.je.Transaction transaction}.
+     *
+     * @param sleepycatTransaction the specified Sleeypcat database transaction 
+     */
+    public SleepycatTransaction(
+            final com.sleepycat.je.Transaction sleepycatTransaction) {
+        this.sleepycatTransaction = sleepycatTransaction;
+    }
+
     /**
      * Gets the underlying Sleepycat transaction.
      * 
