@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke cache implementation for GAE.
-    Version: 1.0.2.1, Sep 3, 2011
+    Version: 1.0.2.2, Sep 23, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -336,14 +336,7 @@
         </plugins>
     </build>
 
-
     <repositories>
-        <repository>
-            <id>guice-maven</id>
-            <name>guice maven</name>
-            <url>http://guice-maven.googlecode.com/svn/trunk</url>
-        </repository>
-
         <repository>
             <id>m2-release</id>
             <name>88250 at Google Maven repository of releases</name>
