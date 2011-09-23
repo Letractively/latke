@@ -22,7 +22,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, Jan 20, 2011
+ * @version 1.0.1.7, Sep 23, 2011
  */
 public interface Repository {
 
@@ -145,4 +145,19 @@ public interface Repository {
      * @return the transaction that was started.
      */
     Transaction beginTransaction();
+
+    /**
+     * Is the cache enabled?
+     *
+     * @return {@code true} for enabled, {@code false} otherwise
+     */
+    boolean isCacheEnabled();
+
+    /**
+     * Sets the cache enabled with the specified switch.
+     *
+     * @param isCacheEnabled the specified switch, {@code true} for enable
+     * cache, {@code false} otherwise
+     */
+    void setCacheEnabled(final boolean isCacheEnabled);
 }
