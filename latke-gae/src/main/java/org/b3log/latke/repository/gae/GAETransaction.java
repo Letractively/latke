@@ -40,7 +40,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.6, Sep 20, 2011
- * @see AbstractGAERepository
+ * @see GAERepository
  */
 public final class GAETransaction implements Transaction {
 
@@ -157,21 +157,21 @@ public final class GAETransaction implements Transaction {
 
                 // Flushes transaction cache into global query (by id) cache.
                 for (final Entry<String, JSONObject> cached : cache.entrySet()) {
-                    final String cacheKey = AbstractGAERepository.CACHE_KEY_PREFIX
+                    final String cacheKey = GAERepository.CACHE_KEY_PREFIX
                                             + cached.getKey();
                     final JSONObject value = cached.getValue();
 
                     // If the value is null, it means the value has been removed
                     if (null == value) {
-                        AbstractGAERepository.CACHE.remove(cacheKey);
+                        GAERepository.CACHE.remove(cacheKey);
                     } else {
-                        AbstractGAERepository.CACHE.put(cacheKey, value);
+                        GAERepository.CACHE.put(cacheKey, value);
                     }
                 }
 
                 // Committed, clears cache and transaction thread var in repository
                 cache.clear();
-                AbstractGAERepository.TX.set(null);
+                GAERepository.TX.set(null);
 
                 if (clearQueryCache) {
                     PageCaches.removeAll();
@@ -198,7 +198,7 @@ public final class GAETransaction implements Transaction {
 
         // Rollbacked, clears cache and transaction thread var in repository
         cache.clear();
-        AbstractGAERepository.TX.set(null);
+        GAERepository.TX.set(null);
     }
 
     @Override
