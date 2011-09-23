@@ -42,7 +42,7 @@ public class SleepycatTransaction implements Transaction {
      * 
      * @return Sleepycat transaction
      */
-    public com.sleepycat.je.Transaction getSleepcatTransaction() {
+    public com.sleepycat.je.Transaction getSleepycatTransaction() {
         return sleepycatTransaction;
     }
 

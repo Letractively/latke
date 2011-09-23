@@ -8,6 +8,7 @@ Without this configuration present, some functionality in the IDE may be limited
 -->
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>enum</word>
+        <word>json</word>
         <word>Serializer</word>
         <word>Sleepycat</word>
         <word>xml</word>
