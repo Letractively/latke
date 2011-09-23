@@ -103,16 +103,18 @@ public abstract class AbstractSleepycatRepository implements Repository {
             final DatabaseEntry data = new DatabaseEntry(
                     jsonObject.toString().getBytes("UTF-8"));
 
-
-            final OperationStatus operationStatus = database.putNoOverwrite(
+            final OperationStatus operationStatus =
+                    database.putNoOverwrite(
                     currentTransaction.getSleepycatTransaction(), entryKey, data);
 
             switch (operationStatus) {
                 case KEYEXIST:
-                    LOGGER.log(Level.WARNING,
+                    LOGGER.log(Level.SEVERE,
                                "Found a duplicated object[oId={0}] in repository[name={1}], ignores this add object operation",
                                new Object[]{ret, getName()});
-                    break;
+                    throw new RepositoryException(
+                            "Add an object into repository[name=" + getName()
+                            + "] failed, caused by duplicated id[" + ret + "]");
                 case SUCCESS:
                     LOGGER.log(Level.FINER,
                                "Added an object[oId={0}] in repository[name={1}]",
@@ -160,6 +162,13 @@ public abstract class AbstractSleepycatRepository implements Repository {
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
+        final SleepycatTransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking update() outside a transaction");
+        }
+
         try {
             LOGGER.log(Level.FINER,
                        "Updating an object[oId={0}] in repository[name={1}]",
@@ -193,9 +202,17 @@ public abstract class AbstractSleepycatRepository implements Repository {
      */
     @Override
     public void remove(final String id) throws RepositoryException {
+        final SleepycatTransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking remove() outside a transaction");
+        }
+
         final Database database = Sleepycat.get(getName(),
                                                 getDatabaseConfig());
-        final Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);
+        final Cursor cursor = database.openCursor(currentTransaction.
+                getSleepycatTransaction(), CursorConfig.DEFAULT);
 
         final DatabaseEntry foundKey = new DatabaseEntry();
         final DatabaseEntry foundData = new DatabaseEntry();
@@ -220,7 +237,6 @@ public abstract class AbstractSleepycatRepository implements Repository {
             throw new RepositoryException(e);
         } finally {
             cursor.close();
-            database.sync();
         }
 
         LOGGER.log(Level.WARNING,
@@ -334,7 +350,6 @@ public abstract class AbstractSleepycatRepository implements Repository {
 //
 //        return ret;
 //    }
-
     @Override
     public List<JSONObject> getRandomly(final int fetchSize)
             throws RepositoryException {
