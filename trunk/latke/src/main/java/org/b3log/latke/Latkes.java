@@ -105,8 +105,8 @@ public final class Latkes {
      */
     public static void initRuntimeEnv() {
         try {
-            Class.forName("org.b3log.latke.repository.gae.GAERepository");
             runtimeEnv = RuntimeEnv.GAE;
+            Class.forName("org.b3log.latke.repository.gae.GAERepository");
             LOGGER.log(Level.INFO, "Latke is running on [GAE]",
                        Latkes.getRuntimeEnv());
         } catch (final ClassNotFoundException e) {
