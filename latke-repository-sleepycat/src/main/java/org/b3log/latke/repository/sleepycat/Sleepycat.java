@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.sleepycat;
 
 import com.sleepycat.je.Database;
@@ -34,7 +33,7 @@ import org.b3log.latke.Latkes;
  * Sleepycat.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Nov 18, 2010
+ * @version 1.0.0.4, Sep 23, 2011
  */
 public final class Sleepycat {
 
@@ -47,14 +46,15 @@ public final class Sleepycat {
      * Default environment configurations. Set the following options explicitly: 
      * <ul>
      *   <li>allowCreate=true</li>
+     *   <li>transactional=true</li>
      * </ul>
      */
     public static final EnvironmentConfig DEFAULT_ENV_CONFIG =
             new EnvironmentConfig();
     /**
-     * Default environment.
+     * Environment.
      */
-    public static final Environment DEFAULT_ENV;
+    public static final Environment ENV;
     /**
      * Database cache.
      */
@@ -64,7 +64,7 @@ public final class Sleepycat {
      * Default database configurations. Set the following options explicitly:
      * <ul>
      *   <li>allowCreate=true</li>
-     *   <li>deferredWrite=true</li>
+     *   <li>transactional=true</li>
      * </ul>
      */
     public static final DatabaseConfig DEFAULT_DB_CONFIG = new DatabaseConfig();
@@ -76,12 +76,14 @@ public final class Sleepycat {
     static {
         try {
             ENV_PATH = Latkes.getRepositoryPath();
-            DEFAULT_ENV_CONFIG.setAllowCreate(true);
+            DEFAULT_ENV_CONFIG.setAllowCreate(true).
+                    setTransactional(true);
 
-            DEFAULT_ENV = new Environment(new File(ENV_PATH),
-                                          DEFAULT_ENV_CONFIG);
+            ENV = new Environment(new File(ENV_PATH),
+                                  DEFAULT_ENV_CONFIG);
 
-            DEFAULT_DB_CONFIG.setAllowCreate(true).setDeferredWrite(true);
+            DEFAULT_DB_CONFIG.setAllowCreate(true).
+                    setTransactional(true);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException(e);
@@ -110,9 +112,9 @@ public final class Sleepycat {
             }
         }
 
-        final Database ret = DEFAULT_ENV.openDatabase(null,
-                                                      repositoryName,
-                                                      databaseConfig);
+        final Database ret = ENV.openDatabase(null,
+                                              repositoryName,
+                                              databaseConfig);
         LOGGER.log(Level.INFO, "Created database[repositoryName={0}]",
                    repositoryName);
 
@@ -138,7 +140,7 @@ public final class Sleepycat {
             }
         }
 
-        DEFAULT_ENV.close();
+        ENV.close();
         LOGGER.info("Closed data store envionment");
         LOGGER.info("SleepCat has been shutdown");
     }

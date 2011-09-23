@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke repository implementation by Sleepycat.
-    Version: 1.0.1.5, Jan 12, 2011
+    Version: 1.0.1.6, Sep 23, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -11,7 +11,7 @@
     <groupId>org.b3log</groupId>
     <artifactId>latke-repository-sleepycat</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.7</version>
+    <version>0.5.0-SNAPSHOT</version>
     <name>Latke Repository(Sleepycat)</name>
     <url>http://latke.googlecode.com</url>
     <description>Latke repository implemented by Sleepycat.</description>
@@ -19,13 +19,13 @@
 
     <!-- Version -->
     <properties>
-        <org.b3log.latke.version>0.4.4</org.b3log.latke.version>
-        <com.sleepycat.je.version>4.0.103</com.sleepycat.je.version>
+        <org.b3log.latke.version>0.5.0-SNAPSHOT</org.b3log.latke.version>
+        <com.sleepycat.je.version>4.1.10</com.sleepycat.je.version>
         <!-- Maven Plugin -->
-        <maven-license-plugin.version>1.8.0</maven-license-plugin.version>
-        <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
+        <maven-license-plugin.version>1.9.0</maven-license-plugin.version>
+        <maven-checkstyle-plugin.version>2.6</maven-checkstyle-plugin.version>
         <!-- Unit Test -->
-        <testng.version>5.9</testng.version>
+        <testng.version>6.1.1</testng.version>
         <!-- -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -115,7 +115,6 @@
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
                 <scope>test</scope>
-                <classifier>jdk15</classifier>
             </dependency>
 
             <dependency>
@@ -137,7 +136,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
 
@@ -290,12 +288,6 @@
 
 
     <repositories>
-        <repository>
-            <id>guice-maven</id>
-            <name>guice maven</name>
-            <url>http://guice-maven.googlecode.com/svn/trunk</url>
-        </repository>
-
         <repository>
             <id>m2-release</id>
             <name>88250 at Google Maven repository of releases</name>
