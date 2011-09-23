@@ -22,6 +22,7 @@ import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.TransactionConfig;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -359,5 +360,26 @@ public abstract class AbstractSleepycatRepository implements Repository {
     @Override
     public long count() throws RepositoryException {
         throw new UnsupportedOperationException("Not supported yet!");
+    }
+
+    @Override
+    public SleepycatTransaction beginTransaction() {
+        SleepycatTransaction ret = TX.get();
+        if (null != ret) {
+            LOGGER.log(Level.FINER,
+                       "There is a transaction[isActive={0}] in current thread",
+                       ret.isActive());
+            if (ret.isActive()) {
+                return TX.get(); // Using 'the current transaction'
+            }
+        }
+
+        final com.sleepycat.je.Transaction sleepycatTx =
+                Sleepycat.ENV.beginTransaction(null, TransactionConfig.DEFAULT);
+
+        ret = new SleepycatTransaction(sleepycatTx);
+        TX.set(ret);
+
+        return ret;
     }
 }
