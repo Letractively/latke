@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.b3log.latke.repository.sleepycat;
 
 import com.sleepycat.je.Cursor;
@@ -27,12 +26,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Keys;
-import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
-import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Ids;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -41,13 +37,18 @@ import org.json.JSONObject;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.6, Nov 18, 2010
  */
-public abstract class AbstractRepository implements Repository {
+public abstract class AbstractSleepycatRepository implements Repository {
 
     /**
      * Logger.
      */
     private static final Logger LOGGER =
-            Logger.getLogger(AbstractRepository.class.getName());
+            Logger.getLogger(AbstractSleepycatRepository.class.getName());
+    /**
+     * The current transaction.
+     */
+    public static final ThreadLocal<SleepycatTransaction> TX =
+            new InheritableThreadLocal<SleepycatTransaction>();
 
     /**
      * Gets database configuration of this repository.
@@ -81,6 +82,12 @@ public abstract class AbstractRepository implements Repository {
      */
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
+        final SleepycatTransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException("Invoking add() outside a transaction");
+        }
+
         final String ret = Ids.genTimeMillisId();
 
         final Database database = Sleepycat.get(getName(), getDatabaseConfig());
@@ -96,29 +103,28 @@ public abstract class AbstractRepository implements Repository {
             final DatabaseEntry data = new DatabaseEntry(
                     jsonObject.toString().getBytes("UTF-8"));
 
-            final OperationStatus operationStatus =
-                    database.putNoOverwrite(null, entryKey, data);
+
+            final OperationStatus operationStatus = database.putNoOverwrite(
+                    currentTransaction.getSleepcatTransaction(), entryKey, data);
 
             switch (operationStatus) {
                 case KEYEXIST:
                     LOGGER.log(Level.WARNING,
-                               "Found duplicated object[oId={0}] in repository[name={1}], ignores add object operation",
+                               "Found a duplicated object[oId={0}] in repository[name={1}], ignores this add object operation",
                                new Object[]{ret, getName()});
                     break;
                 case SUCCESS:
                     LOGGER.log(Level.FINER,
-                               "Added object[oId={0}] in repository[name={1}]",
+                               "Added an object[oId={0}] in repository[name={1}]",
                                new Object[]{ret, getName()});
                     break;
                 default:
-                    throw new ServiceException("Add object[oId="
-                                               + ret + "] fail");
+                    throw new RepositoryException("Add an object[oId="
+                                                  + ret + "] fail");
             }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
-        } finally {
-            database.sync();
         }
 
         return ret;
@@ -271,63 +277,63 @@ public abstract class AbstractRepository implements Repository {
         return null;
     }
 
-    @Override
-    public JSONObject get(final int currentPageNum,
-                          final int pageSize)
-            throws RepositoryException {
-        final Database database = Sleepycat.get(getName(),
-                                                getDatabaseConfig());
-        final Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);
-
-        final long count = database.count();
-        final int pageCount =
-                (int) Math.ceil((double) count / (double) pageSize);
-
-        final JSONObject ret = new JSONObject();
-
-        final DatabaseEntry foundKey = new DatabaseEntry();
-        final DatabaseEntry foundData = new DatabaseEntry();
-        try {
-            final JSONObject pagination = new JSONObject();
-            ret.put(Pagination.PAGINATION, pagination);
-
-            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
-            final int passCount = pageSize * (currentPageNum - 1);
-            int cnt = 0;
-            while (cnt < passCount) {
-                cursor.getNext(foundKey, foundData, LockMode.RMW);
-
-                cnt++;
-            }
-
-            cnt = 0;
-            final JSONArray resultList = new JSONArray();
-            ret.put("d", resultList);
-            while (cnt < pageSize
-                   && cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
-                      == OperationStatus.SUCCESS) {
-                final JSONObject jsonObject =
-                        new JSONObject(new String(foundData.getData(), "UTF-8"));
-                resultList.put(jsonObject);
-
-                cnt++;
-            }
-
-            LOGGER.log(Level.FINER,
-                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
-                       new Object[]{cnt,
-                                    currentPageNum,
-                                    pageSize,
-                                    getName()});
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new RepositoryException(e);
-        } finally {
-            cursor.close();
-        }
-
-        return ret;
-    }
+    // TODO: @Override
+//    public JSONObject get(final int currentPageNum,
+//                          final int pageSize)
+//            throws RepositoryException {
+//        final Database database = Sleepycat.get(getName(),
+//                                                getDatabaseConfig());
+//        final Cursor cursor = database.openCursor(null, CursorConfig.DEFAULT);
+//
+//        final long count = database.count();
+//        final int pageCount =
+//                (int) Math.ceil((double) count / (double) pageSize);
+//
+//        final JSONObject ret = new JSONObject();
+//
+//        final DatabaseEntry foundKey = new DatabaseEntry();
+//        final DatabaseEntry foundData = new DatabaseEntry();
+//        try {
+//            final JSONObject pagination = new JSONObject();
+//            ret.put(Pagination.PAGINATION, pagination);
+//
+//            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+//            final int passCount = pageSize * (currentPageNum - 1);
+//            int cnt = 0;
+//            while (cnt < passCount) {
+//                cursor.getNext(foundKey, foundData, LockMode.RMW);
+//
+//                cnt++;
+//            }
+//
+//            cnt = 0;
+//            final JSONArray resultList = new JSONArray();
+//            ret.put("d", resultList);
+//            while (cnt < pageSize
+//                   && cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
+//                      == OperationStatus.SUCCESS) {
+//                final JSONObject jsonObject =
+//                        new JSONObject(new String(foundData.getData(), "UTF-8"));
+//                resultList.put(jsonObject);
+//
+//                cnt++;
+//            }
+//
+//            LOGGER.log(Level.FINER,
+//                       "Found objects[size={0}] at page[currentPageNum={1}, pageSize={2}] in repository[{3}]",
+//                       new Object[]{cnt,
+//                                    currentPageNum,
+//                                    pageSize,
+//                                    getName()});
+//        } catch (final Exception e) {
+//            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+//            throw new RepositoryException(e);
+//        } finally {
+//            cursor.close();
+//        }
+//
+//        return ret;
+//    }
 
     @Override
     public List<JSONObject> getRandomly(final int fetchSize)
