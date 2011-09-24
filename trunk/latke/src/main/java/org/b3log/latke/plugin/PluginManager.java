@@ -246,11 +246,14 @@ public final class PluginManager {
         final URL classesFileDirURL = classesFileDir.toURI().toURL();
 
         final URLClassLoader classLoader = new URLClassLoader(new URL[]{
-                    defaultClassesFileDirURL, classesFileDirURL});
+                    defaultClassesFileDirURL, classesFileDirURL}, 
+                PluginManager.class.getClassLoader());
 
         classLoaders.add(classLoader);
 
         final String pluginClassName = props.getProperty(Plugin.PLUGIN_CLASS);
+        LOGGER.log(Level.FINEST, "Loading plugin class[name={0}]",
+                   pluginClassName);
         final Class<?> pluginClass = classLoader.loadClass(pluginClassName);
         final AbstractPlugin ret = (AbstractPlugin) pluginClass.newInstance();
 
