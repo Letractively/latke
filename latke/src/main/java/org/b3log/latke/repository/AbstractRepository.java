@@ -40,10 +40,6 @@ public abstract class AbstractRepository implements Repository {
      * Repository.
      */
     private Repository repository;
-    /**
-     * Is cache enabled?
-     */
-    private boolean cacheEnabled = true;
 
     /**
      * Constructs a repository with the specified name.
@@ -132,12 +128,12 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public final boolean isCacheEnabled() {
-        return cacheEnabled;
+        return repository.isCacheEnabled();
     }
 
     @Override
     public final void setCacheEnabled(final boolean isCacheEnabled) {
-        this.cacheEnabled = isCacheEnabled;
+        repository.setCacheEnabled(isCacheEnabled);
     }
 
     @Override
