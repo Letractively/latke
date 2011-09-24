@@ -27,7 +27,6 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.RuntimeEnv;
 
 /**
  * Abstract servlet listener.
@@ -69,14 +68,6 @@ public abstract class AbstractServletListener implements ServletContextListener,
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]",
                    new Object[]{webRoot, catalinaBase});
-
-        if (RuntimeEnv.LOCAL == Latkes.getRuntimeEnv()) {
-            final String repositoryPath =
-                    webRoot + File.separator + "WEB-INF"
-                    + File.separator + "repository";
-            Latkes.setRepositoryPath(repositoryPath);
-            LOGGER.log(Level.INFO, "Sets repository[path={0}]", repositoryPath);
-        }
     }
 
     /**
