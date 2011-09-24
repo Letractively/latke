@@ -33,7 +33,7 @@ import org.b3log.latke.RuntimeEnv;
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.8, Jan 23, 2011
+ * @version 1.0.2.9, Sep 24, 2011
  */
 public abstract class AbstractServletListener implements ServletContextListener,
                                                          ServletRequestListener,
@@ -50,8 +50,8 @@ public abstract class AbstractServletListener implements ServletContextListener,
     private static String webRoot;
 
     /**
-     * Initializes context, {@linkplain #webRoot web root}, registers json RPC
-     * services and json RPC service serializers.
+     * Initializes context, {@linkplain #webRoot web root}, locale and runtime
+     * environment.
      * 
      * @param servletContextEvent servlet context event
      */
