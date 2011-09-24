@@ -114,8 +114,6 @@ public final class Latkes {
             LOGGER.log(Level.INFO, "Latke is running on [Local]",
                        Latkes.getRuntimeEnv());
         }
-
-        // TODO: getRepositoryPath();
     }
 
     /**

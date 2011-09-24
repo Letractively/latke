@@ -72,7 +72,7 @@ public abstract class AbstractServletListener implements ServletContextListener,
 
         if (RuntimeEnv.LOCAL == Latkes.getRuntimeEnv()) {
             final String repositoryPath =
-                    webRoot + "repository" + File.separator + "WEB-INF"
+                    webRoot + File.separator + "WEB-INF"
                     + File.separator + "repository";
             Latkes.setRepositoryPath(repositoryPath);
             LOGGER.log(Level.INFO, "Sets repository[path={0}]", repositoryPath);
