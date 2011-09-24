@@ -27,7 +27,7 @@ import org.b3log.latke.image.ImageService;
  * Google App Engine image service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 8, 2011
+ * @version 1.0.0.1, Sep 24, 2011
  */
 public final class GAEImageService implements ImageService {
 
@@ -39,9 +39,6 @@ public final class GAEImageService implements ImageService {
 
     @Override
     public Image makeImage(final byte[] data) {
-        final com.google.appengine.api.images.Image gaeImage =
-                ImagesServiceFactory.makeImage(data);
-
         final Image ret = new Image();
         ret.setData(data);
 
