@@ -23,6 +23,13 @@ import org.json.JSONObject;
 
 /**
  * Abstract repository.
+ * 
+ * <p>
+ * This is a base adapter for wrapped {@link #repository repository}, the 
+ * underlying repository will be instantiated in the 
+ * {@link #AbstractRepository(java.lang.String) constructor} with 
+ * {@link Latkes#getRuntimeEnv() the current runtime environment}.
+ * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Sep 23, 2011
