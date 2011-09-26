@@ -183,9 +183,9 @@ public final class RequestProcessors {
                 while (entries.hasMoreElements()) {
                     final JarEntry jarEntry = entries.nextElement();
                     String className = jarEntry.getName();
-
+                    
                     if (className.contains("$")
-                        || "META-INF".equals(className)) {
+                        || "META-INF".contains(className)) {
                         continue; // Skips inner class
                     }
 
