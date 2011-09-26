@@ -31,7 +31,7 @@ import org.b3log.latke.image.ImageService;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Aug 16, 2011
  */
-final class LocalImageService implements ImageService {
+public final class LocalImageService implements ImageService {
 
     @Override
     public Image makeImage(final byte[] data) {
