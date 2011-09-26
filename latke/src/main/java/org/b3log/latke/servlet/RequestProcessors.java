@@ -192,7 +192,14 @@ public final class RequestProcessors {
                     className = StringUtils.substringBefore(className, ".");
                     className = className.replaceAll("/", ".");
 
-                    final Class<?> clz = classLoader.loadClass(className);
+                    Class<?> clz = null;
+                    try {
+                        clz = classLoader.loadClass(className);
+                    } catch (final ClassNotFoundException e) {
+                        LOGGER.log(Level.WARNING,
+                                   "Can not load class[name={0}] for discovering request processor, ignored it",
+                                   className);
+                    }
 
                     if (clz.isAnnotationPresent(RequestProcessor.class)) {
                         LOGGER.log(Level.FINER,
