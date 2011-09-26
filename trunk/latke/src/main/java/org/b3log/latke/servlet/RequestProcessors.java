@@ -177,7 +177,12 @@ public final class RequestProcessors {
 
         try {
             for (final File file : files) {
-                final JarFile jarFile = new JarFile(file.getPath());
+                final String path = file.getPath();
+                if (path.contains("appengine")) {
+                    continue; // Skips GAE
+                }
+
+                final JarFile jarFile = new JarFile(path);
 
                 final Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
@@ -196,9 +201,7 @@ public final class RequestProcessors {
                     try {
                         clz = classLoader.loadClass(className);
                     } catch (final ClassNotFoundException e) {
-                        LOGGER.log(Level.WARNING,
-                                   "Can not load class[name={0}] for discovering request processor, ignored it",
-                                   className);
+                        continue; // Ignores....
                     }
 
                     if (clz.isAnnotationPresent(RequestProcessor.class)) {
