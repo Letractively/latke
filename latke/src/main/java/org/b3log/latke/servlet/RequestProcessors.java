@@ -19,12 +19,15 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -37,7 +40,7 @@ import org.b3log.latke.util.AntPathMatcher;
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Sep 12, 2011
+ * @version 1.0.0.4, Sep 26, 2011
  */
 public final class RequestProcessors {
 
@@ -106,6 +109,14 @@ public final class RequestProcessors {
      */
     // XXX: only WEB-INF/classes at present, to consider WEB/INF/lib?
     public static void discover() {
+        discoverFromClassesDir();
+        discoverFromLibDir();
+    }
+
+    /**
+     * Scans classpath (classes directory) to discover request processor classes.
+     */
+    private static void discoverFromClassesDir() {
         final String webRoot = AbstractServletListener.getWebRoot();
         final File classesDir = new File(webRoot + File.separator + "WEB-INF"
                                          + File.separator
@@ -146,7 +157,67 @@ public final class RequestProcessors {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, "Scans classpath failed", e);
+            LOGGER.log(Level.SEVERE,
+                       "Scans classpath (classes directory) failed", e);
+        }
+    }
+
+    /**
+     * Scans classpath (lib directory) to discover request processor classes.
+     */
+    private static void discoverFromLibDir() {
+        final String webRoot = AbstractServletListener.getWebRoot();
+        final File libDir = new File(webRoot + File.separator + "WEB-INF"
+                                     + File.separator + "lib" + File.separator);
+        @SuppressWarnings("unchecked")
+        final Collection<File> files =
+                FileUtils.listFiles(libDir, new String[]{"jar"}, true);
+
+        final ClassLoader classLoader = RequestProcessors.class.getClassLoader();
+
+        try {
+            for (final File file : files) {
+                final JarFile jarFile = new JarFile(file.getPath());
+
+                final Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    final JarEntry jarEntry = entries.nextElement();
+                    String className = jarEntry.getName();
+
+                    if (className.contains("$")
+                        || "META-INF".equals(className)) {
+                        continue; // Skips inner class
+                    }
+
+                    className = StringUtils.substringBefore(className, ".");
+                    className = className.replaceAll("/", ".");
+
+                    final Class<?> clz = classLoader.loadClass(className);
+
+                    if (clz.isAnnotationPresent(RequestProcessor.class)) {
+                        LOGGER.log(Level.FINER,
+                                   "Found a request processor[className={0}]",
+                                   className);
+                        final Method[] declaredMethods =
+                                clz.getDeclaredMethods();
+                        for (int i = 0; i < declaredMethods.length; i++) {
+                            final Method mthd = declaredMethods[i];
+                            final RequestProcessing annotation =
+                                    mthd.getAnnotation(RequestProcessing.class);
+
+                            if (null == annotation) {
+                                continue;
+                            }
+
+                            addProcessorMethod(annotation, clz, mthd);
+                        }
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE,
+                       "Scans classpath (classes directory) failed", e);
+
         }
     }
 
