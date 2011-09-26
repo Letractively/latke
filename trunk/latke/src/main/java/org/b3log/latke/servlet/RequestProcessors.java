@@ -178,7 +178,12 @@ public final class RequestProcessors {
         try {
             for (final File file : files) {
                 final String path = file.getPath();
-                if (path.contains("appengine")) {
+                if (path.contains("appengine")
+                    || path.contains("freemarker")
+                    || path.contains("commons")
+                    || path.contains("jabsorb")
+                    || path.contains("jsoup")
+                    || path.contains("xml")) { // XXX: urgly....
                     continue; // Skips GAE
                 }
 
@@ -189,7 +194,10 @@ public final class RequestProcessors {
                     final JarEntry jarEntry = entries.nextElement();
                     String className = jarEntry.getName();
 
+                    LOGGER.info(":class: " + className);
+
                     if (className.contains("$")
+                        || !className.endsWith(".class")
                         || className.contains("META-INF")) {
                         continue; // Skips inner class
                     }
