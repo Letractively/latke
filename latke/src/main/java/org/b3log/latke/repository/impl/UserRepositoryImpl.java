@@ -119,7 +119,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
     }
 
     /**
-     * Gets the {@link UserGAERepositoryImpl} singleton.
+     * Gets the {@link UserRepositoryImpl} singleton.
      *
      * @return the singleton
      */
