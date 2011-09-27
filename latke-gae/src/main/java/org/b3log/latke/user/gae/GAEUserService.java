@@ -17,6 +17,7 @@ package org.b3log.latke.user.gae;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
+import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.user.GeneralUser;
 import org.b3log.latke.user.UserService;
 
@@ -24,7 +25,7 @@ import org.b3log.latke.user.UserService;
  * Google App Engine user service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 8, 2011
+ * @version 1.0.1.0, Sep 27, 2011
  */
 public final class GAEUserService implements UserService {
 
@@ -35,7 +36,7 @@ public final class GAEUserService implements UserService {
             UserServiceFactory.getUserService();
 
     @Override
-    public GeneralUser getCurrentUser() {
+    public GeneralUser getCurrentUser(final HttpServletRequest request) {
         final User currentUser = USER_SERVICE.getCurrentUser();
 
         if (null == currentUser) {
@@ -46,12 +47,12 @@ public final class GAEUserService implements UserService {
     }
 
     @Override
-    public boolean isUserLoggedIn() {
+    public boolean isUserLoggedIn(final HttpServletRequest request) {
         return USER_SERVICE.isUserLoggedIn();
     }
 
     @Override
-    public boolean isUserAdmin() {
+    public boolean isUserAdmin(final HttpServletRequest request) {
         return USER_SERVICE.isUserAdmin();
     }
 
