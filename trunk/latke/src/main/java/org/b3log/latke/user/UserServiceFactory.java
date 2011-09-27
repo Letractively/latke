@@ -17,12 +17,16 @@ package org.b3log.latke.user;
 
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
+import org.b3log.latke.user.local.LocalUserService;
 
 /**
  * User service factory.
+ * 
+ * <p>Always prepare {@link LocalUserService local version} of user service,
+ * regardless of {@link RuntimeEnv runtime environment}.</p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 8, 2011
+ * @version 1.0.0.1, Sep 27, 2011
  */
 public final class UserServiceFactory {
 
@@ -38,18 +42,20 @@ public final class UserServiceFactory {
             Class<UserService> serviceClass = null;
 
             switch (runtimeEnv) {
+                case GAE: // GAE & Local use the same implementation
                 case LOCAL:
                     serviceClass =
                             (Class<UserService>) Class.forName(
                             "org.b3log.latke.user.local.LocalUserService");
                     USER_SERVICE = serviceClass.newInstance();
                     break;
-                case GAE:
-                    serviceClass =
-                            (Class<UserService>) Class.forName(
-                            "org.b3log.latke.user.gae.GAEUserService");
-                    USER_SERVICE = serviceClass.newInstance();
-                    break;
+                /*
+                serviceClass =
+                (Class<UserService>) Class.forName(
+                "org.b3log.latke.user.gae.GAEUserService");
+                USER_SERVICE = serviceClass.newInstance();
+                break;
+                 */
                 default:
                     throw new RuntimeException(
                             "Latke runs in the hell.... "
@@ -61,7 +67,7 @@ public final class UserServiceFactory {
     }
 
     /**
-     * Gets user service.
+     * Gets user service (always be an instance of {@link LocalUserService}).
      * 
      * @return user service
      */
