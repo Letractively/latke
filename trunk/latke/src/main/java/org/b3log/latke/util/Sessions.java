@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.b3log.latke.model.User;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.json.JSONObject;
 
 /**
  * Session utilities.
@@ -44,15 +45,13 @@ public final class Sessions {
      * Logins the specified user from the specified request.
      *
      * @param request the specified request
-     * @param userName the specified user name
-     * @param userPwd the specified user password(MD5 hash)
+     * @param user the specified user
      */
     public static void login(final HttpServletRequest request,
-                             final String userName, final String userPwd) {
+                             final JSONObject user) {
         final HttpSession session = request.getSession();
 
-        session.setAttribute(User.USER_NAME, userName);
-        session.setAttribute(User.USER_PASSWORD, userPwd);
+        session.setAttribute(User.USER, user);
     }
 
     /**
@@ -65,17 +64,28 @@ public final class Sessions {
         final HttpSession session = request.getSession(false);
 
         if (null != session) {
-            final String userName = (String) session.getAttribute(
-                    User.USER_NAME);
+            session.invalidate();
 
-            if (!Strings.isEmptyOrNull(userName)) {
-                session.invalidate();
-
-                return true;
-            }
+            return true;
         }
 
         return false;
+    }
+
+    /**
+     * Gets the current user with the specified request.
+     * 
+     * @param request the specified request
+     * @return the current user, returns {@code null} if not logged in 
+     */
+    public static JSONObject currentUser(final HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
+
+        if (null != session) {
+            return (JSONObject) session.getAttribute(User.USER);
+        }
+
+        return null;
     }
 
     /**
@@ -88,7 +98,9 @@ public final class Sessions {
         final HttpSession session = request.getSession(false);
 
         if (null != session) {
-            return (String) session.getAttribute(User.USER_PASSWORD);
+            final JSONObject user = (JSONObject) session.getAttribute(User.USER);
+
+            return user.optString(User.USER_PASSWORD);
         }
 
         return null;
@@ -104,7 +116,27 @@ public final class Sessions {
         final HttpSession session = request.getSession(false);
 
         if (null != session) {
-            return (String) session.getAttribute(User.USER_NAME);
+            final JSONObject user = (JSONObject) session.getAttribute(User.USER);
+
+            return user.optString(User.USER_NAME);
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the current logged in user email with the specified request.
+     *
+     * @param request the specified request
+     * @return the current user name or {@code null}
+     */
+    public static String currentUserEmail(final HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
+
+        if (null != session) {
+            final JSONObject user = (JSONObject) session.getAttribute(User.USER);
+
+            return user.optString(User.USER_EMAIL);
         }
 
         return null;
