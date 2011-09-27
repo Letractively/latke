@@ -35,7 +35,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Sep 18, 2011
+ * @version 1.0.0.4, Sep 27, 2011
  */
 public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRenderer {
 
@@ -54,6 +54,18 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     private Map<String, Object> dataModel = new HashMap<String, Object>();
 
     /**
+     * Gets a template with the specified template name.
+     * 
+     * @param templateName the specified template name
+     * @return template
+     * @throws IOException io exception
+     */
+    protected Template getTemplate(final String templateName)
+            throws IOException {
+        return Templates.CONFIGURATION.getTemplate(templateName);
+    }
+
+    /**
      * Invoked after render.
      * 
      * @param context the specified context
@@ -69,8 +81,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
         response.setCharacterEncoding("UTF-8");
 
         try {
-            final Template template =
-                    Templates.CONFIGURATION.getTemplate(templateName);
+            final Template template = getTemplate(templateName);
 
             doRender(context.getRequest(), response, dataModel, template);
 
