@@ -194,8 +194,6 @@ public final class RequestProcessors {
                     final JarEntry jarEntry = entries.nextElement();
                     String className = jarEntry.getName();
 
-                    LOGGER.info(":class: " + className);
-
                     if (className.contains("$")
                         || !className.endsWith(".class")
                         || className.contains("META-INF")) {
