@@ -46,11 +46,11 @@ public final class LocalUserService implements UserService {
 
     @Override
     public String createLoginURL(final String destinationURL) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "/login?goto=" + destinationURL;
     }
 
     @Override
     public String createLogoutURL(final String destinationURL) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "/logout?goto=" + destinationURL;
     }
 }
