@@ -98,7 +98,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
      * Determines the specified email is administrator's or not.
      * 
      * @param email the specified email
-     * @return {@code true} if it is, returns {@code false} owtherwise
+     * @return {@code true} if it is, returns {@code false} otherwise
      * @throws RepositoryException repository exception
      */
     public boolean isAdminEmail(final String email)
@@ -119,7 +119,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
     }
 
     /**
-     * Gets the {@link UserGAERepository} singleton.
+     * Gets the {@link UserGAERepositoryImpl} singleton.
      *
      * @return the singleton
      */
