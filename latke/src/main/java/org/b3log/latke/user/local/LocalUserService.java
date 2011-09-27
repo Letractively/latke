@@ -15,8 +15,14 @@
  */
 package org.b3log.latke.user.local;
 
+import javax.servlet.http.HttpServletRequest;
+import org.b3log.latke.Keys;
+import org.b3log.latke.model.Role;
+import org.b3log.latke.model.User;
 import org.b3log.latke.user.GeneralUser;
 import org.b3log.latke.user.UserService;
+import org.b3log.latke.util.Sessions;
+import org.json.JSONObject;
 
 /**
  * Local user service.
@@ -28,20 +34,34 @@ import org.b3log.latke.user.UserService;
 public final class LocalUserService implements UserService {
 
     @Override
-    public GeneralUser getCurrentUser() {
+    public GeneralUser getCurrentUser(final HttpServletRequest request) {
+        final JSONObject currentUser = Sessions.currentUser(request);
+        if (null == currentUser) {
+            return null;
+        }
+
         final GeneralUser ret = new GeneralUser();
+        ret.setEmail(currentUser.optString(User.USER_EMAIL));
+        ret.setId(currentUser.optString(Keys.OBJECT_ID));
+        ret.setNickname(currentUser.optString(User.USER_NAME));
 
-        throw new UnsupportedOperationException("Not supported yet.");
+        return ret;
     }
 
     @Override
-    public boolean isUserLoggedIn() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean isUserLoggedIn(final HttpServletRequest request) {
+        return null != Sessions.currentUser(request);
     }
 
     @Override
-    public boolean isUserAdmin() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean isUserAdmin(final HttpServletRequest request) {
+        final JSONObject currentUser = Sessions.currentUser(request);
+
+        if (null == currentUser) {
+            return false;
+        }
+
+        return Role.ADMIN_ROLE.equals(currentUser.optString(User.USER_ROLE));
     }
 
     @Override

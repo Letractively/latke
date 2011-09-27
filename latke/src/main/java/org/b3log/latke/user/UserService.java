@@ -15,36 +15,41 @@
  */
 package org.b3log.latke.user;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * User service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 8, 2011
+ * @version 1.0.1.0, Sep 27, 2011
  */
 public interface UserService {
 
     /**
      * Gets the current logged in user.
      * 
+     * @param request the specified request
      * @return user if the user is logged in, return {@code null} otherwise
      */
-    GeneralUser getCurrentUser();
+    GeneralUser getCurrentUser(final HttpServletRequest request);
 
     /**
      * Determines whether the user logged in.
      * 
+     * @param request the specified request
      * @return {@code true} if the user logged in, returns {@code false} 
      * otherwise
      */
-    boolean isUserLoggedIn();
+    boolean isUserLoggedIn(final HttpServletRequest request);
 
     /**
      * Determines whether the user is administrator.
      * 
+     * @param request the specified request
      * @return {@code true} if the user is administrator, returns 
      * {@code false} otherwise
      */
-    boolean isUserAdmin();
+    boolean isUserAdmin(final HttpServletRequest request);
 
     /**
      * Creates login URL with the specified destination URL (redirect to the URL

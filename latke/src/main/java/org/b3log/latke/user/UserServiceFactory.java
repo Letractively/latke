@@ -17,13 +17,12 @@ package org.b3log.latke.user;
 
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
-import org.b3log.latke.user.local.LocalUserService;
 
 /**
  * User service factory.
  * 
- * <p>Always prepare {@link LocalUserService local version} of user service,
- * regardless of {@link RuntimeEnv runtime environment}.</p>
+ * <p>Always prepare {@link org.b3log.latke.user.local.LocalUserService local version} 
+ * of user service,regardless of {@link RuntimeEnv runtime environment}.</p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.1, Sep 27, 2011
@@ -67,7 +66,8 @@ public final class UserServiceFactory {
     }
 
     /**
-     * Gets user service (always be an instance of {@link LocalUserService}).
+     * Gets user service (always be an instance of 
+     * {@link org.b3log.latke.user.local.LocalUserService}).
      * 
      * @return user service
      */
