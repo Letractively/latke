@@ -196,7 +196,6 @@ public final class RequestProcessors {
                             new DataInputStream(jarFile.getInputStream(jarEntry));
 
                     final ClassFile classFile = new ClassFile(dataInputStream);
-
                     final AnnotationsAttribute annotationsAttribute =
                             (AnnotationsAttribute) classFile.getAttribute(
                             AnnotationsAttribute.visibleTag);
@@ -206,7 +205,7 @@ public final class RequestProcessors {
                     
                     for (Annotation annotation : annotationsAttribute.
                             getAnnotations()) {
-                        if (("@" + annotation.getTypeName()).equals(
+                        if ((annotation.getTypeName()).equals(
                                 RequestProcessor.class.getName())) {
                             // Found a request processor class, loads it
                             final String className = classFile.getName();
