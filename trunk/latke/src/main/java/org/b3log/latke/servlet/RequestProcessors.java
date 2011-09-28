@@ -200,6 +200,10 @@ public final class RequestProcessors {
                     final AnnotationsAttribute annotationsAttribute =
                             (AnnotationsAttribute) classFile.getAttribute(
                             AnnotationsAttribute.visibleTag);
+                    if (null == annotationsAttribute) {
+                        continue;
+                    }
+                    
                     for (Annotation annotation : annotationsAttribute.
                             getAnnotations()) {
                         if (("@" + annotation.getTypeName()).equals(

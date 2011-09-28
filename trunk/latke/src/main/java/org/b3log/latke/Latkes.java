@@ -15,6 +15,7 @@
  */
 package org.b3log.latke;
 
+import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -198,6 +199,22 @@ public final class Latkes {
         }
 
         return locale;
+    }
+
+    /**
+     * Shutdowns Latkes.
+     */
+    public static void shutdown() {
+        try {
+            if (RuntimeEnv.LOCAL == getRuntimeEnv()) {
+                final Class<?> sleepycat =
+                        Class.forName("org.b3log.latke.repository.sleepycat");
+                final Method shutdown = sleepycat.getMethod("shutdown");
+                shutdown.invoke(sleepycat);
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "Shutdowns Latke failed", e);
+        }
     }
 
     /**
