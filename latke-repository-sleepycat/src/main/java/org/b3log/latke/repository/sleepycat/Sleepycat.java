@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
@@ -72,12 +73,18 @@ public final class Sleepycat {
      * Environment path.
      */
     private static final String ENV_PATH;
+    /**
+     * Transaction lock timeout (milliseconds).
+     */
+    static final long TRANSACTION_LOCK_TIMEOUT = 3000;
 
     static {
         try {
             ENV_PATH = Latkes.getRepositoryPath();
             DEFAULT_ENV_CONFIG.setAllowCreate(true).
-                    setTransactional(true);
+                    setTransactional(true).
+                    setTxnTimeout(TRANSACTION_LOCK_TIMEOUT,
+                                  TimeUnit.MILLISECONDS);
 
             ENV = new Environment(new File(ENV_PATH),
                                   DEFAULT_ENV_CONFIG);
