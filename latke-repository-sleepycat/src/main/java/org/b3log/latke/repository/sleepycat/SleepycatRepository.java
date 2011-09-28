@@ -306,12 +306,9 @@ public final class SleepycatRepository implements Repository {
      */
     @Override
     public JSONObject get(final String id) throws RepositoryException {
-        final SleepycatTransaction transaction = beginTransaction();
-
         final Cursor cursor = Sleepycat.get(getName(),
                                             Sleepycat.DEFAULT_DB_CONFIG).
-                openCursor(null,
-                           CursorConfig.READ_UNCOMMITTED);
+                openCursor(null, CursorConfig.READ_UNCOMMITTED);
 
         final DatabaseEntry foundKey = new DatabaseEntry();
         final DatabaseEntry foundData = new DatabaseEntry();
