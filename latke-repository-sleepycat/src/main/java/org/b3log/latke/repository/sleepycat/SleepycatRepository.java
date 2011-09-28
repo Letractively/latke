@@ -258,7 +258,7 @@ public final class SleepycatRepository implements Repository {
         final Database database = Sleepycat.get(getName(),
                                                 Sleepycat.DEFAULT_DB_CONFIG);
         final Cursor cursor = database.openCursor(currentTransaction.
-                getSleepycatTransaction(), CursorConfig.READ_UNCOMMITTED);
+                getSleepycatTransaction(), CursorConfig.READ_COMMITTED);
 
         final DatabaseEntry foundKey = new DatabaseEntry();
         final DatabaseEntry foundData = new DatabaseEntry();
@@ -383,7 +383,7 @@ public final class SleepycatRepository implements Repository {
     public boolean has(final String id) throws RepositoryException {
         final Cursor cursor = Sleepycat.get(getName(),
                                             Sleepycat.DEFAULT_DB_CONFIG).
-                openCursor(null, CursorConfig.READ_UNCOMMITTED);
+                openCursor(null, CursorConfig.READ_COMMITTED);
 
         final DatabaseEntry foundKey = new DatabaseEntry();
         final DatabaseEntry foundData = new DatabaseEntry();
@@ -469,7 +469,7 @@ public final class SleepycatRepository implements Repository {
         final Database database = Sleepycat.get(getName(),
                                                 Sleepycat.DEFAULT_DB_CONFIG);
         final Cursor cursor =
-                database.openCursor(null, CursorConfig.READ_UNCOMMITTED);
+                database.openCursor(null, CursorConfig.READ_COMMITTED);
 
         final JSONObject ret = new JSONObject();
         try {
