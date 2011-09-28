@@ -15,7 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
-import javax.servlet.RequestDispatcher;
+import java.io.InputStream;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.util.Strings;
@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.event.EventManager;
 import org.b3log.latke.servlet.renderer.DoNothingRenderer;
@@ -37,7 +38,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Sep 26, 2011
+ * @version 1.0.0.7, Sep 28, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -84,10 +85,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             || requestURI.endsWith(".ico")
             || requestURI.endsWith(".txt")) {
             // TODO: Reads these from appengine-web.xml?
-
-            final RequestDispatcher requestDispatcher =
-                    request.getRequestDispatcher("/");
-            requestDispatcher.forward(request, response);
+            final InputStream staticResourceInputStream =
+                    getServletContext().getResourceAsStream(requestURI);
+            IOUtils.copy(staticResourceInputStream, response.getOutputStream());
 
             return;
         }
