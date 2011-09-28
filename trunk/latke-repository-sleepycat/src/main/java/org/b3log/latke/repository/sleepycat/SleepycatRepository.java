@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Keys;
@@ -87,6 +88,10 @@ public final class SleepycatRepository implements Repository {
      */
     public static final ThreadLocal<SleepycatTransaction> TX =
             new InheritableThreadLocal<SleepycatTransaction>();
+    /**
+     * Transaction lock timeout (milliseconds).
+     */
+    private static final long TRANSACTION_LOCK_TIMEOUT = 3000;
 
     static {
         CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
@@ -368,6 +373,9 @@ public final class SleepycatRepository implements Repository {
 
         final com.sleepycat.je.Transaction sleepycatTx =
                 Sleepycat.ENV.beginTransaction(null, TransactionConfig.DEFAULT);
+
+        sleepycatTx.setLockTimeout(TRANSACTION_LOCK_TIMEOUT,
+                                   TimeUnit.MILLISECONDS);
 
         ret = new SleepycatTransaction(sleepycatTx);
         TX.set(ret);
