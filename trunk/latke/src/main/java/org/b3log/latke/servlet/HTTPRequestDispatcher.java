@@ -77,7 +77,12 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             || requestURI.startsWith("/images/")
             || requestURI.startsWith("/js/")
             || requestURI.startsWith("/skins/")
-            || requestURI.startsWith("/plugins/")) {
+            || requestURI.startsWith("/plugins/")
+            || requestURI.endsWith(".html")
+            || requestURI.endsWith(".png")
+            || requestURI.endsWith(".ico")
+            || requestURI.endsWith(".txt")) {
+            // TODO: Reads these from appengine-web.xml?
             return;
         }
 
