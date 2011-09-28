@@ -75,7 +75,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         final String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/css/")
             || requestURI.startsWith("/images/")
-            || requestURI.startsWith("/js/")) {
+            || requestURI.startsWith("/js/")
+            || requestURI.startsWith("/skins/")
+            || requestURI.startsWith("/plugins/")) {
             return;
         }
 
