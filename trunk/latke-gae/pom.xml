@@ -19,6 +19,7 @@
 
     <!-- Version -->
     <properties>
+        <servlet.version>2.5</servlet.version>
         <org.b3log.latke.version>0.5.0-SNAPSHOT</org.b3log.latke.version>
         <gae.version>1.5.3</gae.version>
         <!-- Maven Plugin -->
@@ -51,44 +52,6 @@
             <url>http://88250.b3log.org</url>
             <roles>
                 <role>Initial Committer</role>
-            </roles>
-            <organization>B3log</organization>
-            <organizationUrl>http://www.b3log.org</organizationUrl>
-            <timezone>+8</timezone>
-        </developer>
-        
-        <developer>
-            <id>lamb52gao@gmail.com</id>
-            <name>Yang Gao</name>
-            <email>lamb52gao@gmail.com</email>
-            <url>http://lamb.b3log.org</url>
-            <roles>
-                <role>Committer</role>
-            </roles>
-            <organization>B3log</organization>
-            <organizationUrl>http://www.b3log.org</organizationUrl>
-            <timezone>+8</timezone>
-        </developer>
-        
-        <developer>
-            <id>jiangzezhou1989@163.com</id>
-            <name>Zezhou Jiang</name>
-            <email>jiangzezhou1989@163.com</email>
-            <url>http://jboat.b3log.org</url>
-            <roles>
-                <role>Committer</role>
-            </roles>
-            <organization>B3log</organization>
-            <organizationUrl>http://www.b3log.org</organizationUrl>
-            <timezone>+8</timezone>
-        </developer>
-        
-        <developer>
-            <id>wmainlove@gmail.com</id>
-            <name>Liceng Yao</name>
-            <email>wmainlove@gmail.com</email>
-            <roles>
-                <role>Committer</role>
             </roles>
             <organization>B3log</organization>
             <organizationUrl>http://www.b3log.org</organizationUrl>
@@ -142,6 +105,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet.version}</version>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.b3log</groupId>
@@ -167,6 +136,10 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
        
         <dependency>
             <groupId>org.b3log</groupId>
