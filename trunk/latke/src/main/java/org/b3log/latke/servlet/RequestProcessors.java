@@ -265,6 +265,10 @@ public final class RequestProcessors {
                 }
             }
         }
+        
+        if (matches.isEmpty()) {
+            return null;
+        }
 
         if (i > 1) {
             final StringBuilder stringBuilder = new StringBuilder(
