@@ -72,11 +72,17 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     protected void service(final HttpServletRequest request,
                            final HttpServletResponse response)
             throws ServletException, IOException {
+        final String requestURI = request.getRequestURI();
+        if (requestURI.startsWith("/css/")
+            || requestURI.startsWith("/images/")
+            || requestURI.startsWith("/js/")) {
+            return;
+        }
+
         final long startTimeMillis = System.currentTimeMillis();
         request.setAttribute(START_TIME_MILLIS, startTimeMillis);
 
         if (Latkes.isPageCacheEnabled()) {
-            final String requestURI = request.getRequestURI();
             final String queryString = request.getQueryString();
             String pageCacheKey =
                     (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
