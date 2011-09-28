@@ -29,7 +29,7 @@ import org.b3log.latke.Latkes;
  * Locale utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Sep 11, 2010
+ * @version 1.0.1.1, Sep 28, 2010
  */
 public final class Locales {
 
@@ -83,8 +83,8 @@ public final class Locales {
             final String languageHeader = request.getHeader("Accept-Language");
             LOGGER.log(Level.FINER, "[Accept-Language={0}]", languageHeader);
 
-            String language = null;
-            String country = null;
+            String language = "zh";
+            String country = "CN";
             if (!Strings.isEmptyOrNull(languageHeader)) {
                 language = getLanguage(languageHeader);
                 country = getCountry(languageHeader);
