@@ -208,7 +208,7 @@ public final class Latkes {
         try {
             if (RuntimeEnv.LOCAL == getRuntimeEnv()) {
                 final Class<?> sleepycat =
-                        Class.forName("org.b3log.latke.repository.sleepycat");
+                        Class.forName("org.b3log.latke.repository.sleepycat.Sleepycat");
                 final Method shutdown = sleepycat.getMethod("shutdown");
                 shutdown.invoke(sleepycat);
             }
