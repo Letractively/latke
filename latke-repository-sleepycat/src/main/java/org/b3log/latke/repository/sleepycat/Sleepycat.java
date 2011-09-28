@@ -34,7 +34,7 @@ import org.b3log.latke.Latkes;
  * Sleepycat.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Sep 23, 2011
+ * @version 1.0.0.5, Sep 28, 2011
  */
 public final class Sleepycat {
 
@@ -74,9 +74,13 @@ public final class Sleepycat {
      */
     private static final String ENV_PATH;
     /**
+     * Lock timeout (milliseconds).
+     */
+    private static final long LOCK_TIMEOUT = 3000;
+    /**
      * Transaction lock timeout (milliseconds).
      */
-    static final long TRANSACTION_LOCK_TIMEOUT = 3000;
+    static final long TRANSACTION_LOCK_TIMEOUT = LOCK_TIMEOUT;
 
     static {
         try {
@@ -84,7 +88,8 @@ public final class Sleepycat {
             DEFAULT_ENV_CONFIG.setAllowCreate(true).
                     setTransactional(true).
                     setTxnTimeout(TRANSACTION_LOCK_TIMEOUT,
-                                  TimeUnit.MILLISECONDS);
+                                  TimeUnit.MILLISECONDS).setLockTimeout(
+                    LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
 
             ENV = new Environment(new File(ENV_PATH),
                                   DEFAULT_ENV_CONFIG);
