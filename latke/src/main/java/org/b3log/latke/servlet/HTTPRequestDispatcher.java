@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
+import javax.servlet.RequestDispatcher;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.util.Strings;
@@ -83,6 +84,11 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             || requestURI.endsWith(".ico")
             || requestURI.endsWith(".txt")) {
             // TODO: Reads these from appengine-web.xml?
+
+            final RequestDispatcher requestDispatcher =
+                    request.getRequestDispatcher("/");
+            requestDispatcher.forward(request, response);
+
             return;
         }
 
