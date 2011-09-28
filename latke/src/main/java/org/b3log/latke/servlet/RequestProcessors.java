@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.annotation.Annotation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.annotation.RequestProcessing;
@@ -177,55 +181,52 @@ public final class RequestProcessors {
 
         try {
             for (final File file : files) {
-                final String path = file.getPath();
-                if (path.contains("appengine")
-                    || path.contains("freemarker")
-                    || path.contains("commons")
-                    || path.contains("jabsorb")
-                    || path.contains("jsoup")
-                    || path.contains("xml")) { // XXX: urgly....
-                    continue; // Skips GAE
-                }
-
-                final JarFile jarFile = new JarFile(path);
-
+                final JarFile jarFile = new JarFile(file.getPath());
                 final Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     final JarEntry jarEntry = entries.nextElement();
-                    String className = jarEntry.getName();
+                    final String classFileName = jarEntry.getName();
 
-                    if (className.contains("$")
-                        || !className.endsWith(".class")
-                        || className.contains("META-INF")) {
-                        continue; // Skips inner class
+                    if (classFileName.contains("$") // Skips inner class
+                        || !classFileName.endsWith(".class")) {
+                        continue;
                     }
 
-                    className = StringUtils.substringBefore(className, ".");
-                    className = className.replaceAll("/", ".");
+                    final DataInputStream dataInputStream =
+                            new DataInputStream(jarFile.getInputStream(jarEntry));
 
-                    Class<?> clz = null;
-                    try {
-                        clz = classLoader.loadClass(className);
-                    } catch (final ClassNotFoundException e) {
-                        continue; // Ignores....
-                    }
+                    final ClassFile classFile = new ClassFile(dataInputStream);
 
-                    if (clz.isAnnotationPresent(RequestProcessor.class)) {
-                        LOGGER.log(Level.FINER,
-                                   "Found a request processor[className={0}]",
-                                   className);
-                        final Method[] declaredMethods =
-                                clz.getDeclaredMethods();
-                        for (int i = 0; i < declaredMethods.length; i++) {
-                            final Method mthd = declaredMethods[i];
-                            final RequestProcessing annotation =
-                                    mthd.getAnnotation(RequestProcessing.class);
+                    final AnnotationsAttribute annotationsAttribute =
+                            (AnnotationsAttribute) classFile.getAttribute(
+                            AnnotationsAttribute.visibleTag);
+                    for (Annotation annotation : annotationsAttribute.
+                            getAnnotations()) {
+                        if (("@" + annotation.getTypeName()).equals(
+                                RequestProcessor.class.getName())) {
+                            // Found a request processor class, loads it
+                            final String className = classFile.getName();
+                            final Class<?> clz =
+                                    classLoader.loadClass(className);
 
-                            if (null == annotation) {
-                                continue;
+                            LOGGER.log(Level.FINER,
+                                       "Found a request processor[className={0}]",
+                                       className);
+                            final Method[] declaredMethods =
+                                    clz.getDeclaredMethods();
+                            for (int i = 0; i < declaredMethods.length; i++) {
+                                final Method mthd = declaredMethods[i];
+                                final RequestProcessing requestProcessingMethodAnn =
+                                        mthd.getAnnotation(
+                                        RequestProcessing.class);
+
+                                if (null == requestProcessingMethodAnn) {
+                                    continue;
+                                }
+
+                                addProcessorMethod(requestProcessingMethodAnn,
+                                                   clz, mthd);
                             }
-
-                            addProcessorMethod(annotation, clz, mthd);
                         }
                     }
                 }
