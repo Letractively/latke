@@ -102,6 +102,11 @@ public final class Latkes {
      * otherwise, considered Latke is running on standard Servlet container.
      * </p>
      * 
+     * <p>
+     * Sets the current {@link RuntimeMode runtime mode} to 
+     * {@link RuntimeMode#DEVELOPMENT development mode}.
+     * </p>
+     * 
      * @see RuntimeEnv
      */
     public static void initRuntimeEnv() {
@@ -115,6 +120,8 @@ public final class Latkes {
             LOGGER.log(Level.INFO, "Latke is running on [Local]",
                        Latkes.getRuntimeEnv());
         }
+        
+        setRuntimeMode(RuntimeMode.DEVELOPMENT); // Defaults to dev mode
     }
 
     /**
