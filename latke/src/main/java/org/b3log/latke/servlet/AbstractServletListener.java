@@ -78,6 +78,7 @@ public abstract class AbstractServletListener implements ServletContextListener,
     @Override
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         LOGGER.info("Destroying the context....");
+        Latkes.shutdown();
     }
 
     @Override
