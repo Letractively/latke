@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Id utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Aug 11, 2010
+ * @version 1.0.0.3, Sep 29, 2011
  */
 public final class Ids {
 
@@ -50,9 +50,9 @@ public final class Ids {
      *
      * @return a time millis string
      */
-    public static String genTimeMillisId() {
+    public synchronized static String genTimeMillisId() {
         String ret = null;
-        
+
         ID_GEN_LOCK.lock();
         try {
             ret = String.valueOf(System.currentTimeMillis());
