@@ -142,7 +142,7 @@ public final class SleepycatRepository implements Repository {
             } else {
                 ret = jsonObject.getString(Keys.OBJECT_ID);
             }
-            
+
             final DatabaseEntry entryKey = new DatabaseEntry(
                     ret.getBytes("UTF-8"));
 
@@ -526,6 +526,11 @@ public final class SleepycatRepository implements Repository {
                    == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
+
+                if (filters.isEmpty()) {
+                    foundList.add(jsonObject);
+                    continue;
+                }
 
                 for (final Filter filter : filters) {
                     final String key = filter.getKey();
