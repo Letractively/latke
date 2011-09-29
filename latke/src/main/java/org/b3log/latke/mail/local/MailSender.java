@@ -114,7 +114,7 @@ final class MailSender {
     private String getPassword() {
         return mailProperties.getString("mail.password");
     }
-    
+
     /**
      * Gets mail SMTP port from mail properties.
      * 
@@ -136,6 +136,14 @@ final class MailSender {
             final Message message) throws MessagingException {
         if (message == null) {
             return null;
+        }
+
+        if (null == message.getRecipients()) {
+            throw new MessagingException("Null from");
+        }
+
+        if (null == message.getRecipients()) {
+            throw new MessagingException("Null recipients");
         }
 
         final MimeMessage ret = new MimeMessage(getSession());
