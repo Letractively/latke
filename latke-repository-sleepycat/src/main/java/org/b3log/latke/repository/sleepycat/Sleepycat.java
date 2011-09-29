@@ -100,7 +100,6 @@ public final class Sleepycat {
                     lockTimeout, TimeUnit.MILLISECONDS);
             
             DEFAULT_TXN_CONFIG.setReadCommitted(true);
-            DEFAULT_TXN_CONFIG.setReadUncommitted(true);
 
             ENV = new Environment(new File(ENV_PATH),
                                   DEFAULT_ENV_CONFIG);
