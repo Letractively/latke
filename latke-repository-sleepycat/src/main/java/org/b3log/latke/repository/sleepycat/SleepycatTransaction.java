@@ -37,10 +37,10 @@ public class SleepycatTransaction implements Transaction {
     private boolean clearQueryCache = true;
 
     /**
-     * Constructs a {@link SleepycatTransaction} object with the specified Sleeypcat
+     * Constructs a {@link SleepycatTransaction} object with the specified Sleepycat
      * database transaction {@link com.sleepycat.je.Transaction transaction}.
      *
-     * @param sleepycatTransaction the specified Sleeypcat database transaction 
+     * @param sleepycatTransaction the specified Sleepycat database transaction 
      */
     public SleepycatTransaction(
             final com.sleepycat.je.Transaction sleepycatTransaction) {
