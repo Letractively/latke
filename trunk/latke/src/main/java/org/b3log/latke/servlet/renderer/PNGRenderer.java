@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.image.Image;
-import org.b3log.latke.servlet.AbstractHTTPResponseRenderer;
 import org.b3log.latke.servlet.HTTPRequestContext;
 
 /**

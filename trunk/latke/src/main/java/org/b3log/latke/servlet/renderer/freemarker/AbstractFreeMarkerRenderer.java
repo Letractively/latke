@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.servlet;
+package org.b3log.latke.servlet.renderer.freemarker;
 
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.servlet.HTTPRequestContext;
+import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import org.b3log.latke.util.freemarker.Templates;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 
