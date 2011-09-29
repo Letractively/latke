@@ -297,6 +297,12 @@ public final class SleepycatRepository implements Repository {
      *   <b>Note</b>: the specified id is NOT the key of a database record, but
      *   the value of "oId" stored in database value entry of a record.
      * </p>
+     * 
+     * <p>
+     * If invokes this method within a transaction, this method will try to get
+     * with <em>uncommitted</em> data; get with <em>committed</em> data if 
+     * without a transaction.
+     * </p>
      *
      * @param id the specified id
      * @return a json object, {@code null} if not found
