@@ -15,8 +15,10 @@
  */
 package org.b3log.latke;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.action.util.PageCaches;
@@ -61,6 +63,29 @@ public final class Latkes {
      * Is the page cache enabled?
      */
     private static boolean pageCacheEnabled;
+    /**
+     * Local properties.
+     */
+    private static final Properties LOCAL_PROPS = new Properties();
+
+    static {
+        try {
+            LOCAL_PROPS.load(
+                    Latkes.class.getResourceAsStream("/local.properties"));
+        } catch (final IOException e) {
+            LOGGER.log(Level.CONFIG, "Not found local configuration file");
+            // Ignores....
+        }
+    }
+    
+    /**
+     * Gets local (standard Servlet container) configurations.
+     * 
+     * @return local properties
+     */
+    public static Properties getLocalProps() {
+        return LOCAL_PROPS;
+    }
 
     /**
      * Disables the page cache.
@@ -120,7 +145,7 @@ public final class Latkes {
             LOGGER.log(Level.INFO, "Latke is running on [Local]",
                        Latkes.getRuntimeEnv());
         }
-        
+
         setRuntimeMode(RuntimeMode.DEVELOPMENT); // Defaults to dev mode
     }
 
@@ -215,7 +240,8 @@ public final class Latkes {
         try {
             if (RuntimeEnv.LOCAL == getRuntimeEnv()) {
                 final Class<?> sleepycat =
-                        Class.forName("org.b3log.latke.repository.sleepycat.Sleepycat");
+                        Class.forName(
+                        "org.b3log.latke.repository.sleepycat.Sleepycat");
                 final Method shutdown = sleepycat.getMethod("shutdown");
                 shutdown.invoke(sleepycat);
             }
