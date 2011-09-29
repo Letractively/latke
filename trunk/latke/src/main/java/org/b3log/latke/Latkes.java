@@ -15,7 +15,7 @@
  */
 package org.b3log.latke;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Properties;
@@ -70,14 +70,17 @@ public final class Latkes {
 
     static {
         try {
-            LOCAL_PROPS.load(
-                    Latkes.class.getResourceAsStream("/local.properties"));
-        } catch (final IOException e) {
+            final InputStream resourceAsStream =
+                    Latkes.class.getResourceAsStream("/local.properties");
+            if (null != resourceAsStream) {
+                LOCAL_PROPS.load(resourceAsStream);
+            }
+        } catch (final Exception e) {
             LOGGER.log(Level.CONFIG, "Not found local configuration file");
             // Ignores....
         }
     }
-    
+
     /**
      * Gets local (standard Servlet container) configurations.
      * 
