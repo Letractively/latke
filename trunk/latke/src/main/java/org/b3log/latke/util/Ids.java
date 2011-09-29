@@ -50,7 +50,7 @@ public final class Ids {
      *
      * @return a time millis string
      */
-    public synchronized static String genTimeMillisId() {
+    public static synchronized String genTimeMillisId() {
         String ret = null;
 
         ID_GEN_LOCK.lock();
