@@ -64,6 +64,8 @@ public class SleepycatTransaction implements Transaction {
     @Override
     public void commit() {
         sleepycatTransaction.commit();
+        
+        SleepycatRepository.TX.set(null);
 
         if (clearQueryCache) {
             PageCaches.removeAll();
