@@ -73,23 +73,21 @@ public final class Sleepycat {
      * Environment path.
      */
     private static final String ENV_PATH;
-    /**
-     * Lock timeout (milliseconds).
-     */
-    private static final long LOCK_TIMEOUT = 3000;
-    /**
-     * Transaction lock timeout (milliseconds).
-     */
-    static final long TRANSACTION_LOCK_TIMEOUT = LOCK_TIMEOUT;
 
     static {
         try {
             ENV_PATH = Latkes.getRepositoryPath();
+
+            final long txnTimeout = Long.valueOf(
+                    Latkes.getLocalProps().getProperty("je.txn.timeout"));
+            final long lockTimeout = Long.valueOf(
+                    Latkes.getLocalProps().getProperty("je.lock.timeout"));
+
             DEFAULT_ENV_CONFIG.setAllowCreate(true).
                     setTransactional(true).
-                    setTxnTimeout(TRANSACTION_LOCK_TIMEOUT,
+                    setTxnTimeout(txnTimeout,
                                   TimeUnit.MILLISECONDS).setLockTimeout(
-                    LOCK_TIMEOUT, TimeUnit.MILLISECONDS);
+                    lockTimeout, TimeUnit.MILLISECONDS);
 
             ENV = new Environment(new File(ENV_PATH),
                                   DEFAULT_ENV_CONFIG);
