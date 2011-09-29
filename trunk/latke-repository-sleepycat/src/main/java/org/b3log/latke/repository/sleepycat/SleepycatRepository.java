@@ -422,6 +422,14 @@ public final class SleepycatRepository implements Repository {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Regardless of transactions, invokes this method within a transaction or 
+     * without a transaction will always query for <em>committed</em> data.
+     * </p>
+     */
     @Override
     public JSONObject get(final Query query) throws RepositoryException {
         JSONObject ret = null;
@@ -466,7 +474,7 @@ public final class SleepycatRepository implements Repository {
     /**
      * Gets the result object by the specified current page number, page size,
      * sorts and filters.
-     *
+     * 
      * @param currentPageNum the specified current page number
      * @param pageSize the specified page size
      * @param sorts the specified sorts
@@ -491,7 +499,7 @@ public final class SleepycatRepository implements Repository {
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(currentTransaction.getSleepycatTransaction(),
-                               CursorConfig.READ_UNCOMMITTED);
+                               CursorConfig.READ_COMMITTED);
         }
 
 
