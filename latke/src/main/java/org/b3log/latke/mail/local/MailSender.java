@@ -132,8 +132,8 @@ final class MailSender {
      * @return a {@link javax.mail.internet.MimeMessage}
      * @throws MessagingException if converts error 
      */
-    public javax.mail.Message convert2JavaMailMsg(
-            final Message message) throws MessagingException {
+    public javax.mail.Message convert2JavaMailMsg(final Message message)
+            throws MessagingException {
         if (message == null) {
             return null;
         }
