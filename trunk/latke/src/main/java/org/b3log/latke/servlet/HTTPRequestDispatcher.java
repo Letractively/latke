@@ -39,7 +39,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Sep 28, 2011
+ * @version 1.0.0.8, Sep 29, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -76,6 +76,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                            final HttpServletResponse response)
             throws ServletException, IOException {
         final String requestURI = request.getRequestURI();
+
         if (requestURI.startsWith("/css/")
             || requestURI.startsWith("/images/")
             || requestURI.startsWith("/js/")
@@ -88,6 +89,10 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             // TODO: Reads these from appengine-web.xml?
             final InputStream staticResourceInputStream =
                     getServletContext().getResourceAsStream(requestURI);
+            final String resourcePath = request.getPathTranslated();
+            final String mimeType = getServletContext().
+                    getMimeType(resourcePath);
+            response.setContentType(mimeType);
             IOUtils.copy(staticResourceInputStream, response.getOutputStream());
 
             return;
