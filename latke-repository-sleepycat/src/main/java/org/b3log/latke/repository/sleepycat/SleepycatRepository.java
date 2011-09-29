@@ -520,7 +520,7 @@ public final class SleepycatRepository implements Repository {
             // Step 1: Retrives by filters
             final List<JSONObject> foundList = new ArrayList<JSONObject>();
 
-            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
+            while (cursor.getNext(foundKey, foundData, LockMode.READ_COMMITTED)
                    == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
