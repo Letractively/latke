@@ -26,6 +26,10 @@ import org.testng.annotations.Test;
  * @version 1.0.0.1, Aug 21, 2011
  */
 public final class MailServiceTestCase {
+    /**
+     * T.
+     */
+    private static final int T = 10000;
 
     static {
         Latkes.initRuntimeEnv();
@@ -51,5 +55,7 @@ public final class MailServiceTestCase {
         message.addRecipient("DL88250@gmail.com");
 
         mailService.send(message);
+        
+        Thread.sleep(T); // Waiting for sending....
     }
 }
