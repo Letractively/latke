@@ -190,8 +190,7 @@ final class MailSender {
      * @param message  the specified message
      * @throws MessagingException message exception
      */
-    void sendMail(final Message message)
-            throws MessagingException {
+    void sendMail(final Message message) throws MessagingException {
         final javax.mail.Message msg = convert2JavaMailMsg(message);
         Transport.send(msg);
     }
