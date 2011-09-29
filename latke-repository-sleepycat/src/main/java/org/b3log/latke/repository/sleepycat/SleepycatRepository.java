@@ -21,7 +21,6 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.TransactionConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -317,7 +316,7 @@ public final class SleepycatRepository implements Repository {
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(null, CursorConfig.READ_COMMITTED);
-        } else { // Get with transaction
+        } else { // Get within a transaction
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(currentTransaction.getSleepycatTransaction(),
@@ -382,7 +381,8 @@ public final class SleepycatRepository implements Repository {
         }
 
         final com.sleepycat.je.Transaction sleepycatTx =
-                Sleepycat.ENV.beginTransaction(null, TransactionConfig.DEFAULT);
+                Sleepycat.ENV.beginTransaction(null,
+                                               Sleepycat.DEFAULT_TXN_CONFIG);
 
         ret = new SleepycatTransaction(sleepycatTx);
         TX.set(ret);
@@ -398,7 +398,7 @@ public final class SleepycatRepository implements Repository {
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(null, CursorConfig.READ_COMMITTED);
-        } else { // Get with transaction
+        } else { // Get within a transaction
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(currentTransaction.getSleepycatTransaction(),
@@ -501,7 +501,7 @@ public final class SleepycatRepository implements Repository {
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(null, CursorConfig.READ_COMMITTED);
-        } else { // Get with transaction
+        } else { // Get within a transaction
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
                     openCursor(currentTransaction.getSleepycatTransaction(),

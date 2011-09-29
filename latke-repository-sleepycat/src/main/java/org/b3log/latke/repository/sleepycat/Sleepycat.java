@@ -19,6 +19,7 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.TransactionConfig;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +71,14 @@ public final class Sleepycat {
      */
     public static final DatabaseConfig DEFAULT_DB_CONFIG = new DatabaseConfig();
     /**
+     * Default transaction configurations. Set the following options explicitly: 
+     * <ul>
+     *   <li>readUncommitted=true</li>
+     * </ul>
+     */
+    public static final TransactionConfig DEFAULT_TXN_CONFIG = 
+            new TransactionConfig();
+    /**
      * Environment path.
      */
     private static final String ENV_PATH;
@@ -88,6 +97,8 @@ public final class Sleepycat {
                     setTxnTimeout(txnTimeout,
                                   TimeUnit.MILLISECONDS).setLockTimeout(
                     lockTimeout, TimeUnit.MILLISECONDS);
+            
+            DEFAULT_TXN_CONFIG.setReadUncommitted(true);
 
             ENV = new Environment(new File(ENV_PATH),
                                   DEFAULT_ENV_CONFIG);
