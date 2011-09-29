@@ -405,7 +405,6 @@ public final class SleepycatRepository implements Repository {
                                CursorConfig.READ_UNCOMMITTED);
         }
 
-
         final DatabaseEntry foundKey = new DatabaseEntry();
         final DatabaseEntry foundData = new DatabaseEntry();
 
