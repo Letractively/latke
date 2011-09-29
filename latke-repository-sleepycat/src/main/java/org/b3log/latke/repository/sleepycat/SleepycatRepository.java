@@ -131,8 +131,7 @@ public final class SleepycatRepository implements Repository {
             throw new RepositoryException("Invoking add() outside a transaction");
         }
 
-        final String ret = Ids.genTimeMillisId();
-
+        String ret = null;
         final Database database = Sleepycat.get(getName(),
                                                 Sleepycat.DEFAULT_DB_CONFIG);
 
@@ -141,7 +140,10 @@ public final class SleepycatRepository implements Repository {
                     ret.getBytes("UTF-8"));
 
             if (!jsonObject.has(Keys.OBJECT_ID)) {
+                ret = Ids.genTimeMillisId();
                 jsonObject.put(Keys.OBJECT_ID, ret);
+            } else {
+                ret = jsonObject.getString(Keys.OBJECT_ID);
             }
 
             final DatabaseEntry data = new DatabaseEntry(
@@ -499,7 +501,7 @@ public final class SleepycatRepository implements Repository {
         if (null == currentTransaction) {
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
-                    openCursor(null, CursorConfig.READ_COMMITTED);
+                    openCursor(null, CursorConfig.DEFAULT);
         } else { // Get within a transaction
             cursor = Sleepycat.get(getName(),
                                    Sleepycat.DEFAULT_DB_CONFIG).
@@ -520,7 +522,7 @@ public final class SleepycatRepository implements Repository {
             // Step 1: Retrives by filters
             final List<JSONObject> foundList = new ArrayList<JSONObject>();
 
-            while (cursor.getNext(foundKey, foundData, LockMode.READ_COMMITTED)
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                    == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         new JSONObject(new String(foundData.getData(), "UTF-8"));
