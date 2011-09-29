@@ -75,6 +75,7 @@ public class SleepycatTransaction implements Transaction {
     @Override
     public void rollback() {
         sleepycatTransaction.abort();
+        SleepycatRepository.TX.set(null);
     }
 
     @Override
