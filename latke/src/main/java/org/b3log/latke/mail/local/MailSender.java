@@ -28,6 +28,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 import org.b3log.latke.mail.MailService.Message;
+import org.b3log.latke.util.Strings;
 
 /**
  * Email sender.
@@ -138,11 +139,11 @@ final class MailSender {
             return null;
         }
 
-        if (null == message.getRecipients()) {
+        if (Strings.isEmptyOrNull(message.getFrom())) {
             throw new MessagingException("Null from");
         }
 
-        if (null == message.getRecipients()) {
+        if (null == message.getRecipients() || message.getRecipients().isEmpty()) {
             throw new MessagingException("Null recipients");
         }
 
