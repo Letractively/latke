@@ -136,15 +136,15 @@ public final class SleepycatRepository implements Repository {
                                                 Sleepycat.DEFAULT_DB_CONFIG);
 
         try {
-            final DatabaseEntry entryKey = new DatabaseEntry(
-                    ret.getBytes("UTF-8"));
-
             if (!jsonObject.has(Keys.OBJECT_ID)) {
                 ret = Ids.genTimeMillisId();
                 jsonObject.put(Keys.OBJECT_ID, ret);
             } else {
                 ret = jsonObject.getString(Keys.OBJECT_ID);
             }
+            
+            final DatabaseEntry entryKey = new DatabaseEntry(
+                    ret.getBytes("UTF-8"));
 
             final DatabaseEntry data = new DatabaseEntry(
                     jsonObject.toString().getBytes("UTF-8"));
