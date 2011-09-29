@@ -86,7 +86,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             || requestURI.endsWith(".png")
             || requestURI.endsWith(".ico")
             || requestURI.endsWith(".txt")) {
-            // TODO: Reads these from appengine-web.xml?
+            // TODO: 1. Reads these from appengine-web.xml?
+            //       2. Etag/Expires/Last-Modified/Cache-Control
+            //       3. Content-Encoding, etc headers
             final InputStream staticResourceInputStream =
                     getServletContext().getResourceAsStream(requestURI);
             final String resourcePath = request.getPathTranslated();
