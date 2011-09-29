@@ -73,7 +73,7 @@ public final class Sleepycat {
     /**
      * Default transaction configurations. Set the following options explicitly: 
      * <ul>
-     *   <li>readUncommitted=false</li>
+     *   <li>readUncommitted=true</li>
      *   <li>readCommitted=true</li>
      * </ul>
      */
@@ -100,7 +100,7 @@ public final class Sleepycat {
                     lockTimeout, TimeUnit.MILLISECONDS);
             
             DEFAULT_TXN_CONFIG.setReadCommitted(true);
-            DEFAULT_TXN_CONFIG.setReadUncommitted(false);
+            DEFAULT_TXN_CONFIG.setReadUncommitted(true);
 
             ENV = new Environment(new File(ENV_PATH),
                                   DEFAULT_ENV_CONFIG);
