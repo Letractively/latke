@@ -23,9 +23,10 @@ import org.testng.annotations.Test;
 /**
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
- * @version 1.0.0.1, Aug 21, 2011
+ * @version 1.0.0.2, Sep 29, 2011
  */
 public final class MailServiceTestCase {
+
     /**
      * T.
      */
@@ -55,7 +56,7 @@ public final class MailServiceTestCase {
         message.addRecipient("DL88250@gmail.com");
 
         mailService.send(message);
-        
+
         Thread.sleep(T); // Waiting for sending....
     }
 }
