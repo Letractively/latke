@@ -370,9 +370,6 @@ public final class SleepycatRepository implements Repository {
         final com.sleepycat.je.Transaction sleepycatTx =
                 Sleepycat.ENV.beginTransaction(null, TransactionConfig.DEFAULT);
 
-        sleepycatTx.setLockTimeout(Sleepycat.TRANSACTION_LOCK_TIMEOUT,
-                                   TimeUnit.MILLISECONDS);
-
         ret = new SleepycatTransaction(sleepycatTx);
         TX.set(ret);
 
