@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.servlet.renderer.freemarker;
 
-import org.b3log.latke.servlet.AbstractFreeMarkerRenderer;
 import org.b3log.latke.servlet.HTTPRequestContext;
 
 /**

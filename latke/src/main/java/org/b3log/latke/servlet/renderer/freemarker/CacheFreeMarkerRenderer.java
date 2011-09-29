@@ -23,7 +23,6 @@ import org.b3log.latke.Latkes;
 import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.servlet.HTTPRequestContext;
 import org.json.JSONObject;
-import org.b3log.latke.servlet.AbstractFreeMarkerRenderer;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 
 /**

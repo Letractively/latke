@@ -15,6 +15,7 @@ package org.b3log.latke.servlet;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

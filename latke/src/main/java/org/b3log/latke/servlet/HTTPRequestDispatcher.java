@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
+import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import java.io.InputStream;
 import org.b3log.latke.Keys;
 import org.b3log.latke.action.util.PageCaches;
