@@ -16,6 +16,8 @@
 package org.b3log.latke.util;
 
 import java.util.logging.Logger;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.model.User;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,7 +27,7 @@ import org.json.JSONObject;
  * Session utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Aug 15, 2010
+ * @version 1.0.0.7, Sep , 2011
  */
 public final class Sessions {
 
@@ -45,13 +47,21 @@ public final class Sessions {
      * Logins the specified user from the specified request.
      *
      * @param request the specified request
+     * @param response the specified response
      * @param user the specified user
      */
     public static void login(final HttpServletRequest request,
+                             final HttpServletResponse response,
                              final JSONObject user) {
         final HttpSession session = request.getSession();
 
         session.setAttribute(User.USER, user);
+
+        final Cookie cookie = new Cookie(
+                "user", user.optString(User.USER_EMAIL) + "/"
+                        + MD5.hash(user.optString(User.USER_PASSWORD)));
+        cookie.setMaxAge(session.getMaxInactiveInterval());
+        response.addCookie(cookie);
     }
 
     /**
