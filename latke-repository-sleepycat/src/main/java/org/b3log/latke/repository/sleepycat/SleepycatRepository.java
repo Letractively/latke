@@ -42,6 +42,7 @@ import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
+import org.b3log.latke.util.Serializer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -49,7 +50,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Sep 28, 2011
+ * @version 1.0.1.0, Sep 30, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -147,7 +148,7 @@ public final class SleepycatRepository implements Repository {
                     ret.getBytes("UTF-8"));
 
             final DatabaseEntry data = new DatabaseEntry(
-                    jsonObject.toString().getBytes("UTF-8"));
+                    Serializer.serialize(jsonObject));
 
             final OperationStatus operationStatus =
                     database.putNoOverwrite(
@@ -267,9 +268,7 @@ public final class SleepycatRepository implements Repository {
         try {
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                    == OperationStatus.SUCCESS) {
-                final JSONObject jsonObject =
-                        new JSONObject(new String(foundData.getData(), "UTF-8"));
-                if (jsonObject.getString(Keys.OBJECT_ID).equals(id)) {
+                if (new String(foundKey.getData(), "UTF-8").equals(id)) {
                     if (cursor.delete().equals(OperationStatus.SUCCESS)) {
                         LOGGER.log(Level.FINER,
                                    "Removed an object[oId={0}] from repository[name={1}]",
@@ -332,9 +331,10 @@ public final class SleepycatRepository implements Repository {
             // XXX: optimize performance by using searchKey of cursor
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                    == OperationStatus.SUCCESS) {
-                final JSONObject ret =
-                        new JSONObject(new String(foundData.getData(), "UTF-8"));
-                if (ret.getString(Keys.OBJECT_ID).equals(id)) {
+                if (new String(foundKey.getData(), "UTF-8").equals(id)) {
+                    final JSONObject ret =
+                            (JSONObject) Serializer.deserialize(
+                            foundData.getData());
                     LOGGER.log(Level.FINER,
                                "Got an object[oId={0}] from repository[name={1}]",
                                new Object[]{id, getName()});
@@ -413,9 +413,7 @@ public final class SleepycatRepository implements Repository {
         try {
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                    == OperationStatus.SUCCESS) {
-                final JSONObject ret =
-                        new JSONObject(new String(foundData.getData(), "UTF-8"));
-                if (ret.getString(Keys.OBJECT_ID).equals(id)) {
+                if (new String(foundKey.getData(), "UTF-8").equals(id)) {
                     return true;
                 }
             }
@@ -525,7 +523,7 @@ public final class SleepycatRepository implements Repository {
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                    == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
-                        new JSONObject(new String(foundData.getData(), "UTF-8"));
+                        (JSONObject) Serializer.deserialize(foundData.getData());
 
                 if (filters.isEmpty()) {
                     foundList.add(jsonObject);
