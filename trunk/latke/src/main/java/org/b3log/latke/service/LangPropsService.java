@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * Language service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Aug 21, 2011
+ * @version 1.0.1.4, Sep 30, 2011
  */
 public final class LangPropsService {
 
@@ -151,6 +151,17 @@ public final class LangPropsService {
     }
 
     /**
+     * Gets a value from {@link Latkes#getLocale() the current locale} specified 
+     * language properties file with the specified key.
+     * 
+     * @param key the specified key
+     * @return value
+     */
+    public String get(final String key) {
+        return get(Keys.LANGUAGE, key, Latkes.getLocale());
+    }
+
+    /**
      * Gets a value from baseName_locale.properties file with the specified key.
      * If not found baseName_(locale).properties configurations, using
      * {@link Latkes#getLocale()} instead.
@@ -163,8 +174,8 @@ public final class LangPropsService {
      * @param locale the specified locale
      * @return the value of the specified key
      */
-    public String get(final String baseName, final String key,
-                      final Locale locale) {
+    private String get(final String baseName, final String key,
+                       final Locale locale) {
         if (!Keys.LANGUAGE.equals(baseName)) {
             final RuntimeException e =
                     new RuntimeException("i18n resource[baseName="
