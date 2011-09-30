@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * Session utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Sep , 2011
+ * @version 1.0.0.7, Sep 30, 2011
  */
 public final class Sessions {
 
