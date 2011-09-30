@@ -78,9 +78,11 @@ public final class Sessions {
      * Logouts a user with the specified request.
      *
      * @param request the specified request
+     * @param response the specified response
      * @return {@code true} if succeed, otherwise returns {@code false}
      */
-    public static boolean logout(final HttpServletRequest request) {
+    public static boolean logout(final HttpServletRequest request,
+                                 final HttpServletResponse response) {
         final HttpSession session = request.getSession(false);
 
         if (null != session) {
@@ -88,6 +90,12 @@ public final class Sessions {
 
             return true;
         }
+
+        final Cookie cookie = new Cookie("b3log-solo", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        
+        response.addCookie(cookie);
 
         return false;
     }
