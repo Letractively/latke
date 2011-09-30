@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.util;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -57,11 +58,20 @@ public final class Sessions {
 
         session.setAttribute(User.USER, user);
 
-        final Cookie cookie = new Cookie(
-                "user", user.optString(User.USER_EMAIL) + "/"
-                        + MD5.hash(user.optString(User.USER_PASSWORD)));
-        cookie.setMaxAge(session.getMaxInactiveInterval());
-        response.addCookie(cookie);
+        try {
+            final JSONObject cookieJSONObject = new JSONObject();
+            cookieJSONObject.put(User.USER_EMAIL,
+                                 user.optString(User.USER_EMAIL));
+            cookieJSONObject.put(User.USER_PASSWORD,
+                                 MD5.hash(user.optString(User.USER_PASSWORD)));
+
+            final Cookie cookie = new Cookie(
+                    "b3log-solo", cookieJSONObject.toString());
+            cookie.setMaxAge(session.getMaxInactiveInterval());
+            response.addCookie(cookie);
+        } catch (final Exception e) {
+            LOGGER.log(Level.WARNING, "Can not write cookie", e);
+        }
     }
 
     /**
