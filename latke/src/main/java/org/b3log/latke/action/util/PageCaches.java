@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Aug 24, 2011
+ * @version 1.0.1.1, Sep 30, 2011
  */
 public final class PageCaches {
 
@@ -77,7 +77,7 @@ public final class PageCaches {
     /**
      * Maximum count of cacheable pages.
      */
-    private static final int MAX_CACHEABLE_PAGE_CNT = 1024;
+    private static final int MAX_CACHEABLE_PAGE_CNT = 10240;
     /**
      * Key of page cache name.
      */
