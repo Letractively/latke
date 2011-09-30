@@ -82,7 +82,6 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             || requestURI.startsWith("/js/")
             || requestURI.startsWith("/skins/")
             || requestURI.startsWith("/plugins/")
-            || requestURI.endsWith(".html")
             || requestURI.endsWith(".png")
             || requestURI.endsWith(".ico")
             || requestURI.endsWith(".txt")) {
