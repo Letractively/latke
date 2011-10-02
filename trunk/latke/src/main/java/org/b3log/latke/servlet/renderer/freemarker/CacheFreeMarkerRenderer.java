@@ -32,7 +32,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * <p>This renderer will put page content into cache.<p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Sep 18, 2011
+ * @version 1.0.0.2, Oct 2, 2011
  */
 public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
 
@@ -41,6 +41,11 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
      */
     private static final Logger LOGGER =
             Logger.getLogger(CacheFreeMarkerRenderer.class.getName());
+
+    @Override
+    protected void beforeRender(final HTTPRequestContext context)
+            throws Exception {
+    }
 
     @Override
     protected void afterRender(final HTTPRequestContext context)
