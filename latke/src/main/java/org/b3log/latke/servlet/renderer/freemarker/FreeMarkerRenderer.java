@@ -24,9 +24,14 @@ import org.b3log.latke.servlet.HTTPRequestContext;
  * <p>Do nothing after render.</p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 8, 2011
+ * @version 1.0.0.1, Oct 2, 2011
  */
 public final class FreeMarkerRenderer extends AbstractFreeMarkerRenderer {
+
+    @Override
+    protected void beforeRender(final HTTPRequestContext context)
+            throws Exception {
+    }
 
     @Override
     protected void afterRender(final HTTPRequestContext context)
