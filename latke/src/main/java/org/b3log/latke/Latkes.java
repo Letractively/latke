@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Aug 8, 2011
+ * @version 1.0.0.5, Oct 3, 2011
  */
 public final class Latkes {
 
@@ -138,6 +138,8 @@ public final class Latkes {
      * @see RuntimeEnv
      */
     public static void initRuntimeEnv() {
+        setRuntimeMode(RuntimeMode.DEVELOPMENT); // Defaults to dev mode
+        
         try {
             runtimeEnv = RuntimeEnv.GAE;
             Class.forName("org.b3log.latke.repository.gae.GAERepository");
@@ -148,8 +150,6 @@ public final class Latkes {
             LOGGER.log(Level.INFO, "Latke is running on [Local]",
                        Latkes.getRuntimeEnv());
         }
-
-        setRuntimeMode(RuntimeMode.DEVELOPMENT); // Defaults to dev mode
     }
 
     /**
