@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * Session utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Sep 30, 2011
+ * @version 1.0.0.8, Oct 3, 2011
  */
 public final class Sessions {
 
@@ -37,6 +37,10 @@ public final class Sessions {
      */
     private static final Logger LOGGER =
             Logger.getLogger(Sessions.class.getName());
+    /**
+     * Cookie expiry: one year.
+     */
+    private static final int COOKIE_EXPIRY = 60 * 60 * 24 * 365;
 
     /**
      * Private default constructor.
@@ -66,8 +70,8 @@ public final class Sessions {
                                  MD5.hash(user.optString(User.USER_PASSWORD)));
 
             final Cookie cookie = new Cookie(
-                    "b3log-solo", cookieJSONObject.toString());
-            cookie.setMaxAge(session.getMaxInactiveInterval());
+                    "b3log-latke", cookieJSONObject.toString());
+            cookie.setMaxAge(COOKIE_EXPIRY);
             response.addCookie(cookie);
         } catch (final Exception e) {
             LOGGER.log(Level.WARNING, "Can not write cookie", e);
