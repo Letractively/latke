@@ -196,15 +196,15 @@ public final class RequestProcessors {
 
         try {
             for (final File file : files) {
-                final JarFile jarFile = new JarFile(file.getPath());
-
-                if (file.getPath().contains("appengine-api")
-                    || file.getPath().contains("freemarker")
-                    || file.getPath().contains("javassist")
-                    || file.getPath().startsWith("commons-")) {
+                if (file.getName().contains("appengine-api")
+                    || file.getName().startsWith("freemarker")
+                    || file.getName().startsWith("javassist")
+                    || file.getName().startsWith("commons-")) {
                     // Just skips some known dependencies hardly....
                     continue;
                 }
+                
+                final JarFile jarFile = new JarFile(file.getPath());
 
                 final Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
