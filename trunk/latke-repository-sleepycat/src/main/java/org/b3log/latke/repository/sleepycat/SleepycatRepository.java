@@ -507,10 +507,8 @@ public final class SleepycatRepository implements Repository {
                                CursorConfig.READ_COMMITTED);
         }
 
-
         final JSONObject ret = new JSONObject();
         try {
-
             final JSONObject pagination = new JSONObject();
             ret.put(Pagination.PAGINATION, pagination);
 
@@ -519,80 +517,12 @@ public final class SleepycatRepository implements Repository {
 
             // Step 1: Retrives by filters
             final List<JSONObject> foundList = new ArrayList<JSONObject>();
-
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT)
                    == OperationStatus.SUCCESS) {
                 final JSONObject jsonObject =
                         (JSONObject) Serializer.deserialize(foundData.getData());
 
-                if (filters.isEmpty()) { // No filtering
-                    foundList.add(jsonObject);
-                    continue;
-                }
-
-                int filteredCnt = filters.size();
-                for (final Filter filter : filters) {
-                    final String key = filter.getKey();
-                    final Object value = filter.getValue();
-                    final FilterOperator operator = filter.getOperator();
-
-                    final Object property = jsonObject.opt(key);
-
-                    if (value.getClass() != property.getClass()) {
-                        throw new RepositoryException(
-                                "The specified filter[key=" + key
-                                + ", valueClass=" + value.getClass()
-                                + "] can not compare to property[class="
-                                + property.getClass() + "]");
-                    }
-
-                    switch (operator) {
-                        case EQUAL:
-                            if (value.equals(property)) {
-                                filteredCnt--;
-                            }
-
-                            break;
-                        case NOT_EQUAL:
-                            if (!value.equals(property)) {
-                                filteredCnt--;
-                            }
-
-                            break;
-                        case GREATER_THAN:
-                            if (greater(value, property)) {
-                                filteredCnt--;
-                            }
-
-                            break;
-                        case GREATER_THAN_OR_EQUAL:
-                            if (greaterOrEqual(value, property)) {
-                               filteredCnt--;
-                            }
-
-                            break;
-
-                        case LESS_THAN:
-                            if (less(value, property)) {
-                               filteredCnt--;
-                            }
-
-                            break;
-                        case LESS_THAN_OR_EQUAL:
-                            if (lessOrEqual(value, property)) {
-                               filteredCnt--;
-                            }
-
-                            break;
-                        default:
-                            throw new RepositoryException("Unsupported filter operator["
-                                                          + operator + "]");
-                    }
-                }
-                
-                if (0 == filteredCnt) { // Filtered
-                    foundList.add(jsonObject);
-                }
+                filter(filters, foundList, jsonObject);
             }
 
             final int pageCount = (int) Math.ceil((double) foundList.size()
@@ -644,6 +574,90 @@ public final class SleepycatRepository implements Repository {
         }
 
         return ret;
+    }
+
+    /**
+     * Filters the specified json object by the specified filters, and if 
+     * filtered, adds the specified json object into the specified found list.
+     * 
+     * @param filters the specified filters
+     * @param foundList the specified found list
+     * @param jsonObject the specified json object
+     * @throws RepositoryException repository exception
+     */
+    private void filter(final List<Filter> filters,
+                        final List<JSONObject> foundList,
+                        final JSONObject jsonObject)
+            throws RepositoryException {
+        if (filters.isEmpty()) {
+            // No filtering
+            foundList.add(jsonObject);
+            return;
+        }
+
+        int filteredCnt = filters.size();
+        for (final Filter filter : filters) {
+            final String key = filter.getKey();
+            final Object value = filter.getValue();
+            final FilterOperator operator = filter.getOperator();
+
+            final Object property = jsonObject.opt(key);
+
+            if (value.getClass() != property.getClass()) {
+                throw new RepositoryException(
+                        "The specified filter[key=" + key
+                        + ", valueClass=" + value.getClass()
+                        + "] can not compare to property[class="
+                        + property.getClass() + "]");
+            }
+
+            switch (operator) {
+                case EQUAL:
+                    if (value.equals(property)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+                case NOT_EQUAL:
+                    if (!value.equals(property)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+                case GREATER_THAN:
+                    if (greater(value, property)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    if (greaterOrEqual(value, property)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+
+                case LESS_THAN:
+                    if (less(value, property)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    if (lessOrEqual(value, property)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+                default:
+                    throw new RepositoryException("Unsupported filter operator["
+                                                  + operator + "]");
+            }
+        }
+
+        if (0 == filteredCnt) { // Filtered
+            foundList.add(jsonObject);
+        }
     }
 
     @Override
