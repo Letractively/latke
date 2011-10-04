@@ -50,7 +50,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Sep 30, 2011
+ * @version 1.0.1.1, Oct 4, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -525,11 +525,12 @@ public final class SleepycatRepository implements Repository {
                 final JSONObject jsonObject =
                         (JSONObject) Serializer.deserialize(foundData.getData());
 
-                if (filters.isEmpty()) {
+                if (filters.isEmpty()) { // No filtering
                     foundList.add(jsonObject);
                     continue;
                 }
 
+                int filteredCnt = filters.size();
                 for (final Filter filter : filters) {
                     final String key = filter.getKey();
                     final Object value = filter.getValue();
@@ -548,38 +549,38 @@ public final class SleepycatRepository implements Repository {
                     switch (operator) {
                         case EQUAL:
                             if (value.equals(property)) {
-                                foundList.add(jsonObject);
+                                filteredCnt--;
                             }
 
                             break;
                         case NOT_EQUAL:
                             if (!value.equals(property)) {
-                                foundList.add(jsonObject);
+                                filteredCnt--;
                             }
 
                             break;
                         case GREATER_THAN:
                             if (greater(value, property)) {
-                                foundList.add(jsonObject);
+                                filteredCnt--;
                             }
 
                             break;
                         case GREATER_THAN_OR_EQUAL:
                             if (greaterOrEqual(value, property)) {
-                                foundList.add(jsonObject);
+                               filteredCnt--;
                             }
 
                             break;
 
                         case LESS_THAN:
                             if (less(value, property)) {
-                                foundList.add(jsonObject);
+                               filteredCnt--;
                             }
 
                             break;
                         case LESS_THAN_OR_EQUAL:
                             if (lessOrEqual(value, property)) {
-                                foundList.add(jsonObject);
+                               filteredCnt--;
                             }
 
                             break;
@@ -587,6 +588,10 @@ public final class SleepycatRepository implements Repository {
                             throw new RepositoryException("Unsupported filter operator["
                                                           + operator + "]");
                     }
+                }
+                
+                if (0 == filteredCnt) { // Filtered
+                    foundList.add(jsonObject);
                 }
             }
 
