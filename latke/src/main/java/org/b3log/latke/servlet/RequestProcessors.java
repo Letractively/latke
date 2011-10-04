@@ -34,6 +34,8 @@ import java.util.logging.Logger;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.annotation.RequestProcessing;
@@ -44,7 +46,7 @@ import org.b3log.latke.util.AntPathMatcher;
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Sep 26, 2011
+ * @version 1.0.0.5, Oct 5, 2011
  */
 public final class RequestProcessors {
 
@@ -99,7 +101,21 @@ public final class RequestProcessors {
                 processorObject = instance;
             }
 
-            return processorMethod.invoke(processorObject, context);
+            final List<Object> args = new ArrayList<Object>();
+            final Class<?>[] parameterTypes =
+                    processorMethod.getParameterTypes();
+            for (int i = 0; i < parameterTypes.length; i++) {
+                final Class<?> paramClass = parameterTypes[i];
+                if (paramClass.equals(HTTPRequestContext.class)) {
+                    args.add(i, context);
+                } else if (paramClass.equals(HttpServletRequest.class)) {
+                    args.add(i, context.getRequest());
+                } else if (paramClass.equals(HttpServletResponse.class)) {
+                    args.add(i, context.getResponse());
+                }
+            }
+
+            return processorMethod.invoke(processorObject, args.toArray());
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "Invokes processor method failed", e);
 
@@ -111,7 +127,6 @@ public final class RequestProcessors {
      * Scans classpath to discover request processor classes via annotation
      * {@linkplain org.b3log.latke.annotation.RequestProcessor}.
      */
-    // XXX: only WEB-INF/classes at present, to consider WEB/INF/lib?
     public static void discover() {
         discoverFromClassesDir();
         discoverFromLibDir();
@@ -182,6 +197,15 @@ public final class RequestProcessors {
         try {
             for (final File file : files) {
                 final JarFile jarFile = new JarFile(file.getPath());
+
+                if (file.getPath().contains("appengine-api")
+                    || file.getPath().contains("freemarker")
+                    || file.getPath().contains("javassist")
+                    || file.getPath().startsWith("commons-")) {
+                    // Just skips some known dependencies hardly....
+                    continue;
+                }
+
                 final Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     final JarEntry jarEntry = entries.nextElement();
@@ -202,7 +226,7 @@ public final class RequestProcessors {
                     if (null == annotationsAttribute) {
                         continue;
                     }
-                    
+
                     for (Annotation annotation : annotationsAttribute.
                             getAnnotations()) {
                         if ((annotation.getTypeName()).equals(
@@ -265,7 +289,7 @@ public final class RequestProcessors {
                 }
             }
         }
-        
+
         if (matches.isEmpty()) {
             return null;
         }
