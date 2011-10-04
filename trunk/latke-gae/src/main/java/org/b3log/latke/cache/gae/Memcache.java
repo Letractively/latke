@@ -31,12 +31,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.plugin.PluginManager;
+import org.b3log.latke.util.Serializer;
 
 /**
  * Simple warper of <a href="http://code.google.com/appengine/docs/java/memcache/">
@@ -54,7 +56,7 @@ import org.b3log.latke.plugin.PluginManager;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Sep 20, 2011
+ * @version 1.0.1.3, Oct 4, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -123,7 +125,18 @@ public final class Memcache<K, V> implements Cache<K, V> {
                     "The specified value can not be null![key=" + key + "]");
         }
 
-        memcacheService.put(key, value);
+        try {
+            memcacheService.put(key, value);
+        } catch (final Exception e) {
+            try {
+                LOGGER.log(Level.WARNING, "Can not put memcache[key=" + key
+                                          + ", valueSize="
+                                          + Serializer.serialize(
+                        (Serializable) value).length, e);
+            } catch (final Exception ex) {
+                LOGGER.log(Level.SEVERE, " Serializes failed", ex);
+            }
+        }
     }
 
     @Override
