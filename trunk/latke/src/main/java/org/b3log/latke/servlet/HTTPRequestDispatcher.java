@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.servlet;
 
+import java.io.File;
 import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import java.io.InputStream;
 import org.b3log.latke.Keys;
@@ -39,7 +40,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Sep 29, 2011
+ * @version 1.0.0.9, Oct 9, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -75,8 +76,17 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     protected void service(final HttpServletRequest request,
                            final HttpServletResponse response)
             throws ServletException, IOException {
-        final String requestURI = request.getRequestURI();
+        final String resourcePath = request.getPathTranslated();
 
+        if ((!request.getRequestURI().equals("/")
+             && new File(resourcePath).isDirectory())
+            || resourcePath.endsWith(".ftl")) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            return;
+        }
+
+        final String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/css/")
             || requestURI.startsWith("/images/")
             || requestURI.startsWith("/js/")
@@ -84,13 +94,13 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             || requestURI.startsWith("/plugins/")
             || requestURI.endsWith(".png")
             || requestURI.endsWith(".ico")
-            || requestURI.endsWith(".txt")) {
+            || requestURI.endsWith(".txt")
+            || requestURI.equals("/403.html")) {
             // TODO: 1. Reads these from appengine-web.xml?
             //       2. Etag/Expires/Last-Modified/Cache-Control
             //       3. Content-Encoding, etc headers
             final InputStream staticResourceInputStream =
                     getServletContext().getResourceAsStream(requestURI);
-            final String resourcePath = request.getPathTranslated();
             final String mimeType = getServletContext().
                     getMimeType(resourcePath);
             response.setContentType(mimeType);
