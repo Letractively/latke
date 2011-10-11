@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 0.0.0.2, Aug 21, 2011
- * 
  */
 public class UrlFetchTestCase {
 

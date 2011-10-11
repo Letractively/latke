@@ -32,7 +32,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 23, 2011
+ * @version 1.0.0.1, Oct 11, 2011
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -75,8 +75,10 @@ public abstract class AbstractRepository implements Repository {
 
             repository = constructor.newInstance(name);
         } catch (final Exception e) {
-            throw new RuntimeException("Can not initialize Mail Service!", e);
+            throw new RuntimeException("Can not initialize repository!", e);
         }
+
+        Repositories.addRepository(repository);
     }
 
     @Override
