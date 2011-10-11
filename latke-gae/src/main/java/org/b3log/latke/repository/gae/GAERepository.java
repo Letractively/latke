@@ -828,16 +828,6 @@ public final class GAERepository implements Repository {
         this.cacheEnabled = isCacheEnabled;
     }
 
-    /**
-     * Gets the underlying Google App Engine datastore service.
-     *
-     * @return datastore service
-     */
-    // TODO: Removes this method while after refactoring Rhythm and Symphony
-    protected DatastoreService getDatastoreService() {
-        return datastoreService;
-    }
-
     @Override
     public String getName() {
         return name;
