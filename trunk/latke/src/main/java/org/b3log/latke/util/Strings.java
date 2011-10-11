@@ -27,9 +27,28 @@ import java.util.regex.Pattern;
  * String utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Jul 1, 2011
+ * @version 1.0.1.0, Oct 11, 2011
  */
 public final class Strings {
+
+    /**
+     * Maximum length of local part of a valid email address.
+     */
+    private static final int MAX_EMAIL_LENGTH_LOCAL = 64;
+    /**
+     * Maximum length of domain part of a valid email address.
+     */
+    private static final int MAX_EMAIL_LENGTH_DOMAIN = 255;
+    /**
+     * Maximum length of a valid email address.
+     */
+    private static final int MAX_EMAIL_LENGTH = 256;
+    /**
+     * Email pattern.
+     */
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile(
+            "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
     /**
      * Private default constructor.
@@ -74,13 +93,13 @@ public final class Strings {
      * 
      * @param string the specified string
      * @return {@code true} if the specified string is numeric, returns 
-     * {@code false} otherwise
+     * returns {@code false} otherwise
      */
     public static boolean isNumeric(final String string) {
         if (isEmptyOrNull(string)) {
             return false;
         }
-        
+
         final Pattern pattern = Pattern.compile("[0-9]*");
         final Matcher matcher = pattern.matcher(string);
 
@@ -92,11 +111,45 @@ public final class Strings {
     }
 
     /**
+     * Checks whether the specified string is a valid email address.
+     * 
+     * @param string the specified string
+     * @return {@code true} if the specified string is a valid email address,
+     * returns {@code false} otherwise
+     */
+    public static boolean isEmail(final String string) {
+        if (isEmptyOrNull(string)) {
+            return false;
+        }
+        
+        if (MAX_EMAIL_LENGTH < string.length()) {
+            return false;
+        }
+
+        final String[] parts = string.split("@");
+        if (2 != parts.length) {
+            return false;
+        }
+
+        final String local = parts[0];
+        if (MAX_EMAIL_LENGTH_LOCAL < local.length()) {
+            return false;
+        }
+
+        final String domain = parts[1];
+        if (MAX_EMAIL_LENGTH_DOMAIN < domain.length()) {
+            return false;
+        }
+
+        return EMAIL_PATTERN.matcher(string).matches();
+    }
+
+    /**
      * Determines whether the specified string is {@code ""} or {@code null}.
      *
      * @param string the specified string
      * @return {@code true} if the specified string is {@code ""} or
-     * {@code null}, {@code false} otherwise
+     * {@code null}, returns {@code false} otherwise
      */
     public static boolean isEmptyOrNull(final String string) {
         return string == null || string.trim().length() == 0;
