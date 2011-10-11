@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.6.5, Sep 28, 2011
+    Version: 1.0.6.6, Oct 10, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -258,6 +258,7 @@
                         <exclude>**/src/main/java/**/package-info.java</exclude>
                         <exclude>**/src/main/java/org/json/*.java</exclude>
                         <exclude>**/src/main/java/org/b3log/latke/util/AntPathMatcher.java</exclude>
+                        <exclude>**/src/main/java/javax/persistence/*.java</exclude>
                     </excludes>
 
                     <useDefaultExcludes>true</useDefaultExcludes>
@@ -290,7 +291,8 @@
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <excludes>
                         org/json/*.java,
-                        org/b3log/latke/util/AntPathMatcher.java
+                        org/b3log/latke/util/AntPathMatcher.java,
+                        javax/**/*.java
                     </excludes>
                     <consoleOutput>true</consoleOutput>
                     <failOnViolation>true</failOnViolation>
