@@ -16,6 +16,9 @@
  */
 package org.b3log.latke.util;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -103,15 +106,6 @@ public final class Stopwatchs {
 
         final Stopwatch recent = getRecentRunning(STOPWATCH.get());
         recent.addLeaf(new Stopwatch(taskTitle)); // Adds sub-stopwatch
-    }
-
-    /**
-     * Starts a task timing with the specified task title asynchronously.
-     * 
-     * @param taskTitle the specified task title
-     */
-    public static void startAsync(final String taskTitle) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -266,7 +260,7 @@ public final class Stopwatchs {
      * Stopwatch for timing a task.
      * 
      * <p>
-     * A stopwatch based on a tree-structure for timing parallel tasks, and 
+     * A stopwatch based on a tree-structure for timing sub-tasks, and 
      * calculating running time of tasks hierarchically.
      * 
      * <pre>
@@ -307,6 +301,11 @@ public final class Stopwatchs {
          * Hundred.
          */
         private static final int HUNDRED = 100;
+        /**
+         * Math context for formatting percent.
+         */
+        private static final MathContext MATH_CONTEXT =
+                new MathContext(4, RoundingMode.HALF_UP);
 
         /**
          * Constructs a stopwatch with the specified task title and starts it 
@@ -437,8 +436,11 @@ public final class Stopwatchs {
 
         @Override
         public String toString() {
+            final BigDecimal percenOfRoot =
+                    new BigDecimal(getPercentOfRoot(),  MATH_CONTEXT);
+
             final StringBuilder stringBuilder =
-                    new StringBuilder("[").append(getPercentOfRoot()).
+                    new StringBuilder("[").append(percenOfRoot).
                     append("]%, [").append(getElapsedTime()).append("]ms [").
                     append(getTaskTitle()).append("]").
                     append(Strings.LINE_SEPARATOR);
