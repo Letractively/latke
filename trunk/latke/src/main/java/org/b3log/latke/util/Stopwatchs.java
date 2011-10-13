@@ -88,6 +88,7 @@ import java.util.List;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.1, Oct 13, 2011
  * @see Stopwatch
+ * @see #getTimingStat() 
  */
 public final class Stopwatchs {
 

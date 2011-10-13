@@ -51,7 +51,6 @@ public final class StopwatchsTestCase {
 
         Stopwatchs.start("task 1.2");
         Stopwatchs.start("task 1.2.1");
-        final long task121Time = 0;
         Stopwatchs.end(); // Ends 1.2.1
 
         Stopwatchs.start("task 1.2.2");
@@ -60,8 +59,6 @@ public final class StopwatchsTestCase {
         Stopwatchs.end(); // Ends 1.2.2
 
         Stopwatchs.end(); // Ends 1.2
-        final long task12Time = task121Time + task122Time;
-
 
         Stopwatchs.start("task 1.3");
         final long task13Time = 10;
