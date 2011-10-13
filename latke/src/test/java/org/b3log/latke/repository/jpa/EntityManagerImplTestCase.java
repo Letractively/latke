@@ -15,7 +15,6 @@
  */
 package org.b3log.latke.repository.jpa;
 
-import javax.persistence.EntityTransaction;
 import org.b3log.latke.Latkes;
 import javax.persistence.EntityManager;
 import org.testng.annotations.Test;
