@@ -38,7 +38,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * Gets a list of integers(sum specified by the given size) between the
+     * Gets a list of integers(size specified by the given size) between the
      * specified start(inclusion) and end(inclusion) randomly.
      *
      * @param start the specified start
