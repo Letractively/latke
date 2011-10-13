@@ -40,6 +40,7 @@ import org.b3log.latke.event.EventManager;
 import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.servlet.AbstractServletListener;
+import org.b3log.latke.util.Stopwatchs;
 import org.b3log.latke.util.Strings;
 import org.jabsorb.JSONRPCBridge;
 
@@ -173,6 +174,8 @@ public final class PluginManager {
      * Loads plugins from directory {@literal webRoot/plugins/}.
      */
     public void load() {
+        Stopwatchs.start("Load Plugins");
+        
         classLoaders.clear();
 
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
@@ -214,6 +217,8 @@ public final class PluginManager {
         }
 
         pluginCache.put(PLUGIN_CACHE_NAME, holder);
+        
+        Stopwatchs.end();
     }
 
     /**
