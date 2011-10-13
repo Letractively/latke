@@ -16,16 +16,23 @@
  */
 package org.b3log.latke.util;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * {@link Stopwatchs} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 12, 2011
+ * @version 1.0.0.1, Oct 13, 2011
  */
 public final class StopwatchsTestCase {
+
+    /**
+     * Releases the current thread-local variable after each test method.
+     */
+    @org.testng.annotations.AfterMethod
+    public void afterMethod() {
+        Stopwatchs.release();
+    }
 
     /**
      * Tests method {@link Stopwatchs#getTimingStat()}.
@@ -33,6 +40,7 @@ public final class StopwatchsTestCase {
      */
     @Test
     public void getTimingStat() throws Exception {
+        System.out.println("getTimingStat");
         Stopwatchs.start("task 1");
 
         Stopwatchs.start("task 1.1");
@@ -63,11 +71,44 @@ public final class StopwatchsTestCase {
         Stopwatchs.end(); // Ends 1
 
         System.out.println(Stopwatchs.getTimingStat());
+    }
 
-        Assert.assertEquals(Stopwatchs.getElapsed("task 1.1"), task11Time);
-        Assert.assertEquals(Stopwatchs.getElapsed("task 1.2"), task12Time);
-        Assert.assertEquals(Stopwatchs.getElapsed("task 1.2.1"), task121Time);
-        Assert.assertEquals(Stopwatchs.getElapsed("task 1.2.2"), task122Time);
-        Assert.assertEquals(Stopwatchs.getElapsed("task 1.3"), task13Time);
+    /**
+     * Tests method {@link Stopwatchs#getTimingStat()}.
+     * @throws Exception exception
+     */
+    @Test(expectedExceptions = RuntimeException.class)
+    public void getTimingStatWhileException() throws Exception {
+        System.out.println("getTimingStatWhileException");
+        Stopwatchs.start("task 1");
+
+        Stopwatchs.start("task 1.1");
+        try {
+            throw new RuntimeException();
+        } finally {
+            final long task11Time = 50;
+            Thread.sleep(task11Time);
+            Stopwatchs.end(); // Ends 1.1
+
+
+            Stopwatchs.start("task 1.2");
+            Stopwatchs.start("task 1.2.1");
+            Stopwatchs.end(); // Ends 1.2.1
+
+            Stopwatchs.start("task 1.2.2");
+            final long task122Time = 20;
+            Thread.sleep(task122Time);
+            Stopwatchs.end(); // Ends 1.2.2
+
+            //Stopwatchs.end(); // Ends 1.2, NOTE
+
+            Stopwatchs.start("task 1.3");
+            final long task13Time = 10;
+            Thread.sleep(task13Time);
+
+            //Stopwatchs.end(); // Ends 1, NOTE
+
+            System.out.println(Stopwatchs.getTimingStat());
+        }
     }
 }
