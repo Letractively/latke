@@ -27,6 +27,15 @@ import org.testng.annotations.Test;
 public final class StopwatchsTestCase {
 
     /**
+     * Test method invocation count.
+     */
+    private static final int INVOCATION_COUNT = 30;
+    /**
+     * Thread pool size.
+     */
+    private static final int THREAD_POOL_SIZE = 5;
+
+    /**
      * Releases the current thread-local variable after each test method.
      */
     @org.testng.annotations.AfterMethod
@@ -38,7 +47,7 @@ public final class StopwatchsTestCase {
      * Tests method {@link Stopwatchs#getTimingStat()}.
      * @throws Exception exception
      */
-    @Test
+    @Test(threadPoolSize = THREAD_POOL_SIZE, invocationCount = INVOCATION_COUNT)
     public void getTimingStat() throws Exception {
         System.out.println("getTimingStat");
         Stopwatchs.start("task 1");
