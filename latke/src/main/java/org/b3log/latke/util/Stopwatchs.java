@@ -158,13 +158,6 @@ public final class Stopwatchs {
             return "No stopwatch";
         }
         
-        final StackTraceElement[] stackTraceElements =
-                Thread.currentThread().getStackTrace();
-        for (int i = 0; i < stackTraceElements.length; i++) {
-            final StackTraceElement stackTraceElement = stackTraceElements[i];
-            System.out.println("~~~~: " + stackTraceElement.getMethodName());
-        }
-
         final StringBuilder stringBuilder = new StringBuilder();
 
         root.appendTimingStat("  ", stringBuilder);
