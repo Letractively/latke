@@ -113,6 +113,10 @@ public final class Stopwatchs {
         }
 
         final Stopwatch recent = getRecentRunning(STOPWATCH.get());
+        if (null == recent) {
+            return;
+        }
+        
         recent.addLeaf(new Stopwatch(taskTitle)); // Adds sub-stopwatch
     }
 
@@ -128,6 +132,10 @@ public final class Stopwatchs {
         }
 
         final Stopwatch recent = getRecentRunning(root);
+        if (null == recent) {
+            return;
+        }
+        
         recent.setEndTime(System.currentTimeMillis()); // Ends timing
     }
 
