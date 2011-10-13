@@ -33,6 +33,11 @@ import java.util.List;
  * </p>
  * 
  * <p>
+ * <b>Note</b>: Remember to {@link Stopwatchs#release() release} a stopwatch
+ * if finished statistics finally to avoid memory leak.
+ * </p>
+ * 
+ * <p>
  * See the following example snippet codes:
  * <pre>
  *     Stopwatchs.start("task 1");
@@ -65,6 +70,8 @@ import java.util.List;
  *     
  *     // Shows the timing statistics
  *     System.out.println(Stopwatchs.getTimingStat());
+ * 
+ *     Stopwatchs.release();
  * </pre>
  * 
  * Outputs:
@@ -137,6 +144,11 @@ public final class Stopwatchs {
     /**
      * Gets the current timing statistics.
      * 
+     * <p>
+     * If a task is not ended, the outputs will be minus for percentage and 
+     * elapsed, the absolute value of the elapsed filed is the start time.
+     * </p>
+     * 
      * @return the current timing statistics, returns {@code "No stopwatch"}
      * if not stopwatch
      */
@@ -144,6 +156,13 @@ public final class Stopwatchs {
         final Stopwatch root = STOPWATCH.get();
         if (null == root) {
             return "No stopwatch";
+        }
+        
+        final StackTraceElement[] stackTraceElements =
+                Thread.currentThread().getStackTrace();
+        for (int i = 0; i < stackTraceElements.length; i++) {
+            final StackTraceElement stackTraceElement = stackTraceElements[i];
+            System.out.println("~~~~: " + stackTraceElement.getMethodName());
         }
 
         final StringBuilder stringBuilder = new StringBuilder();
