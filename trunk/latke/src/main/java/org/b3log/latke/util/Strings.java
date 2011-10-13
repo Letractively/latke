@@ -27,10 +27,15 @@ import java.util.regex.Pattern;
  * String utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Oct 11, 2011
+ * @version 1.0.1.1, Oct 13, 2011
  */
 public final class Strings {
 
+    /**
+     * Line separator.
+     */
+    public static final String LINE_SEPARATOR =
+            System.getProperty("line.separator");
     /**
      * Maximum length of local part of a valid email address.
      */
@@ -121,7 +126,7 @@ public final class Strings {
         if (isEmptyOrNull(string)) {
             return false;
         }
-        
+
         if (MAX_EMAIL_LENGTH < string.length()) {
             return false;
         }

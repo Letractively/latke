@@ -76,7 +76,7 @@ import java.util.List;
  * <p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 12, 2011
+ * @version 1.0.0.1, Oct 13, 2011
  * @see Stopwatch
  */
 public final class Stopwatchs {
@@ -86,11 +86,6 @@ public final class Stopwatchs {
      */
     private static final ThreadLocal<Stopwatch> STOPWATCH =
             new ThreadLocal<Stopwatch>();
-    /**
-     * Line separator.
-     */
-    private static final String LINE_SEPARATOR =
-            System.getProperty("line.separator");
 
     /**
      * Starts a task timing with the specified task title.
@@ -446,7 +441,7 @@ public final class Stopwatchs {
                     new StringBuilder("[").append(getPercentOfRoot()).
                     append("]%, [").append(getElapsedTime()).append("]ms [").
                     append(getTaskTitle()).append("]").
-                    append(LINE_SEPARATOR);
+                    append(Strings.LINE_SEPARATOR);
 
             return stringBuilder.toString();
         }
