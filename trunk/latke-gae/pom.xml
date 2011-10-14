@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke cache implementation for GAE.
-    Version: 1.0.2.2, Sep 23, 2011
+    Version: 1.0.2.3, Oct 14, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -21,13 +21,13 @@
     <properties>
         <servlet.version>2.5</servlet.version>
         <org.b3log.latke.version>0.5.0-SNAPSHOT</org.b3log.latke.version>
-        <gae.version>1.5.3</gae.version>
+        <gae.version>1.5.5</gae.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.9.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
         <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
         <!-- Unit Test -->
-        <testng.version>5.9</testng.version>
+        <testng.version>6.1.1</testng.version>
         <!-- -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -123,7 +123,6 @@
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
                 <scope>test</scope>
-                <classifier>jdk15</classifier>
             </dependency>
 
             <dependency>
@@ -149,7 +148,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
 
