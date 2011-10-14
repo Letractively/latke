@@ -52,9 +52,9 @@ public class EntityManagerImplTestCase {
         entity0.setField2(true);
         final long field3 = 88250;
         entity0.setField3(field3);
-        
-// FIXME:        final EntityTransaction transaction = entityManager.getTransaction();
-//        entityManager.persist(entity0);
-//        transaction.commit();
+
+        // FIXfinal EntityTransaction transaction = entityManager.getTransaction();
+        //entityManager.persist(entity0);
+        //transaction.commit();
     }
 }
