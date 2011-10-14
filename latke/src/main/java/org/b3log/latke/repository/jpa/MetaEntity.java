@@ -26,12 +26,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import org.b3log.latke.Keys;
+import org.b3log.latke.repository.jpa.util.EntityClassCheckers;
 
 /**
  * Meta entity.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 10, 2011
+ * @version 1.0.0.1, Oct 14, 2011
  */
 public final class MetaEntity {
 
@@ -60,6 +61,14 @@ public final class MetaEntity {
      */
     public MetaEntity(final Class<?> entityClass) {
         LOGGER.log(Level.FINER, "Analysing an entity scheme....");
+
+        // XXX: Resolver checker for checks fail error messages output
+
+        if (!EntityClassCheckers.isValid(entityClass)) {
+            throw new IllegalArgumentException("The specified class is not a "
+                                               + "valid entity class");
+        }
+
         this.entityClass = entityClass;
 
         final String entityClassName = entityClass.getSimpleName();
@@ -71,8 +80,6 @@ public final class MetaEntity {
                    new Object[]{entityClass.getSimpleName(), repositoryName});
 
         final Field[] allFields = entityClass.getDeclaredFields();
-
-        // TODO: check
 
         for (int i = 0; i < allFields.length; i++) {
             final Field field = allFields[i];
