@@ -50,7 +50,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Oct 4, 2011
+ * @version 1.0.1.2, Oct 15, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -465,12 +465,29 @@ public final class SleepycatRepository implements Repository {
         }
 
         if (cacheEnabled) {
-            final String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
-                                    + getName();
+            String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
+                              + getName();
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
                        "Added query result[cacheKey={0}] in repository cache[{1}]",
                        new Object[]{cacheKey, getName()});
+            // Checks if the result is a single result
+            final JSONArray results = ret.optJSONArray(Keys.RESULTS);
+            if (1 == results.length()) {
+                final JSONObject jsonObject = results.optJSONObject(0);
+
+                // Checks if the single result is an entity
+                if (jsonObject.has(Keys.OBJECT_ID)) {
+                    // If it is an entity, put its key into cache
+                    cacheKey = CACHE_KEY_PREFIX
+                               + jsonObject.optString(Keys.OBJECT_ID);
+
+                    CACHE.put(cacheKey, jsonObject);
+                    LOGGER.log(Level.FINER,
+                               "Added an object[cacheKey={0}] in repository cache[{1}]",
+                               new Object[]{cacheKey, getName()});
+                }
+            }
         }
 
         return ret;
