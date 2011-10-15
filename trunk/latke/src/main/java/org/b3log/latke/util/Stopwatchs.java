@@ -86,7 +86,7 @@ import java.util.List;
  * <p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Oct 13, 2011
+ * @version 1.0.0.2, Oct 15, 2011
  * @see Stopwatch
  * @see #getTimingStat() 
  */
@@ -116,7 +116,7 @@ public final class Stopwatchs {
         if (null == recent) {
             return;
         }
-        
+
         recent.addLeaf(new Stopwatch(taskTitle)); // Adds sub-stopwatch
     }
 
@@ -135,7 +135,7 @@ public final class Stopwatchs {
         if (null == recent) {
             return;
         }
-        
+
         recent.setEndTime(System.currentTimeMillis()); // Ends timing
     }
 
@@ -166,7 +166,7 @@ public final class Stopwatchs {
         if (null == root) {
             return "No stopwatch";
         }
-        
+
         final StringBuilder stringBuilder = new StringBuilder();
 
         root.appendTimingStat("  ", stringBuilder);
@@ -434,7 +434,12 @@ public final class Stopwatchs {
                 return 0;
             }
 
-            return getElapsedTime() / (float) root.getElapsedTime() * HUNDRED;
+            final float rootElapsedTime = (float) root.getElapsedTime();
+            if (0 == rootElapsedTime) { // Denominator is equals to zero
+                return 0;
+            }
+
+            return getElapsedTime() / rootElapsedTime * HUNDRED;
         }
 
         /**
@@ -457,8 +462,13 @@ public final class Stopwatchs {
 
         @Override
         public String toString() {
+            float percentOfRoot = getPercentOfRoot();
+            if (0 > percentOfRoot) {
+                percentOfRoot = 0F;
+            }
+
             final BigDecimal percenOfRoot =
-                    new BigDecimal(getPercentOfRoot(),  MATH_CONTEXT);
+                    new BigDecimal(percentOfRoot, MATH_CONTEXT);
 
             final StringBuilder stringBuilder =
                     new StringBuilder("[").append(percenOfRoot).
