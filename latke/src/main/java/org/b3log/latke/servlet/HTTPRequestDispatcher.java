@@ -101,6 +101,11 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             //       3. Content-Encoding, etc headers
             final InputStream staticResourceInputStream =
                     getServletContext().getResourceAsStream(requestURI);
+            if (null == staticResourceInputStream) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
             final String mimeType = getServletContext().
                     getMimeType(resourcePath);
             response.setContentType(mimeType);
