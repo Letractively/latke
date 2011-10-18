@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * Session utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Oct 3, 2011
+ * @version 1.0.0.9, Oct 18, 2011
  */
 public final class Sessions {
 
@@ -69,8 +69,8 @@ public final class Sessions {
             cookieJSONObject.put(User.USER_PASSWORD,
                                  MD5.hash(user.optString(User.USER_PASSWORD)));
 
-            final Cookie cookie = new Cookie(
-                    "b3log-latke", cookieJSONObject.toString());
+            final Cookie cookie =
+                    new Cookie("b3log-latke", cookieJSONObject.toString());
             cookie.setMaxAge(COOKIE_EXPIRY);
             response.addCookie(cookie);
         } catch (final Exception e) {
@@ -90,7 +90,7 @@ public final class Sessions {
         final HttpSession session = request.getSession(false);
 
         if (null != session) {
-            final Cookie cookie = new Cookie("b3log-solo", null);
+            final Cookie cookie = new Cookie("b3log-latke", null);
             cookie.setMaxAge(0);
             cookie.setPath("/");
 
