@@ -19,7 +19,7 @@ package org.b3log.latke.repository;
  * Filter operator.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Dec 2, 2010
+ * @version 1.0.0.1, Oct 18, 2011
  */
 public enum FilterOperator {
 
@@ -46,5 +46,9 @@ public enum FilterOperator {
     /**
      * Not equal.
      */
-    NOT_EQUAL
+    NOT_EQUAL,
+    /**
+     * In.
+     */
+    IN,
 }
