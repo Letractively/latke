@@ -698,6 +698,11 @@ public final class SleepycatRepository implements Repository {
         this.cacheEnabled = isCacheEnabled;
     }
 
+    @Override
+    public Cache<String, Object> getCache() {
+        return CACHE;
+    }
+
     /**
      * Returns {@code true} if the specified object1 greater than the specified 
      * object2.
