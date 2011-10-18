@@ -54,6 +54,7 @@ import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
+import org.b3log.latke.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,7 +77,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.9, Oct 15, 2011
+ * @version 1.0.4.0, Oct 18, 2011
  * @see GAETransaction
  */
 public final class GAERepository implements Repository {
@@ -469,9 +470,14 @@ public final class GAERepository implements Repository {
     public JSONObject get(final org.b3log.latke.repository.Query query)
             throws RepositoryException {
         JSONObject ret = null;
+        
+        if (Strings.isEmptyOrNull(query.getCacheKey())) { // No application defined cache key
+            // Uses the hashcode as query results cache key
+            query.setCacheKey(String.valueOf(query.hashCode()));
+        }
 
         if (cacheEnabled) {
-            final String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
+            final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
                                     + getName();
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
@@ -496,7 +502,7 @@ public final class GAERepository implements Repository {
         }
 
         if (cacheEnabled) {
-            String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
+            String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
                               + getName();
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
