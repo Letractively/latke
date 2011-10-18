@@ -43,6 +43,7 @@ import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
 import org.b3log.latke.util.Serializer;
+import org.b3log.latke.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -50,7 +51,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Oct 15, 2011
+ * @version 1.0.1.3, Oct 18, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -439,8 +440,13 @@ public final class SleepycatRepository implements Repository {
     public JSONObject get(final Query query) throws RepositoryException {
         JSONObject ret = null;
 
+        if (Strings.isEmptyOrNull(query.getCacheKey())) { // No application defined cache key
+            // Uses the hashcode as query results cache key
+            query.setCacheKey(String.valueOf(query.hashCode()));
+        }
+
         if (cacheEnabled) {
-            final String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
+            final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
                                     + getName();
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
@@ -465,7 +471,7 @@ public final class SleepycatRepository implements Repository {
         }
 
         if (cacheEnabled) {
-            String cacheKey = CACHE_KEY_PREFIX + query.hashCode() + "_"
+            String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
                               + getName();
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
