@@ -32,8 +32,10 @@ import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.api.utils.SystemProperty.Environment.Value;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,7 @@ import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Blob;
 import org.b3log.latke.repository.Filter;
+import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
@@ -347,7 +350,7 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Remmoves.
+     * Removes.
      * 
      * @param id the specified id
      * @param parentKeyKind the specified parent key kind
@@ -569,12 +572,34 @@ public final class GAERepository implements Repository {
                 case NOT_EQUAL:
                     filterOperator = Query.FilterOperator.NOT_EQUAL;
                     break;
+                case IN:
+                    filterOperator = Query.FilterOperator.IN;
+                    break;
                 default:
                     throw new RepositoryException("Unsupported filter operator["
                                                   + filter.getOperator() + "]");
             }
 
-            query.addFilter(filter.getKey(), filterOperator, filter.getValue());
+            if (FilterOperator.IN != filter.getOperator()) {
+                query.addFilter(filter.getKey(), filterOperator,
+                                filter.getValue());
+            } else {
+                LOGGER.log(Level.FINEST, "In operation[");
+                @SuppressWarnings("unchecked")
+                final Collection<String> ids =
+                        (Collection<String>) filter.getValue();
+
+                final Set<Key> keys = new HashSet<Key>();
+                for (final String id : ids) {
+                    keys.add(KeyFactory.createKey(defaultParentKey, getName(),
+                                                  id));
+                    LOGGER.log(Level.FINEST, "    {0}]", id);
+                }
+                LOGGER.log(Level.FINEST, "]");
+
+                query.addFilter(filter.getKey(), Query.FilterOperator.IN,
+                                keys);
+            }
         }
 
         for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
