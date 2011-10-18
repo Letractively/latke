@@ -470,7 +470,7 @@ public final class GAERepository implements Repository {
     public JSONObject get(final org.b3log.latke.repository.Query query)
             throws RepositoryException {
         JSONObject ret = null;
-        
+
         if (Strings.isEmptyOrNull(query.getCacheKey())) { // No application defined cache key
             // Uses the hashcode as query results cache key
             query.setCacheKey(String.valueOf(query.hashCode()));
@@ -849,6 +849,11 @@ public final class GAERepository implements Repository {
     @Override
     public void setCacheEnabled(final boolean isCacheEnabled) {
         this.cacheEnabled = isCacheEnabled;
+    }
+
+    @Override
+    public Cache<String, Object> getCache() {
+        return CACHE;
     }
 
     @Override
