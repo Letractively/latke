@@ -28,7 +28,7 @@ import java.util.Set;
  * Query.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jan 20, 2011
+ * @version 1.0.0.3, Oct 18, 2011
  */
 public final class Query {
 
@@ -48,6 +48,15 @@ public final class Query {
      * Page size.
      */
     private int pageSize = DEFAULT_PAGE_SIZE;
+    /**
+     * Cache key.
+     * 
+     * <p>
+     * If the repository executes this query enabled query results caching, 
+     * this field will be used as the key of the cached results.
+     * </p>
+     */
+    private String cacheKey;
     /**
      * Sorts.
      */
@@ -164,6 +173,24 @@ public final class Query {
      */
     public Map<String, SortDirection> getSorts() {
         return Collections.unmodifiableMap(sorts);
+    }
+
+    /**
+     * Sets the cache key with the specified cache key.
+     * 
+     * @param cacheKey the specified cache key
+     */
+    public void setCacheKey(final String cacheKey) {
+        this.cacheKey = cacheKey;
+    }
+
+    /**
+     * Gets the cache key.
+     * 
+     * @return cache key
+     */
+    public String getCacheKey() {
+        return cacheKey;
     }
 
     @Override
