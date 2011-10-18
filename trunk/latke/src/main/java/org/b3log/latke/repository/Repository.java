@@ -16,13 +16,14 @@
 package org.b3log.latke.repository;
 
 import java.util.List;
+import org.b3log.latke.cache.Cache;
 import org.json.JSONObject;
 
 /**
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.7, Sep 23, 2011
+ * @version 1.0.1.8, Oct 18, 2011
  */
 public interface Repository {
 
@@ -162,4 +163,11 @@ public interface Repository {
      * cache, {@code false} otherwise
      */
     void setCacheEnabled(final boolean isCacheEnabled);
+
+    /**
+     * Gets the query cache.
+     * 
+     * @return query cache
+     */
+    Cache<String, Object> getCache();
 }

@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
+import org.b3log.latke.cache.Cache;
 import org.json.JSONObject;
 
 /**
@@ -32,7 +33,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Oct 11, 2011
+ * @version 1.0.0.2, Oct 18, 2011
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -141,5 +142,10 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public String getName() {
         return repository.getName();
+    }
+
+    @Override
+    public Cache<String, Object> getCache() {
+        return repository.getCache();
     }
 }
