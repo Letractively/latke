@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Sep 30, 2011
+ * @version 1.0.1.2, Oct 21, 2011
  */
 public final class PageCaches {
 
@@ -175,6 +175,10 @@ public final class PageCaches {
      * <p>Invoking this method will change statistic of a cached page if the 
      * specified update stat. flag is {@code true}, such as to update the 
      * cache hit count.</p>
+     * 
+     * <p>
+     *   <b>Note</b>: Do NOT modify properties of the returned json object,
+     * </p>
      *
      * @param pageCacheKey the specified page cache key
      * @param needUpdateStat the specified update stat. flat, {@code true} 
