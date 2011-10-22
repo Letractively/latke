@@ -151,8 +151,6 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                 (Integer) request.getAttribute("javax.servlet.error.status_code");
         if (null != sc) {
             request.setAttribute("requestURI", "/error.do");
-
-            return;
         }
 
         String requestURI = (String) request.getAttribute("requestURI");
