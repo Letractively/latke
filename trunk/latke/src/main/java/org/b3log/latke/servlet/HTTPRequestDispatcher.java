@@ -40,7 +40,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Oct 9, 2011
+ * @version 1.0.1.0, Oct 22, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -105,7 +105,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            
+
             final String mimeType = getServletContext().
                     getMimeType(resourcePath);
             response.setContentType(mimeType);
@@ -146,7 +146,14 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      */
     public static void dispatch(final HTTPRequestContext context) {
         final HttpServletRequest request = context.getRequest();
-        final HttpServletResponse response = context.getResponse();
+
+        final Integer sc =
+                (Integer) request.getAttribute("javax.servlet.error.status_code");
+        if (null != sc) {
+            request.setAttribute("requestURI", "/error.do");
+
+            return;
+        }
 
         String requestURI = (String) request.getAttribute("requestURI");
         if (Strings.isEmptyOrNull(requestURI)) {
