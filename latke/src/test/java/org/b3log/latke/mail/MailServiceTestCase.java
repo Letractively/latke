@@ -21,9 +21,10 @@ import org.b3log.latke.mail.MailService.Message;
 import org.testng.annotations.Test;
 
 /**
+ * {@link MailService} test case.
  * 
  * @author <a href="mailto:jiangzezhou1989@gmail.com">zezhou jiang</a>
- * @version 1.0.0.2, Sep 29, 2011
+ * @version 1.0.0.3, Oct 24, 2011
  */
 public final class MailServiceTestCase {
 
@@ -50,7 +51,7 @@ public final class MailServiceTestCase {
 
         final Message message = new Message();
         message.setFrom("b3log.solo@163.com");
-        message.setSubject("dd");
+        message.setSubject("Latke Mail Service[local] Test");
         message.setHtmlBody("<htmL><body>测试</body><html>");
         message.addRecipient("jiangzezhou1989@yahoo.com.cn");
         message.addRecipient("DL88250@gmail.com");

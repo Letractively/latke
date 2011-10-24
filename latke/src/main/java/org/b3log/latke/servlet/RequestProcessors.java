@@ -46,7 +46,7 @@ import org.b3log.latke.util.AntPathMatcher;
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Oct 5, 2011
+ * @version 1.0.0.6, Oct 24, 2011
  */
 public final class RequestProcessors {
 
@@ -201,9 +201,13 @@ public final class RequestProcessors {
                     || file.getName().startsWith("javassist")
                     || file.getName().startsWith("commons-")) {
                     // Just skips some known dependencies hardly....
+                    LOGGER.log(Level.INFO,
+                               "Skipped request processing discovery[jarName={0}]",
+                               file.getName());
+
                     continue;
                 }
-                
+
                 final JarFile jarFile = new JarFile(file.getPath());
 
                 final Enumeration<JarEntry> entries = jarFile.entries();
