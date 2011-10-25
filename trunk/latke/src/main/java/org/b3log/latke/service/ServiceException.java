@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.repository;
+package org.b3log.latke.service;
 
 /**
- * Repository exception.
+ * Service exception.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 21, 2010
+ * @version 1.0.0.0, Oct 25, 2011
  */
-public final class RepositoryException extends Exception {
+public final class ServiceException extends Exception {
     
     /**
      * Default serial version uid.
@@ -31,8 +31,8 @@ public final class RepositoryException extends Exception {
     /**
      * Public default constructor.
      */
-    public RepositoryException() {
-        super("Repository exception!");
+    public ServiceException() {
+        super("Service exception!");
     }
 
     /**
@@ -40,7 +40,7 @@ public final class RepositoryException extends Exception {
      *
      * @param throwable the specified throwable object
      */
-    public RepositoryException(final Throwable throwable) {
+    public ServiceException(final Throwable throwable) {
         super(throwable);
     }
 
@@ -49,7 +49,7 @@ public final class RepositoryException extends Exception {
      *
      * @param msg the specified message
      */
-    public RepositoryException(final String msg) {
+    public ServiceException(final String msg) {
         super(msg);
     }
 }
