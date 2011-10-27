@@ -51,7 +51,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Oct 18, 2011
+ * @version 1.0.1.4, Oct 27, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -833,13 +833,8 @@ public final class SleepycatRepository implements Repository {
 
             @Override
             public int compare(final JSONObject o1, final JSONObject o2) {
-                if (SortDirection.DESCENDING == sort.getValue()) {
-                    return o1.optString(sort.getKey()).compareTo(
-                            o2.optString(sort.getKey()));
-                }
-
-                return o2.optString(sort.getKey()).compareTo(
-                        o1.optString(sort.getKey()));
+                return o1.optString(sort.getKey()).compareTo(
+                        o2.optString(sort.getKey()));
             }
         });
     }
