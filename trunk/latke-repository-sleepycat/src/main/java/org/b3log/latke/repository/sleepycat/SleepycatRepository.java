@@ -833,6 +833,11 @@ public final class SleepycatRepository implements Repository {
 
             @Override
             public int compare(final JSONObject o1, final JSONObject o2) {
+                if (SortDirection.DESCENDING == sort.getValue()) {
+                    return o2.optString(sort.getKey()).compareTo(
+                            o1.optString(sort.getKey()));
+                }
+
                 return o1.optString(sort.getKey()).compareTo(
                         o2.optString(sort.getKey()));
             }
