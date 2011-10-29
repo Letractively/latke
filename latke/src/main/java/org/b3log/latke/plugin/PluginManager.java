@@ -37,7 +37,6 @@ import org.b3log.latke.event.AbstractEventListener;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventException;
 import org.b3log.latke.event.EventManager;
-import org.b3log.latke.jsonrpc.AbstractJSONRpcService;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.servlet.AbstractServletListener;
 import org.b3log.latke.util.Stopwatchs;
@@ -174,7 +173,7 @@ public final class PluginManager {
      */
     public void load() {
         Stopwatchs.start("Load Plugins");
-        
+
         classLoaders.clear();
 
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
@@ -216,7 +215,7 @@ public final class PluginManager {
         }
 
         pluginCache.put(PLUGIN_CACHE_NAME, holder);
-        
+
         Stopwatchs.end();
     }
 
@@ -250,8 +249,9 @@ public final class PluginManager {
         final URL classesFileDirURL = classesFileDir.toURI().toURL();
 
         final URLClassLoader classLoader = new URLClassLoader(new URL[]{
-                    defaultClassesFileDirURL, classesFileDirURL}, 
-                PluginManager.class.getClassLoader());
+                    defaultClassesFileDirURL, classesFileDirURL},
+                                                              PluginManager.class.
+                getClassLoader());
 
         classLoaders.add(classLoader);
 
@@ -263,7 +263,6 @@ public final class PluginManager {
 
         setPluginProps(pluginDir, ret, props);
 
-        registerJSONRpcServices(props, classLoader, ret);
         registerEventListeners(props, classLoader, ret);
 
         register(ret, holder);
@@ -327,74 +326,6 @@ public final class PluginManager {
         for (int i = 0; i < typeArray.length; i++) {
             final PluginType type = PluginType.valueOf(typeArray[i]);
             plugin.addType(type);
-        }
-    }
-
-    /**
-     * Registers json rpc services with the specified plugin properties, class 
-     * loader and plugin.
-     * 
-     * <p>
-     *   <b>Note</b>: If the specified plugin has some json rpc services, each
-     *   of these service MUST implement a static method named 
-     *   {@code getInstance} to obtain an instance of this service. See 
-     *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
-     *   Singleton Pattern</a> for more details.
-     * </p>
-     * 
-     * @param props the specified plugin properties
-     * @param classLoader the specified class loader
-     * @param plugin the specified plugin
-     * @throws Exception exception
-     */
-    private static void registerJSONRpcServices(final Properties props,
-                                                final URLClassLoader classLoader,
-                                                final AbstractPlugin plugin)
-            throws Exception {
-        final String jsonRpcClasses =
-                props.getProperty(Plugin.PLUGIN_JSON_RPC_CLASSES);
-        final String[] jsonRpcClassArray = jsonRpcClasses.split(",");
-        for (int i = 0; i < jsonRpcClassArray.length; i++) {
-            final String jsonRpcClassName = jsonRpcClassArray[i];
-            if (Strings.isEmptyOrNull(jsonRpcClassName)) {
-                LOGGER.log(Level.INFO,
-                           "No json rpc service to load for plugin[name={0}]",
-                           plugin.getName());
-                return;
-            }
-
-            LOGGER.log(Level.FINER, "Loading json rpc service[className={0}]",
-                       jsonRpcClassName);
-
-            final Class<?> jsonRpcClass =
-                    classLoader.loadClass(jsonRpcClassName);
-// On GAE production environment, we can ONLY reflect class that loadded from default classpath 
-// (WEB-INF/classes/, WEB-INF/lib/), classes loadded from other directories (i.e. /plugins/classes/)
-// can not get methods of their own via reflection. But on dev sandbox environment, 
-// we can reflect class methods both default classpath or customized directory.            
-//            
-//            Method[] methods = jsonRpcClass.getMethods();
-//            for (int j = 0; j < methods.length; j++) {
-//                final Method method = methods[j];
-//                LOGGER.severe("method: " + method);
-//            }
-//
-//            methods = jsonRpcClass.getDeclaredMethods();
-//            
-// On GAE production environment, declared method length will be equal to 0
-//            LOGGER.severe("declared method length: " + methods.length);
-//            for (int j = 0; j < methods.length; j++) {
-//                final Method method = methods[j];
-//                LOGGER.severe("declared method: " + method);
-//            }
-
-            final Method getInstance = jsonRpcClass.getMethod("getInstance");
-            final AbstractJSONRpcService jsonRpcService =
-                    (AbstractJSONRpcService) getInstance.invoke(jsonRpcClass);
-            LOGGER.log(Level.FINER,
-                       "Registered json rpc service[{0}] for plugin[name={1}]",
-                       new Object[]{jsonRpcService.getServiceObjectName(),
-                                    plugin.getName()});
         }
     }
 
