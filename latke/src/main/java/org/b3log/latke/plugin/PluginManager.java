@@ -42,13 +42,12 @@ import org.b3log.latke.model.Plugin;
 import org.b3log.latke.servlet.AbstractServletListener;
 import org.b3log.latke.util.Stopwatchs;
 import org.b3log.latke.util.Strings;
-import org.jabsorb.JSONRPCBridge;
 
 /**
  * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Jul 23, 2011
+ * @version 1.0.0.9, Oct 30, 2011
  */
 public final class PluginManager {
 
@@ -392,9 +391,6 @@ public final class PluginManager {
             final Method getInstance = jsonRpcClass.getMethod("getInstance");
             final AbstractJSONRpcService jsonRpcService =
                     (AbstractJSONRpcService) getInstance.invoke(jsonRpcClass);
-
-            JSONRPCBridge.getGlobalBridge().registerObject(
-                    jsonRpcService.getServiceObjectName(), jsonRpcService);
             LOGGER.log(Level.FINER,
                        "Registered json rpc service[{0}] for plugin[name={1}]",
                        new Object[]{jsonRpcService.getServiceObjectName(),
