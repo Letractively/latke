@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.8, Jul 16, 2011
+ * @version 1.0.1.9, Oct 28, 2011
  */
 public final class Keys {
 
@@ -38,10 +38,6 @@ public final class Keys {
      * Key of code.
      */
     public static final String CODE = "code";
-    /**
-     * Key of action status.
-     */
-    public static final String STATUS = "status";
     /**
      * Key of action status code.
      */
