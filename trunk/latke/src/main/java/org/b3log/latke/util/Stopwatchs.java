@@ -122,8 +122,7 @@ public final class Stopwatchs {
 
     /**
      * Ends the timing of the recent task started by 
-     * {@link #start(java.lang.String) start()} or 
-     * {@link #startAsync(java.lang.String) startAsync()}.
+     * {@link #start(java.lang.String) start()}.
      */
     public static void end() {
         final Stopwatch root = STOPWATCH.get();
