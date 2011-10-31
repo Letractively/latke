@@ -21,12 +21,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.b3log.latke.servlet.URIPatternMode;
 
 /**
  * Indicates that an annotated method for HTTP servlet request processing.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jul 16, 2011
+ * @version 1.0.0.3, Oct 31, 2011
  * @see RequestProcessor
  */
 @Target(ElementType.METHOD)
@@ -41,13 +42,20 @@ public @interface RequestProcessing {
      * Semantics of these values adapting to the URL patterns 
      * (&lt;url-pattern/&gt;) configures in 
      * web application descriptor (web.xml) of a servlet. Ant-style path 
-     * patterns are also supported.
+     * pattern and regular expression pattern are also supported.
      * </p>
      */
     String[] value() default {};
 
     /**
+     * The URI patterns mode.
+     */
+    URIPatternMode uriPatternsMode() default URIPatternMode.ANT_PATH;
+
+    /**
      * The HTTP request methods the annotated method should process.
      */
     HTTPRequestMethod[] method() default {HTTPRequestMethod.GET};
+
+
 }
