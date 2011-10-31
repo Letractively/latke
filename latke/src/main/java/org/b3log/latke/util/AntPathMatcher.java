@@ -54,6 +54,7 @@ import java.util.StringTokenizer;
  * @author Juergen Hoeller
  * @author Rob Harrop
  * @since 16.07.2003
+ * @see RegexPathMatcher
  */
 public final class AntPathMatcher {
 

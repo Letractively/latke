@@ -41,6 +41,7 @@ import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.annotation.RequestProcessing;
 import org.b3log.latke.annotation.RequestProcessor;
 import org.b3log.latke.util.AntPathMatcher;
+import org.b3log.latke.util.RegexPathMatcher;
 
 /**
  * Request processor utilities.
@@ -286,8 +287,25 @@ public final class RequestProcessors {
                     return processorMethod;
                 }
 
-                if (AntPathMatcher.match(processorMethod.getURIPattern(),
-                                         requestURI)) {
+                boolean found = false;
+
+                switch (processorMethod.getURIPatternMode()) {
+                    case ANT_PATH:
+                        found = AntPathMatcher.match(processorMethod.
+                                getURIPattern(), requestURI);
+                        break;
+                    case REGEX:
+                        found = RegexPathMatcher.match(processorMethod.
+                                getURIPattern(), requestURI);
+                        break;
+                    default:
+                        throw new IllegalStateException(
+                                "Can not process URI pattern[uriPattern="
+                                + processorMethod.getURIPattern() + ", mode="
+                                + processorMethod.getURIPatternMode() + "]");
+                }
+
+                if (found) {
                     i++;
                     matches.add(processorMethod);
                 }
@@ -338,6 +356,8 @@ public final class RequestProcessors {
             final RequestProcessing requestProcessing, final Class<?> clz,
             final Method method) {
         final String[] uriPatterns = requestProcessing.value();
+        final URIPatternMode uriPatternsMode =
+                requestProcessing.uriPatternsMode();
 
         for (int i = 0; i < uriPatterns.length; i++) {
             final String uriPattern = uriPatterns[i];
@@ -355,6 +375,7 @@ public final class RequestProcessors {
                 processorMethod.setURIPattern(uriPattern);
                 processorMethod.setProcessorClass(clz);
                 processorMethod.setProcessorMethod(method);
+                processorMethod.setURIPatternModel(uriPatternsMode);
             }
         }
     }
@@ -364,102 +385,124 @@ public final class RequestProcessors {
      */
     private RequestProcessors() {
     }
-}
-
-/**
- * Request processor method.
- *
- * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 17, 2011
- */
-final class ProcessorMethod {
 
     /**
-     * URI path pattern.
+     * Request processor method.
+     *
+     * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+     * @version 1.0.0.1, Oct 31, 2011
      */
-    private String uriPattern;
-    /**
-     * Request method.
-     */
-    private String method;
-    /**
-     * Class.
-     */
-    private Class<?> processorClass;
-    /**
-     * Method.
-     */
-    private Method processorMethod;
+    private static final class ProcessorMethod {
 
-    /**
-     * Gets method.
-     * 
-     * @return method
-     */
-    public String getMethod() {
-        return method;
-    }
+        /**
+         * URI path pattern.
+         */
+        private String uriPattern;
+        /**
+         * URI pattern mode.
+         */
+        private URIPatternMode uriPatternMode;
+        /**
+         * Request method.
+         */
+        private String method;
+        /**
+         * Class.
+         */
+        private Class<?> processorClass;
+        /**
+         * Method.
+         */
+        private Method processorMethod;
 
-    /**
-     * Sets the method with the specified method.
-     * 
-     * @param method the specified method
-     */
-    public void setMethod(final String method) {
-        this.method = method;
-    }
+        /**
+         * Sets the URI pattern mode with the specified URI pattern mode.
+         * 
+         * @param uriPatternMode the specified URI pattern mode
+         */
+        public void setURIPatternModel(final URIPatternMode uriPatternMode) {
+            this.uriPatternMode = uriPatternMode;
+        }
 
-    /**
-     * Gets the processor class.
-     * 
-     * @return processor class
-     */
-    public Class<?> getProcessorClass() {
-        return processorClass;
-    }
+        /**
+         * Gets the URI pattern mode.
+         * 
+         * @return URI pattern mode
+         */
+        public URIPatternMode getURIPatternMode() {
+            return uriPatternMode;
+        }
 
-    /**
-     * Sets the processor class with the specified processor class.
-     * 
-     * @param processorClass the specified processor class
-     */
-    public void setProcessorClass(final Class<?> processorClass) {
-        this.processorClass = processorClass;
-    }
+        /**
+         * Gets method.
+         * 
+         * @return method
+         */
+        public String getMethod() {
+            return method;
+        }
 
-    /**
-     * Gets the processor method.
-     * 
-     * @return processor method
-     */
-    public Method getProcessorMethod() {
-        return processorMethod;
-    }
+        /**
+         * Sets the method with the specified method.
+         * 
+         * @param method the specified method
+         */
+        public void setMethod(final String method) {
+            this.method = method;
+        }
 
-    /**
-     * Sets the processor method with the specified processor method.
-     * 
-     * @param processorMethod the specified processor method
-     */
-    public void setProcessorMethod(final Method processorMethod) {
-        this.processorMethod = processorMethod;
-    }
+        /**
+         * Gets the processor class.
+         * 
+         * @return processor class
+         */
+        public Class<?> getProcessorClass() {
+            return processorClass;
+        }
 
-    /**
-     * Gets the URI pattern.
-     * 
-     * @return URI pattern
-     */
-    public String getURIPattern() {
-        return uriPattern;
-    }
+        /**
+         * Sets the processor class with the specified processor class.
+         * 
+         * @param processorClass the specified processor class
+         */
+        public void setProcessorClass(final Class<?> processorClass) {
+            this.processorClass = processorClass;
+        }
 
-    /**
-     * Sets the URI pattern with the specified URI pattern.
-     * 
-     * @param uriPattern the specified URI pattern
-     */
-    public void setURIPattern(final String uriPattern) {
-        this.uriPattern = uriPattern;
+        /**
+         * Gets the processor method.
+         * 
+         * @return processor method
+         */
+        public Method getProcessorMethod() {
+            return processorMethod;
+        }
+
+        /**
+         * Sets the processor method with the specified processor method.
+         * 
+         * @param processorMethod the specified processor method
+         */
+        public void setProcessorMethod(final Method processorMethod) {
+            this.processorMethod = processorMethod;
+        }
+
+        /**
+         * Gets the URI pattern.
+         * 
+         * @return URI pattern
+         */
+        public String getURIPattern() {
+            return uriPattern;
+        }
+
+        /**
+         * Sets the URI pattern with the specified URI pattern.
+         * 
+         * @param uriPattern the specified URI pattern
+         */
+        public void setURIPattern(final String uriPattern) {
+            this.uriPattern = uriPattern;
+        }
     }
 }
