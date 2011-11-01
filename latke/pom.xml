@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.6.8, Oct 30, 2011
+    Version: 1.0.6.9, Nov 1, 2011
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -24,9 +24,6 @@
         <commons-io.version>1.4</commons-io.version>
         <commons-lang.version>2.5</commons-lang.version>
         <javassist.version>3.12.1.GA</javassist.version>
-        <org.b3log.latke-repository-sleepycat.version>
-		    0.5.0-SNAPSHOT
-        </org.b3log.latke-repository-sleepycat.version>
 	<!-- Maven Plugin -->
         <maven-license-plugin.version>1.9.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.6</maven-checkstyle-plugin.version>
@@ -154,13 +151,6 @@
                 <version>${javassist.version}</version>
             </dependency>
             
-            <dependency>
-                <groupId>org.b3log</groupId>
-                <artifactId>latke-repository-sleepycat</artifactId>
-                <version>${org.b3log.latke-repository-sleepycat.version}</version>
-                <scope>test</scope>
-            </dependency>
-            
         </dependencies>
     </dependencyManagement>
 
@@ -176,11 +166,6 @@
             <artifactId>testng</artifactId>
         </dependency>
         
-        <dependency>
-            <groupId>org.b3log</groupId>
-            <artifactId>latke-repository-sleepycat</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
