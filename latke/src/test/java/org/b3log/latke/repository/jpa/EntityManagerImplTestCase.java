@@ -45,13 +45,13 @@ public class EntityManagerImplTestCase {
 
         assertNotNull(metaEntity);
 
-        final Entity0Repository entity0Repository =
-                new Entity0Repository("entity0");
-
-        final Entity0 entity0 = new Entity0();
-        entity0.setField2(true);
-        final long field3 = 88250;
-        entity0.setField3(field3);
+//        final Entity0Repository entity0Repository =
+//                new Entity0Repository("entity0");
+//
+//        final Entity0 entity0 = new Entity0();
+//        entity0.setField2(true);
+//        final long field3 = 88250;
+//        entity0.setField3(field3);
 
         // FIXfinal EntityTransaction transaction = entityManager.getTransaction();
         //entityManager.persist(entity0);
