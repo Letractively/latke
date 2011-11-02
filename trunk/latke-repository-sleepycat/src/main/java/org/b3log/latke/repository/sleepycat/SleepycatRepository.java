@@ -570,10 +570,9 @@ public final class SleepycatRepository implements Repository {
                                   : foundList.size();
 
             // Step 4: Retrives
-            int fromIndex = passCount - 1;
-            if (fromIndex < 0) {
-                fromIndex = 0;
-            }
+            final int fromIndex = foundList.size() > pageSize
+                            ? passCount - 1
+                            : 0;
             int toIndex = passCount - 1 + pageSize;
             if (toIndex > foundList.size() || toIndex < 0) {
                 toIndex = foundList.size();
