@@ -42,9 +42,8 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.9, Sep 11, 2011
- * @see #doFreeMarkerAction(freemarker.template.Template,
- *                        HttpServletRequest, HttpServletResponse)
+ * @version 1.0.4.0, Nov 2, 2011
+ * @see #doFreeMarkerAction(HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
  *                     HttpServletRequest, HttpServletResponse)
  * @see Templates
@@ -62,7 +61,7 @@ public abstract class AbstractAction extends HttpServlet {
      */
     private EventManager eventManager = EventManager.getInstance();
     /**
-     * Indicates the event of invoked {@link #doFreeMarkerAction(freemarker.template.Template, 
+     * Indicates the event of invoked {@link #doFreeMarkerAction(
      * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}.
      */
     public static final String FREEMARKER_ACTION = "FreeMarkerAction";
@@ -70,14 +69,12 @@ public abstract class AbstractAction extends HttpServlet {
     /**
      * Performs the FreeMarker template action.
      * 
-     * @param template request FreeMarker template
      * @param request the specified HTTP servlet request
      * @param response the specified HTTP servlet response
      * @return data model for FreeMarker template
      * @throws ActionException action exception
      */
     protected abstract Map<?, ?> doFreeMarkerAction(
-            final Template template,
             final HttpServletRequest request,
             final HttpServletResponse response)
             throws ActionException;
@@ -236,8 +233,7 @@ public abstract class AbstractAction extends HttpServlet {
             beforeDoFreeMarkerAction(request, response);
 
             final Map<String, Object> dataModel =
-                    (Map<String, Object>) doFreeMarkerAction(template,
-                                                             request, response);
+                    (Map<String, Object>) doFreeMarkerAction(request, response);
 
             fireFreeMarkerActionEvent(template.getName(), dataModel);
 
