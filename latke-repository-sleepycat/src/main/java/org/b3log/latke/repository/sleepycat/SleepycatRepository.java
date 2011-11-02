@@ -552,13 +552,6 @@ public final class SleepycatRepository implements Repository {
                                                   / (double) pageSize);
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
-            // Step 2: Sorts
-            for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
-                sort(foundList, sort);
-            }
-
-            // Step 3: Paginates
-            final int passCount = pageSize * (currentPageNum - 1);
             if (0 == pageCount) {
                 // Not found
                 ret.put(Keys.RESULTS, new JSONArray());
@@ -566,13 +559,23 @@ public final class SleepycatRepository implements Repository {
                 return ret;
             }
 
+            // Step 2: Sorts
+            for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
+                sort(foundList, sort);
+            }
+
+            // Step 3: Paginates
+            final int passCount = foundList.size() > pageSize
+                                  ? pageSize * pageCount
+                                  : foundList.size();
+
             // Step 4: Retrives
             int fromIndex = passCount - 1;
             if (fromIndex < 0) {
                 fromIndex = 0;
             }
             int toIndex = passCount - 1 + pageSize;
-            if (toIndex > foundList.size()) {
+            if (toIndex > foundList.size() || toIndex < 0) {
                 toIndex = foundList.size();
             }
 
