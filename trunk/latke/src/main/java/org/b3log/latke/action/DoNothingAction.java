@@ -29,7 +29,7 @@ import org.json.JSONObject;
  * Do nothing action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Jan 12, 2011
+ * @version 1.0.0.5, Nov 2, 2011
  */
 public class DoNothingAction extends AbstractAction {
 
@@ -48,10 +48,9 @@ public class DoNothingAction extends AbstractAction {
     private LangPropsService langPropsService = LangPropsService.getInstance();
 
     @Override
-    protected Map<?, ?> doFreeMarkerAction(
-            final freemarker.template.Template template,
-            final HttpServletRequest request,
-            final HttpServletResponse response) throws ActionException {
+    protected Map<?, ?> doFreeMarkerAction(final HttpServletRequest request,
+                                           final HttpServletResponse response)
+            throws ActionException {
         LOGGER.finest("Do nothing action[FreeMarker action]");
         final Map<String, Object> ret = new HashMap<String, Object>();
 

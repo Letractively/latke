@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, Aug 2, 2011
+ * @version 1.0.1.6, Nov 2, 2011
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -89,7 +89,6 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      *   </ul>
      * </p>
      *
-     * @param template request FreeMarker template
      * @param request the specified HTTP servlet request
      * @param response the specified HTTP servlet response
      * @return data model for FreeMarker template
@@ -97,9 +96,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     @Override
     protected abstract Map<?, ?> doFreeMarkerAction(
-            final Template template,
-            final HttpServletRequest request,
-            final HttpServletResponse response)
+            final HttpServletRequest request, final HttpServletResponse response)
             throws ActionException;
 
     /**
@@ -150,8 +147,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
             beforeDoFreeMarkerAction(request, response);
             final Map<String, Object> dataModel =
-                    (Map<String, Object>) doFreeMarkerAction(template,
-                                                             request, response);
+                    (Map<String, Object>) doFreeMarkerAction(request, response);
 
             fireFreeMarkerActionEvent(template.getName(), dataModel);
 
