@@ -835,8 +835,23 @@ public final class SleepycatRepository implements Repository {
 
             @Override
             public int compare(final JSONObject o1, final JSONObject o2) {
-                return o2.optString(sort.getKey()).compareTo(
-                        o1.optString(sort.getKey()));
+                try {
+                    if (SortDirection.DESCENDING == sort.getValue()) {
+                        if (lessOrEqual(o1.opt(sort.getKey()),
+                                        o2.opt(sort.getKey()))) {
+                            return 1;
+                        }
+                    }
+
+                    if (greaterOrEqual(o1.opt(sort.getKey()),
+                                       o2.opt(sort.getKey()))) {
+                        return 1;
+                    }
+                } catch (final RepositoryException e) {
+                    LOGGER.log(Level.WARNING, "Sort error", e);
+                }
+
+                return 0;
             }
         });
     }
