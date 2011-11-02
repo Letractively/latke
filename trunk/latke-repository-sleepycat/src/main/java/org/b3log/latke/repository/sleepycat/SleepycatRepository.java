@@ -51,7 +51,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Oct 27, 2011
+ * @version 1.0.1.5, Nov 2, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -648,26 +648,26 @@ public final class SleepycatRepository implements Repository {
 
                     break;
                 case GREATER_THAN:
-                    if (greater(value, property)) {
+                    if (greater(property, value)) {
                         filteredCnt--;
                     }
 
                     break;
                 case GREATER_THAN_OR_EQUAL:
-                    if (greaterOrEqual(value, property)) {
+                    if (greaterOrEqual(property, value)) {
                         filteredCnt--;
                     }
 
                     break;
 
                 case LESS_THAN:
-                    if (less(value, property)) {
+                    if (less(property, value)) {
                         filteredCnt--;
                     }
 
                     break;
                 case LESS_THAN_OR_EQUAL:
-                    if (lessOrEqual(value, property)) {
+                    if (lessOrEqual(property, value)) {
                         filteredCnt--;
                     }
 
