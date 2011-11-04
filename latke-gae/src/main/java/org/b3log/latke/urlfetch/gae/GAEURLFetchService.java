@@ -31,7 +31,7 @@ import org.b3log.latke.urlfetch.URLFetchService;
  * Google App Engine URL fetch service.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Aug 8, 2011
+ * @version 1.0.0.1, Nov 4, 2011
  */
 public final class GAEURLFetchService implements URLFetchService {
 
@@ -40,6 +40,10 @@ public final class GAEURLFetchService implements URLFetchService {
      */
     private static final com.google.appengine.api.urlfetch.URLFetchService URL_FETCH_SERVICE =
             URLFetchServiceFactory.getURLFetchService();
+    /**
+     * Default fetch timeout, measures in seconds.
+     */
+    private static final double DEFAULT_TIMEOUT = 5D;
 
     @Override
     public HTTPResponse fetch(final HTTPRequest request) throws IOException {
@@ -47,7 +51,7 @@ public final class GAEURLFetchService implements URLFetchService {
                 toGAEHTTPRequest(request);
         final com.google.appengine.api.urlfetch.HTTPResponse gaeHTTPResponse =
                 URL_FETCH_SERVICE.fetch(gaeHTTPRequest);
-
+        
         return toHTTPResponse(gaeHTTPResponse);
     }
 
@@ -141,7 +145,9 @@ public final class GAEURLFetchService implements URLFetchService {
         }
 
         ret.setPayload(request.getPayload());
-
+        
+        ret.getFetchOptions().setDeadline(DEFAULT_TIMEOUT);
+        
         return ret;
     }
 }
