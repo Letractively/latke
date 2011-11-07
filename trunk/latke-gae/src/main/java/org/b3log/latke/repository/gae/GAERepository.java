@@ -16,6 +16,7 @@
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.api.datastore.AsyncDatastoreService;
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DataTypeUtils;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -80,7 +81,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.0, Oct 18, 2011
+ * @version 1.0.4.1, Nov 7, 2011
  * @see GAETransaction
  */
 public final class GAERepository implements Repository {
@@ -125,7 +126,11 @@ public final class GAERepository implements Repository {
     /**
      * Repository cache count.
      */
-    public static final String REPOSITORY_CACHE_COUNT = "#count";
+    private static final String REPOSITORY_CACHE_COUNT = "#count";
+    /**
+     * Repository cache query cursor.
+     */
+    private static final String REPOSITORY_CACHE_QUERY_CURSOR = "#query#cursor";
     /**
      * Is cache enabled?
      */
@@ -802,11 +807,14 @@ public final class GAERepository implements Repository {
             ret.put(Pagination.PAGINATION, pagination);
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
-            final int offset = pageSize * (currentPageNum - 1);
+            final Cursor startCursor = getStartCursor(currentPageNum,
+                                                      pageSize,
+                                                      preparedQuery);
+
             final QueryResultList<Entity> queryResultList =
-                    preparedQuery.asQueryResultList(
-                    withOffset(offset).limit(pageSize).chunkSize(
-                    QUERY_CHUNK_SIZE));
+                    preparedQuery.asQueryResultList(withStartCursor(
+                    startCursor).
+                    limit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
 
             final JSONArray results = new JSONArray();
             ret.put(Keys.RESULTS, results);
@@ -884,5 +892,62 @@ public final class GAERepository implements Repository {
     @Override
     public String getName() {
         return name;
+    }
+
+    /**
+     * Gets the start cursor of the specified current page number, page size and 
+     * the prepared query.
+     * 
+     * @param currentPageNum the specified current page number
+     * @param pageSize the specified page size
+     * @param preparedQuery the specified prepared query
+     * @return the start cursor
+     */
+    private Cursor getStartCursor(final int currentPageNum,
+                                  final int pageSize,
+                                  final PreparedQuery preparedQuery) {
+        int i = currentPageNum - 1;
+        Cursor ret = null;
+        for (; i > 0; i--) {
+            final String cacheKey = CACHE_KEY_PREFIX + getName()
+                                    + REPOSITORY_CACHE_QUERY_CURSOR
+                                    + '(' + i + ')';
+            ret = (Cursor) CACHE.get(cacheKey);
+            if (null != ret) {
+                // Found the nearest cursor
+                break;
+            }
+        }
+
+        int emptyCursorIndex = i;
+        QueryResultList<Entity> results = null;
+        String cacheKey = null;
+        if (null == ret) { // No cache at all
+            // For the first page
+            results = preparedQuery.asQueryResultList(withLimit(pageSize).
+                    chunkSize(QUERY_CHUNK_SIZE));
+            ret = results.getCursor(); // The end cursor of page 1
+            cacheKey = CACHE_KEY_PREFIX + getName()
+                       + REPOSITORY_CACHE_QUERY_CURSOR + "(1)";
+            CACHE.put(cacheKey, ret);
+
+            emptyCursorIndex = 2;
+        }
+
+        // For the remains pages
+        for (; emptyCursorIndex < currentPageNum; emptyCursorIndex++) {
+            results = preparedQuery.asQueryResultList(
+                    withStartCursor(ret).
+                    limit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
+
+            ret = results.getCursor();
+            cacheKey = CACHE_KEY_PREFIX + getName()
+                       + REPOSITORY_CACHE_QUERY_CURSOR
+                       + '(' + emptyCursorIndex + ')';
+            CACHE.put(cacheKey, ret);
+        }
+
+
+        return ret;
     }
 }
