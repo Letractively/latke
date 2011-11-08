@@ -807,14 +807,21 @@ public final class GAERepository implements Repository {
             ret.put(Pagination.PAGINATION, pagination);
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
-            final Cursor endCursor = getEndCursor(currentPageNum,
-                                                  pageSize,
-                                                  preparedQuery);
+            QueryResultList<Entity> queryResultList = null;
+            if (1 != currentPageNum) {
+                final Cursor startCursor = getStartCursor(currentPageNum,
+                                                          pageSize,
+                                                          preparedQuery);
 
-            final QueryResultList<Entity> queryResultList =
-                    preparedQuery.asQueryResultList(withEndCursor(
-                    endCursor).
-                    limit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
+                queryResultList =
+                        preparedQuery.asQueryResultList(withStartCursor(
+                        startCursor).
+                        limit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
+            } else { // The first page
+                queryResultList =
+                        preparedQuery.asQueryResultList(
+                        withLimit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
+            }
 
             final JSONArray results = new JSONArray();
             ret.put(Keys.RESULTS, results);
@@ -898,14 +905,15 @@ public final class GAERepository implements Repository {
      * Gets the end cursor of the specified current page number, page size and 
      * the prepared query.
      * 
-     * @param currentPageNum the specified current page number
+     * @param currentPageNum the specified current page number, MUST larger 
+     * then 1
      * @param pageSize the specified page size
      * @param preparedQuery the specified prepared query
      * @return the start cursor
      */
-    private Cursor getEndCursor(final int currentPageNum,
-                                final int pageSize,
-                                final PreparedQuery preparedQuery) {
+    private Cursor getStartCursor(final int currentPageNum,
+                                  final int pageSize,
+                                  final PreparedQuery preparedQuery) {
         int i = currentPageNum - 1;
         Cursor ret = null;
         for (; i > 0; i--) {
@@ -928,7 +936,7 @@ public final class GAERepository implements Repository {
                     chunkSize(QUERY_CHUNK_SIZE));
             ret = results.getCursor(); // The end cursor of page 1, also the start cursor of page 2
             cacheKey = CACHE_KEY_PREFIX + getName()
-                       + REPOSITORY_CACHE_QUERY_CURSOR + "(1)";
+                       + REPOSITORY_CACHE_QUERY_CURSOR + "(2)";
             CACHE.put(cacheKey, ret);
 
             emptyCursorIndex = 2;
@@ -943,7 +951,7 @@ public final class GAERepository implements Repository {
             ret = results.getCursor();
             cacheKey = CACHE_KEY_PREFIX + getName()
                        + REPOSITORY_CACHE_QUERY_CURSOR
-                       + '(' + emptyCursorIndex + ')';
+                       + '(' + (emptyCursorIndex + 1) + ')';
             CACHE.put(cacheKey, ret);
         }
 
