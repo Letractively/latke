@@ -922,6 +922,7 @@ public final class GAERepository implements Repository {
                                     + '(' + i + ')';
             ret = (Cursor) CACHE.get(cacheKey);
             if (null != ret) {
+                LOGGER.log(Level.FINEST, "Found query cursor[{0}] in cache", i);
                 // Found the nearest cursor
                 break;
             }
@@ -931,6 +932,7 @@ public final class GAERepository implements Repository {
         QueryResultList<Entity> results = null;
         String cacheKey = null;
         if (null == ret) { // No cache at all
+            LOGGER.log(Level.INFO, "No query cursor at all");
             // For the first page
             results = preparedQuery.asQueryResultList(withLimit(pageSize).
                     chunkSize(QUERY_CHUNK_SIZE));
