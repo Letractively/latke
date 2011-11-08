@@ -81,7 +81,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.1, Nov 7, 2011
+ * @version 1.0.4.2, Nov 8, 2011
  * @see GAETransaction
  */
 public final class GAERepository implements Repository {
@@ -807,13 +807,13 @@ public final class GAERepository implements Repository {
             ret.put(Pagination.PAGINATION, pagination);
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
 
-            final Cursor startCursor = getStartCursor(currentPageNum,
-                                                      pageSize,
-                                                      preparedQuery);
+            final Cursor endCursor = getEndCursor(currentPageNum,
+                                                  pageSize,
+                                                  preparedQuery);
 
             final QueryResultList<Entity> queryResultList =
-                    preparedQuery.asQueryResultList(withStartCursor(
-                    startCursor).
+                    preparedQuery.asQueryResultList(withEndCursor(
+                    endCursor).
                     limit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
 
             final JSONArray results = new JSONArray();
@@ -841,7 +841,7 @@ public final class GAERepository implements Repository {
     /**
      * Gets current date time string.
      *
-     * @return a time millis string
+     * @return a time millisecond string
      */
     public static String genTimeMillisId() {
         final String timeMillisId = Ids.genTimeMillisId();
@@ -895,7 +895,7 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Gets the start cursor of the specified current page number, page size and 
+     * Gets the end cursor of the specified current page number, page size and 
      * the prepared query.
      * 
      * @param currentPageNum the specified current page number
@@ -903,9 +903,9 @@ public final class GAERepository implements Repository {
      * @param preparedQuery the specified prepared query
      * @return the start cursor
      */
-    private Cursor getStartCursor(final int currentPageNum,
-                                  final int pageSize,
-                                  final PreparedQuery preparedQuery) {
+    private Cursor getEndCursor(final int currentPageNum,
+                                final int pageSize,
+                                final PreparedQuery preparedQuery) {
         int i = currentPageNum - 1;
         Cursor ret = null;
         for (; i > 0; i--) {
@@ -926,7 +926,7 @@ public final class GAERepository implements Repository {
             // For the first page
             results = preparedQuery.asQueryResultList(withLimit(pageSize).
                     chunkSize(QUERY_CHUNK_SIZE));
-            ret = results.getCursor(); // The end cursor of page 1
+            ret = results.getCursor(); // The end cursor of page 1, also the start cursor of page 2
             cacheKey = CACHE_KEY_PREFIX + getName()
                        + REPOSITORY_CACHE_QUERY_CURSOR + "(1)";
             CACHE.put(cacheKey, ret);
