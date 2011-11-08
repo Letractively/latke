@@ -460,18 +460,7 @@ public final class GAERepository implements Repository {
 
     @Override
     public boolean has(final String id) throws RepositoryException {
-        if (cacheEnabled) {
-            if (null != CACHE.get(id)) {
-                return true;
-            }
-        }
-
-        final Query query = new Query(getName());
-        query.addFilter(Keys.OBJECT_ID, Query.FilterOperator.EQUAL, id);
-        final PreparedQuery preparedQuery = datastoreService.prepare(query);
-
-        return 0 == preparedQuery.countEntities(
-                FetchOptions.Builder.withDefaults()) ? false : true;
+        return null == get(id);
     }
 
     @Override
@@ -796,8 +785,7 @@ public final class GAERepository implements Repository {
                            final int pageSize)
             throws RepositoryException {
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
-        final int count = preparedQuery.countEntities(
-                FetchOptions.Builder.withDefaults());
+        final long count = count();
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
 
@@ -956,7 +944,6 @@ public final class GAERepository implements Repository {
                        + '(' + (emptyCursorIndex + 1) + ')';
             CACHE.put(cacheKey, ret);
         }
-
 
         return ret;
     }
