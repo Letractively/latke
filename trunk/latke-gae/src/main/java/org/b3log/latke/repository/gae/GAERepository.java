@@ -922,7 +922,7 @@ public final class GAERepository implements Repository {
                                     + '(' + i + ')';
             ret = (Cursor) CACHE.get(cacheKey);
             if (null != ret) {
-                LOGGER.log(Level.FINEST, "Found query cursor[{0}] in cache", i);
+                LOGGER.log(Level.FINEST, "Found a query cursor[{0}] in cache", i);
                 // Found the nearest cursor
                 break;
             }
