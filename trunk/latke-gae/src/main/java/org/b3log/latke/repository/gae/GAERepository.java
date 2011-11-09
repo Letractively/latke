@@ -81,7 +81,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.2, Nov 8, 2011
+ * @version 1.0.4.3, Nov 9, 2011
  * @see GAETransaction
  */
 public final class GAERepository implements Repository {
@@ -110,8 +110,8 @@ public final class GAERepository implements Repository {
      * Default parent key. Kind is {@code "parentKind"}, name is
      * {@code "parentKeyName"}.
      */
-    private final Key defaultParentKey = KeyFactory.createKey("parentKind",
-                                                              "parentKeyName");
+    private static final Key DEFAULT_PARENT_KEY =
+            KeyFactory.createKey("parentKind", "parentKeyName");
     /**
      * Repository cache.
      * <p>
@@ -190,7 +190,7 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Adds the specified json object with the {@linkplain #defaultParentKey
+     * Adds the specified json object with the {@linkplain #DEFAULT_PARENT_KEY
      * default parent key}.
      *
      * @param jsonObject the specified json object
@@ -206,7 +206,7 @@ public final class GAERepository implements Repository {
         }
 
         final String ret = add(jsonObject,
-                               defaultParentKey.getKind(), defaultParentKey.
+                               DEFAULT_PARENT_KEY.getKind(), DEFAULT_PARENT_KEY.
                 getName());
 
         currentTransaction.putUncommitted(ret, jsonObject);
@@ -258,7 +258,7 @@ public final class GAERepository implements Repository {
      * json object.
      *
      * <p>
-     * The parent key of the entity to update is the {@linkplain #defaultParentKey
+     * The parent key of the entity to update is the {@linkplain #DEFAULT_PARENT_KEY
      * default parent key}.
      * </p>
      *
@@ -297,7 +297,7 @@ public final class GAERepository implements Repository {
         }
 
         update(id, jsonObject,
-               defaultParentKey.getKind(), defaultParentKey.getName());
+               DEFAULT_PARENT_KEY.getKind(), DEFAULT_PARENT_KEY.getName());
 
         currentTransaction.putUncommitted(id, jsonObject);
     }
@@ -334,7 +334,7 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Removes a json object by the specified id with the {@linkplain #defaultParentKey
+     * Removes a json object by the specified id with the {@linkplain #DEFAULT_PARENT_KEY
      * default parent key}.
      *
      * @param id the specified id
@@ -349,7 +349,7 @@ public final class GAERepository implements Repository {
                     "Invoking remove() outside a transaction");
         }
 
-        remove(id, defaultParentKey.getKind(), defaultParentKey.getName());
+        remove(id, DEFAULT_PARENT_KEY.getKind(), DEFAULT_PARENT_KEY.getName());
 
         currentTransaction.putUncommitted(id, null);
     }
@@ -375,7 +375,7 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Gets a json object by the specified id with the {@linkplain #defaultParentKey
+     * Gets a json object by the specified id with the {@linkplain #DEFAULT_PARENT_KEY
      * default parent key}.
      *
      * @param id the specified id
@@ -387,8 +387,7 @@ public final class GAERepository implements Repository {
         final GAETransaction currentTransaction = TX.get();
         if (null == currentTransaction) {
             // Gets outside a transaction
-            return get(id, defaultParentKey.getKind(),
-                       defaultParentKey.getName());
+            return get(DEFAULT_PARENT_KEY, id);
         }
 
         // Works in a transaction....
@@ -396,8 +395,7 @@ public final class GAERepository implements Repository {
         if (!currentTransaction.hasUncommitted(id)) {
             // Has not mainipulat the object in the current transaction
             // Gets from transaction snapshot view
-            return get(id, defaultParentKey.getKind(),
-                       defaultParentKey.getName());
+            return get(DEFAULT_PARENT_KEY, id);
         }
 
         // The returned value may be null if it has been set to null in the 
@@ -406,17 +404,14 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Gets.
+     * Gets a json object with the specified parent key and id.
      * 
+     * @param parentKey the specified parent key
      * @param id the specified id
-     * @param parentKeyKind the specified parent key kind
-     * @param parentKeyName the specified parent key name
      * @return a json object, returns {@code null} if not found
      * @throws RepositoryException repository exception
      */
-    private JSONObject get(final String id,
-                           final String parentKeyKind,
-                           final String parentKeyName)
+    private JSONObject get(final Key parentKey, final String id)
             throws RepositoryException {
         JSONObject ret = null;
 
@@ -431,7 +426,6 @@ public final class GAERepository implements Repository {
             }
         }
 
-        final Key parentKey = KeyFactory.createKey(parentKeyKind, parentKeyName);
         final Key key = KeyFactory.createKey(parentKey, getName(), id);
         try {
             final Entity entity = datastoreService.get(key);
@@ -468,7 +462,7 @@ public final class GAERepository implements Repository {
             throws RepositoryException {
         JSONObject ret = null;
 
-        if (Strings.isEmptyOrNull(query.getCacheKey())) { // No application defined cache key
+        if (Strings.isEmptyOrNull(query.getCacheKey())) { // No application specified cache key
             // Uses the hashcode as query results cache key
             query.setCacheKey(String.valueOf(query.hashCode()));
         }
@@ -585,7 +579,7 @@ public final class GAERepository implements Repository {
 
                 final Set<Key> keys = new HashSet<Key>();
                 for (final String id : ids) {
-                    keys.add(KeyFactory.createKey(defaultParentKey, getName(),
+                    keys.add(KeyFactory.createKey(DEFAULT_PARENT_KEY, getName(),
                                                   id));
                     LOGGER.log(Level.FINEST, "    {0}]", id);
                 }
