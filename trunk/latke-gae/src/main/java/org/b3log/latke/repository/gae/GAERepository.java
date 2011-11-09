@@ -484,13 +484,15 @@ public final class GAERepository implements Repository {
         final List<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
         final Map<String, SortDirection> sorts = query.getSorts();
+        final int pageCount = query.getPageCount();
 
         if (org.b3log.latke.repository.Query.DEFAULT_CUR_PAGE_NUM
             != currentPageNum
             && org.b3log.latke.repository.Query.DEFAULT_PAGE_SIZE != pageSize) {
-            ret = get(currentPageNum, pageSize, sorts, filters, cacheKey);
+            ret = get(currentPageNum, pageSize, pageCount, sorts, filters,
+                      cacheKey);
         } else {
-            ret = get(1, Integer.MAX_VALUE, sorts, filters, cacheKey);
+            ret = get(1, Integer.MAX_VALUE, pageCount, sorts, filters, cacheKey);
         }
 
         if (cacheEnabled) {
@@ -520,10 +522,11 @@ public final class GAERepository implements Repository {
 
     /**
      * Gets the result object by the specified current page number, page size,
-     * sorts and filters.
+     * page count, sorts, filters and query cache key.
      *
      * @param currentPageNum the specified current page number
      * @param pageSize the specified page size
+     * @param pageCount the specified page count
      * @param sorts the specified sorts
      * @param filters the specified filters
      * @param cacheKey the specified cache key of a query
@@ -533,6 +536,7 @@ public final class GAERepository implements Repository {
      */
     private JSONObject get(final int currentPageNum,
                            final int pageSize,
+                           final int pageCount,
                            final Map<String, SortDirection> sorts,
                            final List<Filter> filters,
                            final String cacheKey)
@@ -600,7 +604,7 @@ public final class GAERepository implements Repository {
             query.addSort(sort.getKey(), querySortDirection);
         }
 
-        return get(query, currentPageNum, pageSize, cacheKey);
+        return get(query, currentPageNum, pageSize, pageCount, cacheKey);
     }
 
     @Override // XXX: performance issue
@@ -754,12 +758,18 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Gets result json object by the specified query, current page number and
-     * page size.
+     * Gets result json object by the specified query, current page number,
+     * page size, page count and cache key.
+     * 
+     * <p>
+     * If the specified page count equals to {@code -1}, this method will
+     * calculate the page count.  
+     * </p>
      *
      * @param query the specified query
      * @param currentPageNum the specified current page number
      * @param pageSize the specified page size
+     * @param pageCount the specified page count
      * @param cacheKey the specified cache key of a query
      * @return for example,
      * <pre>
@@ -777,43 +787,47 @@ public final class GAERepository implements Repository {
     private JSONObject get(final Query query,
                            final int currentPageNum,
                            final int pageSize,
+                           final int pageCount,
                            final String cacheKey)
             throws RepositoryException {
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
-        long count = -1;
-
-        final String countCacheKey = cacheKey + REPOSITORY_CACHE_COUNT;
-        if (cacheEnabled) {
-            final Object o = CACHE.get(countCacheKey);
-            if (null != o) {
-                LOGGER.log(Level.FINER,
-                           "Got an object[cacheKey={0}] from repository cache[name={1}]",
-                           new Object[]{countCacheKey, getName()});
-                count = (Long) o;
-            }
-        }
-
-        if (-1 == count) {
-            count = preparedQuery.countEntities(
-                    FetchOptions.Builder.withDefaults());
-
+        int pageCnt = pageCount;
+        if (-1 == pageCnt) { // Application caller dose not specify the page count
+            // Calculates the page count
+            long count = -1;
+            final String countCacheKey = cacheKey + REPOSITORY_CACHE_COUNT;
             if (cacheEnabled) {
-                CACHE.put(countCacheKey, count);
-                LOGGER.log(Level.FINER,
-                           "Added an object[cacheKey={0}] in repository cache[{1}]",
-                           new Object[]{countCacheKey, getName()});
+                final Object o = CACHE.get(countCacheKey);
+                if (null != o) {
+                    LOGGER.log(Level.FINER,
+                               "Got an object[cacheKey={0}] from repository cache[name={1}]",
+                               new Object[]{countCacheKey, getName()});
+                    count = (Long) o;
+                }
             }
-        }
 
-        final int pageCount =
-                (int) Math.ceil((double) count / (double) pageSize);
+            if (-1 == count) {
+                count = preparedQuery.countEntities(
+                        FetchOptions.Builder.withDefaults());
+                LOGGER.log(Level.WARNING, "Invoked countEntities()");
+
+                if (cacheEnabled) {
+                    CACHE.put(countCacheKey, count);
+                    LOGGER.log(Level.FINER,
+                               "Added an object[cacheKey={0}] in repository cache[{1}]",
+                               new Object[]{countCacheKey, getName()});
+                }
+            }
+
+            pageCnt = (int) Math.ceil((double) count / (double) pageSize);
+        }
 
         final JSONObject ret = new JSONObject();
         try {
             final JSONObject pagination = new JSONObject();
             ret.put(Pagination.PAGINATION, pagination);
-            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCnt);
 
             QueryResultList<Entity> queryResultList = null;
             if (1 != currentPageNum) {
