@@ -23,7 +23,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.8, Oct 18, 2011
+ * @version 1.0.1.9, Nov 8, 2011
  */
 public interface Repository {
 
@@ -76,6 +76,13 @@ public interface Repository {
 
     /**
      * Gets json objects by the specified query.
+     * 
+     * <p>
+     * If the "paginationPageCount" has been specified by caller (as the argument
+     * {@link Query#pageCount}), the value will be used in the returned value. 
+     * In other words, the page count result will not be calculated by this 
+     * interface.
+     * </p>
      *
      * <p>
      *   <b>Note</b>:the order of elements of the returned result list is
@@ -89,7 +96,7 @@ public interface Repository {
      * <pre>
      * {
      *     "pagination": {
-     *       "paginationPageCount": 88250
+     *       "paginationPageCount": 88250 // May be specified by the specified query.pageCount
      *     },
      *     "rslts": [{
      *         "oId": "...."

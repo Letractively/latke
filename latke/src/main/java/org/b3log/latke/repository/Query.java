@@ -28,7 +28,7 @@ import java.util.Set;
  * Query.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Oct 18, 2011
+ * @version 1.0.0.4, Nov 8, 2011
  */
 public final class Query {
 
@@ -39,11 +39,15 @@ public final class Query {
     /**
      * Default value of page size.
      */
-    public static final int DEFAULT_PAGE_SIZE = DEFAULT_CUR_PAGE_NUM;
+    public static final int DEFAULT_PAGE_SIZE = -1;
     /**
      * Current page number.
      */
     private int currentPageNum = DEFAULT_CUR_PAGE_NUM;
+    /**
+     * Page count.
+     */
+    private int pageCount = -1;
     /**
      * Page size.
      */
@@ -179,9 +183,12 @@ public final class Query {
      * Sets the cache key with the specified cache key.
      * 
      * @param cacheKey the specified cache key
+     * @return the current query object 
      */
-    public void setCacheKey(final String cacheKey) {
+    public Query setCacheKey(final String cacheKey) {
         this.cacheKey = cacheKey;
+
+        return this;
     }
 
     /**
@@ -191,6 +198,27 @@ public final class Query {
      */
     public String getCacheKey() {
         return cacheKey;
+    }
+
+    /**
+     * Gets the page count.
+     * 
+     * @return page count
+     */
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    /**
+     * Sets the page count with the specified page count.
+     * 
+     * @param pageCount the specified page count
+     * @return the current query object 
+     */
+    public Query setPageCount(final int pageCount) {
+        this.pageCount = pageCount;
+
+        return this;
     }
 
     @Override
