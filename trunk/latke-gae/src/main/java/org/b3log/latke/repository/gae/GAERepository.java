@@ -81,7 +81,7 @@ import org.json.JSONObject;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.3, Nov 9, 2011
+ * @version 1.0.4.4, Nov 9, 2011
  * @see GAETransaction
  */
 public final class GAERepository implements Repository {
@@ -467,9 +467,10 @@ public final class GAERepository implements Repository {
             query.setCacheKey(String.valueOf(query.hashCode()));
         }
 
+        final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
+                                + getName();
         if (cacheEnabled) {
-            final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
-                                    + getName();
+
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
                 LOGGER.log(Level.FINER,
@@ -487,14 +488,12 @@ public final class GAERepository implements Repository {
         if (org.b3log.latke.repository.Query.DEFAULT_CUR_PAGE_NUM
             != currentPageNum
             && org.b3log.latke.repository.Query.DEFAULT_PAGE_SIZE != pageSize) {
-            ret = get(currentPageNum, pageSize, sorts, filters);
+            ret = get(currentPageNum, pageSize, sorts, filters, cacheKey);
         } else {
-            ret = get(1, Integer.MAX_VALUE, sorts, filters);
+            ret = get(1, Integer.MAX_VALUE, sorts, filters, cacheKey);
         }
 
         if (cacheEnabled) {
-            String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
-                              + getName();
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
                        "Added query result[cacheKey={0}] in repository cache[{1}]",
@@ -507,10 +506,8 @@ public final class GAERepository implements Repository {
                 // Checks if the single result is an entity
                 if (jsonObject.has(Keys.OBJECT_ID)) {
                     // If it is an entity, put its key into cache
-                    cacheKey = CACHE_KEY_PREFIX
-                               + jsonObject.optString(Keys.OBJECT_ID);
-
-                    CACHE.put(cacheKey, jsonObject);
+                    CACHE.put(CACHE_KEY_PREFIX
+                              + jsonObject.optString(Keys.OBJECT_ID), jsonObject);
                     LOGGER.log(Level.FINER,
                                "Added an object[cacheKey={0}] in repository cache[{1}]",
                                new Object[]{cacheKey, getName()});
@@ -529,6 +526,7 @@ public final class GAERepository implements Repository {
      * @param pageSize the specified page size
      * @param sorts the specified sorts
      * @param filters the specified filters
+     * @param cacheKey the specified cache key of a query
      * @return the result object, see return of
      * {@linkplain #get(org.b3log.latke.repository.Query)} for details
      * @throws RepositoryException repository exception
@@ -536,7 +534,8 @@ public final class GAERepository implements Repository {
     private JSONObject get(final int currentPageNum,
                            final int pageSize,
                            final Map<String, SortDirection> sorts,
-                           final List<Filter> filters)
+                           final List<Filter> filters,
+                           final String cacheKey)
             throws RepositoryException {
         final Query query = new Query(getName());
         for (final Filter filter : filters) {
@@ -601,7 +600,7 @@ public final class GAERepository implements Repository {
             query.addSort(sort.getKey(), querySortDirection);
         }
 
-        return get(query, currentPageNum, pageSize);
+        return get(query, currentPageNum, pageSize, cacheKey);
     }
 
     @Override // XXX: performance issue
@@ -761,6 +760,7 @@ public final class GAERepository implements Repository {
      * @param query the specified query
      * @param currentPageNum the specified current page number
      * @param pageSize the specified page size
+     * @param cacheKey the specified cache key of a query
      * @return for example,
      * <pre>
      * {
@@ -776,10 +776,36 @@ public final class GAERepository implements Repository {
      */
     private JSONObject get(final Query query,
                            final int currentPageNum,
-                           final int pageSize)
+                           final int pageSize,
+                           final String cacheKey)
             throws RepositoryException {
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
-        final long count = count();
+
+        long count = -1;
+
+        final String countCacheKey = cacheKey + REPOSITORY_CACHE_COUNT;
+        if (cacheEnabled) {
+            final Object o = CACHE.get(countCacheKey);
+            if (null != o) {
+                LOGGER.log(Level.FINER,
+                           "Got an object[cacheKey={0}] from repository cache[name={1}]",
+                           new Object[]{countCacheKey, getName()});
+                count = (Long) o;
+            }
+        }
+
+        if (-1 == count) {
+            count = preparedQuery.countEntities(
+                    FetchOptions.Builder.withDefaults());
+
+            if (cacheEnabled) {
+                CACHE.put(countCacheKey, count);
+                LOGGER.log(Level.FINER,
+                           "Added an object[cacheKey={0}] in repository cache[{1}]",
+                           new Object[]{countCacheKey, getName()});
+            }
+        }
+
         final int pageCount =
                 (int) Math.ceil((double) count / (double) pageSize);
 
