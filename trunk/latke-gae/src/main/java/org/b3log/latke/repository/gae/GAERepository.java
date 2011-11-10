@@ -810,7 +810,9 @@ public final class GAERepository implements Repository {
             if (-1 == count) {
                 count = preparedQuery.countEntities(
                         FetchOptions.Builder.withDefaults());
-                LOGGER.log(Level.WARNING, "Invoked countEntities()");
+                LOGGER.log(Level.WARNING,
+                           "Invoked countEntities() for repository[name={0}, count={1}]",
+                           new Object[]{getName(), count});
 
                 if (cacheEnabled) {
                     CACHE.put(countCacheKey, count);
