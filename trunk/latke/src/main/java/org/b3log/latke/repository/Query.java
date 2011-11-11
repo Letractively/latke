@@ -28,7 +28,7 @@ import java.util.Set;
  * Query.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Nov 8, 2011
+ * @version 1.0.0.5, Nov 11, 2011
  */
 public final class Query {
 
@@ -264,7 +264,8 @@ public final class Query {
     public String toString() {
         final StringBuilder stringBuilder =
                 new StringBuilder("currentPageNum=").append(currentPageNum).
-                append(", pageSize=").append(pageSize).append(", sorts=[");
+                append(", pageSize=").append(pageSize).append(", pageCount=").
+                append(pageCount).append(", sorts=[");
 
         final Set<Entry<String, SortDirection>> entrySet = sorts.entrySet();
         final Iterator<Entry<String, SortDirection>> iterator =
