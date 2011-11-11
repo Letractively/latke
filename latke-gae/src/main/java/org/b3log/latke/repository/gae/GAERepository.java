@@ -467,6 +467,9 @@ public final class GAERepository implements Repository {
             query.setCacheKey(String.valueOf(query.hashCode()));
         }
 
+        LOGGER.log(Level.FINEST, "Executing a query[cacheKey={0}, query={1}]",
+                   new Object[]{query.getCacheKey(), query.toString()});
+
         final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
                                 + getName();
         if (cacheEnabled) {
@@ -946,7 +949,9 @@ public final class GAERepository implements Repository {
                                     + '(' + i + ')';
             ret = (Cursor) CACHE.get(cacheKey);
             if (null != ret) {
-                LOGGER.log(Level.FINEST, "Found a query cursor[{0}] in cache", i);
+                LOGGER.log(Level.FINEST,
+                           "Found a query cursor[{0}] in repository cache[name={1}]",
+                           new Object[]{i, getName()});
                 // Found the nearest cursor
                 break;
             }
