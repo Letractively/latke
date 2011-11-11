@@ -467,7 +467,7 @@ public final class GAERepository implements Repository {
             query.setCacheKey(String.valueOf(query.hashCode()));
         }
 
-        LOGGER.log(Level.FINEST, "Executing a query[cacheKey={0}, query={1}]",
+        LOGGER.log(Level.FINEST, "Executing a query[cacheKey={0}, query=[{1}]]",
                    new Object[]{query.getCacheKey(), query.toString()});
 
         final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
