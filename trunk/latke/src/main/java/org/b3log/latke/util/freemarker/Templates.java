@@ -15,6 +15,8 @@
  */
 package org.b3log.latke.util.freemarker;
 
+import freemarker.core.TemplateElement;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import org.b3log.latke.servlet.AbstractServletListener;
 import freemarker.template.Configuration;
@@ -30,7 +32,7 @@ import java.util.logging.Logger;
  * engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Jan 24, 2011
+ * @version 1.0.0.9, Nov 14, 2011
  */
 public final class Templates {
 
@@ -74,6 +76,57 @@ public final class Templates {
     }
 
     /**
+     * Determines whether exists a variable specified by the given expression
+     * in the specified template.
+     * 
+     * @param template the specified template
+     * @param expression the given expression, for example, 
+     * "${aVariable}", "&lt;#list recentComments as comment&gt;"
+     * @return {@code true} if it exists, returns {@code false} otherwise
+     */
+    public static boolean hasExpression(final Template template,
+                                        final String expression) {
+        final TemplateElement rootTreeNode = template.getRootTreeNode();
+
+        return hasExpression(template, expression, rootTreeNode);
+    }
+
+    /**
+     * Determines whether the specified expression exists in the specified 
+     * element (includes its children) of the specified template.
+     * 
+     * @param template the specified template
+     * @param expression the specified expression
+     * @param templateElement the specified element
+     * @return {@code true} if it exists, returns {@code false} otherwise
+     */
+    private static boolean hasExpression(final Template template,
+                                         final String expression,
+                                         final TemplateElement templateElement) {
+        final String canonicalForm = templateElement.getCanonicalForm();
+        if (canonicalForm.startsWith(expression)) {
+            LOGGER.log(Level.FINEST,
+                       "Template has expression[nodeName={0}, expression={1}]",
+                       new Object[]{templateElement.getNodeName(),
+                                    expression});
+
+            return true;
+        }
+
+        @SuppressWarnings("unchecked")
+        final Enumeration<TemplateElement> children = templateElement.children();
+        while (children.hasMoreElements()) {
+            final TemplateElement nextElement = children.nextElement();
+
+            if (hasExpression(template, expression, nextElement)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Private default constructor.
      */
     private Templates() {
@@ -94,30 +147,36 @@ public final class Templates {
      *
      * @param templateName the specified template name
      * @return a template
-     * @throws IOException io exception
      */
-    public static Template getTemplate(final String templateName)
-            throws IOException {
+    public static Template getTemplate(final String templateName) {
         Template ret = null;
 
-        if (cacheEnabled) {
-            ret = CACHE.get(templateName);
-        }
-
-        if (null != ret) {
-            LOGGER.log(Level.FINEST, "Got template[templateName={0}] from cache",
-                       templateName);
-        } else {
-            ret = CONFIGURATION.getTemplate(templateName);
+        try {
 
             if (cacheEnabled) {
-                CACHE.put(templateName, ret);
-                LOGGER.log(Level.FINEST,
-                           "Got template[templateName={0}], then put it into template cache",
-                           templateName);
+                ret = CACHE.get(templateName);
             }
-        }
 
-        return ret;
+            if (null != ret) {
+                LOGGER.log(Level.FINEST,
+                           "Got template[templateName={0}] from cache",
+                           templateName);
+            } else {
+                ret = CONFIGURATION.getTemplate(templateName);
+
+                if (cacheEnabled) {
+                    CACHE.put(templateName, ret);
+                    LOGGER.log(Level.FINEST,
+                               "Got template[templateName={0}], then put it into template cache",
+                               templateName);
+                }
+            }
+
+            return ret;
+        } catch (final IOException e) {
+            LOGGER.log(Level.SEVERE, "Gets template[name="
+                                     + templateName + "] failed", e);
+            return null;
+        }
     }
 }

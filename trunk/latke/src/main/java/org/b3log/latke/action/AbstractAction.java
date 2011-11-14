@@ -42,7 +42,7 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.0, Nov 2, 2011
+ * @version 1.0.4.1, Nov 14, 2011
  * @see #doFreeMarkerAction(HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
  *                     HttpServletRequest, HttpServletResponse)
@@ -322,14 +322,7 @@ public abstract class AbstractAction extends HttpServlet {
     protected Template getTemplate(final HttpServletRequest request) {
         final String templateName = getTemplateName(request.getRequestURI());
 
-        try {
-            return Templates.getTemplate(templateName);
-        } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, "Can't find template by the specified request[URI="
-                                     + request.getRequestURI() + "]",
-                       e.getMessage());
-            return null;
-        }
+        return Templates.getTemplate(templateName);
     }
 
     /**
