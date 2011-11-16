@@ -15,10 +15,15 @@
  */
 package org.b3log.latke.servlet.renderer;
 
+import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.servlet.HTTPRequestContext;
 
 /**
  * Do nothing HTTP response renderer.
+ * 
+ * <p>
+ * Returns HTTP status code 200 only.
+ * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Sep 11, 2011
@@ -27,5 +32,7 @@ public final class DoNothingRenderer extends AbstractHTTPResponseRenderer {
 
     @Override
     public void render(final HTTPRequestContext context) {
+        final HttpServletResponse response = context.getResponse();
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 }
