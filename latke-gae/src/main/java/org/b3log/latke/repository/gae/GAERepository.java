@@ -471,7 +471,6 @@ public final class GAERepository implements Repository {
                    new Object[]{cacheKey, query.toString()});
 
         if (cacheEnabled) {
-
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
                 LOGGER.log(Level.FINER,
