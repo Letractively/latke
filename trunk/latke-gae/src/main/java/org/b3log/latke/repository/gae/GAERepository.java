@@ -465,11 +465,11 @@ public final class GAERepository implements Repository {
             throws RepositoryException {
         JSONObject ret = null;
 
+        String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
+                          + getName();
         LOGGER.log(Level.FINEST, "Executing a query[cacheKey={0}, query=[{1}]]",
                    new Object[]{query.getCacheKey(), query.toString()});
 
-        String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
-                          + getName();
         if (cacheEnabled) {
 
             ret = (JSONObject) CACHE.get(cacheKey);
