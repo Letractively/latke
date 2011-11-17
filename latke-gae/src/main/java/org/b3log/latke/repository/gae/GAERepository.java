@@ -306,6 +306,64 @@ public final class GAERepository implements Repository {
     }
 
     /**
+     * Caches the specified query results with the specified query.
+     * 
+     * @param results the specified query results
+     * @param query the specified query
+     * @throws JSONException json exception
+     */
+    private void cacheQueryResults(final JSONArray results,
+                                   final org.b3log.latke.repository.Query query)
+            throws JSONException {
+        String cacheKey;
+        for (int i = 0; i < results.length(); i++) {
+            final JSONObject jsonObject = results.optJSONObject(i);
+
+            // 1. Caching for get by id.
+            cacheKey = CACHE_KEY_PREFIX
+                       + jsonObject.optString(Keys.OBJECT_ID);
+            CACHE.putAsync(cacheKey, jsonObject);
+            LOGGER.log(Level.FINER,
+                       "Added an object[cacheKey={0}] in repository cache[{1}] for default index[oId]",
+                       new Object[]{cacheKey, getName()});
+
+            // 2. Caching for get by query with filters (EQUAL operator) only
+            final Set<String[]> indexes = query.getIndexes();
+            final StringBuilder logMsgBuilder = new StringBuilder();
+            for (final String[] index : indexes) {
+                final org.b3log.latke.repository.Query futureQuery =
+                        new org.b3log.latke.repository.Query().setPageCount(
+                        1);
+                for (int j = 0; j < index.length; j++) {
+                    final String propertyName = index[j];
+                    futureQuery.addFilter(propertyName, FilterOperator.EQUAL,
+                                          jsonObject.opt(propertyName));
+                    logMsgBuilder.append(propertyName).append(",");
+                }
+                logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1); // Removes the last comma
+
+                cacheKey = CACHE_KEY_PREFIX + futureQuery.getCacheKey() + "_"
+                           + getName();
+
+                final JSONObject futureQueryRet = new JSONObject();
+                final JSONObject pagination = new JSONObject();
+                futureQueryRet.put(Pagination.PAGINATION, pagination);
+                pagination.put(Pagination.PAGINATION_PAGE_COUNT, 1);
+
+                final JSONArray futureQueryResults = new JSONArray();
+                futureQueryRet.put(Keys.RESULTS, futureQueryResults);
+                futureQueryResults.put(jsonObject);
+
+                CACHE.putAsync(cacheKey, futureQueryRet);
+                LOGGER.log(Level.FINER,
+                           "Added an object[cacheKey={0}] in repository cache[{1}] for index[{2}] for future query[{3}]",
+                           new Object[]{cacheKey, getName(), logMsgBuilder,
+                                        futureQuery.toString()});
+            }
+        }
+    }
+
+    /**
      * Updates.
      * 
      * @param id the specified id
@@ -465,8 +523,8 @@ public final class GAERepository implements Repository {
             throws RepositoryException {
         JSONObject ret = null;
 
-        String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
-                          + getName();
+        final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
+                                + getName();
         LOGGER.log(Level.FINEST, "Executing a query[cacheKey={0}, query=[{1}]]",
                    new Object[]{cacheKey, query.toString()});
 
@@ -494,41 +552,10 @@ public final class GAERepository implements Repository {
                        "Added query result[cacheKey={0}] in repository cache[{1}]",
                        new Object[]{cacheKey, getName()});
 
-            final JSONArray results = ret.optJSONArray(Keys.RESULTS);
-            for (int i = 0; i < results.length(); i++) {
-                final JSONObject jsonObject = results.optJSONObject(i);
-
-                // 1. Caching for get by id.
-                cacheKey = CACHE_KEY_PREFIX
-                           + jsonObject.optString(Keys.OBJECT_ID);
-                CACHE.putAsync(cacheKey, jsonObject);
-                LOGGER.log(Level.FINER,
-                           "Added an object[cacheKey={0}] in repository cache[{1}] for default index[oId]",
-                           new Object[]{cacheKey, getName()});
-
-                // 2. Caching for get by query with filters (EQUAL operator) only
-                final Set<String[]> indexes = query.getIndexes();
-                final StringBuilder logMsgBuilder = new StringBuilder();
-                for (final String[] index : indexes) {
-                    final org.b3log.latke.repository.Query futureQuery =
-                            new org.b3log.latke.repository.Query().setPageCount(
-                            1);
-                    for (int j = 0; j < index.length; j++) {
-                        final String propertyName = index[j];
-                        futureQuery.addFilter(propertyName, FilterOperator.EQUAL,
-                                    jsonObject.opt(propertyName));
-                        logMsgBuilder.append(propertyName).append(",");
-                    }
-                    logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1); // Removes the last comma
-
-                    cacheKey = CACHE_KEY_PREFIX + futureQuery.getCacheKey() + "_"
-                               + getName();
-                    CACHE.putAsync(cacheKey, jsonObject);
-                    LOGGER.log(Level.FINER,
-                               "Added an object[cacheKey={0}] in repository cache[{1}] for index[{2}] for future query[{3}]",
-                               new Object[]{cacheKey, getName(), logMsgBuilder,
-                                            futureQuery.toString()});
-                }
+            try {
+                cacheQueryResults(ret.optJSONArray(Keys.RESULTS), query);
+            } catch (final JSONException e) {
+                LOGGER.log(Level.WARNING, "Caches query results failed", e);
             }
         }
 
