@@ -30,22 +30,14 @@ import org.b3log.latke.util.Strings;
  * Query.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Nov 11, 2011
+ * @version 1.0.0.6, Nov 17, 2011
  */
 public final class Query {
 
     /**
-     * Default value of current page number.
-     */
-    public static final int DEFAULT_CUR_PAGE_NUM = -1;
-    /**
-     * Default value of page size.
-     */
-    public static final int DEFAULT_PAGE_SIZE = -1;
-    /**
      * Current page number.
      */
-    private int currentPageNum = DEFAULT_CUR_PAGE_NUM;
+    private int currentPageNum = 1;
     /**
      * Page count.
      */
@@ -53,7 +45,7 @@ public final class Query {
     /**
      * Page size.
      */
-    private int pageSize = DEFAULT_PAGE_SIZE;
+    private int pageSize = Integer.MAX_VALUE;
     /**
      * Cache key.
      * 
