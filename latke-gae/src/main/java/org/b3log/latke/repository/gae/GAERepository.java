@@ -682,11 +682,10 @@ public final class GAERepository implements Repository {
                 final Collection<String> ids =
                         (Collection<String>) filter.getValue();
 
-                final Set<Key> keys = new HashSet<Key>();
+                final Set<Object> values = new HashSet<Object>();
                 for (final String id : ids) {
-                    keys.add(KeyFactory.createKey(DEFAULT_PARENT_KEY, getName(),
-                                                  id));
-                    logMsgBuilder.append(id).append(", ");
+                    values.add(id);
+                    logMsgBuilder.append(id).append(",");
                 }
                 logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
 
@@ -694,7 +693,7 @@ public final class GAERepository implements Repository {
                 LOGGER.log(Level.FINEST, logMsgBuilder.toString());
 
                 query.addFilter(filter.getKey(), Query.FilterOperator.IN,
-                                keys);
+                                values);
             }
         }
 
