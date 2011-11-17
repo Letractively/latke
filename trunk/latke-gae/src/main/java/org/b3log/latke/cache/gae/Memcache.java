@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.cache.gae;
 
+import com.google.appengine.api.memcache.AsyncMemcacheService;
 import com.google.appengine.api.memcache.InvalidValueException;
 import com.google.appengine.api.memcache.MemcacheSerialization;
 import com.google.appengine.api.memcache.MemcacheSerialization.Flag;
@@ -56,7 +57,7 @@ import org.b3log.latke.util.Serializer;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Oct 4, 2011
+ * @version 1.0.1.4, Nov 17, 2011
  */
 public final class Memcache<K, V> implements Cache<K, V> {
 
@@ -69,6 +70,10 @@ public final class Memcache<K, V> implements Cache<K, V> {
      * Memcache service.
      */
     private MemcacheService memcacheService;
+    /**
+     * Asynchronous memcache service.
+     */
+    private AsyncMemcacheService asyncMemcacheService;
     /**
      * Name of this cache.
      */
@@ -91,6 +96,8 @@ public final class Memcache<K, V> implements Cache<K, V> {
         this.name = name;
 
         memcacheService = MemcacheServiceFactory.getMemcacheService(name);
+        asyncMemcacheService =
+                MemcacheServiceFactory.getAsyncMemcacheService(name);
     }
 
     /**
@@ -102,17 +109,11 @@ public final class Memcache<K, V> implements Cache<K, V> {
         return name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean contains(final K key) {
         return memcacheService.contains(key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void put(final K key, final V value) {
         if (null == key) {
@@ -132,6 +133,32 @@ public final class Memcache<K, V> implements Cache<K, V> {
                 LOGGER.log(Level.WARNING, "Can not put memcache[key=" + key
                                           + ", valueSize="
                                           + Serializer.serialize(
+                        (Serializable) value).length, e);
+            } catch (final Exception ex) {
+                LOGGER.log(Level.SEVERE, " Serializes failed", ex);
+            }
+        }
+    }
+
+    @Override
+    public void putAsync(final K key, final V value) {
+        if (null == key) {
+            throw new IllegalArgumentException(
+                    "The specified key can not be null!");
+        }
+
+        if (null == value) {
+            throw new IllegalArgumentException(
+                    "The specified value can not be null![key=" + key + "]");
+        }
+
+        try {
+            asyncMemcacheService.put(key, value);
+        } catch (final Exception e) {
+            try {
+                LOGGER.log(Level.WARNING,
+                           "Can not put async memcache[key=" + key
+                           + ", valueSize=" + Serializer.serialize(
                         (Serializable) value).length, e);
             } catch (final Exception ex) {
                 LOGGER.log(Level.SEVERE, " Serializes failed", ex);
