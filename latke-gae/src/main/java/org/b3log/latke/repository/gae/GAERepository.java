@@ -525,8 +525,9 @@ public final class GAERepository implements Repository {
                                + getName();
                     CACHE.putAsync(cacheKey, jsonObject);
                     LOGGER.log(Level.FINER,
-                               "Added an object[cacheKey={0}] in repository cache[{1}] for index[{2}]",
-                               new Object[]{cacheKey, getName(), logMsgBuilder});
+                               "Added an object[cacheKey={0}] in repository cache[{1}] for index[{2}] for future query[{3}]",
+                               new Object[]{cacheKey, getName(), logMsgBuilder,
+                                            q.toString()});
                 }
             }
         }
