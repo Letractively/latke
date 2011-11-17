@@ -510,24 +510,24 @@ public final class GAERepository implements Repository {
                 final Set<String[]> indexes = query.getIndexes();
                 final StringBuilder logMsgBuilder = new StringBuilder();
                 for (final String[] index : indexes) {
-                    final org.b3log.latke.repository.Query q =
+                    final org.b3log.latke.repository.Query futureQuery =
                             new org.b3log.latke.repository.Query().setPageCount(
                             1);
                     for (int j = 0; j < index.length; j++) {
                         final String propertyName = index[j];
-                        q.addFilter(propertyName, FilterOperator.EQUAL,
+                        futureQuery.addFilter(propertyName, FilterOperator.EQUAL,
                                     jsonObject.opt(propertyName));
                         logMsgBuilder.append(propertyName).append(",");
                     }
                     logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1); // Removes the last comma
 
-                    cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
+                    cacheKey = CACHE_KEY_PREFIX + futureQuery.getCacheKey() + "_"
                                + getName();
                     CACHE.putAsync(cacheKey, jsonObject);
                     LOGGER.log(Level.FINER,
                                "Added an object[cacheKey={0}] in repository cache[{1}] for index[{2}] for future query[{3}]",
                                new Object[]{cacheKey, getName(), logMsgBuilder,
-                                            q.toString()});
+                                            futureQuery.toString()});
                 }
             }
         }
