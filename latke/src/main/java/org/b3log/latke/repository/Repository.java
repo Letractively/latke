@@ -16,6 +16,7 @@
 package org.b3log.latke.repository;
 
 import java.util.List;
+import java.util.Map;
 import org.b3log.latke.cache.Cache;
 import org.json.JSONObject;
 
@@ -63,6 +64,16 @@ public interface Repository {
      * @throws RepositoryException repository exception
      */
     JSONObject get(final String id) throws RepositoryException;
+
+    /**
+     * Gets json objects by the specified ids.
+     * 
+     * @param ids the specified ids
+     * @return json objects matched in the specified ids
+     * @throws RepositoryException repository exception 
+     */
+    Map<String, JSONObject> get(final Iterable<String> ids)
+            throws RepositoryException;
 
     /**
      * Determines a json object specified by the given id exists in this 
