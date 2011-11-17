@@ -17,6 +17,7 @@ package org.b3log.latke.repository;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+import java.util.Map;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.cache.Cache;
@@ -33,7 +34,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Oct 18, 2011
+ * @version 1.0.0.3, Nov 17, 2011
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -101,6 +102,12 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public JSONObject get(final String id) throws RepositoryException {
         return repository.get(id);
+    }
+
+    @Override
+    public Map<String, JSONObject> get(final Iterable<String> ids)
+            throws RepositoryException {
+        return repository.get(ids);
     }
 
     @Override
