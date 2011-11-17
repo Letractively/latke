@@ -27,7 +27,7 @@ import java.util.Collection;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.7, Jul 9, 2011
+ * @version 1.0.2.8, Nov 17, 2011
  */
 public interface Cache<K, V> {
 
@@ -51,6 +51,19 @@ public interface Cache<K, V> {
      * @param value the specified object
      */
     void put(final K key, final V value);
+
+    /**
+     * Puts the specified object into this cache asynchronously.
+     * 
+     * <p>
+     * Throws {@link IllegalArgumentException} if the specified key or value is 
+     * {@code null}.
+     * </p>
+     * 
+     * @param key the key of the specified object
+     * @param value the specified object
+     */
+    void putAsync(final K key, final V value);
 
     /**
      * Gets a object by the specified key.

@@ -28,7 +28,7 @@ import org.b3log.latke.cache.local.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.6, Aug 9, 2011
+ * @version 1.0.2.7, Nov 17, 2011
  */
 public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         implements Serializable {
@@ -49,9 +49,6 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         map = new DoubleLinkedMap<K, V>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void put(final K key, final V value) {
         putCountInc();
@@ -65,6 +62,19 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
 
             cachedCountInc();
         }
+    }
+
+    /**
+     * Just put sync, as the same as {@link #put(java.lang.Object, java.lang.Object)}.
+     * 
+     * No Async at present.
+     * 
+     * @param key the key of the specified object
+     * @param value the specified object
+     */
+    @Override
+    public void putAsync(final K key, final V value) {
+        put(key, value);
     }
 
     /**
