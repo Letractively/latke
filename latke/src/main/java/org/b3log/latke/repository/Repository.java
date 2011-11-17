@@ -77,15 +77,21 @@ public interface Repository {
     /**
      * Gets json objects by the specified query.
      * 
-     * <p>
+     * <h4>Pagination</h4>
      * If the "paginationPageCount" has been specified by caller (as the argument
      * {@link Query#pageCount}), the value will be used in the returned value. 
      * In other words, the page count result will not be calculated by this 
      * interface.
-     * </p>
+     * 
+     * <h4>Caching</h4>
+     * Each object in the result list (specified by {@value org.b3log.latke.Keys#RESULTS} 
+     * in returned value) will be cached for future queries if the specified 
+     * query {@link Query#index(java.lang.String[]) with indices}. Property "oId"
+     * will be treated as an index and cached for interface 
+     * {@link #get(java.lang.String) get by id} as default.
      *
      * <p>
-     *   <b>Note</b>:the order of elements of the returned result list is
+     *   <b>Note</b>: The order of elements of the returned result list is
      *   decided by datastore implementation, excepts 
      *   {@link Query#addSort(java.lang.String, org.b3log.latke.repository.SortDirection)}
      *   be invoked.

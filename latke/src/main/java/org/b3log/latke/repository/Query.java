@@ -17,12 +17,14 @@ package org.b3log.latke.repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.b3log.latke.util.Strings;
 
 /**
  * Query.
@@ -56,8 +58,9 @@ public final class Query {
      * Cache key.
      * 
      * <p>
-     * If the repository executes this query enabled query results caching, 
-     * this field will be used as the key of the cached results.
+     * If the repository executes this query {@link Repository#isCacheEnabled() enabled}
+     * query results caching, this field will be used as the key of the cached 
+     * results.
      * </p>
      */
     private String cacheKey;
@@ -71,6 +74,10 @@ public final class Query {
      */
     private List<Filter> filters = new ArrayList<Filter>();
     /**
+     * Indices.
+     */
+    private Set<String[]> indexes = new HashSet<String[]>();
+    /**
      * Initialization value for hashing.
      */
     private static final int INIT_HASH = 5;
@@ -78,6 +85,31 @@ public final class Query {
      * Base for hashing.
      */
     private static final int BASE = 83;
+
+    /**
+     * Indexes the specified properties for future queries.
+     * 
+     * @param properties the specified properties
+     * @return the current query object
+     */
+    public Query index(final String... properties) {
+        if (null == properties || 0 == properties.length) {
+            return this;
+        }
+
+        indexes.add(properties);
+
+        return this;
+    }
+
+    /**
+     * Gets the indices.
+     * 
+     * @return indices
+     */
+    public Set<String[]> getIndexes() {
+        return Collections.unmodifiableSet(indexes);
+    }
 
     /**
      * Adds sort for the specified property with the specified direction.
@@ -194,9 +226,18 @@ public final class Query {
     /**
      * Gets the cache key.
      * 
+     * <p>
+     * If no application specified cache key, uses {@link #hashCode() the hash 
+     * code} of this query.
+     * </p>
+     * 
      * @return cache key
      */
     public String getCacheKey() {
+        if (Strings.isEmptyOrNull(cacheKey)) {
+            setCacheKey(String.valueOf(hashCode()));
+        }
+
         return cacheKey;
     }
 
