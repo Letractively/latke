@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -454,7 +455,7 @@ public final class GAERepository implements Repository {
         // Works in a transaction....
 
         if (!currentTransaction.hasUncommitted(id)) {
-            // Has not mainipulat the object in the current transaction
+            // Has not mainipulate the object in the current transaction
             // Gets from transaction snapshot view
             return get(DEFAULT_PARENT_KEY, id);
         }
@@ -462,6 +463,64 @@ public final class GAERepository implements Repository {
         // The returned value may be null if it has been set to null in the 
         // current transaction
         return currentTransaction.getUncommitted(id);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, JSONObject> get(final Iterable<String> ids)
+            throws RepositoryException {
+        final GAETransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction
+            || !currentTransaction.hasUncommitted(ids)) {
+            Map<String, JSONObject> ret = null;
+
+            if (cacheEnabled) {
+                final String cacheKey = CACHE_KEY_PREFIX + ids.hashCode();
+                ret = (Map<String, JSONObject>) CACHE.get(cacheKey);
+                if (null != ret) {
+                    LOGGER.log(Level.FINER,
+                               "Got objects[cacheKey={0}] from repository cache[name={1}]",
+                               new Object[]{cacheKey, getName()});
+                    return ret;
+                }
+            }
+
+            final Set<Key> keys = new HashSet<Key>();
+            for (final String id : ids) {
+                final Key key = KeyFactory.createKey(DEFAULT_PARENT_KEY,
+                                                     getName(), id);
+
+                keys.add(key);
+            }
+
+            ret = new HashMap<String, JSONObject>();
+
+            final Map<Key, Entity> map = datastoreService.get(keys);
+
+            for (final Entry<Key, Entity> entry : map.entrySet()) {
+                ret.put(entry.getKey().getName(),
+                        entity2JSONObject(entry.getValue()));
+            }
+
+            LOGGER.log(Level.FINER,
+                       "Got objects[oIds={0}] from repository[name={1}]",
+                       new Object[]{ids, getName()});
+
+            if (cacheEnabled) {
+                final String cacheKey = CACHE_KEY_PREFIX + ids.hashCode();
+                CACHE.putAsync(cacheKey, ret);
+                LOGGER.log(Level.FINER,
+                           "Added objects[cacheKey={0}] in repository cache[{1}]",
+                           new Object[]{cacheKey, getName()});
+            }
+
+            return ret;
+        }
+
+        // The returned value may be null if it has been set to null in the 
+        // current transaction
+        return currentTransaction.getUncommitted(ids);
     }
 
     /**
@@ -617,7 +676,8 @@ public final class GAERepository implements Repository {
                 query.addFilter(filter.getKey(), filterOperator,
                                 filter.getValue());
             } else {
-                LOGGER.log(Level.FINEST, "In operation[");
+                final StringBuilder logMsgBuilder = new StringBuilder();
+                logMsgBuilder.append("In operation[");
                 @SuppressWarnings("unchecked")
                 final Collection<String> ids =
                         (Collection<String>) filter.getValue();
@@ -626,9 +686,12 @@ public final class GAERepository implements Repository {
                 for (final String id : ids) {
                     keys.add(KeyFactory.createKey(DEFAULT_PARENT_KEY, getName(),
                                                   id));
-                    LOGGER.log(Level.FINEST, "    {0}]", id);
+                    logMsgBuilder.append(id).append(", ");
                 }
-                LOGGER.log(Level.FINEST, "]");
+                logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
+
+                logMsgBuilder.append("]");
+                LOGGER.log(Level.FINEST, logMsgBuilder.toString());
 
                 query.addFilter(filter.getKey(), Query.FilterOperator.IN,
                                 keys);

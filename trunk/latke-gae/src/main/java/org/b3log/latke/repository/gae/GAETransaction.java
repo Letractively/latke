@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Sep 20, 2011
+ * @version 1.0.0.7, Nov 17, 2011
  * @see GAERepository
  */
 public final class GAETransaction implements Transaction {
@@ -110,6 +110,26 @@ public final class GAETransaction implements Transaction {
     }
 
     /**
+     * Gets json objects from uncommitted transaction cache with the specified 
+     * ids.
+     * 
+     * @param ids the specified ids
+     * @return json objects, return an empty map if not found
+     */
+    public Map<String, JSONObject> getUncommitted(final Iterable<String> ids) {
+        final Map<String, JSONObject> ret = new HashMap<String, JSONObject>();
+
+        for (final String id : ids) {
+            final JSONObject o = cache.get(id);
+            if (null != o) {
+                ret.put(id, o);
+            }
+        }
+
+        return ret;
+    }
+
+    /**
      * Determines the specified id is in transaction cache or not.
      * 
      * @param id the specified id
@@ -118,6 +138,23 @@ public final class GAETransaction implements Transaction {
      */
     public boolean hasUncommitted(final String id) {
         return cache.containsKey(id);
+    }
+
+    /**
+     * Determines the specified ids is in transaction cache or not.
+     * 
+     * @param ids the specified ids
+     * @return {@code true} if in transaction cache, returns {@code false} 
+     * otherwise
+     */
+    public boolean hasUncommitted(final Iterable<String> ids) {
+        for (final String id : ids) {
+            if (cache.containsKey(id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
