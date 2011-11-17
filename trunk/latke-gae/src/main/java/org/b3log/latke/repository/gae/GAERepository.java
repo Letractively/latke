@@ -487,14 +487,7 @@ public final class GAERepository implements Repository {
         final Map<String, SortDirection> sorts = query.getSorts();
         final int pageCount = query.getPageCount();
 
-        if (org.b3log.latke.repository.Query.DEFAULT_CUR_PAGE_NUM
-            != currentPageNum
-            && org.b3log.latke.repository.Query.DEFAULT_PAGE_SIZE != pageSize) {
-            ret = get(currentPageNum, pageSize, pageCount, sorts, filters,
-                      cacheKey);
-        } else {
-            ret = get(1, Integer.MAX_VALUE, pageCount, sorts, filters, cacheKey);
-        }
+        ret = get(currentPageNum, pageSize, pageCount, sorts, filters, cacheKey);
 
         if (cacheEnabled) {
             CACHE.putAsync(cacheKey, ret);
