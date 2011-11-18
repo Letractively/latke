@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Oct 3, 2011
+ * @version 1.0.0.6, Nov 18, 2011
  */
 public final class Latkes {
 
@@ -67,6 +67,10 @@ public final class Latkes {
      * Local properties.
      */
     private static final Properties LOCAL_PROPS = new Properties();
+    /**
+     * Static resource version.
+     */
+    private static String staticResourceVersion;
 
     static {
         try {
@@ -79,6 +83,47 @@ public final class Latkes {
             LOGGER.log(Level.CONFIG, "Not found local configuration file");
             // Ignores....
         }
+    }
+
+    /**
+     * Gets static resource (JS, CSS files) version.
+     * 
+     * <p>
+     * For different {@link #getRuntimeEnv() runtime environment}s: 
+     *   <ul>
+     *     <li>{@link RuntimeEnv#GAE GAE}</li>
+     *     Returns GAE system property 
+     *     <a href="https://code.google.com/appengine/docs/java/javadoc/
+     *com/google/appengine/api/utils/SystemProperty.html#applicationVersion">
+     *     application version</a>.
+     *     <li>{@link RuntimeEnv#LOCAL LOCAL}</li>
+     *     Returns the value of "staticResourceVersion" property in 
+     *     {@link #getLocalProps() local configurations}.
+     *   </ul>
+     * </p>
+     * 
+     * @return static resource version
+     */
+    public static String getStaticResourceVersion() {
+        if (null == staticResourceVersion) {
+
+            switch (Latkes.getRuntimeEnv()) {
+                case GAE:
+                    staticResourceVersion =
+                            System.getProperty(
+                            "com.google.appengine.application.version");
+                    break;
+                case LOCAL:
+                    staticResourceVersion =
+                            LOCAL_PROPS.getProperty("staticResourceVersion");
+                    break;
+                default:
+                    throw new RuntimeException(
+                            "Runtime enviornment has not been initialized!");
+            }
+        }
+
+        return staticResourceVersion;
     }
 
     /**
@@ -139,7 +184,7 @@ public final class Latkes {
      */
     public static void initRuntimeEnv() {
         setRuntimeMode(RuntimeMode.DEVELOPMENT); // Defaults to dev mode
-        
+
         try {
             runtimeEnv = RuntimeEnv.GAE;
             Class.forName("org.b3log.latke.repository.gae.GAERepository");
