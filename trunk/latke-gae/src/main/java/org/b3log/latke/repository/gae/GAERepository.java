@@ -446,6 +446,8 @@ public final class GAERepository implements Repository {
      */
     @Override
     public JSONObject get(final String id) throws RepositoryException {
+        LOGGER.log(Level.FINEST, "Getting with id[{0}]", id);
+        
         final GAETransaction currentTransaction = TX.get();
         if (null == currentTransaction) {
             // Gets outside a transaction
@@ -469,6 +471,8 @@ public final class GAERepository implements Repository {
     @SuppressWarnings("unchecked")
     public Map<String, JSONObject> get(final Iterable<String> ids)
             throws RepositoryException {
+        LOGGER.log(Level.FINEST, "Getting with ids[{0}]", ids);
+        
         final GAETransaction currentTransaction = TX.get();
 
         if (null == currentTransaction
