@@ -82,7 +82,11 @@ import org.json.JSONObject;
  * <h3>Caching</h3>
  * {@link #CACHE Repository cache} is used to cache the {@link #get(java.lang.String) get} 
  * and {@link #get(org.b3log.latke.repository.Query) query} results if 
- * {@link #cacheEnabled enabled} caching.
+ * {@link #cacheEnabled enabled} caching. The cache keys are constructed as the 
+ * following rules: // TODO: 88250, javadoc
+ * <ul>
+ *   <li></li>
+ * </ul>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.4.5, Nov 17, 2011
@@ -447,7 +451,7 @@ public final class GAERepository implements Repository {
     @Override
     public JSONObject get(final String id) throws RepositoryException {
         LOGGER.log(Level.FINEST, "Getting with id[{0}]", id);
-        
+
         final GAETransaction currentTransaction = TX.get();
         if (null == currentTransaction) {
             // Gets outside a transaction
@@ -472,7 +476,7 @@ public final class GAERepository implements Repository {
     public Map<String, JSONObject> get(final Iterable<String> ids)
             throws RepositoryException {
         LOGGER.log(Level.FINEST, "Getting with ids[{0}]", ids);
-        
+
         final GAETransaction currentTransaction = TX.get();
 
         if (null == currentTransaction
