@@ -191,6 +191,12 @@ public interface Repository {
     /**
      * Gets the query cache.
      * 
+     * <p>
+     * The cached object corresponding key is constructed by the underlying 
+     * repository implementation, so if the caller of this method want to put 
+     * object into this query cache, take care about the key.
+     * </p>
+     * 
      * @return query cache
      */
     Cache<String, Object> getCache();
