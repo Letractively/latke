@@ -196,6 +196,10 @@ public final class PageCaches {
                                           + pageCacheKey + "] failed", e);
             }
         }
+        
+        if (null != ret) {
+            KEYS.add(pageCacheKey);
+        }
 
         return ret;
     }
