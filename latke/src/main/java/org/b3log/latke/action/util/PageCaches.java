@@ -16,8 +16,8 @@
 package org.b3log.latke.action.util;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,7 +58,8 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Oct 21, 2011
+ * @version 1.0.1.3, Nov 22, 2011
+ * @since 0.3.1
  */
 public final class PageCaches {
 
@@ -75,6 +76,10 @@ public final class PageCaches {
      */
     private static final Cache<String, Object> CACHE;
     /**
+     * Cached page keys.
+     */
+    private static final Set<String> KEYS = new HashSet<String>();
+    /**
      * Maximum count of cacheable pages.
      */
     private static final int MAX_CACHEABLE_PAGE_CNT = 10240;
@@ -82,10 +87,6 @@ public final class PageCaches {
      * Key of page cache name.
      */
     public static final String PAGE_CACHE_NAME = "page";
-    /**
-     * Key of cached page keys.
-     */
-    public static final String KEYS = "keys";
     /**
      * Key of cached time.
      */
@@ -109,13 +110,6 @@ public final class PageCaches {
             CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
             LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
                        MAX_CACHEABLE_PAGE_CNT);
-        }
-
-        @SuppressWarnings("unchecked")
-        Set<String> keys = (Set<String>) CACHE.get(KEYS);
-        if (null == keys) {
-            keys = new LinkedHashSet<String>();
-            CACHE.put(KEYS, keys);
         }
     }
 
@@ -150,13 +144,7 @@ public final class PageCaches {
      */
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
-        final Set<String> keys = (Set<String>) CACHE.get(KEYS);
-
-        if (null == keys) { // Occurs sometime on GAE
-            removeAll();
-        }
-
-        return Collections.unmodifiableSet(keys);
+        return Collections.unmodifiableSet(KEYS);
     }
 
     /**
@@ -232,13 +220,6 @@ public final class PageCaches {
     public static void put(final String pageKey, final JSONObject cachedValue) {
         check(cachedValue);
 
-        @SuppressWarnings("unchecked")
-        Set<String> keys = (Set<String>) CACHE.get(KEYS);
-        if (null == keys) {
-            keys = new LinkedHashSet<String>();
-            CACHE.put(KEYS, keys);
-        }
-
         try {
             final String content = cachedValue.getString(
                     AbstractCacheablePageAction.CACHED_CONTENT);
@@ -252,14 +233,12 @@ public final class PageCaches {
                                       + "]", e);
         }
 
-        keys.add(pageKey);
-
-        CACHE.put(KEYS, keys);
         CACHE.put(pageKey, cachedValue);
+        KEYS.add(pageKey);
 
         LOGGER.log(Level.FINEST, "Put a page[key={0}, value={1} into page cache,"
                                  + " cached keys[{2}]",
-                   new Object[]{pageKey, cachedValue, keys});
+                   new Object[]{pageKey, cachedValue, KEYS});
     }
 
     /**
@@ -268,18 +247,17 @@ public final class PageCaches {
      */
     public static void syncKeys() {
         @SuppressWarnings("unchecked")
-        final Set<String> keys = (Set<String>) CACHE.get(KEYS);
-        final Iterator<String> iterator = keys.iterator();
+        final Iterator<String> iterator = KEYS.iterator();
         while (iterator.hasNext()) {
             final String key = iterator.next();
 
             if (!CACHE.contains(key)) {
                 iterator.remove();
-                keys.remove(key);
+                KEYS.remove(key);
+
+                LOGGER.finer("Removed a page cache key");
             }
         }
-
-        CACHE.put(KEYS, keys);
     }
 
     /**
@@ -310,7 +288,7 @@ public final class PageCaches {
         CACHE.removeAll();
         Templates.CACHE.clear();
 
-        CACHE.put(KEYS, new LinkedHashSet<String>());
+        KEYS.clear();
         LOGGER.info("Removed all cache....");
     }
 
