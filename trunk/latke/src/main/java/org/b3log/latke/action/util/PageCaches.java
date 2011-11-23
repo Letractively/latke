@@ -259,7 +259,7 @@ public final class PageCaches {
                 iterator.remove();
                 KEYS.remove(key);
 
-                LOGGER.finer("Removed a page cache key");
+                LOGGER.finer("Removed a page cache key[" + key + "]");
             }
         }
     }
