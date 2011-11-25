@@ -22,6 +22,7 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -43,7 +44,6 @@ import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
 import org.b3log.latke.util.Serializer;
-import org.b3log.latke.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -51,7 +51,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, Nov 2, 2011
+ * @version 1.0.1.6, Nov 25, 2011
  */
 public final class SleepycatRepository implements Repository {
 
@@ -440,14 +440,12 @@ public final class SleepycatRepository implements Repository {
     public JSONObject get(final Query query) throws RepositoryException {
         JSONObject ret = null;
 
-        if (Strings.isEmptyOrNull(query.getCacheKey())) { // No application defined cache key
-            // Uses the hashcode as query results cache key
-            query.setCacheKey(String.valueOf(query.hashCode()));
-        }
+        final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
+                                + getName();
+        LOGGER.log(Level.FINEST, "Executing a query[cacheKey={0}, query=[{1}]]",
+                   new Object[]{cacheKey, query.toString()});
 
         if (cacheEnabled) {
-            final String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
-                                    + getName();
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
                 LOGGER.log(Level.FINER,
@@ -462,17 +460,9 @@ public final class SleepycatRepository implements Repository {
         final int pageSize = query.getPageSize();
         final Map<String, SortDirection> sorts = query.getSorts();
 
-        if (org.b3log.latke.repository.Query.DEFAULT_CUR_PAGE_NUM
-            != currentPageNum
-            && org.b3log.latke.repository.Query.DEFAULT_PAGE_SIZE != pageSize) {
-            ret = get(currentPageNum, pageSize, sorts, filters);
-        } else {
-            ret = get(1, Integer.MAX_VALUE, sorts, filters);
-        }
+        ret = get(currentPageNum, pageSize, sorts, filters);
 
         if (cacheEnabled) {
-            String cacheKey = CACHE_KEY_PREFIX + query.getCacheKey() + "_"
-                              + getName();
             CACHE.put(cacheKey, ret);
             LOGGER.log(Level.FINER,
                        "Added query result[cacheKey={0}] in repository cache[{1}]",
@@ -485,10 +475,8 @@ public final class SleepycatRepository implements Repository {
                 // Checks if the single result is an entity
                 if (jsonObject.has(Keys.OBJECT_ID)) {
                     // If it is an entity, put its key into cache
-                    cacheKey = CACHE_KEY_PREFIX
-                               + jsonObject.optString(Keys.OBJECT_ID);
-
-                    CACHE.put(cacheKey, jsonObject);
+                    CACHE.put(CACHE_KEY_PREFIX
+                              + jsonObject.optString(Keys.OBJECT_ID), jsonObject);
                     LOGGER.log(Level.FINER,
                                "Added an object[cacheKey={0}] in repository cache[{1}]",
                                new Object[]{cacheKey, getName()});
@@ -628,7 +616,8 @@ public final class SleepycatRepository implements Repository {
 
             final Object property = jsonObject.opt(key);
 
-            if (value.getClass() != property.getClass()) {
+            if (value.getClass() != property.getClass()
+                && !(value instanceof Collection) /* Excludes IN operation */) {
                 throw new RepositoryException(
                         "The specified filter[key=" + key
                         + ", valueClass=" + value.getClass()
@@ -670,6 +659,12 @@ public final class SleepycatRepository implements Repository {
                     break;
                 case LESS_THAN_OR_EQUAL:
                     if (lessOrEqual(property, value)) {
+                        filteredCnt--;
+                    }
+
+                    break;
+                case IN:
+                    if (in(property, (Collection) value)) {
                         filteredCnt--;
                     }
 
@@ -824,6 +819,20 @@ public final class SleepycatRepository implements Repository {
     }
 
     /**
+     * Returns {@code true} if the specified object in the specified collection.
+     * 
+     * @param object the specified object
+     * @param collection the specified collection
+     * @return {@code true} if the specified object in the specified collection,
+     * returns {@code false} otherwise
+     * @throws RepositoryException repository exception
+     */
+    private boolean in(final Object object, final Collection<?> collection)
+            throws RepositoryException {
+        return collection.contains(object);
+    }
+
+    /**
      * Sorts the specified list with the specified sort rule.
      * 
      * @param list the specified list
@@ -850,5 +859,11 @@ public final class SleepycatRepository implements Repository {
                 return 0;
             }
         });
+    }
+
+    @Override
+    public Map<String, JSONObject> get(final Iterable<String> ids) throws
+            RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
