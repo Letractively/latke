@@ -144,6 +144,7 @@ public final class PageCaches {
      */
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
+        syncKeys();
         return Collections.unmodifiableSet(KEYS);
     }
 
@@ -280,7 +281,7 @@ public final class PageCaches {
      * Synchronizes the {@linkplain #KEYS keys} collection and cached page
      * objects.
      */
-    public static void syncKeys() {
+    private static void syncKeys() {
         @SuppressWarnings("unchecked")
         final Iterator<String> iterator = KEYS.iterator();
         while (iterator.hasNext()) {
