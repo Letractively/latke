@@ -289,7 +289,6 @@ public final class PageCaches {
 
             if (!CACHE.contains(key)) {
                 iterator.remove();
-                KEYS.remove(key);
 
                 LOGGER.log(Level.FINER, "Removed a page cache key[{0}] for sync",
                            key);
