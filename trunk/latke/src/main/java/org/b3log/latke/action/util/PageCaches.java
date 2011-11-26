@@ -17,6 +17,7 @@ package org.b3log.latke.action.util;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Nov 22, 2011
+ * @version 1.0.1.4, Nov 26, 2011
  * @since 0.3.1
  */
 public final class PageCaches {
@@ -195,7 +196,7 @@ public final class PageCaches {
                                           + pageCacheKey + "] failed", e);
             }
         }
-        
+
         if (null != ret) {
             KEYS.add(pageCacheKey);
         }
@@ -273,6 +274,26 @@ public final class PageCaches {
 
         KEYS.clear();
         LOGGER.info("Removed all cache....");
+    }
+
+    /**
+     * Synchronizes the {@linkplain #KEYS keys} collection and cached page
+     * objects.
+     */
+    public static void syncKeys() {
+        @SuppressWarnings("unchecked")
+        final Iterator<String> iterator = KEYS.iterator();
+        while (iterator.hasNext()) {
+            final String key = iterator.next();
+
+            if (!CACHE.contains(key)) {
+                iterator.remove();
+                KEYS.remove(key);
+
+                LOGGER.log(Level.FINER, "Removed a page cache key[{0}] for sync",
+                           key);
+            }
+        }
     }
 
     /**
