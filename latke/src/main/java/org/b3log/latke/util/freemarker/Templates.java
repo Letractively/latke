@@ -22,7 +22,6 @@ import org.b3log.latke.servlet.AbstractServletListener;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +65,7 @@ public final class Templates {
     static {
         loadTemplates();
     }
-    
+
     /**
      * Gets the template configuration.
      * 
@@ -183,13 +182,7 @@ public final class Templates {
                            "Got template[templateName={0}] from cache",
                            templateName);
             } else {
-                try {
-                    ret = configuration.getTemplate(templateName);
-                } catch (final FileNotFoundException e) {
-                    loadTemplates();
-
-                    ret = configuration.getTemplate(templateName);
-                }
+                ret = configuration.getTemplate(templateName);
 
                 if (cacheEnabled) {
                     CACHE.put(templateName, ret);
