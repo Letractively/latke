@@ -22,6 +22,7 @@ import org.b3log.latke.servlet.AbstractServletListener;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public final class Templates {
     /**
      * FreeMarker {@linkplain  Configuration configuration}.
      */
-    public static final Configuration CONFIGURATION;
+    private static Configuration configuration;
     /**
      * Template cache.
      * <p>
@@ -63,16 +64,36 @@ public final class Templates {
     public static final String TEMPLATE_CACHE_NAME = "template";
 
     static {
-        CONFIGURATION = new Configuration();
-        CONFIGURATION.setDefaultEncoding("UTF-8");
+        loadTemplates();
+    }
+    
+    /**
+     * Gets the template configuration.
+     * 
+     * @return template configuration
+     */
+    public static Configuration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Loads templates.
+     */
+    private static void loadTemplates() {
+        LOGGER.log(Level.INFO, "Loading templates....");
+
+        configuration = new Configuration();
+        configuration.setDefaultEncoding("UTF-8");
         try {
             final String webRootPath = AbstractServletListener.getWebRoot();
             LOGGER.log(Level.FINEST, "Web root[path={0}]", webRootPath);
 
-            CONFIGURATION.setDirectoryForTemplateLoading(new File(webRootPath));
+            configuration.setDirectoryForTemplateLoading(new File(webRootPath));
         } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
+
+        LOGGER.log(Level.INFO, "Loaded templates");
     }
 
     /**
@@ -162,7 +183,13 @@ public final class Templates {
                            "Got template[templateName={0}] from cache",
                            templateName);
             } else {
-                ret = CONFIGURATION.getTemplate(templateName);
+                try {
+                    ret = configuration.getTemplate(templateName);
+                } catch (final FileNotFoundException e) {
+                    loadTemplates();
+
+                    ret = configuration.getTemplate(templateName);
+                }
 
                 if (cacheEnabled) {
                     CACHE.put(templateName, ret);
