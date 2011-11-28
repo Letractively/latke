@@ -303,7 +303,7 @@ public final class PageCaches {
      */
     private static void syncKeys() {
         @SuppressWarnings("unchecked")
-        final Iterator<String> iterator = KEYS.iterator();
+        final Iterator<String> iterator = KEYS.iterator();        
         while (iterator.hasNext()) {
             final String key = iterator.next();
 
