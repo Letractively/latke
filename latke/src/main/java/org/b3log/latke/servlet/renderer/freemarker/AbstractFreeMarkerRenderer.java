@@ -63,7 +63,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
      */
     protected Template getTemplate(final String templateName)
             throws IOException {
-        return Templates.CONFIGURATION.getTemplate(templateName);
+        return Templates.getConfiguration().getTemplate(templateName);
     }
 
     /**

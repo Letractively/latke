@@ -40,7 +40,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Oct 22, 2011
+ * @version 1.0.1.1, Nov 28, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -143,8 +143,11 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * Dispatches with the specified context.
      * 
      * @param context the specified specified context
+     * @throws ServletException servlet exception
+     * @throws IOException io exception 
      */
-    public static void dispatch(final HTTPRequestContext context) {
+    public static void dispatch(final HTTPRequestContext context)
+            throws ServletException, IOException {
         final HttpServletRequest request = context.getRequest();
 
         final Integer sc =
@@ -166,8 +169,26 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]",
                    new Object[]{requestURI, method});
 
-        final Object processorMethodRet =
-                RequestProcessors.invoke(requestURI, method, context);
+        try {
+            final Object processorMethodRet =
+                    RequestProcessors.invoke(requestURI, method, context);
+        } catch (final Exception e) {
+            final String exceptionTypeName = e.getClass().getName();
+            LOGGER.log(Level.FINER,
+                       "Occured error while processing request[requestURI={0}, method={1}, exceptionTypeName={2}, errorMsg={3}]",
+                       new Object[]{requestURI, method, exceptionTypeName, e.
+                        getMessage()});
+            if ("com.google.apphosting.api.ApiProxy$OverQuotaException".equals(
+                    exceptionTypeName)) {
+                PageCaches.removeAll();
+
+                context.getResponse().sendError(
+                        HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                return;
+            }
+
+            throw new ServletException(e);
+        }
         // XXX: processor method ret?
 
         AbstractHTTPResponseRenderer renderer = context.getRenderer();
