@@ -28,7 +28,7 @@ import org.b3log.latke.cache.local.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.7, Nov 17, 2011
+ * @version 1.0.2.8, Nov 29, 2011
  */
 public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         implements Serializable {
@@ -54,7 +54,7 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         putCountInc();
 
         synchronized (this) {
-            if (getCachedCount() > getMaxCount()) {
+            if (getCachedCount() >= getMaxCount()) {
                 collect();
             }
 
