@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, Nov 28, 2011
+ * @version 1.0.1.6, Nov 29, 2011
  * @since 0.3.1
  */
 public final class PageCaches {
@@ -200,6 +200,7 @@ public final class PageCaches {
 
         JSONObject ret = (JSONObject) LOCAL_CACHE.get(pageCacheKey);
         if (null == ret) {
+            LOGGER.log(Level.FINEST, "Local cache miss[key={0}]", pageCacheKey);
             ret = (JSONObject) CACHE.get(pageCacheKey);
         }
 
@@ -303,7 +304,7 @@ public final class PageCaches {
      */
     private static void syncKeys() {
         @SuppressWarnings("unchecked")
-        final Iterator<String> iterator = KEYS.iterator();        
+        final Iterator<String> iterator = KEYS.iterator();
         while (iterator.hasNext()) {
             final String key = iterator.next();
 
