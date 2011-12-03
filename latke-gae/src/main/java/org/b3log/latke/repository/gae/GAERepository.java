@@ -32,6 +32,7 @@ import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.api.utils.SystemProperty.Environment.Value;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -92,6 +93,7 @@ import org.json.JSONObject;
  * @version 1.0.4.5, Nov 17, 2011
  * @see GAETransaction
  */
+@SuppressWarnings("unchecked")
 public final class GAERepository implements Repository {
 
     /**
@@ -126,7 +128,7 @@ public final class GAERepository implements Repository {
      * &lt;oId, JSONObject&gt;
      * </p>
      */
-    public static final Cache<String, Object> CACHE;
+    public static final Cache<String, Serializable> CACHE;
     /**
      * Repository cache name.
      */
@@ -174,7 +176,8 @@ public final class GAERepository implements Repository {
                     + "using GAE repository.");
         }
 
-        CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
+                REPOSITORY_CACHE_NAME);
 
         // TODO: Intializes the runtime mode at application startup
         LOGGER.info("Initializing runtime mode....");
@@ -517,7 +520,7 @@ public final class GAERepository implements Repository {
 
             if (cacheEnabled) {
                 final String cacheKey = CACHE_KEY_PREFIX + ids.hashCode();
-                CACHE.putAsync(cacheKey, ret);
+                CACHE.putAsync(cacheKey, (Serializable) ret);
                 LOGGER.log(Level.FINER,
                            "Added objects[cacheKey={0}] in repository cache[{1}]",
                            new Object[]{cacheKey, getName()});
@@ -1028,7 +1031,7 @@ public final class GAERepository implements Repository {
     }
 
     @Override
-    public Cache<String, Object> getCache() {
+    public Cache<String, Serializable> getCache() {
         return CACHE;
     }
 
