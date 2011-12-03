@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, Nov 2, 2011
+ * @version 1.0.1.7, Dec 3, 2011
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -252,12 +252,11 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
         try {
-            final PrintWriter writer = response.getWriter();
             if (response.isCommitted()) { // response has been sent redirect
-                writer.flush();
-
                 return;
             }
+            
+            final PrintWriter writer = response.getWriter();
 
             final StringWriter stringWriter = new StringWriter();
             template.setOutputEncoding("UTF-8");
