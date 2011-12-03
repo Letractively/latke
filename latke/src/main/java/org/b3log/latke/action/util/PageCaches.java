@@ -104,7 +104,7 @@ public final class PageCaches {
     /**
      * Maximum count of the most recent used cache.
      */
-    private static final int MOST_RECENT_USED_MAX_COUNT = 50;
+    private static final int MOST_RECENT_USED_MAX_COUNT = Integer.MAX_VALUE;
     /**
      * LRU cache.
      */
