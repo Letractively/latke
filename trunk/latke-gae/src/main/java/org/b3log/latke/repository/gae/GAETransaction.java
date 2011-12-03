@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Nov 17, 2011
+ * @version 1.0.0.8, Dec 3, 2011
  * @see GAERepository
  */
 public final class GAETransaction implements Transaction {
@@ -211,6 +211,7 @@ public final class GAETransaction implements Transaction {
                 GAERepository.TX.set(null);
 
                 if (clearQueryCache) {
+                    GAERepository.CACHE.removeAll();
                     PageCaches.removeAll();
                 }
 
