@@ -15,7 +15,8 @@
  */
 package org.b3log.latke.cache;
 
-import java.lang.reflect.Constructor;
+import freemarker.log.Logger;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,28 +27,32 @@ import org.b3log.latke.RuntimeEnv;
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Jun 11, 2011
+ * @version 1.0.0.3, Dec 3, 2011
  */
 public final class CacheFactory {
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(CacheFactory.class.
+            getName());
+    /**
      * Caches.
      */
-    private static final Map<String, Cache<String, Object>> CACHES =
+    private static final Map<String, Cache<String, ?>> CACHES =
             Collections.synchronizedMap(
-            new HashMap<String, Cache<String, Object>>());
+            new HashMap<String, Cache<String, ?>>());
 
     /**
      * Gets a cache specified by the given cache name.
      *
-     * @param <T> the type of cached objects
      * @param cacheName the given cache name
      * @return a cache specified by the given cache name
      */
     @SuppressWarnings("unchecked")
-    public static synchronized <T> Cache<String, T> getCache(
+    public static synchronized Cache<String, ? extends Serializable> getCache(
             final String cacheName) {
-        Cache<String, Object> ret = CACHES.get(cacheName);
+        Cache<String, ?> ret = CACHES.get(cacheName);
 
         try {
             if (null == ret) {
@@ -55,19 +60,22 @@ public final class CacheFactory {
 
                 switch (runtimeEnv) {
                     case LOCAL:
-                        final Class<Cache<String, Object>> localLruCache =
-                                (Class<Cache<String, Object>>) Class.forName(
+                    // XXX: GAE also use LOCAL cache....
+                    case GAE:
+                        LOGGER.info("Constructs a [LOCAL] cache");
+                        final Class<Cache<String, ?>> localLruCache =
+                                (Class<Cache<String, ?>>) Class.forName(
                                 "org.b3log.latke.cache.local.memory.LruMemoryCache");
                         ret = localLruCache.newInstance();
                         break;
-                    case GAE:
-                        final Class<Cache<String, Object>> gaeMemcache =
-                                (Class<Cache<String, Object>>) Class.forName(
-                                "org.b3log.latke.cache.gae.Memcache");
-                        final Constructor<Cache<String, Object>> constructor =
-                                gaeMemcache.getConstructor(String.class);
-                        ret = constructor.newInstance(cacheName);
-                        break;
+//                    case GAE:
+//                        final Class<Cache<String, Object>> gaeMemcache =
+//                                (Class<Cache<String, Object>>) Class.forName(
+//                                "org.b3log.latke.cache.gae.Memcache");
+//                        final Constructor<Cache<String, Object>> constructor =
+//                                gaeMemcache.getConstructor(String.class);
+//                        ret = constructor.newInstance(cacheName);
+//                        break;
                     default:
                         throw new RuntimeException(
                                 "Latke runs in the hell.... "
@@ -80,7 +88,7 @@ public final class CacheFactory {
             throw new RuntimeException("Can not get cache: " + e.getMessage(), e);
         }
 
-        return (Cache<String, T>) ret;
+        return (Cache<String, Serializable>) ret;
     }
 
     /**

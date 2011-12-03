@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.action.util;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,6 +62,7 @@ import org.json.JSONObject;
  * @version 1.0.1.6, Nov 29, 2011
  * @since 0.3.1
  */
+@SuppressWarnings("unchecked")
 public final class PageCaches {
 
     /**
@@ -74,7 +76,7 @@ public final class PageCaches {
      * &lt;requestURI?queryString, page info&gt;
      * </p>
      */
-    private static final Cache<String, Object> CACHE;
+    private static final Cache<String, Serializable> CACHE;
     /**
      * Cached page keys.
      */
@@ -106,14 +108,15 @@ public final class PageCaches {
     /**
      * LRU cache.
      */
-    private static final LruMemoryCache<String, Object> LOCAL_CACHE =
-            new LruMemoryCache<String, Object>();
+    private static final LruMemoryCache<String, Serializable> LOCAL_CACHE =
+            new LruMemoryCache<String, Serializable>();
 
     /**
      * Initializes the cache.
      */
     static {
-        CACHE = CacheFactory.getCache(PAGE_CACHE_NAME);
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
+                PAGE_CACHE_NAME);
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
         if (runtimeEnv.equals(RuntimeEnv.LOCAL)) {
             CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
@@ -164,7 +167,7 @@ public final class PageCaches {
      *
      * @return cache
      */
-    public static Cache<String, Object> getCache() {
+    public static Cache<String, ?> getCache() {
         return CACHE;
     }
 
