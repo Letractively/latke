@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.cache;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -27,9 +28,9 @@ import java.util.Collection;
  * @param <K> the key of an object
  * @param <V> the type of objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.8, Nov 17, 2011
+ * @version 1.0.2.9, Dec 3, 2011
  */
-public interface Cache<K, V> {
+public interface Cache<K extends Serializable, V extends Serializable> {
 
     /**
      * Checks whether an object specified by the given key is in cache.

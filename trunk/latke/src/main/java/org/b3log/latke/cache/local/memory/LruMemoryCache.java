@@ -15,9 +15,13 @@
  */
 package org.b3log.latke.cache.local.memory;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.cache.local.util.DoubleLinkedMap;
+import org.b3log.latke.util.Serializer;
 
 /**
  * This is a Least Recently Used (LRU) pure memory cache. This cache use a 
@@ -28,11 +32,17 @@ import org.b3log.latke.cache.local.util.DoubleLinkedMap;
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.8, Nov 29, 2011
+ * @version 1.0.2.9, Dec 3, 2011
  */
-public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
+public final class LruMemoryCache<K extends Serializable, V extends Serializable>
+        extends AbstractMemoryCache<K, V>
         implements Serializable {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(LruMemoryCache.class.getName());
     /**
      * Default serial version uid.
      */
@@ -40,13 +50,13 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     /**
      * a thread-safe double linked list is used to hold all objects.
      */
-    private DoubleLinkedMap<K, V> map;
+    private DoubleLinkedMap<K, byte[]> map;
 
     /**
      * Constructs a {@code LruMemoryCache} object.
      */
     public LruMemoryCache() {
-        map = new DoubleLinkedMap<K, V>();
+        map = new DoubleLinkedMap<K, byte[]>();
     }
 
     @Override
@@ -58,7 +68,12 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
                 collect();
             }
 
-            map.addFirst(key, value);
+            try {
+                map.addFirst(key, Serializer.serialize((Serializable) value));
+            } catch (final IOException e) {
+                LOGGER.log(Level.SEVERE, "Cache error[key={0}]", key);
+                return;
+            }
 
             cachedCountInc();
         }
@@ -77,21 +92,27 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         put(key, value);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
+    @SuppressWarnings("unchecked")
     public synchronized V get(final K key) {
-        final V v = map.get(key);
+        final byte[] bytes = map.get(key);
 
-        if (v != null) {
+
+        if (bytes != null) {
             hitCountInc();
             map.makeFirst(key);
-        } else {
-            missCountInc();
+
+            try {
+                return (V) Serializer.deserialize(bytes);
+            } catch (final Exception e) {
+                LOGGER.log(Level.SEVERE, "Gets cached object failed[key=" + key
+                                         + "]", e);
+                return null;
+            }
         }
 
-        return v;
+        missCountInc();
+        return null;
     }
 
     /**
@@ -138,7 +159,22 @@ public final class LruMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public long inc(final K key, final long delta) {
-        throw new UnsupportedOperationException();
+        V ret = get(key);
+
+        if (null == ret || !(ret instanceof Long)) {
+            final Long v = delta;
+            ret = (V) v;
+            put(key, ret);
+        }
+
+        if (ret instanceof Long) {
+            final Long v = (Long) ret + delta;
+            ret = (V) v;
+            put(key, ret);
+        }
+
+        return (Long) ret;
     }
 }

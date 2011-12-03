@@ -46,7 +46,7 @@ import org.b3log.latke.util.Strings;
  * Plugin loader.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Oct 30, 2011
+ * @version 1.0.1.0, Dec 3, 2011
  */
 public final class PluginManager {
 
@@ -72,8 +72,10 @@ public final class PluginManager {
      * &lt;"hosting view name", plugins&gt;
      * </p>
      */
-    private final Cache<String, Map<String, Set<AbstractPlugin>>> pluginCache =
-            CacheFactory.getCache(PLUGIN_CACHE_NAME);
+    @SuppressWarnings("unchecked")
+    private final Cache<String, HashMap<String, HashSet<AbstractPlugin>>> pluginCache =
+            (Cache<String, HashMap<String, HashSet<AbstractPlugin>>>) CacheFactory.
+            getCache(PLUGIN_CACHE_NAME);
     /**
      * Plugin root directory.
      */
@@ -92,7 +94,7 @@ public final class PluginManager {
     public void update(final AbstractPlugin plugin) {
         final String viewName = plugin.getViewName();
 
-        Map<String, Set<AbstractPlugin>> holder =
+        HashMap<String, HashSet<AbstractPlugin>> holder =
                 pluginCache.get(PLUGIN_CACHE_NAME);
         if (null == holder) {
             LOGGER.info("Plugin cache miss, reload");
@@ -104,7 +106,7 @@ public final class PluginManager {
             }
         }
 
-        final Set<AbstractPlugin> set = holder.get(viewName);
+        final HashSet<AbstractPlugin> set = holder.get(viewName);
 
         // Refresh
         set.remove(plugin);
@@ -119,7 +121,7 @@ public final class PluginManager {
      * @return all plugins, returns an empty list if not found
      */
     public List<AbstractPlugin> getPlugins() {
-        Map<String, Set<AbstractPlugin>> holder =
+        Map<String, HashSet<AbstractPlugin>> holder =
                 pluginCache.get(PLUGIN_CACHE_NAME);
         if (null == holder) {
             LOGGER.info("Plugin cache miss, reload");
@@ -133,7 +135,7 @@ public final class PluginManager {
 
         final List<AbstractPlugin> ret = new ArrayList<AbstractPlugin>();
 
-        for (final Map.Entry<String, Set<AbstractPlugin>> entry : holder.
+        for (final Map.Entry<String, HashSet<AbstractPlugin>> entry : holder.
                 entrySet()) {
             ret.addAll(entry.getValue());
         }
@@ -148,7 +150,7 @@ public final class PluginManager {
      * @return a plugin, returns an empty list if not found
      */
     public Set<AbstractPlugin> getPlugins(final String viewName) {
-        Map<String, Set<AbstractPlugin>> holder =
+        Map<String, HashSet<AbstractPlugin>> holder =
                 pluginCache.get(PLUGIN_CACHE_NAME);
         if (null == holder) {
             LOGGER.info("Plugin cache miss, reload");
@@ -178,11 +180,11 @@ public final class PluginManager {
 
         final File[] pluginsDirs = new File(PLUGIN_ROOT).listFiles();
         final List<AbstractPlugin> plugins = new ArrayList<AbstractPlugin>();
-        Map<String, Set<AbstractPlugin>> holder =
+        HashMap<String, HashSet<AbstractPlugin>> holder =
                 pluginCache.get(PLUGIN_CACHE_NAME);
         if (null == holder) {
             LOGGER.info("Creates an empty plugin holder");
-            holder = new HashMap<String, Set<AbstractPlugin>>();
+            holder = new HashMap<String, HashSet<AbstractPlugin>>();
         }
 
         for (int i = 0; i < pluginsDirs.length; i++) {
@@ -229,7 +231,7 @@ public final class PluginManager {
      * @throws Exception exception
      */
     private AbstractPlugin load(final File pluginDir,
-                                final Map<String, Set<AbstractPlugin>> holder)
+                                final HashMap<String, HashSet<AbstractPlugin>> holder)
             throws Exception {
         final Properties props = new Properties();
         props.load(new FileInputStream(pluginDir.getPath() + File.separator
@@ -277,10 +279,10 @@ public final class PluginManager {
      * @param holder the specified holder 
      */
     private void register(final AbstractPlugin plugin,
-                          final Map<String, Set<AbstractPlugin>> holder) {
+                          final HashMap<String, HashSet<AbstractPlugin>> holder) {
         final String viewName = plugin.getViewName();
 
-        Set<AbstractPlugin> set = holder.get(viewName);
+        HashSet<AbstractPlugin> set = holder.get(viewName);
         if (null == set) {
             set = new HashSet<AbstractPlugin>();
             holder.put(viewName, set);

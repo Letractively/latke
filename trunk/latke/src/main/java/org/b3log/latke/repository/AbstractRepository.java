@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Nov 17, 2011
+ * @version 1.0.0.4, Dec 3, 2011
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -152,7 +153,7 @@ public abstract class AbstractRepository implements Repository {
     }
 
     @Override
-    public Cache<String, Object> getCache() {
+    public Cache<String, Serializable> getCache() {
         return repository.getCache();
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import org.b3log.latke.cache.Cache;
@@ -24,7 +25,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.9, Nov 8, 2011
+ * @version 1.0.2.0, Dec 3, 2011
  */
 public interface Repository {
 
@@ -199,5 +200,5 @@ public interface Repository {
      * 
      * @return query cache
      */
-    Cache<String, Object> getCache();
+    Cache<String, Serializable> getCache();
 }
