@@ -23,7 +23,7 @@ import org.b3log.latke.repository.Transaction;
  * simply.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Sep 29, 2011
+ * @version 1.0.0.2, Dec 3, 2011
  */
 public class SleepycatTransaction implements Transaction {
 
@@ -68,6 +68,7 @@ public class SleepycatTransaction implements Transaction {
         SleepycatRepository.TX.set(null);
 
         if (clearQueryCache) {
+            SleepycatRepository.CACHE.removeAll();
             PageCaches.removeAll();
         }
     }
