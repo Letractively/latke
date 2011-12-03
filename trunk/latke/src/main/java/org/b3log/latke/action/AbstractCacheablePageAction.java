@@ -252,11 +252,19 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
         try {
+            PrintWriter writer = null;
+            try {
+                writer = response.getWriter();
+            } catch (final Exception e) {
+                writer = new PrintWriter(response.getOutputStream());
+            }
+
             if (response.isCommitted()) { // response has been sent redirect
+                writer.flush();
+                writer.close();
+
                 return;
             }
-            
-            final PrintWriter writer = response.getWriter();
 
             final StringWriter stringWriter = new StringWriter();
             template.setOutputEncoding("UTF-8");

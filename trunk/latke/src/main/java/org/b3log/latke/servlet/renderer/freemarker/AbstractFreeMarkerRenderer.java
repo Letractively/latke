@@ -87,7 +87,22 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     @Override
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+        } catch (final Exception e) {
+            try {
+                writer = new PrintWriter(response.getOutputStream());
+            } catch (final IOException ex) {
+                LOGGER.log(Level.SEVERE, "Can not get response writer", ex);
+                return;
+            }
+        }
+
         if (response.isCommitted()) { // response has been sent redirect
+            writer.flush();
+            writer.close();
+
             return;
         }
 
@@ -177,11 +192,20 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
                             final HttpServletRequest request,
                             final HttpServletResponse response)
             throws Exception {
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+        } catch (final Exception e) {
+            writer = new PrintWriter(response.getOutputStream());
+        }
+
         if (response.isCommitted()) { // response has been sent redirect
+            writer.flush();
+            writer.close();
+
             return;
         }
 
-        final PrintWriter writer = response.getWriter();
         writer.write(html);
         writer.flush();
         writer.close();
