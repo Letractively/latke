@@ -418,11 +418,19 @@ public abstract class AbstractAction extends HttpServlet {
                                    final HttpServletResponse response,
                                    final JSONObject responseJSONObject)
             throws ServletException, IOException, JSONException {
-        if (response.isCommitted()) { // response has been sent redirect
-            return;
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+        } catch (final Exception e) {
+            writer = new PrintWriter(response.getOutputStream());
         }
 
-        final PrintWriter writer = response.getWriter();
+        if (response.isCommitted()) { // response has been sent redirect
+            writer.flush();
+            writer.close();
+
+            return;
+        }
 
         try {
             writer.println(responseJSONObject);
