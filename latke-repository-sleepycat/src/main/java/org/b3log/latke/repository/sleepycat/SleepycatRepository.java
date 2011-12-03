@@ -21,6 +21,7 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +54,7 @@ import org.json.JSONObject;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.1.6, Nov 25, 2011
  */
+@SuppressWarnings("unchecked")
 public final class SleepycatRepository implements Repository {
 
     /**
@@ -82,7 +84,7 @@ public final class SleepycatRepository implements Repository {
      * &lt;oId, JSONObject&gt;
      * </p>
      */
-    public static final Cache<String, Object> CACHE;
+    public static final Cache<String, Serializable> CACHE;
     /**
      * The current transaction.
      */
@@ -90,7 +92,8 @@ public final class SleepycatRepository implements Repository {
             new InheritableThreadLocal<SleepycatTransaction>();
 
     static {
-        CACHE = CacheFactory.getCache(REPOSITORY_CACHE_NAME);
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
+                REPOSITORY_CACHE_NAME);
     }
 
     /**
@@ -696,7 +699,7 @@ public final class SleepycatRepository implements Repository {
     }
 
     @Override
-    public Cache<String, Object> getCache() {
+    public Cache<String, Serializable> getCache() {
         return CACHE;
     }
 
