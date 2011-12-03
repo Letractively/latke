@@ -36,7 +36,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * renderer.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Oct 22, 2011
+ * @version 1.0.0.7, Dec 3, 2011
  */
 public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRenderer {
 
@@ -88,12 +88,6 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
         if (response.isCommitted()) { // response has been sent redirect
-            try {
-                response.getWriter().flush();
-            } catch (final IOException e) {
-                LOGGER.log(Level.SEVERE, "Renders page failed", e);
-            }
-
             return;
         }
 
@@ -183,13 +177,11 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
                             final HttpServletRequest request,
                             final HttpServletResponse response)
             throws Exception {
-        final PrintWriter writer = response.getWriter();
         if (response.isCommitted()) { // response has been sent redirect
-            writer.flush();
-
             return;
         }
 
+        final PrintWriter writer = response.getWriter();
         writer.write(html);
         writer.flush();
         writer.close();
