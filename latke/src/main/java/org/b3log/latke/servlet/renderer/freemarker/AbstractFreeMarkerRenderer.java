@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.Keys;
 import org.b3log.latke.servlet.HTTPRequestContext;
 import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import org.b3log.latke.util.freemarker.Templates;
@@ -55,15 +56,18 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     private Map<String, Object> dataModel = new HashMap<String, Object>();
 
     /**
-     * Gets a template with the specified template name.
+     * Gets a template with the specified template directory name and template 
+     * name.
      * 
+     * @param templateDirName the specified template directory name
      * @param templateName the specified template name
      * @return template
      * @throws IOException io exception
      */
-    protected Template getTemplate(final String templateName)
+    protected Template getTemplate(final String templateDirName,
+                                   final String templateName)
             throws IOException {
-        return Templates.getConfiguration().getTemplate(templateName);
+        return Templates.getTemplate(templateDirName, templateName);
     }
 
     /**
@@ -87,10 +91,10 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     @Override
     public void render(final HTTPRequestContext context) {
         final HttpServletResponse response = context.getResponse();
-        
+
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
-        
+
         PrintWriter writer = null;
         try {
             writer = response.getWriter();
@@ -111,7 +115,10 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
         }
 
         try {
-            final Template template = getTemplate(templateName);
+            final HttpServletRequest request = context.getRequest();
+            final Template template = getTemplate(
+                    (String) request.getAttribute(Keys.TEMAPLTE_DIR_NAME),
+                    templateName);
 
             beforeRender(context);
 
