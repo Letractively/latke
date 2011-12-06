@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.b3log.latke.Keys;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventException;
 import org.b3log.latke.event.EventManager;
@@ -42,13 +43,12 @@ import org.json.JSONObject;
  * Abstract action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.1, Nov 14, 2011
+ * @version 1.0.4.2, Dec 6, 2011
  * @see #doFreeMarkerAction(HttpServletRequest, HttpServletResponse)
  * @see #doAjaxAction(org.json.JSONObject,
  *                     HttpServletRequest, HttpServletResponse)
  * @see Templates
  */
-// TODO: include request processing
 public abstract class AbstractAction extends HttpServlet {
 
     /**
@@ -322,7 +322,9 @@ public abstract class AbstractAction extends HttpServlet {
     protected Template getTemplate(final HttpServletRequest request) {
         final String templateName = getTemplateName(request.getRequestURI());
 
-        return Templates.getTemplate(templateName);
+        return Templates.getTemplate(
+                (String) request.getAttribute(Keys.TEMAPLTE_DIR_NAME),
+                templateName);
     }
 
     /**

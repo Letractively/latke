@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
  * This class defines framework(non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.9, Oct 28, 2011
+ * @version 1.0.2.0, Dec 6, 2011
  */
 public final class Keys {
 
@@ -75,6 +75,10 @@ public final class Keys {
      * Key of page cache key.
      */
     public static final String PAGE_CACHE_KEY = "pageCacheKey";
+    /**
+     * Key of template directory name.
+     */
+    public static final String TEMAPLTE_DIR_NAME = "templateDirName";
 
     /**
      * Private constructor.

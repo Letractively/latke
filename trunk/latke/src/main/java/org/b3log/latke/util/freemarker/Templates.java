@@ -18,7 +18,6 @@ package org.b3log.latke.util.freemarker;
 import freemarker.core.TemplateElement;
 import java.util.Enumeration;
 import java.util.logging.Level;
-import org.b3log.latke.servlet.AbstractServletListener;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import java.io.File;
@@ -32,7 +31,7 @@ import java.util.logging.Logger;
  * engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Nov 28, 2011
+ * @version 1.0.1.1, Dec 6, 2011
  */
 public final class Templates {
 
@@ -42,13 +41,18 @@ public final class Templates {
     private static final Logger LOGGER =
             Logger.getLogger(Templates.class.getName());
     /**
-     * FreeMarker {@linkplain  Configuration configuration}.
+     * Main template {@link Configuration configuration}.
      */
-    private static Configuration configuration;
+    public static final Configuration MAIN_CFG = new Configuration();
+    /**
+     * Mobile template {@link Configuration configuration}.
+     */
+    public static final Configuration MOBILE_CFG = new Configuration();
     /**
      * Template cache.
+     * 
      * <p>
-     * &lt;templateName, template&gt;
+     * &lt;templateDirName/templateName, template&gt;
      * </p>
      */
     public static final Map<String, Template> CACHE =
@@ -57,42 +61,11 @@ public final class Templates {
      * Enables the {@linkplain #CACHE cache}? Default to {@code true}.
      */
     private static boolean cacheEnabled = true;
-    /**
-     * Template cache name.
-     */
-    public static final String TEMPLATE_CACHE_NAME = "template";
-
-    static {
-        loadTemplates();
-    }
 
     /**
-     * Gets the template configuration.
-     * 
-     * @return template configuration
+     * Private default constructor.
      */
-    public static Configuration getConfiguration() {
-        return configuration;
-    }
-
-    /**
-     * Loads templates.
-     */
-    private static void loadTemplates() {
-        LOGGER.log(Level.INFO, "Loading templates....");
-
-        configuration = new Configuration();
-        configuration.setDefaultEncoding("UTF-8");
-        try {
-            final String webRootPath = AbstractServletListener.getWebRoot();
-            LOGGER.log(Level.FINEST, "Web root[path={0}]", webRootPath);
-
-            configuration.setDirectoryForTemplateLoading(new File(webRootPath));
-        } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        LOGGER.log(Level.INFO, "Loaded templates");
+    private Templates() {
     }
 
     /**
@@ -147,12 +120,6 @@ public final class Templates {
     }
 
     /**
-     * Private default constructor.
-     */
-    private Templates() {
-    }
-
-    /**
      * Enables or disables the template cache.
      *
      * @param enabled {@code true} to enable, disable otherwise
@@ -163,33 +130,48 @@ public final class Templates {
 
     /**
      * Gets a FreeMarker {@linkplain Template template} with the specified
-     * template name.
+     * template directory name and template name.
      *
+     * @param templateDirName the specified template directory name
      * @param templateName the specified template name
-     * @return a template
+     * @return a template, returns {@code null} if not found
      */
-    public static Template getTemplate(final String templateName) {
+    public static Template getTemplate(final String templateDirName,
+                                       final String templateName) {
         Template ret = null;
 
         try {
+            try {
+                if ("mobile".equals(templateDirName)) {
+                    return MOBILE_CFG.getTemplate(templateName);
+                }
+            } catch (final Exception e) {
+                LOGGER.log(Level.SEVERE,
+                           "Can not load mobile template[templateDirName={0}, templateName={1}]",
+                           new Object[]{templateDirName,
+                                        templateName});
+                return null;
+            }
 
             if (cacheEnabled) {
-                ret = CACHE.get(templateName);
+                ret = CACHE.get(templateDirName + File.separator + templateName);
             }
 
             if (null != ret) {
                 LOGGER.log(Level.FINEST,
                            "Got template[templateName={0}] from cache",
                            templateName);
-            } else {
-                ret = configuration.getTemplate(templateName);
+                return ret;
+            }
 
-                if (cacheEnabled) {
-                    CACHE.put(templateName, ret);
-                    LOGGER.log(Level.FINEST,
-                               "Got template[templateName={0}], then put it into template cache",
-                               templateName);
-                }
+            ret = MAIN_CFG.getTemplate(templateName);
+
+            if (cacheEnabled) {
+                CACHE.put(templateDirName + File.separator + templateName,
+                          ret);
+                LOGGER.log(Level.FINEST,
+                           "Got template[templateName={0}], then put it into template cache",
+                           templateName);
             }
 
             return ret;
