@@ -192,7 +192,10 @@ public final class PageCaches {
      *     "cachedContent: "",
      *     "cachedOid": "",
      *     "cachedTitle": "",
-     *     "cachedType": ""
+     *     "cachedType": "",
+     *     "cachedBytesLength": int,
+     *     "cachedHitCount": long,
+     *     "cachedTime": long
      * }
      * </pre>
      */
