@@ -60,6 +60,7 @@ import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
+import org.b3log.latke.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,7 +91,7 @@ import org.json.JSONObject;
  * </ul>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.5, Nov 17, 2011
+ * @version 1.0.4.6, Dec 12, 2011
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -300,6 +301,10 @@ public final class GAERepository implements Repository {
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
+        if (Strings.isEmptyOrNull(id)) {
+            return;
+        }
+
         final GAETransaction currentTransaction = TX.get();
 
         if (null == currentTransaction) {
@@ -411,6 +416,10 @@ public final class GAERepository implements Repository {
      */
     @Override
     public void remove(final String id) throws RepositoryException {
+        if (Strings.isEmptyOrNull(id)) {
+            return;
+        }
+
         final GAETransaction currentTransaction = TX.get();
 
         if (null == currentTransaction) {
@@ -454,6 +463,10 @@ public final class GAERepository implements Repository {
     @Override
     public JSONObject get(final String id) throws RepositoryException {
         LOGGER.log(Level.FINEST, "Getting with id[{0}]", id);
+
+        if (Strings.isEmptyOrNull(id)) {
+            return null;
+        }
 
         final GAETransaction currentTransaction = TX.get();
         if (null == currentTransaction) {
