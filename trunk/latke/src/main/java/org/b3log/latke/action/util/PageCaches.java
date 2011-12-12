@@ -184,7 +184,7 @@ public final class PageCaches {
      * </p>
      *
      * @param pageCacheKey the specified page cache key
-     * @param needUpdateStat the specified update stat. flat, {@code true} 
+     * @param needUpdateStat the specified update stat. flag, {@code true} 
      * indicates that need to update the statistic, {@code false} otherwise
      * @return for example,
      * <pre>
