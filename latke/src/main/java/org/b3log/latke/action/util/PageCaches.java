@@ -27,7 +27,6 @@ import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.action.AbstractCacheablePageAction;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
-import org.b3log.latke.cache.local.memory.LruMemoryCache;
 import org.b3log.latke.util.Serializer;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
@@ -59,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, Nov 29, 2011
+ * @version 1.0.1.7, Dec 12, 2011
  * @since 0.3.1
  */
 @SuppressWarnings("unchecked")
@@ -105,11 +104,6 @@ public final class PageCaches {
      * Maximum count of the most recent used cache.
      */
     private static final int MOST_RECENT_USED_MAX_COUNT = Integer.MAX_VALUE;
-    /**
-     * LRU cache.
-     */
-    private static final LruMemoryCache<String, Serializable> LOCAL_CACHE =
-            new LruMemoryCache<String, Serializable>();
 
     /**
      * Initializes the cache.
@@ -123,8 +117,6 @@ public final class PageCaches {
             LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
                        MAX_CACHEABLE_PAGE_CNT);
         }
-
-        LOCAL_CACHE.setMaxCount(MOST_RECENT_USED_MAX_COUNT);
     }
 
     /**
@@ -201,14 +193,7 @@ public final class PageCaches {
      */
     public static JSONObject get(final String pageCacheKey,
                                  final boolean needUpdateStat) {
-        LOGGER.log(Level.FINEST, "Local cache[cachedCount={0}]",
-                   LOCAL_CACHE.getCachedCount());
-
-        JSONObject ret = (JSONObject) LOCAL_CACHE.get(pageCacheKey);
-        if (null == ret) {
-            LOGGER.log(Level.FINEST, "Local cache miss[key={0}]", pageCacheKey);
-            ret = (JSONObject) CACHE.get(pageCacheKey);
-        }
+        JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
 
         if (needUpdateStat && null != ret) {
             try {
@@ -264,7 +249,6 @@ public final class PageCaches {
 
         CACHE.put(pageKey, cachedValue);
         KEYS.add(pageKey);
-        LOCAL_CACHE.put(pageKey, cachedValue);
 
         LOGGER.log(Level.FINEST, "Put a page[key={0}] into page cache,"
                                  + " cached keys[size={1}, {2}]",
@@ -285,7 +269,6 @@ public final class PageCaches {
         CACHE.remove(pageKey);
         KEYS.remove(pageKey);
         Templates.CACHE.clear();
-        LOCAL_CACHE.remove(pageKey);
     }
 
     /**
@@ -300,7 +283,6 @@ public final class PageCaches {
         Templates.CACHE.clear();
 
         KEYS.clear();
-        LOCAL_CACHE.removeAll();
         LOGGER.info("Removed all cache....");
     }
 
