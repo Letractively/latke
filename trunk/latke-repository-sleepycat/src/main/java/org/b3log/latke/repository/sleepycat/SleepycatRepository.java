@@ -45,6 +45,7 @@ import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Ids;
 import org.b3log.latke.util.Serializer;
+import org.b3log.latke.util.Strings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -52,7 +53,7 @@ import org.json.JSONObject;
  * Sleepycat repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, Nov 25, 2011
+ * @version 1.0.1.7, Dec 12, 2011
  */
 @SuppressWarnings("unchecked")
 public final class SleepycatRepository implements Repository {
@@ -213,6 +214,10 @@ public final class SleepycatRepository implements Repository {
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
+        if (Strings.isEmptyOrNull(id)) {
+            return;
+        }
+
         final SleepycatTransaction currentTransaction = TX.get();
 
         if (null == currentTransaction) {
@@ -253,6 +258,10 @@ public final class SleepycatRepository implements Repository {
      */
     @Override
     public void remove(final String id) throws RepositoryException {
+        if (Strings.isEmptyOrNull(id)) {
+            return;
+        }
+
         final SleepycatTransaction currentTransaction = TX.get();
 
         if (null == currentTransaction) {
@@ -315,6 +324,10 @@ public final class SleepycatRepository implements Repository {
      */
     @Override
     public JSONObject get(final String id) throws RepositoryException {
+        if (Strings.isEmptyOrNull(id)) {
+            return null;
+        }
+
         final SleepycatTransaction currentTransaction = TX.get();
         Cursor cursor = null;
         if (null == currentTransaction) {
