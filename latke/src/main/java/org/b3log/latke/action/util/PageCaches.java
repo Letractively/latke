@@ -193,7 +193,7 @@ public final class PageCaches {
      */
     public static JSONObject get(final String pageCacheKey,
                                  final boolean needUpdateStat) {
-        JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
+        final JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
 
         if (needUpdateStat && null != ret) {
             try {
