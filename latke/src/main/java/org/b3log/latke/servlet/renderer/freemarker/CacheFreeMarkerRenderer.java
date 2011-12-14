@@ -22,6 +22,7 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.action.util.PageCaches;
 import org.b3log.latke.servlet.HTTPRequestContext;
+import org.b3log.latke.util.Strings;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 
@@ -29,10 +30,12 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * <a href="http://freemarker.org">FreeMarker</a> HTTP response 
  * renderer.
  * 
- * <p>This renderer will put page content into cache.<p>
+ * <p>
+ * This renderer will put page content into cache.
+ * <p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Oct 2, 2011
+ * @version 1.0.0.3, Dec 14, 2011
  */
 public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
 
@@ -60,6 +63,9 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
         if (Latkes.isPageCacheEnabled()) {
             final String cachedPageKey =
                     (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            if (Strings.isEmptyOrNull(cachedPageKey)) {
+                return;
+            }
 
             LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
                        cachedPageKey);
