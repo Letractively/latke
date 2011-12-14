@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.mail;
 
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 
@@ -25,6 +26,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Aug 8, 2011
  */
 public final class MailServiceFactory {
+    
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER 
+            = Logger.getLogger(MailServiceFactory.class.getName());
 
     /**
      * Mail service.
@@ -32,6 +39,8 @@ public final class MailServiceFactory {
     private static final MailService MAIL_SERVICE;
 
     static {
+        LOGGER.info("Constructing Mail Service....");
+        
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -58,6 +67,8 @@ public final class MailServiceFactory {
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize Mail Service!", e);
         }
+        
+        LOGGER.info("Constructed Mail Service");
     }
 
     /**

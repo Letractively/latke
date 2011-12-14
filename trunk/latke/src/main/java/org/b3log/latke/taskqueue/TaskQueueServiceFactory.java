@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.taskqueue;
 
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 
@@ -25,6 +26,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Nov 15, 2011
  */
 public final class TaskQueueServiceFactory {
+    
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = 
+            Logger.getLogger(TaskQueueServiceFactory.class.getName());
 
     /**
      * Task queue service.
@@ -32,6 +39,8 @@ public final class TaskQueueServiceFactory {
     private static final TaskQueueService TASK_QUEUE_SERVICE;
 
     static {
+        LOGGER.info("Constructing Task Query Service....");
+        
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -59,6 +68,8 @@ public final class TaskQueueServiceFactory {
             throw new RuntimeException("Can not initialize Task Queue Service!",
                                        e);
         }
+        
+        LOGGER.info("Constructed Task Query Service");
     }
 
     /**

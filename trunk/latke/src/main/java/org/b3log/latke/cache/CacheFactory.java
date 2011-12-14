@@ -15,11 +15,12 @@
  */
 package org.b3log.latke.cache;
 
-import freemarker.log.Logger;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 
@@ -52,6 +53,8 @@ public final class CacheFactory {
     @SuppressWarnings("unchecked")
     public static synchronized Cache<String, ? extends Serializable> getCache(
             final String cacheName) {
+        LOGGER.log(Level.INFO, "Constructing Cache[name={0}]....", cacheName);
+
         Cache<String, ?> ret = CACHES.get(cacheName);
 
         try {
@@ -87,6 +90,8 @@ public final class CacheFactory {
         } catch (final Exception e) {
             throw new RuntimeException("Can not get cache: " + e.getMessage(), e);
         }
+
+        LOGGER.log(Level.INFO, "Constructed Cache[name={0}]", cacheName);
 
         return (Cache<String, Serializable>) ret;
     }
