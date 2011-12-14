@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.user;
 
+import freemarker.log.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 
@@ -28,6 +29,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.1, Sep 27, 2011
  */
 public final class UserServiceFactory {
+    
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER 
+            = Logger.getLogger(UserServiceFactory.class.getName());
 
     /**
      * User service.
@@ -35,6 +42,8 @@ public final class UserServiceFactory {
     private static final UserService USER_SERVICE;
 
     static {
+        LOGGER.info("Constructing User Service....");
+        
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -63,6 +72,8 @@ public final class UserServiceFactory {
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize User Service!", e);
         }
+        
+        LOGGER.info("Constructed User Service");
     }
 
     /**

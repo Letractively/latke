@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.image;
 
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 
@@ -25,6 +26,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Aug 8, 2011
  */
 public final class ImageServiceFactory {
+    
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(ImageServiceFactory.class.getName());
 
     /**
      * Image service.
@@ -32,6 +39,8 @@ public final class ImageServiceFactory {
     private static final ImageService IMAGE_SERVICE;
 
     static {
+        LOGGER.info("Constructing Image Service....");
+        
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -59,6 +68,8 @@ public final class ImageServiceFactory {
             throw new RuntimeException("Can not initialize Image Service!",
                                        e);
         }
+        
+        LOGGER.info("Constructed Image Service");
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.urlfetch;
 
+import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 
@@ -25,6 +26,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Aug 8, 2011
  */
 public final class URLFetchServiceFactory {
+    
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER 
+            = Logger.getLogger(URLFetchServiceFactory.class.getName());
 
     /**
      * URL fetch service.
@@ -32,6 +39,8 @@ public final class URLFetchServiceFactory {
     private static final URLFetchService URL_FETCH_SERVICE;
 
     static {
+        LOGGER.info("Constructing URL Fetch Service....");
+        
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -58,6 +67,8 @@ public final class URLFetchServiceFactory {
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize URL Fetch Service!", e);
         }
+        
+        LOGGER.info("Constructed URL Fetch Service");
     }
 
     /**
