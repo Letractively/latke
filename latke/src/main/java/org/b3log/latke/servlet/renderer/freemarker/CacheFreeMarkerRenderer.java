@@ -50,6 +50,13 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
             throws Exception {
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * <p>
+     * Processes page caching.
+     * </p>
+     */
     @Override
     protected void afterRender(final HTTPRequestContext context)
             throws Exception {
