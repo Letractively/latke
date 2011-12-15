@@ -102,7 +102,8 @@ public final class Repositories {
                                   final JSONObject jsonObject,
                                   final String... ignoredKeys) {
         if (null == jsonObject) {
-            LOGGER.warning("Null to persist");
+            LOGGER.log(Level.WARNING, "Null to persist to repository[{0}]",
+                       repositoryName);
 
             return true;
         }
@@ -132,7 +133,8 @@ public final class Repositories {
 
             if (!nameSet.contains(key)) {
                 LOGGER.log(Level.WARNING,
-                           "A json object to persist does not contain key[{0}]",
+                           "A json object to persist to repository[name="
+                           + repositoryName + "] does not contain a key[{0}]",
                            key);
 
                 return true;
@@ -145,7 +147,8 @@ public final class Repositories {
 
             if (!keySet.contains(name)) {
                 LOGGER.log(Level.WARNING,
-                           "A json object to persist contains an redundant key[{0}]",
+                           "A json object to persist to repository[name="
+                           + repositoryName + "] contains an redundant key[{0}]",
                            name);
 
                 return true;
