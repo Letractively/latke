@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * String utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Oct 13, 2011
+ * @version 1.0.1.2, Dec 15, 2011
  */
 public final class Strings {
 
@@ -179,5 +179,37 @@ public final class Strings {
         }
 
         return ret;
+    }
+
+    /**
+     * Determines whether the specified strings contains the specified string.
+     * 
+     * @param string the specified string
+     * @param strings the specified strings
+     * @return {@code true} if the specified strings contains the specified 
+     * string, returns {@code false} otherwise
+     */
+    public static boolean contains(final String string, final String[] strings) {
+        if (null == strings) {
+            return false;
+        }
+
+        for (int i = 0; i < strings.length; i++) {
+            final String str = strings[i];
+
+            if (null == str && null == string) {
+                return true;
+            }
+
+            if (null == string || null == str) {
+                continue;
+            }
+
+            if (string.equals(str)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
