@@ -15,10 +15,15 @@
  */
 package org.b3log.latke.repository;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.IOUtils;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.cache.Cache;
@@ -40,9 +45,32 @@ import org.json.JSONObject;
 public abstract class AbstractRepository implements Repository {
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER =
+            Logger.getLogger(AbstractRepository.class.getName());
+    /**
      * Repository.
      */
     private Repository repository;
+    /**
+     * Repositories description (repository.json).
+     */
+    private static JSONObject repositoriesDescription;
+
+    static {
+        loadRepositoryDescription();
+    }
+
+    /**
+     * Gets repositories description.
+     * 
+     * @return repositories description, returns {@code null} if not found or
+     * parse the description failed
+     */
+    public static JSONObject getRepositriesDescription() {
+        return repositoriesDescription;
+    }
 
     /**
      * Constructs a repository with the specified name.
@@ -155,5 +183,41 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public Cache<String, Serializable> getCache() {
         return repository.getCache();
+    }
+
+    /**
+     * Loads repository description.
+     */
+    private static void loadRepositoryDescription() {
+        LOGGER.log(Level.INFO, "Loading repository description....");
+
+        final InputStream inputStream =
+                AbstractRepository.class.getClassLoader().getResourceAsStream(
+                "repository.json");
+        if (null == inputStream) {
+            LOGGER.log(Level.INFO,
+                       "Not found repository description[repository.json] file under classpath");
+            return;
+        }
+
+        LOGGER.log(Level.INFO, "Parsing repository description....");
+
+        try {
+            final String description = IOUtils.toString(inputStream);
+
+            LOGGER.log(Level.CONFIG, "\n" + description);
+
+            repositoriesDescription = new JSONObject(description);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "Parses repository description failed",
+                       e);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (final IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
