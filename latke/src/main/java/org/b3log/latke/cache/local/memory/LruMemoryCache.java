@@ -25,9 +25,9 @@ import org.b3log.latke.util.Serializer;
 
 /**
  * This is a Least Recently Used (LRU) pure memory cache. This cache use a 
- * thread-safe <code>DoubleLinkedList</code> to hold the objects, and 
+ * thread-safe {@link DoubleLinkedMap} to hold the objects, and 
  * the least recently used objects will be moved to the end of the list and to
- * remove by invoking {@linkplain #collect()} method. 
+ * remove by invoking {@link #collect()} method. 
  *
  * @param <K> the type of the key of the object
  * @param <V> the type of the objects
@@ -96,7 +96,6 @@ public final class LruMemoryCache<K extends Serializable, V extends Serializable
     @SuppressWarnings("unchecked")
     public synchronized V get(final K key) {
         final byte[] bytes = map.get(key);
-
 
         if (bytes != null) {
             hitCountInc();
