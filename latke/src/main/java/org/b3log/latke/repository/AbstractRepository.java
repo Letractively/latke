@@ -15,15 +15,12 @@
  */
 package org.b3log.latke.repository;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.io.IOUtils;
+import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.cache.Cache;
@@ -40,7 +37,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Dec 3, 2011
+ * @version 1.0.0.5, Dec 15, 2011
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -53,24 +50,6 @@ public abstract class AbstractRepository implements Repository {
      * Repository.
      */
     private Repository repository;
-    /**
-     * Repositories description (repository.json).
-     */
-    private static JSONObject repositoriesDescription;
-
-    static {
-        loadRepositoryDescription();
-    }
-
-    /**
-     * Gets repositories description.
-     * 
-     * @return repositories description, returns {@code null} if not found or
-     * parse the description failed
-     */
-    public static JSONObject getRepositriesDescription() {
-        return repositoriesDescription;
-    }
 
     /**
      * Constructs a repository with the specified name.
@@ -114,12 +93,22 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
+        if (Repositories.invalid(getName(), jsonObject, Keys.OBJECT_ID)) {
+            throw new RepositoryException("The json object [" + jsonObject
+                                          + "] to persist is invalid");
+        }
+
         return repository.add(jsonObject);
     }
 
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
+        if (Repositories.invalid(getName(), jsonObject, Keys.OBJECT_ID)) {
+            throw new RepositoryException("The json object [" + jsonObject
+                                          + "] to persist is invalid");
+        }
+
         repository.update(id, jsonObject);
     }
 
@@ -186,38 +175,11 @@ public abstract class AbstractRepository implements Repository {
     }
 
     /**
-     * Loads repository description.
+     * Gets the underlying repository.
+     * 
+     * @return underlying repository
      */
-    private static void loadRepositoryDescription() {
-        LOGGER.log(Level.INFO, "Loading repository description....");
-
-        final InputStream inputStream =
-                AbstractRepository.class.getClassLoader().getResourceAsStream(
-                "repository.json");
-        if (null == inputStream) {
-            LOGGER.log(Level.INFO,
-                       "Not found repository description[repository.json] file under classpath");
-            return;
-        }
-
-        LOGGER.log(Level.INFO, "Parsing repository description....");
-
-        try {
-            final String description = IOUtils.toString(inputStream);
-
-            LOGGER.log(Level.CONFIG, "\n" + description);
-
-            repositoriesDescription = new JSONObject(description);
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, "Parses repository description failed",
-                       e);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (final IOException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
+    protected Repository getUnderlyingRepository() {
+        return repository;
     }
 }

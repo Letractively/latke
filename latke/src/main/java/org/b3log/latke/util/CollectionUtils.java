@@ -17,6 +17,7 @@ package org.b3log.latke.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ import org.json.JSONException;
  * Collection utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Oct 12, 2010
+ * @version 1.0.0.6, Dec 15, 2011
  */
 public final class CollectionUtils {
 
@@ -95,6 +96,10 @@ public final class CollectionUtils {
      * @return a hash set
      */
     public static <T> Set<T> arrayToSet(final T[] array) {
+        if (null == array) {
+            return Collections.emptySet();
+        }
+
         final Set<T> ret = new HashSet<T>();
         for (int i = 0; i < array.length; i++) {
             final T object = array[i];
@@ -116,6 +121,11 @@ public final class CollectionUtils {
     public static <T> JSONArray listToJSONArray(final List<T> list)
             throws JSONException {
         final JSONArray ret = new JSONArray();
+        
+        if (null == list) {
+            return ret;
+        }
+
         for (final T object : list) {
             ret.put(object);
         }
@@ -130,16 +140,40 @@ public final class CollectionUtils {
      * @param <T> the type of elements maintained by the specified json array
      * @param jsonArray the specified json array
      * @return an {@link ArrayList array list}
-     * @throws JSONException json exception
      */
     @SuppressWarnings("unchecked")
-    public static <T> List<T> jsonArrayToList(final JSONArray jsonArray)
-            throws JSONException {
-        final int newLength = jsonArray.length();
+    public static <T> Set<T> jsonArrayToSet(final JSONArray jsonArray) {
+        if (null == jsonArray) {
+            return Collections.emptySet();
+        }
+
+        final Set<T> ret = new HashSet<T>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            ret.add((T) jsonArray.opt(i));
+        }
+
+        return ret;
+    }
+
+    /**
+     * Converts the specified {@link JSONArray JSON array} to a
+     * {@link List list}.
+     *
+     * @param <T> the type of elements maintained by the specified json array
+     * @param jsonArray the specified json array
+     * @return an {@link ArrayList array list}
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> jsonArrayToList(final JSONArray jsonArray) {
+        if (null == jsonArray) {
+            return Collections.emptyList();
+        }
+
         final List<T> ret = new ArrayList<T>();
 
-        for (int i = 0; i < newLength; i++) {
-            ret.add((T) jsonArray.get(i));
+        for (int i = 0; i < jsonArray.length(); i++) {
+            ret.add((T) jsonArray.opt(i));
         }
 
         return ret;
@@ -158,6 +192,10 @@ public final class CollectionUtils {
     public static <T> T[] jsonArrayToArray(final JSONArray jsonArray,
                                            final Class<? extends T[]> newType)
             throws JSONException {
+        if (null == jsonArray) {
+            return (T[]) new Object[]{};
+        }
+
         final int newLength = jsonArray.length();
         final Object[] original = new Object[newLength];
         for (int i = 0; i < newLength; i++) {
