@@ -54,6 +54,19 @@
             <organizationUrl>http://www.b3log.org</organizationUrl>
             <timezone>+8</timezone>
         </developer>
+        
+        <developer>
+            <id>wmainlove@gmail.com</id>
+            <name>Liceng Yao</name>
+            <email>wmainlove@gmail.com</email>
+            <url>http://love.b3log.org</url>
+            <roles>
+                <role>Committer</role>
+            </roles>
+            <organization>B3log</organization>
+            <organizationUrl>http://www.b3log.org</organizationUrl>
+            <timezone>+8</timezone>
+        </developer>
     </developers>
 
     <issueManagement>
