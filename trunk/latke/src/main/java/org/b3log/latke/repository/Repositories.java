@@ -80,9 +80,9 @@ public final class Repositories {
      * repository name.
      * 
      * <p>
-     * A valid json object to persist must match keys definitions in the 
-     * repository description (repository.json) with the json object names 
-     * itself.
+     * A valid json object to persist must match keys definitions 
+     * (including type and length if had) in the repository 
+     * description (repository.json) with the json object names itself.
      * </p>
      * 
      * <p>
@@ -98,6 +98,7 @@ public final class Repositories {
      * @see Repository#add(org.json.JSONObject) 
      * @see Repository#update(java.lang.String, org.json.JSONObject) 
      */
+    // TODO: Type and length validation
     public static boolean invalid(final String repositoryName,
                                   final JSONObject jsonObject,
                                   final String... ignoredKeys) {
