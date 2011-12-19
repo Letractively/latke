@@ -98,7 +98,7 @@ public final class Repositories {
      * @see Repository#add(org.json.JSONObject) 
      * @see Repository#update(java.lang.String, org.json.JSONObject) 
      */
-    // TODO: Type and length validation
+    // TODO: 88250, type and length validation
     public static boolean invalid(final String repositoryName,
                                   final JSONObject jsonObject,
                                   final String... ignoredKeys) {
