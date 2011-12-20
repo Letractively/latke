@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * Repository utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Dec 15, 2011
+ * @version 1.0.0.2, Dec 20, 2011
  */
 public final class Repositories {
 
@@ -98,7 +98,6 @@ public final class Repositories {
      * @see Repository#add(org.json.JSONObject) 
      * @see Repository#update(java.lang.String, org.json.JSONObject) 
      */
-    // TODO: 88250, type and length validation
     public static boolean invalid(final String repositoryName,
                                   final JSONObject jsonObject,
                                   final String... ignoredKeys) {
@@ -117,10 +116,15 @@ public final class Repositories {
 
         final JSONArray keysDescription =
                 getRepositoryKeysDescription(repositoryName);
+        if (null == keysDescription) { // Not found repository description
+            // Skips the checks
+            return false;
+        }
 
         final Set<String> keySet = new HashSet<String>();
 
-        // Checks whether the specified json object has all keys defined
+        // Checks whether the specified json object has all keys defined,
+        // and whether the type of its value is appropriate
         for (int i = 0; i < keysDescription.length(); i++) {
             final JSONObject keyDescription = keysDescription.optJSONObject(i);
 
@@ -140,6 +144,19 @@ public final class Repositories {
 
                 return true;
             }
+
+            final String type = keyDescription.optString("type");
+            final Object value = jsonObject.opt(key);
+
+            if (("String".equals(type) && !(value instanceof String))
+                || ("int".equals(type) && !(value instanceof Integer))
+                || ("long".equals(type) && !(value instanceof Long))
+                || ("double".equals(type) && !(value instanceof Double))
+                || ("boolean".equals(type) && !(value instanceof Boolean))) {
+                return true;
+            }
+
+            // TODO: 88250, length validation
         }
 
         // Checks whether the specified json object has an redundant (undefined) key
