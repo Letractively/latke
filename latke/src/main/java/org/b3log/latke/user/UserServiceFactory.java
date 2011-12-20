@@ -22,20 +22,16 @@ import org.b3log.latke.RuntimeEnv;
 /**
  * User service factory.
  * 
- * <p>Always prepare {@link org.b3log.latke.user.local.LocalUserService local version} 
- * of user service,regardless of {@link RuntimeEnv runtime environment}.</p>
- *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Sep 27, 2011
+ * @version 1.0.0.2, Dec 20, 2011
  */
 public final class UserServiceFactory {
-    
+
     /**
      * Logger.
      */
-    private static final Logger LOGGER 
-            = Logger.getLogger(UserServiceFactory.class.getName());
-
+    private static final Logger LOGGER =
+            Logger.getLogger(UserServiceFactory.class.getName());
     /**
      * User service.
      */
@@ -43,27 +39,26 @@ public final class UserServiceFactory {
 
     static {
         LOGGER.info("Constructing User Service....");
-        
-        final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
+
+        final String runtime = Latkes.getProperties().getProperty("userService");
+        final RuntimeEnv runtimeEnv = RuntimeEnv.valueOf(runtime);
 
         try {
             Class<UserService> serviceClass = null;
 
             switch (runtimeEnv) {
-                case GAE: // GAE & Local use the same implementation
+                case GAE:
+                    serviceClass =
+                            (Class<UserService>) Class.forName(
+                            "org.b3log.latke.user.gae.GAEUserService");
+                    USER_SERVICE = serviceClass.newInstance();
+                    break;
                 case LOCAL:
                     serviceClass =
                             (Class<UserService>) Class.forName(
                             "org.b3log.latke.user.local.LocalUserService");
                     USER_SERVICE = serviceClass.newInstance();
                     break;
-                /*
-                serviceClass =
-                (Class<UserService>) Class.forName(
-                "org.b3log.latke.user.gae.GAEUserService");
-                USER_SERVICE = serviceClass.newInstance();
-                break;
-                 */
                 default:
                     throw new RuntimeException(
                             "Latke runs in the hell.... "
@@ -72,7 +67,7 @@ public final class UserServiceFactory {
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize User Service!", e);
         }
-        
+
         LOGGER.info("Constructed User Service");
     }
 
