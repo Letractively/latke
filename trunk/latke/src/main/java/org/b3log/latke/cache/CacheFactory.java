@@ -16,6 +16,7 @@
 package org.b3log.latke.cache;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ import org.b3log.latke.RuntimeEnv;
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Dec 3, 2011
+ * @version 1.0.0.4, Dec 20, 2011
  */
 public final class CacheFactory {
 
@@ -59,26 +60,25 @@ public final class CacheFactory {
 
         try {
             if (null == ret) {
-                final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
+                final String runtime =
+                        Latkes.getProperties().getProperty("cache");
+                final RuntimeEnv runtimeEnv = RuntimeEnv.valueOf(runtime);
 
                 switch (runtimeEnv) {
                     case LOCAL:
-                    // XXX: GAE also use LOCAL cache....
-                    case GAE:
-                        LOGGER.info("Constructs a [LOCAL] cache");
                         final Class<Cache<String, ?>> localLruCache =
                                 (Class<Cache<String, ?>>) Class.forName(
                                 "org.b3log.latke.cache.local.memory.LruMemoryCache");
                         ret = localLruCache.newInstance();
                         break;
-//                    case GAE:
-//                        final Class<Cache<String, Object>> gaeMemcache =
-//                                (Class<Cache<String, Object>>) Class.forName(
-//                                "org.b3log.latke.cache.gae.Memcache");
-//                        final Constructor<Cache<String, Object>> constructor =
-//                                gaeMemcache.getConstructor(String.class);
-//                        ret = constructor.newInstance(cacheName);
-//                        break;
+                    case GAE:
+                        final Class<Cache<String, ?>> gaeMemcache =
+                                (Class<Cache<String, ?>>) Class.forName(
+                                "org.b3log.latke.cache.gae.Memcache");
+                        final Constructor<Cache<String, ?>> constructor =
+                                gaeMemcache.getConstructor(String.class);
+                        ret = constructor.newInstance(cacheName);
+                        break;
                     default:
                         throw new RuntimeException(
                                 "Latke runs in the hell.... "

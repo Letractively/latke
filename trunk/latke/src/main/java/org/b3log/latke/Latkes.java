@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Nov 18, 2011
+ * @version 1.0.0.7, Dec 20, 2011
  */
 public final class Latkes {
 
@@ -64,13 +64,17 @@ public final class Latkes {
      */
     private static boolean pageCacheEnabled;
     /**
-     * Local properties.
+     * Local properties (local.properties).
      */
     private static final Properties LOCAL_PROPS = new Properties();
     /**
      * Static resource version.
      */
     private static String staticResourceVersion;
+    /**
+     * Latke configurations (latke.properties).
+     */
+    private static final Properties LATKE_PROPS = new Properties();
 
     static {
         try {
@@ -82,6 +86,16 @@ public final class Latkes {
         } catch (final Exception e) {
             LOGGER.log(Level.CONFIG, "Not found local configuration file");
             // Ignores....
+        }
+
+        try {
+            final InputStream resourceAsStream =
+                    Latkes.class.getResourceAsStream("/latke.properties");
+            if (null != resourceAsStream) {
+                LATKE_PROPS.load(resourceAsStream);
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.CONFIG, "Not found Latke configuration file");
         }
     }
 
@@ -124,6 +138,15 @@ public final class Latkes {
         }
 
         return staticResourceVersion;
+    }
+
+    /**
+     * Gets Latke configurations.
+     * 
+     * @return Latke properties
+     */
+    public static Properties getProperties() {
+        return LATKE_PROPS;
     }
 
     /**
