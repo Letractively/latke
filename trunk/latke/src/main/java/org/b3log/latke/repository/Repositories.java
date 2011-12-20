@@ -153,6 +153,12 @@ public final class Repositories {
                 || ("long".equals(type) && !(value instanceof Long))
                 || ("double".equals(type) && !(value instanceof Double))
                 || ("boolean".equals(type) && !(value instanceof Boolean))) {
+                LOGGER.log(Level.WARNING,
+                           "A json object to persist to repository[name={0}] has "
+                           + "a wrong value type[definedType={1}, currentType={2}] with key["
+                           + key + "]",
+                           new Object[]{repositoryName, type, value.getClass()});
+
                 return true;
             }
 
