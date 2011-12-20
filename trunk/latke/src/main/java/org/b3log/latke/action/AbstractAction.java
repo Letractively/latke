@@ -15,29 +15,32 @@
  */
 package org.b3log.latke.action;
 
-import java.util.logging.Level;
-import org.b3log.latke.util.Strings;
-import org.b3log.latke.util.freemarker.Templates;
-import freemarker.template.Template;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.b3log.latke.Keys;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventException;
 import org.b3log.latke.event.EventManager;
 import org.b3log.latke.model.Plugin;
 import org.b3log.latke.plugin.ViewLoadEventData;
+import org.b3log.latke.util.Strings;
+import org.b3log.latke.util.freemarker.Templates;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import freemarker.template.Template;
 
 /**
  * Abstract action.
@@ -187,6 +190,7 @@ public abstract class AbstractAction extends HttpServlet {
     protected String getTemplateName(final String requestURI) {
         int idx = requestURI.lastIndexOf("/");
 
+        
         String ret = requestURI.substring(idx + 1, requestURI.length());
         if (Strings.isEmptyOrNull(ret)) { //   -> "index.ftl"
             ret = "index.ftl";
