@@ -147,7 +147,7 @@ public final class Repositories {
 
             final String type = keyDescription.optString("type");
             final Object value = jsonObject.opt(key);
-
+            
             if (("String".equals(type) && !(value instanceof String))
                 || ("int".equals(type) && !(value instanceof Integer))
                 || ("long".equals(type) && !(value instanceof Long))
