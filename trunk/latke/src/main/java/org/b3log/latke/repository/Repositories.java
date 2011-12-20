@@ -145,24 +145,25 @@ public final class Repositories {
                 return true;
             }
 
+            // TODO: 88250, type and length validation
+            /*
             final String type = keyDescription.optString("type");
             final Object value = jsonObject.opt(key);
             
             if (("String".equals(type) && !(value instanceof String))
-                || ("int".equals(type) && !(value instanceof Integer))
-                || ("long".equals(type) && !(value instanceof Long))
-                || ("double".equals(type) && !(value instanceof Double))
-                || ("boolean".equals(type) && !(value instanceof Boolean))) {
-                LOGGER.log(Level.WARNING,
-                           "A json object to persist to repository[name={0}] has "
-                           + "a wrong value type[definedType={1}, currentType={2}] with key["
-                           + key + "]",
-                           new Object[]{repositoryName, type, value.getClass()});
-
-                return true;
+            || ("int".equals(type) && !(value instanceof Integer))
+            || ("long".equals(type) && !(value instanceof Long))
+            || ("double".equals(type) && !(value instanceof Double))
+            || ("boolean".equals(type) && !(value instanceof Boolean))) {
+            LOGGER.log(Level.WARNING,
+            "A json object to persist to repository[name={0}] has "
+            + "a wrong value type[definedType={1}, currentType={2}] with key["
+            + key + "]",
+            new Object[]{repositoryName, type, value.getClass()});
+            
+            return true;
             }
-
-            // TODO: 88250, length validation
+             */
         }
 
         // Checks whether the specified json object has an redundant (undefined) key
