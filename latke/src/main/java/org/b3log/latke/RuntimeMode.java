@@ -20,6 +20,7 @@ package org.b3log.latke;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.0, Jun 24, 2011
+ * @see Latkes#getRuntimeMode() 
  */
 public enum RuntimeMode {
 
