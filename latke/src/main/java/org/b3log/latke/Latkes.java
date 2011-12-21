@@ -303,9 +303,11 @@ public final class Latkes {
      * @return repository path
      */
     public static String getRepositoryPath() {
-        if (Strings.isEmptyOrNull(repositoryPath)) {
-            throw new RuntimeException(
-                    "Repository path has not been initialized!");
+        if (RuntimeDatabase.SLEEPYCAT == getRuntimeDatabase()) {
+            if (Strings.isEmptyOrNull(repositoryPath)) {
+                throw new RuntimeException(
+                        "Repository path has not been initialized!");
+            }
         }
 
         return repositoryPath;
