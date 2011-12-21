@@ -38,7 +38,8 @@ public class JdbcRepository implements Repository {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(JdbcRepository.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JdbcRepository.class
+            .getName());
 
     /**
      * Repository name.
@@ -58,7 +59,8 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public void update(final String id, final JSONObject jsonObject) throws RepositoryException {
+    public void update(final String id, final JSONObject jsonObject)
+            throws RepositoryException {
         // TODO Auto-generated method stub
 
     }
@@ -76,7 +78,8 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public Map<String, JSONObject> get(final Iterable<String> ids) throws RepositoryException {
+    public Map<String, JSONObject> get(final Iterable<String> ids)
+            throws RepositoryException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -94,7 +97,8 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public List<JSONObject> getRandomly(final int fetchSize) throws RepositoryException {
+    public List<JSONObject> getRandomly(final int fetchSize)
+            throws RepositoryException {
         // TODO Auto-generated method stub
         return null;
     }
