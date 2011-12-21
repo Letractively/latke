@@ -19,7 +19,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 /**
- * the jdbc connection pool utils.
+ * the jdbc connection pool TODO.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Dec 20, 2011
