@@ -100,7 +100,8 @@ public class JdbcRepositories {
 
             try {
                 initRepositoriesMap();
-            } catch (final Exception e) {
+            }
+            catch (final Exception e) {
 
                 LOGGER.log(Level.SEVERE, "initRepositoriesMap mistake " + e.getMessage(), e);
             }
@@ -125,7 +126,7 @@ public class JdbcRepositories {
             LOGGER.warning("the repository description[repository.json]");
             return;
         }
-        repositoriesMap = new HashMap<String, List<FieldDefinition>>();
+
         jsonToRepositoriesMap(jsonObject);
 
     }
@@ -135,9 +136,10 @@ public class JdbcRepositories {
      * 
      * @param jsonObject json Model
      * @throws JSONException
-     * @throws RepositoryException
      */
-    private static void jsonToRepositoriesMap(final JSONObject jsonObject) throws JSONException, RepositoryException {
+    public static void jsonToRepositoriesMap(final JSONObject jsonObject) throws JSONException {
+
+        repositoriesMap = new HashMap<String, List<FieldDefinition>>();
 
         final JSONArray repositoritArray = jsonObject.getJSONArray(REPOSITORIES);
 
@@ -149,16 +151,10 @@ public class JdbcRepositories {
             repositoritObject = repositoritArray.getJSONObject(i);
             final String repositoryName = repositoritObject.getString(NAME);
 
-            if (repositoryName == null) {
-                throw new RepositoryException(" json node 'repositories' missing! ");
-            }
             final List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
             repositoriesMap.put(repositoryName, fieldDefinitions);
 
             JSONArray keysJsonArray = repositoritObject.getJSONArray(KEYS);
-            if (keysJsonArray.length() == 0) {
-                throw new RepositoryException(" json node 'keys' missing! ");
-            }
 
             FieldDefinition definition = null;
             for (int j = 0; j < keysJsonArray.length(); j++) {
@@ -183,9 +179,9 @@ public class JdbcRepositories {
         final FieldDefinition fieldDefinition = new FieldDefinition();
         fieldDefinition.setName(fieldDefinitionObject.getString(NAME));
         fieldDefinition.setType(fieldDefinitionObject.getString(TYPE));
-        fieldDefinition.setNullable(fieldDefinitionObject.getBoolean(NULLABLE));
-        fieldDefinition.setLength(fieldDefinitionObject.getInt(LENGTH));
-        fieldDefinition.setIsKey(fieldDefinitionObject.getBoolean(ISKEY));
+        fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE, true));
+        fieldDefinition.setLength(fieldDefinitionObject.optInt(LENGTH));
+        fieldDefinition.setIsKey(fieldDefinitionObject.optBoolean(ISKEY));
 
         /**
          * the default key name is 'old'.
