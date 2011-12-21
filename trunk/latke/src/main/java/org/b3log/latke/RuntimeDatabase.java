@@ -13,26 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.repository.jdbc;
-
-import java.util.List;
-
-import org.b3log.latke.repository.jdbc.util.FieldDefinition;
+package org.b3log.latke;
 
 /**
+ *  Latke runtime JDBC database.
  * 
- * JdbcDatabaseSolution.
- * 
+ * <p>
+ * If Latke runs on local environment, Latke will read database configurations
+ * from file "local.properties".
+ * </p>
+ *  
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Dec 20, 2011
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Dec 21, 2011
+ * @see Latkes#getRuntimeDatabase() 
  */
-public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
+public enum RuntimeDatabase {
 
-    @Override
-    public boolean createTable(final String tableName,
-            final List<FieldDefinition> fieldDefinitions) {
-
-        return false;
-    }
-
+    /**
+     * Sleepycat (Berkeley DB Java Edition).
+     */
+    SLEEPYCAT,
+    /**
+     * Oracle.
+     */
+    ORACLE,
+    /**
+     * MySQL.
+     */
+    MYSQL,
+    /**
+     * SYBASE.
+     */
+    SYBASE,
+    /**
+     * MSSQL.
+     */
+    MSSQL,
+    /**
+     * DB2.
+     */
+    DB2
 }

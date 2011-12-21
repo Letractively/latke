@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Dec 20, 2011
+ * @version 1.0.0.8, Dec 21, 2011
  */
 public final class Latkes {
 
@@ -218,6 +218,16 @@ public final class Latkes {
             LOGGER.log(Level.INFO, "Latke is running on [Local]",
                        Latkes.getRuntimeEnv());
         }
+
+        switch (runtimeEnv) {
+            case LOCAL:
+                final RuntimeDatabase runtimeDatabase = getRuntimeDatabase();
+                LOGGER.log(Level.INFO, "Runtime database is [{0}",
+                           runtimeDatabase);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -255,6 +265,24 @@ public final class Latkes {
         }
 
         return Latkes.runtimeMode;
+    }
+
+    /**
+     * Gets the runtime database.
+     * 
+     * @return runtime database
+     */
+    public static RuntimeDatabase getRuntimeDatabase() {
+        final String runtimeDatabase =
+                LOCAL_PROPS.getProperty("runtimeDatabase");
+
+        final RuntimeDatabase ret = RuntimeDatabase.valueOf(runtimeDatabase);
+        if (null == ret) {
+            throw new RuntimeException(
+                    "Please configures runtime database in local.properties!");
+        }
+
+        return ret;
     }
 
     /**
@@ -309,12 +337,18 @@ public final class Latkes {
      */
     public static void shutdown() {
         try {
-            if (RuntimeEnv.LOCAL == getRuntimeEnv()) {
-                final Class<?> sleepycat =
-                        Class.forName(
-                        "org.b3log.latke.repository.sleepycat.Sleepycat");
-                final Method shutdown = sleepycat.getMethod("shutdown");
-                shutdown.invoke(sleepycat);
+            final RuntimeDatabase runtimeDatabase = getRuntimeDatabase();
+            switch (runtimeDatabase) {
+                case SLEEPYCAT:
+                    final Class<?> sleepycat =
+                            Class.forName(
+                            "org.b3log.latke.repository.sleepycat.Sleepycat");
+                    final Method shutdown = sleepycat.getMethod("shutdown");
+                    shutdown.invoke(sleepycat);
+                    
+                    break;
+                default:
+                    break;
             }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "Shutdowns Latke failed", e);
