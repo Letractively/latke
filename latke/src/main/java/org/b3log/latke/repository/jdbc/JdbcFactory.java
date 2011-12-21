@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeDatabase;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
@@ -74,7 +75,7 @@ public final class JdbcFactory implements JdbcDatabase {
         /**
          * Latkes.getRuntimeDatabase();
          */
-        databaseSolution = jdbcDatabaseSolutionMap.get("todo");
+        databaseSolution = jdbcDatabaseSolutionMap.get(Latkes.getRuntimeDatabase());
     }
 
 }
