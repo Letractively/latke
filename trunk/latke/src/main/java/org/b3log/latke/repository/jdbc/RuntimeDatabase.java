@@ -9,27 +9,27 @@ package org.b3log.latke.repository.jdbc;
 public enum RuntimeDatabase {
 
     /**
-     * ORACLE
+     * ORACLE.
      */
     ORACLE,
 
     /**
-     * MYSQL
+     * MYSQL.
      */
     MYSQL,
 
     /**
-     * SYBASE
+     * SYBASE.
      */
     SYBASE,
 
     /**
-     * MSSQL
+     * MSSQL.
      */
     MSSQL,
 
     /**
-     * DB2
+     * DB2.
      */
     DB2,
 
