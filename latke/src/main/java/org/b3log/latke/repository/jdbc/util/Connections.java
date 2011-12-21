@@ -31,6 +31,16 @@ public final class Connections {
         return null;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Private constructor.
      */
