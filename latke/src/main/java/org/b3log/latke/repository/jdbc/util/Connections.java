@@ -77,7 +77,7 @@ public final class Connections {
      * @param sql sql
      * @param paramList paramList
      * @param connection connection
-     * @return
+     * @return JSONObject
      * @throws SQLException SQLException
      * @throws JSONException JSONException 
      */
@@ -85,34 +85,37 @@ public final class Connections {
             final List<Object> paramList, final Connection connection)
             throws SQLException, JSONException {
 
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        final PreparedStatement preparedStatement = connection
+                .prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
 
             preparedStatement.setObject(i, paramList.get(i));
         }
 
-        ResultSet resultSet = preparedStatement.executeQuery();
+        final ResultSet resultSet = preparedStatement.executeQuery();
 
-        return resultSetToJsonObject(resultSet);
+        final JSONObject jsonObject = resultSetToJsonObject(resultSet);
+        preparedStatement.close();
+        return jsonObject;
 
     }
 
     /**
      * jdbc resultSetToJsonObject to JSONObject.
      * 
-     * @param resultSet
+     * @param resultSet resultSet
      * @return JSONObject
-     * @throws SQLException 
-     * @throws JSONException 
+     * @throws SQLException SQLException 
+     * @throws JSONException JSONException
      */
-    private static JSONObject resultSetToJsonObject(ResultSet resultSet)
+    private static JSONObject resultSetToJsonObject(final ResultSet resultSet)
             throws SQLException, JSONException {
 
-        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        int numColumns = resultSetMetaData.getColumnCount();
+        final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+        final int numColumns = resultSetMetaData.getColumnCount();
 
-        JSONArray jsonArray = new JSONArray();
+        final JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = null;
         String columnName = null;
         while (resultSet.next()) {

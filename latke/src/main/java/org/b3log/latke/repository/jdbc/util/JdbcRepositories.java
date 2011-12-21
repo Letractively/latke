@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Dec 20, 2011
  */
-public class JdbcRepositories {
+public final class JdbcRepositories {
 
     /**
      * Logger.
@@ -137,7 +137,7 @@ public class JdbcRepositories {
      * analysis json data structure to java Map structure.
      * 
      * @param jsonObject json Model
-     * @throws JSONException
+     * @throws JSONException JSONException
      */
     public static void jsonToRepositoriesMap(final JSONObject jsonObject)
             throws JSONException {
@@ -158,7 +158,8 @@ public class JdbcRepositories {
             final List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
             repositoriesMap.put(repositoryName, fieldDefinitions);
 
-            JSONArray keysJsonArray = repositoritObject.getJSONArray(KEYS);
+            final JSONArray keysJsonArray = repositoritObject
+                    .getJSONArray(KEYS);
 
             FieldDefinition definition = null;
             for (int j = 0; j < keysJsonArray.length(); j++) {
@@ -175,11 +176,11 @@ public class JdbcRepositories {
      * fillFieldDefinitionData.
      * 
      * @param fieldDefinitionObject josn model
-     * @return
-     * @throws JSONException
+     * @return {@link FieldDefinition}
+     * @throws JSONException JSONException
      */
     private static FieldDefinition fillFieldDefinitionData(
-            JSONObject fieldDefinitionObject) throws JSONException {
+            final JSONObject fieldDefinitionObject) throws JSONException {
 
         final FieldDefinition fieldDefinition = new FieldDefinition();
         fieldDefinition.setName(fieldDefinitionObject.getString(NAME));
