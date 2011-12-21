@@ -34,6 +34,7 @@ import org.b3log.latke.util.Strings;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.8, Dec 21, 2011
+ * @see #initRuntimeEnv() 
  */
 public final class Latkes {
 
@@ -199,6 +200,11 @@ public final class Latkes {
      * </p>
      * 
      * <p>
+     * If the Latke runs on the standard Servlet container (local environment),
+     * Latke will read database configurations from file "local.properties".
+     * </p>
+     * 
+     * <p>
      * Sets the current {@link RuntimeMode runtime mode} to 
      * {@link RuntimeMode#DEVELOPMENT development mode}.
      * </p>
@@ -219,14 +225,11 @@ public final class Latkes {
                        Latkes.getRuntimeEnv());
         }
 
-        switch (runtimeEnv) {
-            case LOCAL:
-                final RuntimeDatabase runtimeDatabase = getRuntimeDatabase();
-                LOGGER.log(Level.INFO, "Runtime database is [{0}",
-                           runtimeDatabase);
-                break;
-            default:
-                break;
+        if (RuntimeEnv.LOCAL == runtimeEnv) {
+            // Read local database configurations
+            final RuntimeDatabase runtimeDatabase = getRuntimeDatabase();
+            LOGGER.log(Level.INFO, "Runtime database is [{0}]",
+                       runtimeDatabase);
         }
     }
 
@@ -345,7 +348,7 @@ public final class Latkes {
                             "org.b3log.latke.repository.sleepycat.Sleepycat");
                     final Method shutdown = sleepycat.getMethod("shutdown");
                     shutdown.invoke(sleepycat);
-                    
+
                     break;
                 default:
                     break;
