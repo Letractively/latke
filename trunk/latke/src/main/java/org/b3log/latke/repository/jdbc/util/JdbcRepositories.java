@@ -39,7 +39,8 @@ public class JdbcRepositories {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(JdbcRepositories.class.getName());
+    private static final Logger LOGGER = Logger
+            .getLogger(JdbcRepositories.class.getName());
 
     /**
      * /** to json "repositories".
@@ -100,10 +101,10 @@ public class JdbcRepositories {
 
             try {
                 initRepositoriesMap();
-            }
-            catch (final Exception e) {
+            } catch (final Exception e) {
 
-                LOGGER.log(Level.SEVERE, "initRepositoriesMap mistake " + e.getMessage(), e);
+                LOGGER.log(Level.SEVERE,
+                        "initRepositoriesMap mistake " + e.getMessage(), e);
             }
         }
 
@@ -117,7 +118,8 @@ public class JdbcRepositories {
      * @throws JSONException JSONException
      * @throws RepositoryException RepositoryException
      */
-    private static void initRepositoriesMap() throws JSONException, RepositoryException {
+    private static void initRepositoriesMap() throws JSONException,
+            RepositoryException {
 
         final JSONObject jsonObject = Repositories.getRepositoriesDescription();
 
@@ -137,11 +139,13 @@ public class JdbcRepositories {
      * @param jsonObject json Model
      * @throws JSONException
      */
-    public static void jsonToRepositoriesMap(final JSONObject jsonObject) throws JSONException {
+    public static void jsonToRepositoriesMap(final JSONObject jsonObject)
+            throws JSONException {
 
         repositoriesMap = new HashMap<String, List<FieldDefinition>>();
 
-        final JSONArray repositoritArray = jsonObject.getJSONArray(REPOSITORIES);
+        final JSONArray repositoritArray = jsonObject
+                .getJSONArray(REPOSITORIES);
 
         JSONObject repositoritObject = null;
         JSONObject fieldDefinitionObject = null;
@@ -174,12 +178,14 @@ public class JdbcRepositories {
      * @return
      * @throws JSONException
      */
-    private static FieldDefinition fillFieldDefinitionData(JSONObject fieldDefinitionObject) throws JSONException {
+    private static FieldDefinition fillFieldDefinitionData(
+            JSONObject fieldDefinitionObject) throws JSONException {
 
         final FieldDefinition fieldDefinition = new FieldDefinition();
         fieldDefinition.setName(fieldDefinitionObject.getString(NAME));
         fieldDefinition.setType(fieldDefinitionObject.getString(TYPE));
-        fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE, true));
+        fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE,
+                true));
         fieldDefinition.setLength(fieldDefinitionObject.optInt(LENGTH));
         fieldDefinition.setIsKey(fieldDefinitionObject.optBoolean(ISKEY));
 
