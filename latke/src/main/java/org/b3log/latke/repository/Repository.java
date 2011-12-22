@@ -153,23 +153,26 @@ public interface Repository {
 
     /**
      * Begins a transaction against the repository.
-     *
+     * 
+     * <p>
      * Callers are responsible for explicitly calling {@linkplain Transaction#commit()}
      * or {@linkplain Transaction#rollback()} when they no longer need the
      * {@code Transaction}. The {@code Transaction} returned by this call will
      * be considered <i>the current transaction</i> until one of the
      * following happens:
-     * <ol>
-     *   <li>{@linkplain #beginTransaction()} is invoked from the same thread</li>
-     *   <li>{@linkplain Transaction#commit()} is invoked on the
+     *   <ol>
+     *     <li>{@linkplain #beginTransaction()} is invoked from the same thread</li>
+     *     <li>{@linkplain Transaction#commit()} is invoked on the
      *        {@code Transaction} returned by this method</li>
-     *   Whether or not the commit returns successfully, the {@code Transaction}
-     *   will no longer be <i>the current transaction</i>.
-     *   <li>{@linkplain Transaction#rollback()} is invoked on the
-     *   {@code Transaction} returned by this method</li>
-     *    Whether or not the rollback returns successfully, the {@code Transaction}
-     *    will no longer be <i>the current transaction</i>.
-     * </ol>
+     *     Whether or not the commit returns successfully, the {@code Transaction}
+     *     will no longer be <i>the current transaction</i>.
+     *     <li>{@linkplain Transaction#rollback()} is invoked on the
+     *     {@code Transaction} returned by this method</li>
+     *      Whether or not the rollback returns successfully, the {@code Transaction}
+     *      will no longer be <i>the current transaction</i>.
+     *   </ol>
+     * </p>
+     * 
      * @return the transaction that was started.
      */
     Transaction beginTransaction();
@@ -195,7 +198,7 @@ public interface Repository {
      * <p>
      * The cached object corresponding key is constructed by the underlying 
      * repository implementation, so if the caller of this method want to put 
-     * object into this query cache, take care about the key.
+     * object into this query cache, please take care about the cache key.
      * </p>
      * 
      * @return query cache
