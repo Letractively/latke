@@ -172,14 +172,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         try {
             final Object processorMethodRet =
                     RequestProcessors.invoke(requestURI, method, context);
-        } catch (final Throwable e) {
-            final Runtime runtime = Runtime.getRuntime();
-            LOGGER.log(Level.FINER,
-                       "Memory status[total={0}, max={1}, free={2}]",
-                       new Object[]{runtime.totalMemory(),
-                                    runtime.maxMemory(),
-                                    runtime.freeMemory()});
-
+        } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,
                        "Occured error while processing request[requestURI={0}, method={1}, exceptionTypeName={2}, errorMsg={3}]",
@@ -195,6 +188,17 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             }
 
             throw new ServletException(e);
+        } catch (final Error e) {
+            final Runtime runtime = Runtime.getRuntime();
+            LOGGER.log(Level.FINER,
+                       "Memory status[total={0}, max={1}, free={2}]",
+                       new Object[]{runtime.totalMemory(),
+                                    runtime.maxMemory(),
+                                    runtime.freeMemory()});
+
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
+            throw e;
         }
         // XXX: processor method ret?
 
