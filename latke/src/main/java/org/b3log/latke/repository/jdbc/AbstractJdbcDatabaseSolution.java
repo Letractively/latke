@@ -15,9 +15,12 @@
  */
 package org.b3log.latke.repository.jdbc;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
+import org.b3log.latke.repository.jdbc.util.JdbcUtil;
 
 /**
  * 
@@ -30,9 +33,42 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
 
     @Override
     public boolean createTable(final String tableName,
-            final List<FieldDefinition> fieldDefinitions) {
+            final List<FieldDefinition> fieldDefinitions) throws SQLException {
 
-        return false;
+        final StringBuffer createTableSql = new StringBuffer();
+
+        createTableHead(createTableSql, tableName);
+        createTableBody(createTableSql, fieldDefinitions);
+        createTableEnd(createTableSql);
+
+       return  JdbcUtil.executeSql(createTableSql.toString(), Connections.getConnection());
+        
+       
     }
+
+    /**
+     * 
+     * abstract createTableHead for each DB to impl.
+     * 
+     * @param createTableSql createSql
+     * @param tableName tableName
+     */
+    protected abstract void createTableHead(StringBuffer createTableSql,
+            String tableName);
+
+    /**
+     * abstract createTableBody for each DB to impl.
+     * 
+     * @param createTableSql createSql
+     * @param fieldDefinitions {@link FieldDefinition}
+     */
+    protected abstract void createTableBody(StringBuffer createTableSql,
+            List<FieldDefinition> fieldDefinitions);
+
+    /**
+     * abstract createTableEnd for each DB to impl.
+     * @param createTableSql createSql 
+     */
+    protected abstract void createTableEnd(StringBuffer createTableSql);
 
 }

@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.jdbc;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public final class JdbcFactory implements JdbcDatabase {
 
     @Override
     public boolean createTable(final String tableName,
-            final List<FieldDefinition> fieldDefinitions) {
+            final List<FieldDefinition> fieldDefinitions) throws SQLException {
         return databaseSolution.createTable(null, fieldDefinitions);
     }
 
@@ -75,7 +76,8 @@ public final class JdbcFactory implements JdbcDatabase {
         /**
          * Latkes.getRuntimeDatabase();
          */
-        databaseSolution = jdbcDatabaseSolutionMap.get(Latkes.getRuntimeDatabase());
+        databaseSolution = jdbcDatabaseSolutionMap.get(Latkes
+                .getRuntimeDatabase());
     }
 
 }
