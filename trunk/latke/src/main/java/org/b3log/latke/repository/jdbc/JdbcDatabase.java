@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.jdbc;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
@@ -33,7 +34,9 @@ public interface JdbcDatabase {
      * @param fieldDefinitions fieldDefinitions
      * 
      * @return ifseccuss
+     * @throws SQLException SQLException 
      */
-    boolean createTable(String tableName, List<FieldDefinition> fieldDefinitions);
+    boolean createTable(String tableName, List<FieldDefinition> fieldDefinitions)
+            throws SQLException;
 
 }
