@@ -271,12 +271,12 @@ public final class GAERepository implements Repository {
      * </p>
      *
      * <p>
-     *   Invokes this method for an non-existent entity will create a new entity
-     *   in database, as the same effect of method {@linkplain #add(org.json.JSONObject)}.
+     * Invokes this method for an non-existent entity will create a new entity
+     * in database, as the same effect of method {@linkplain #add(org.json.JSONObject)}.
      * </p>
      *
      * <p>
-     *   Update algorithm steps:
+     * Update algorithm steps:
      *   <ol>
      *     <li>Sets the specified id into the specified new json object</li>
      *     <li>Creates a new entity with the specified id</li>
