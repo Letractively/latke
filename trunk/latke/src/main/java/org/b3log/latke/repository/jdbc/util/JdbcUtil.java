@@ -52,6 +52,30 @@ public final class JdbcUtil {
     }
 
     /**
+     * 
+     * executeSql.
+     * 
+     * @param sql sql
+     * @param paramList paramList
+     * @param connection connection
+     * @return issuccess
+     * @throws SQLException SQLException
+     */
+    public static boolean executeSql(final String sql,
+            final List<Object> paramList, final Connection connection)
+            throws SQLException {
+
+        final PreparedStatement preparedStatement = connection
+                .prepareStatement(sql);
+
+        for (int i = 1; i <= paramList.size(); i++) {
+
+            preparedStatement.setObject(i, paramList.get(i));
+        }
+        return preparedStatement.execute();
+    }
+
+    /**
      * querySql.
      * 
      * @param sql sql

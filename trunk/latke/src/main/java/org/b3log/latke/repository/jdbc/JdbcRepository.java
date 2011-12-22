@@ -16,15 +16,24 @@
 package org.b3log.latke.repository.jdbc;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.b3log.latke.Keys;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.Transaction;
+import org.b3log.latke.repository.jdbc.util.Connections;
+import org.b3log.latke.repository.jdbc.util.JdbcUtil;
+import org.b3log.latke.util.Ids;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -51,17 +60,119 @@ public class JdbcRepository implements Repository {
      */
     private boolean cacheEnabled = true;
 
+    /**
+     * The current transaction.
+     */
+    public static final ThreadLocal<JdbcTransaction> TX = new InheritableThreadLocal<JdbcTransaction>();
+
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
 
-        return null;
+        final JdbcTransaction currentTransaction = TX.get();
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking add() outside a transaction");
+        }
+
+        final Connection connection = Connections.getConnection();
+
+        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer sql = new StringBuffer();
+        String id = null;
+
+        try {
+            id = buildAddSql(jsonObject, paramList, sql);
+            JdbcUtil.executeSql(sql.toString(), paramList, connection);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "add:" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return id;
+    }
+
+    /**
+     * buildAddSql.
+     * @param jsonObject jsonObject
+     * @param paramlist paramlist 
+     * @param sql sql
+     * @return id
+     * @throws JSONException  JSONException
+     */
+    private String buildAddSql(final JSONObject jsonObject,
+            final List<Object> paramlist, final StringBuffer sql)
+            throws JSONException {
+
+        String ret = null;
+
+        if (!jsonObject.has(Keys.OBJECT_ID)) {
+            ret = Ids.genTimeMillisId();
+            jsonObject.put(Keys.OBJECT_ID, ret);
+        } else {
+            ret = jsonObject.getString(Keys.OBJECT_ID);
+        }
+
+        setProperties(jsonObject, paramlist, sql);
+
+        return ret;
+
+    }
+
+    /**
+     * setProperties.
+     * 
+     * @param jsonObject jsonObject
+     * @param paramlist paramlist
+     * @param sql sql
+     * @throws JSONException JSONException 
+     */
+    private void setProperties(final JSONObject jsonObject,
+            final List<Object> paramlist, final StringBuffer sql)
+            throws JSONException {
+
+        @SuppressWarnings("unchecked")
+        final Iterator<String> keys = jsonObject.keys();
+
+        final StringBuffer insertString = new StringBuffer();
+        final StringBuffer wildcardString = new StringBuffer();
+
+        boolean isFirst = true;
+        String key = null;
+        Object value = null;
+
+        while (keys.hasNext()) {
+
+            key = keys.next();
+
+            if (isFirst) {
+                insertString.append("(").append(key);
+                wildcardString.append("(?");
+                isFirst = false;
+            } else {
+                insertString.append(",").append(key);
+                wildcardString.append(",?");
+            }
+
+            value = jsonObject.get(key);
+            paramlist.add(value);
+
+            if (keys.hasNext()) {
+                insertString.append(")");
+                wildcardString.append(")");
+            }
+        }
+
+        /**
+         * TODO table name Prefix.
+         */
+        sql.append("insert into ").append(getName()).append(insertString)
+                .append(" value ").append(wildcardString);
 
     }
 
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
-        // TODO Auto-generated method stub
 
     }
 
@@ -117,8 +228,22 @@ public class JdbcRepository implements Repository {
 
     @Override
     public Transaction beginTransaction() {
-        // TODO Auto-generated method stub
-        return null;
+
+        final JdbcTransaction ret = TX.get();
+        if (null != ret) {
+            LOGGER.log(Level.FINER,
+                    "There is a transaction[isActive={0}] in current thread",
+                    ret.isActive());
+            if (ret.isActive()) {
+                return TX.get(); // Using 'the current transaction'
+            }
+        }
+
+        final JdbcTransaction jdbcTransaction = new JdbcTransaction();
+        TX.set(jdbcTransaction);
+
+        return ret;
+
     }
 
     @Override
