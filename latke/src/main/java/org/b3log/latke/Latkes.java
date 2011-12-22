@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Dec 21, 2011
+ * @version 1.0.0.9, Dec 22, 2011
  * @see #initRuntimeEnv() 
  */
 public final class Latkes {
@@ -276,6 +276,11 @@ public final class Latkes {
      * @return runtime database
      */
     public static RuntimeDatabase getRuntimeDatabase() {
+        if (RuntimeEnv.LOCAL != getRuntimeEnv()) {
+            throw new RuntimeException(
+                    "Underlying database can be specified when Latke runs on Local environment only");
+        }
+
         final String runtimeDatabase =
                 LOCAL_PROPS.getProperty("runtimeDatabase");
 
