@@ -40,7 +40,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Nov 28, 2011
+ * @version 1.0.1.2, Dec 22, 2011
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -172,7 +172,14 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         try {
             final Object processorMethodRet =
                     RequestProcessors.invoke(requestURI, method, context);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
+            final Runtime runtime = Runtime.getRuntime();
+            LOGGER.log(Level.FINER,
+                       "Memory status[total={0}, max={1}, free={2}]",
+                       new Object[]{runtime.totalMemory(),
+                                    runtime.maxMemory(),
+                                    runtime.freeMemory()});
+
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,
                        "Occured error while processing request[requestURI={0}, method={1}, exceptionTypeName={2}, errorMsg={3}]",
