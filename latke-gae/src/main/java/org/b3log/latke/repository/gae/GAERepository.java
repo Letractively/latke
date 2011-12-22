@@ -84,11 +84,7 @@ import org.json.JSONObject;
  * <h3>Caching</h3>
  * {@link #CACHE Repository cache} is used to cache the {@link #get(java.lang.String) get} 
  * and {@link #get(org.b3log.latke.repository.Query) query} results if 
- * {@link #cacheEnabled enabled} caching. The cache keys are constructed as the 
- * following rules: // TODO: 88250, javadoc
- * <ul>
- *   <li></li>
- * </ul>
+ * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.4.6, Dec 12, 2011
