@@ -133,6 +133,13 @@ public final class JdbcUtil {
             jsonArray.put(jsonObject);
         }
 
+        if (jsonArray.length() == 1) {
+
+            jsonObject = jsonArray.getJSONObject(0);
+            return jsonObject;
+
+        }
+
         jsonObject = new JSONObject();
         jsonObject.put(Keys.RESULTS, jsonArray);
 

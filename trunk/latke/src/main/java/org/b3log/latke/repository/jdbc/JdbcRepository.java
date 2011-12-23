@@ -31,8 +31,10 @@ import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
+import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
 import org.b3log.latke.repository.jdbc.util.JdbcUtil;
 import org.b3log.latke.util.Ids;
+import org.b3log.latke.util.Strings;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,7 +77,6 @@ public class JdbcRepository implements Repository {
         }
 
         final Connection connection = Connections.getConnection();
-
         final List<Object> paramList = new ArrayList<Object>();
         final StringBuffer sql = new StringBuffer();
         String id = null;
@@ -174,24 +175,211 @@ public class JdbcRepository implements Repository {
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
 
+        if (Strings.isEmptyOrNull(id)) {
+            return;
+        }
+
+        final JdbcTransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking update() outside a transaction");
+        }
+
+        final JSONObject oldJsonObject = get(id);
+
+        final Connection connection = Connections.getConnection();
+        final List<Object> paramList = new ArrayList<Object>();
+        final StringBuffer sql = new StringBuffer();
+        try {
+            update(id, oldJsonObject, jsonObject, paramList, sql);
+            JdbcUtil.executeSql(sql.toString(), paramList, connection);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "update:" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+    }
+
+    /**
+     * 
+     * update.
+     * 
+     * @param id id
+     * @param oldJsonObject oldJsonObject
+     * @param jsonObject newJsonObject
+     * @param paramList paramList
+     * @param sql sql
+     * @throws JSONException JSONException
+     */
+    private void update(final String id, final JSONObject oldJsonObject,
+            final JSONObject jsonObject, final List<Object> paramList,
+            final StringBuffer sql) throws JSONException {
+
+        final JSONObject needUpdateJsonObject = getNeedUpdateJsonObject(
+                oldJsonObject, jsonObject);
+
+        if (needUpdateJsonObject.length() == 0) {
+            LOGGER.log(Level.INFO,
+                    "nothing to update [{0}]for  repository[{1}]",
+                    new Object[] {id, getName() });
+            return;
+        }
+
+        setUpdateProperties(id, needUpdateJsonObject, paramList, sql);
+
+    }
+
+    /**
+     * setUpdateProperties.
+     * 
+     * @param id id
+     * @param needUpdateJsonObject needUpdateJsonObject
+     * @param paramList paramList
+     * @param sql sql
+     * @throws JSONException JSONException
+     */
+    private void setUpdateProperties(final String id,
+            final JSONObject needUpdateJsonObject,
+            final List<Object> paramList, final StringBuffer sql)
+            throws JSONException {
+
+        final Iterator<String> keys = needUpdateJsonObject.keys();
+        String key;
+
+        boolean isFirst = true;
+        final StringBuffer wildcardString = new StringBuffer();
+
+        while (keys.hasNext()) {
+            key = keys.next();
+
+            if (isFirst) {
+                wildcardString.append("set ").append(key).append("=?");
+                isFirst = false;
+            } else {
+                wildcardString.append(",").append(key).append("=?");
+            }
+
+            paramList.add(needUpdateJsonObject.get(key));
+        }
+
+        sql.append("update ").append(getName()).append(wildcardString)
+                .append("where ").append(JdbcRepositories.OID).append("=")
+                .append(id);
+
+    }
+
+    /**
+     * 
+     * getNeedUpdateJsonObject.
+     * 
+     * @param oldJsonObject oldJsonObject
+     * @param jsonObject newJsonObject
+     * @return JSONObject
+     * @throws JSONException jsonObject
+     */
+    private JSONObject getNeedUpdateJsonObject(final JSONObject oldJsonObject,
+            final JSONObject jsonObject) throws JSONException {
+
+        final JSONObject needUpdateJsonObject = new JSONObject();
+
+        @SuppressWarnings("unchecked")
+        final Iterator<String> keys = jsonObject.keys();
+
+        String key = null;
+        while (keys.hasNext()) {
+
+            key = keys.next();
+
+            if (jsonObject.get(key) == null && oldJsonObject.get(key) == null) {
+                //???????????????????????????
+                needUpdateJsonObject.put(key, jsonObject.get(key));
+
+            } else if (!jsonObject.getString(key).equals(
+                    oldJsonObject.getString(key))) {
+                needUpdateJsonObject.put(key, jsonObject.get(key));
+            }
+
+        }
+
+        return jsonObject;
     }
 
     @Override
     public void remove(final String id) throws RepositoryException {
-        // TODO Auto-generated method stub
 
+        if (Strings.isEmptyOrNull(id)) {
+            return;
+        }
+
+        final JdbcTransaction currentTransaction = TX.get();
+
+        if (null == currentTransaction) {
+            throw new RepositoryException(
+                    "Invoking remove() outside a transaction");
+        }
+
+        final StringBuffer sql = new StringBuffer();
+        final Connection connection = Connections.getConnection();
+
+        try {
+            remove(id, sql);
+            JdbcUtil.executeSql(sql.toString(), connection);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "remove:" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+    }
+
+    /**
+     * remove record.
+     * 
+     * @param id id
+     * @param sql sql
+     */
+    private void remove(final String id, final StringBuffer sql) {
+        sql.append("delete from ").append(getName()).append(" where ")
+                .append(JdbcRepositories.OID).append("=").append(id);
     }
 
     @Override
     public JSONObject get(final String id) throws RepositoryException {
-        // TODO Auto-generated method stub
-        return null;
+
+        final StringBuffer sql = new StringBuffer();
+        final Connection connection = Connections.getConnection();
+        JSONObject jsonObject = null;
+
+        try {
+            get(id, sql);
+            jsonObject = JdbcUtil.querySql(sql.toString(),
+                    new ArrayList<Object>(), connection);
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return jsonObject;
+
+    }
+
+    /**
+     * get.
+     * 
+     * @param id id
+     * @param sql sql
+     */
+    private void get(final String id, final StringBuffer sql) {
+
+        sql.append("select * from ").append(getName()).append(" where ")
+                .append(JdbcRepositories.OID).append("=").append(id);
+
     }
 
     @Override
     public Map<String, JSONObject> get(final Iterable<String> ids)
             throws RepositoryException {
-        // TODO Auto-generated method stub
+
         return null;
     }
 

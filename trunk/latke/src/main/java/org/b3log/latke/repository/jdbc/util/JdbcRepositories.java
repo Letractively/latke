@@ -80,7 +80,7 @@ public final class JdbcRepositories {
     /**
      * the default keyname.
      */
-    private static final String OID = "oId";
+    public static final String OID = "oId";
 
     /**
      * store all repository filed definition in a Map.
