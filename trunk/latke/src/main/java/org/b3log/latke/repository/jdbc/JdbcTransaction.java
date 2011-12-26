@@ -16,6 +16,7 @@
 package org.b3log.latke.repository.jdbc;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
@@ -31,9 +32,11 @@ public  class JdbcTransaction implements Transaction {
 
     /**
      * Public constructor.
+     * @throws SQLException SQLException 
      */
-    public JdbcTransaction() {
+    public JdbcTransaction() throws SQLException {
         connection = Connections.getConnection();
+        connection.setAutoCommit(false);
 
     }
 

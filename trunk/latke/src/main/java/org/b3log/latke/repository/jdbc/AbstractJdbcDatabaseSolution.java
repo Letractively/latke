@@ -71,4 +71,8 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      */
     protected abstract void createTableEnd(StringBuffer createTableSql);
 
+    
+    
+  
+
 }
