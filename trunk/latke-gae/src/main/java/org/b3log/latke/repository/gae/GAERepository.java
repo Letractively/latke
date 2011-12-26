@@ -87,7 +87,7 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.6, Dec 12, 2011
+ * @version 1.0.4.7, Dec 26, 2011
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -699,13 +699,13 @@ public final class GAERepository implements Repository {
                 final StringBuilder logMsgBuilder = new StringBuilder();
                 logMsgBuilder.append("In operation[");
                 @SuppressWarnings("unchecked")
-                final Collection<String> ids =
-                        (Collection<String>) filter.getValue();
+                final Collection<?> inValues =
+                        (Collection<?>) filter.getValue();
 
                 final Set<Object> values = new HashSet<Object>();
-                for (final String id : ids) {
-                    values.add(id);
-                    logMsgBuilder.append(id).append(",");
+                for (final Object inValue : inValues) {
+                    values.add(inValue);
+                    logMsgBuilder.append(inValue).append(",");
                 }
                 logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
 
