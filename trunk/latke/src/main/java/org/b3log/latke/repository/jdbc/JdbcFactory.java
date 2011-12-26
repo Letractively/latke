@@ -46,8 +46,8 @@ public final class JdbcFactory implements JdbcDatabase {
     /**
      * all JdbcDatabaseSolution in here.
      */
-    private static Map<RuntimeDatabase, AbstractJdbcDatabaseSolution> jdbcDatabaseSolutionMap 
-        = new HashMap<RuntimeDatabase, AbstractJdbcDatabaseSolution>();
+    private static Map<RuntimeDatabase, AbstractJdbcDatabaseSolution> jdbcDatabaseSolutionMap =
+            new HashMap<RuntimeDatabase, AbstractJdbcDatabaseSolution>();
 
     @Override
     public boolean createTable(final String tableName,
@@ -76,8 +76,8 @@ public final class JdbcFactory implements JdbcDatabase {
         /**
          * Latkes.getRuntimeDatabase();
          */
-        databaseSolution = jdbcDatabaseSolutionMap.get(Latkes
-                .getRuntimeDatabase());
+        databaseSolution =
+                jdbcDatabaseSolutionMap.get(Latkes.getRuntimeDatabase());
     }
 
     @Override
