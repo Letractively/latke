@@ -52,7 +52,7 @@ public final class JdbcFactory implements JdbcDatabase {
     @Override
     public boolean createTable(final String tableName,
             final List<FieldDefinition> fieldDefinitions) throws SQLException {
-        return databaseSolution.createTable(null, fieldDefinitions);
+        return databaseSolution.createTable(tableName, fieldDefinitions);
     }
 
     /**
@@ -78,6 +78,21 @@ public final class JdbcFactory implements JdbcDatabase {
          */
         databaseSolution = jdbcDatabaseSolutionMap.get(Latkes
                 .getRuntimeDatabase());
+    }
+
+    @Override
+    public String queryPage(final int start, final int end,
+            final StringBuffer filterSql, final StringBuffer orderBySql,
+            final String tableName) {
+
+        return databaseSolution.queryPage(start, end, filterSql, orderBySql,
+                tableName);
+    }
+
+    @Override
+    public String getRandomlySql(final String tableName, final int fetchSize) {
+
+        return databaseSolution.getRandomlySql(tableName, fetchSize);
     }
 
 }

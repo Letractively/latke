@@ -17,7 +17,10 @@ package org.b3log.latke.repository.jdbc;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +29,20 @@ import java.util.logging.Logger;
 
 import org.b3log.latke.Keys;
 import org.b3log.latke.cache.Cache;
+import org.b3log.latke.model.Pagination;
+import org.b3log.latke.repository.Filter;
+import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.Repository;
 import org.b3log.latke.repository.RepositoryException;
+import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
 import org.b3log.latke.repository.jdbc.util.JdbcUtil;
 import org.b3log.latke.util.Ids;
 import org.b3log.latke.util.Strings;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -157,7 +165,7 @@ public class JdbcRepository implements Repository {
             value = jsonObject.get(key);
             paramlist.add(value);
 
-            if (keys.hasNext()) {
+            if (!keys.hasNext()) {
                 insertString.append(")");
                 wildcardString.append(")");
             }
@@ -244,6 +252,7 @@ public class JdbcRepository implements Repository {
             final List<Object> paramList, final StringBuffer sql)
             throws JSONException {
 
+        @SuppressWarnings("unchecked")
         final Iterator<String> keys = needUpdateJsonObject.keys();
         String key;
 
@@ -352,7 +361,7 @@ public class JdbcRepository implements Repository {
 
         try {
             get(id, sql);
-            jsonObject = JdbcUtil.querySql(sql.toString(),
+            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
                     new ArrayList<Object>(), connection);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
@@ -380,38 +389,338 @@ public class JdbcRepository implements Repository {
     public Map<String, JSONObject> get(final Iterable<String> ids)
             throws RepositoryException {
 
-        return null;
+        final Map<String, JSONObject> map = new HashMap<String, JSONObject>();
+
+        JSONObject jsonObject = null;
+
+        try {
+            for (String id : ids) {
+                jsonObject = get(id);
+                map.put(jsonObject.getString(JdbcRepositories.OID), jsonObject);
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "get ids :" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return map;
     }
 
     @Override
     public boolean has(final String id) throws RepositoryException {
-        // TODO Auto-generated method stub
+
+        final StringBuffer sql = new StringBuffer("select count("
+                + JdbcRepositories.OID + ") from ").append(getName())
+                .append(" where ").append(JdbcRepositories.OID).append("=")
+                .append(id);
+
+        if (count(sql.append(sql.toString())) > 0) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public JSONObject get(final Query query) throws RepositoryException {
-        // TODO Auto-generated method stub
-        return null;
+
+        final int currentPageNum = query.getCurrentPageNum();
+        final List<Filter> filters = query.getFilters();
+        final int pageSize = query.getPageSize();
+        final Map<String, SortDirection> sorts = query.getSorts();
+        final int pageCount = query.getPageCount();
+
+        final StringBuffer sql = new StringBuffer();
+        final Connection connection = Connections.getConnection();
+        final List<Object> paramList = new ArrayList<Object>();
+        final JSONObject jsonObject = new JSONObject();
+
+        try {
+
+            final int pageCnt = get(currentPageNum, pageSize, pageCount, sorts,
+                    filters, sql, paramList);
+
+            //result
+            final JSONArray jsonResults = JdbcUtil.queryJsonArray(
+                    sql.toString(), paramList, connection);
+            jsonObject.put(Keys.RESULTS, jsonResults);
+
+            //page
+            final JSONObject pagination = new JSONObject();
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCnt);
+            jsonObject.put(Pagination.PAGINATION, pagination);
+
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "query :" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return jsonObject;
+
+    }
+
+    /**
+     * 
+     * getQuery sql.
+     * 
+     * @param currentPageNum currentPageNum
+     * @param pageSize pageSize
+     * @param pageCount pageCount
+     * @param sorts sorts
+     * @param filters filters
+     * @param sql sql
+     * @param paramList paramList
+     * @return pageCnt
+     * @throws RepositoryException  RepositoryException
+     */
+    private int get(final int currentPageNum, final int pageSize,
+            final int pageCount, final Map<String, SortDirection> sorts,
+            final List<Filter> filters, final StringBuffer sql,
+            final List<Object> paramList) throws RepositoryException {
+
+        int pageCnt = pageCount;
+
+        final StringBuffer filterSql = new StringBuffer();
+        final StringBuffer orderBySql = new StringBuffer();
+        getFilterSql(filterSql, paramList, filters);
+        getOrderBySql(orderBySql, sorts);
+
+        if (-1 == pageCount) {
+            final StringBuffer countSql = new StringBuffer("select count("
+                    + JdbcRepositories.OID + ") from ").append(getName());
+
+            countSql.append("where ").append(filterSql);
+            final long count = count(countSql);
+            pageCnt = (int) Math.ceil((double) count / (double) pageSize);
+        }
+
+        if (currentPageNum > pageCnt) {
+            LOGGER.severe("currentPageNum pageCount ");
+            throw new RepositoryException("currentPageNum pageCount");
+
+        }
+
+        getQuerySql(currentPageNum, pageSize, filterSql, orderBySql, sql);
+        return pageCnt;
+    }
+
+    /**
+     * 
+     * getQuerySql.
+     * 
+     * @param currentPageNum currentPageNum
+     * @param pageSize  pageSize
+     * @param filterSql filterSql
+     * @param orderBySql orderBySql
+     * @param sql sql
+     */
+    private void getQuerySql(final int currentPageNum, final int pageSize,
+            final StringBuffer filterSql, final StringBuffer orderBySql,
+            final StringBuffer sql) {
+
+        final int start = (currentPageNum - 1) * pageSize;
+        final int end = start + pageSize;
+
+        sql.append(JdbcFactory.createJdbcFactory().queryPage(start, end,
+                filterSql, orderBySql, getName()));
+
+    }
+
+    /**
+     * 
+     * get filterSql and paramList.
+     * 
+     * @param filterSql filterSql
+     * @param paramList paramList
+     * @param filters filters
+     * @throws RepositoryException RepositoryException
+     */
+    private void getFilterSql(final StringBuffer filterSql,
+            final List<Object> paramList, final List<Filter> filters)
+            throws RepositoryException {
+
+        boolean isFirst = true;
+        String filterOperator = null;
+
+        for (Filter filter : filters) {
+
+            switch (filter.getOperator()) {
+            case EQUAL:
+                filterOperator = "=";
+                break;
+            case GREATER_THAN:
+                filterOperator = ">";
+                break;
+            case GREATER_THAN_OR_EQUAL:
+                filterOperator = ">=";
+                break;
+            case LESS_THAN:
+                filterOperator = "<";
+                break;
+            case LESS_THAN_OR_EQUAL:
+                filterOperator = "<=";
+                break;
+            case NOT_EQUAL:
+                filterOperator = "!=";
+                break;
+            case IN:
+                filterOperator = "in";
+                break;
+            default:
+                throw new RepositoryException("Unsupported filter operator["
+                        + filter.getOperator() + "]");
+            }
+
+            if (!isFirst) {
+                filterSql.append(" and ");
+                isFirst = false;
+            }
+
+            if (FilterOperator.IN != filter.getOperator()) {
+                filterSql.append(filter.getKey()).append(filterOperator)
+                        .append("?");
+                paramList.add(filter.getValue());
+            } else {
+
+                @SuppressWarnings("unchecked")
+                final Collection<Object> objects = (Collection<Object>) filter
+                        .getValue();
+
+                boolean isSubFist = true;
+                if (objects != null && objects.size() > 0) {
+                    filterSql.append(filter.getKey()).append(" in ");
+
+                    final Iterator<Object> obs = objects.iterator();
+                    while (obs.hasNext()) {
+                        if (isSubFist) {
+                            filterSql.append("(");
+                            isSubFist = false;
+                        } else {
+                            filterSql.append(",");
+                        }
+                        filterSql.append("?");
+                        paramList.add(obs.next());
+
+                        if (!obs.hasNext()) {
+                            filterSql.append(") ");
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+
+    }
+
+    /**
+     * 
+     * getOrderBySql.
+     * 
+     * @param orderBySql orderBySql
+     * @param sorts sorts
+     */
+    private void getOrderBySql(final StringBuffer orderBySql,
+            final Map<String, SortDirection> sorts) {
+
+        boolean isFirst = true;
+        String querySortDirection = null;
+        for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
+            if (isFirst) {
+                orderBySql.append(" order by ");
+                isFirst = false;
+            } else {
+                orderBySql.append(",");
+            }
+
+            if (sort.getValue().equals(SortDirection.ASCENDING)) {
+                querySortDirection = "asc";
+            } else {
+                querySortDirection = "desc";
+            }
+
+            orderBySql.append(sort.getKey()).append(" ")
+                    .append(querySortDirection);
+
+        }
+
     }
 
     @Override
     public List<JSONObject> getRandomly(final int fetchSize)
             throws RepositoryException {
-        // TODO Auto-generated method stub
-        return null;
+
+        final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+
+        final StringBuffer sql = new StringBuffer();
+        JSONArray jsonArray = null;
+
+        final Connection connection = Connections.getConnection();
+        getRandomly(fetchSize, sql);
+        try {
+            jsonArray = JdbcUtil.queryJsonArray(sql.toString(),
+                    new ArrayList<Object>(), connection);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                jsonObjects.add(jsonArray.getJSONObject(i));
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "getRandomly :" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return jsonObjects;
+    }
+
+    /**
+     * getRandomly.
+     * 
+     * @param fetchSize fetchSize
+     * @param sql sql
+     */
+    private void getRandomly(final int fetchSize, final StringBuffer sql) {
+
+        sql.append(JdbcFactory.createJdbcFactory().getRandomlySql(getName(),
+                fetchSize));
     }
 
     @Override
     public long count() throws RepositoryException {
-        // TODO Auto-generated method stub
-        return 0;
+
+        final StringBuffer sql = new StringBuffer("select count("
+                + JdbcRepositories.OID + ") from ").append(getName());
+        return count(sql);
+    }
+
+    /**
+     * count.
+     * 
+     * @param sql sql
+     * @return count
+     * @throws RepositoryException RepositoryException
+     */
+    private long count(final StringBuffer sql) throws RepositoryException {
+
+        final Connection connection = Connections.getConnection();
+
+        JSONObject jsonObject;
+        long count;
+        try {
+            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
+                    new ArrayList<Object>(), connection);
+
+            count = jsonObject.getLong(jsonObject.keys().next().toString());
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "count :" + e.getMessage(), e);
+            throw new RepositoryException(e);
+        }
+
+        return count;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return name;
     }
 
     @Override
@@ -427,7 +736,12 @@ public class JdbcRepository implements Repository {
             }
         }
 
-        final JdbcTransaction jdbcTransaction = new JdbcTransaction();
+        JdbcTransaction jdbcTransaction = null;
+        try {
+            jdbcTransaction = new JdbcTransaction();
+        } catch (final SQLException e) {
+            LOGGER.severe("init jdbcTransaction wrong");
+        }
         TX.set(jdbcTransaction);
 
         return ret;
@@ -436,20 +750,27 @@ public class JdbcRepository implements Repository {
 
     @Override
     public boolean isCacheEnabled() {
-        // TODO Auto-generated method stub
-        return false;
+        return cacheEnabled;
     }
 
     @Override
     public void setCacheEnabled(final boolean isCacheEnabled) {
-        // TODO Auto-generated method stub
-
+        cacheEnabled = isCacheEnabled;
     }
 
     @Override
     public Cache<String, Serializable> getCache() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * Constructs a JDBC repository with the specified name.
+     * 
+     * @param name the specified name
+     */
+    public JdbcRepository(final String name) {
+        this.name = name;
     }
 
 }

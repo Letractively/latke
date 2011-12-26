@@ -76,18 +76,57 @@ public final class JdbcUtil {
     }
 
     /**
-     * querySql.
+     * queryJsonObject.
+     * 
      * 
      * @param sql sql
      * @param paramList paramList
      * @param connection connection
-     * @return JSONObject
+     * @return JSONObject only one record.
      * @throws SQLException SQLException
-     * @throws JSONException JSONException 
+     * @throws JSONException JSONException
      */
-    public static JSONObject querySql(final String sql,
+    public static JSONObject queryJsonObject(final String sql,
             final List<Object> paramList, final Connection connection)
             throws SQLException, JSONException {
+
+        return queryJson(sql, paramList, connection, true);
+
+    }
+
+    /**
+     * 
+     * queryJsonArray.
+     * 
+     * @param sql sql
+     * @param paramList paramList
+     * @param connection connection
+     * @return JSONArray
+     * @throws SQLException SQLException
+     * @throws JSONException JSONException
+     */
+    public static JSONArray queryJsonArray(final String sql,
+            final List<Object> paramList, final Connection connection)
+            throws SQLException, JSONException {
+
+     final    JSONObject jsonObject = queryJson(sql, paramList, connection, false);
+        return jsonObject.getJSONArray(Keys.RESULTS);
+
+    }
+
+    /**
+     * 
+     * @param sql sql
+     * @param paramList paramList
+     * @param connection connection
+     * @param ifOnlyOne ifOnlyOne to determine return object or array.
+     * @return JSONObject
+     * @throws SQLException SQLException
+     * @throws JSONException JSONException
+     */
+    private static JSONObject queryJson(final String sql,
+            final List<Object> paramList, final Connection connection,
+           final boolean ifOnlyOne) throws SQLException, JSONException {
 
         final PreparedStatement preparedStatement = connection
                 .prepareStatement(sql);
@@ -99,22 +138,24 @@ public final class JdbcUtil {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
 
-        final JSONObject jsonObject = resultSetToJsonObject(resultSet);
+        final JSONObject jsonObject = resultSetToJsonObject(resultSet,
+                ifOnlyOne);
         preparedStatement.close();
         return jsonObject;
 
     }
 
     /**
-     * jdbc resultSetToJsonObject to JSONObject.
+     * resultSetToJsonObject.
      * 
      * @param resultSet resultSet
+     * @param ifOnlyOne ifOnlyOne
      * @return JSONObject
-     * @throws SQLException SQLException 
+     * @throws SQLException SQLException
      * @throws JSONException JSONException
      */
-    private static JSONObject resultSetToJsonObject(final ResultSet resultSet)
-            throws SQLException, JSONException {
+    private static JSONObject resultSetToJsonObject(final ResultSet resultSet,
+            final boolean ifOnlyOne) throws SQLException, JSONException {
 
         final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
         final int numColumns = resultSetMetaData.getColumnCount();
@@ -133,7 +174,7 @@ public final class JdbcUtil {
             jsonArray.put(jsonObject);
         }
 
-        if (jsonArray.length() == 1) {
+        if (ifOnlyOne) {
 
             jsonObject = jsonArray.getJSONObject(0);
             return jsonObject;

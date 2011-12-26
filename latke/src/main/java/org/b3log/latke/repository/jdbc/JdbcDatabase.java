@@ -39,4 +39,26 @@ public interface JdbcDatabase {
     boolean createTable(String tableName, List<FieldDefinition> fieldDefinitions)
             throws SQLException;
 
+    /**
+     * queryPage sql.
+     * 
+     * @param start start
+     * @param end end
+     * @param filterSql filterSql
+     * @param orderBySql orderBySql
+     * @param tableName tableName
+     * @return sql 
+     */
+    String queryPage(int start, int end, StringBuffer filterSql,
+            StringBuffer orderBySql, String tableName);
+
+    /**
+     * getRandomlySql.
+     * 
+     * @param tableName tableName
+     * @param fetchSize fetchSize
+     * @return sql
+     */
+    String getRandomlySql(String tableName, int fetchSize);
+
 }
