@@ -28,7 +28,7 @@ import org.b3log.latke.repository.jdbc.util.Connections;
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Dec 20, 2011
  */
-public  class JdbcTransaction implements Transaction {
+public final class JdbcTransaction implements Transaction {
 
     /**
      * Public constructor.
@@ -37,7 +37,6 @@ public  class JdbcTransaction implements Transaction {
     public JdbcTransaction() throws SQLException {
         connection = Connections.getConnection();
         connection.setAutoCommit(false);
-
     }
 
     /**
@@ -58,13 +57,23 @@ public  class JdbcTransaction implements Transaction {
 
     @Override
     public void commit() {
-        // TODO Auto-generated method stub
+
+        try {
+            connection.commit();
+        } catch (final SQLException e) {
+            throw new RuntimeException("commit mistake", e);
+        }
 
     }
 
     @Override
     public void rollback() {
-        // TODO Auto-generated method stub
+
+        try {
+            connection.rollback();
+        } catch (final SQLException e) {
+            throw new RuntimeException("rollback mistake", e);
+        }
 
     }
 
@@ -78,8 +87,7 @@ public  class JdbcTransaction implements Transaction {
 
     @Override
     public boolean isActive() {
-        // TODO Auto-generated method stub
-        return false;
+        return isActive;
     }
 
     @Override
