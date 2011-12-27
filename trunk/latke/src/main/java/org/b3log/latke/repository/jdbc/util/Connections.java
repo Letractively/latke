@@ -36,14 +36,15 @@ public final class Connections {
         Connection con = null;
         try {
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            con = DriverManager.getConnection("jdbc:odbc:wombat", "login",
-                    "password");
+            con =
+                    DriverManager.getConnection("jdbc:odbc:wombat", "login",
+                            "password");
             return con;
         } catch (final Exception e) {
             e.printStackTrace();
         }
 
-        return null;
+        return con;
     }
 
     /**
