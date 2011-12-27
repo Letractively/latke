@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.b3log.latke.Keys;
@@ -47,8 +48,11 @@ public final class JdbcUtil {
     public static boolean executeSql(final String sql,
             final Connection connection) throws SQLException {
 
-        return connection.createStatement().execute(sql);
+        final Statement statement = connection.createStatement();
+        final boolean isSuccess = statement.execute(sql);
+        statement.close();
 
+        return isSuccess;
     }
 
     /**
@@ -65,14 +69,17 @@ public final class JdbcUtil {
             final List<Object> paramList, final Connection connection)
             throws SQLException {
 
-        final PreparedStatement preparedStatement = connection
-                .prepareStatement(sql);
+        final PreparedStatement preparedStatement =
+                connection.prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
 
             preparedStatement.setObject(i, paramList.get(i));
         }
-        return preparedStatement.execute();
+        final boolean isSuccess = preparedStatement.execute();
+        preparedStatement.close();
+
+        return isSuccess;
     }
 
     /**
@@ -109,7 +116,8 @@ public final class JdbcUtil {
             final List<Object> paramList, final Connection connection)
             throws SQLException, JSONException {
 
-     final    JSONObject jsonObject = queryJson(sql, paramList, connection, false);
+        final JSONObject jsonObject =
+                queryJson(sql, paramList, connection, false);
         return jsonObject.getJSONArray(Keys.RESULTS);
 
     }
@@ -126,10 +134,10 @@ public final class JdbcUtil {
      */
     private static JSONObject queryJson(final String sql,
             final List<Object> paramList, final Connection connection,
-           final boolean ifOnlyOne) throws SQLException, JSONException {
+            final boolean ifOnlyOne) throws SQLException, JSONException {
 
-        final PreparedStatement preparedStatement = connection
-                .prepareStatement(sql);
+        final PreparedStatement preparedStatement =
+                connection.prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
 
@@ -138,8 +146,8 @@ public final class JdbcUtil {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
 
-        final JSONObject jsonObject = resultSetToJsonObject(resultSet,
-                ifOnlyOne);
+        final JSONObject jsonObject =
+                resultSetToJsonObject(resultSet, ifOnlyOne);
         preparedStatement.close();
         return jsonObject;
 
