@@ -144,8 +144,8 @@ public final class JdbcRepositories {
 
         repositoriesMap = new HashMap<String, List<FieldDefinition>>();
 
-        final JSONArray repositoritArray = jsonObject
-                .getJSONArray(REPOSITORIES);
+        final JSONArray repositoritArray =
+                jsonObject.getJSONArray(REPOSITORIES);
 
         JSONObject repositoritObject = null;
         JSONObject fieldDefinitionObject = null;
@@ -155,11 +155,12 @@ public final class JdbcRepositories {
             repositoritObject = repositoritArray.getJSONObject(i);
             final String repositoryName = repositoritObject.getString(NAME);
 
-            final List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
+            final List<FieldDefinition> fieldDefinitions =
+                    new ArrayList<FieldDefinition>();
             repositoriesMap.put(repositoryName, fieldDefinitions);
 
-            final JSONArray keysJsonArray = repositoritObject
-                    .getJSONArray(KEYS);
+            final JSONArray keysJsonArray =
+                    repositoritObject.getJSONArray(KEYS);
 
             FieldDefinition definition = null;
             for (int j = 0; j < keysJsonArray.length(); j++) {
