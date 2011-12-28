@@ -37,6 +37,7 @@ public final class JdbcTransaction implements Transaction {
     public JdbcTransaction() throws SQLException {
         connection = Connections.getConnection();
         connection.setAutoCommit(false);
+        isActive = true;
     }
 
     /**
@@ -58,10 +59,16 @@ public final class JdbcTransaction implements Transaction {
     @Override
     public void commit() {
 
+        boolean ifSuccess = false;
         try {
             connection.commit();
+            ifSuccess = true;
         } catch (final SQLException e) {
             throw new RuntimeException("commit mistake", e);
+        }
+
+        if (ifSuccess) {
+            dispose();
         }
 
     }
@@ -71,8 +78,11 @@ public final class JdbcTransaction implements Transaction {
 
         try {
             connection.rollback();
+
         } catch (final SQLException e) {
             throw new RuntimeException("rollback mistake", e);
+        } finally {
+            dispose();
         }
 
     }
@@ -92,7 +102,21 @@ public final class JdbcTransaction implements Transaction {
 
     @Override
     public void clearQueryCache(final boolean flag) {
-        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * close the connection.
+     */
+    public void dispose() {
+        try {
+            connection.close();
+        } catch (final SQLException e) {
+            throw new RuntimeException("close connection", e);
+        } finally {
+            isActive = false;
+            connection = null;
+        }
 
     }
 
