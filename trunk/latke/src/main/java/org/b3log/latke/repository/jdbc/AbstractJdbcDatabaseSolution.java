@@ -16,7 +16,9 @@
 package org.b3log.latke.repository.jdbc;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
@@ -31,6 +33,22 @@ import org.b3log.latke.repository.jdbc.util.JdbcUtil;
  */
 public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
 
+    /**
+     * the map Mapping type to real database type. 
+     */
+    private Map<String, String> jdbcTypeMap = new HashMap<String, String>();
+
+    /**
+     * 
+     * registerType.
+     * 
+     * @param type type from json
+     * @param databaseType real databaseType
+     */
+    protected void registerType(final String type, final String databaseType) {
+        jdbcTypeMap.put(type, databaseType);
+    }
+
     @Override
     public boolean createTable(final String tableName,
             final List<FieldDefinition> fieldDefinitions) throws SQLException {
@@ -41,9 +59,9 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
         createTableBody(createTableSql, fieldDefinitions);
         createTableEnd(createTableSql);
 
-       return  JdbcUtil.executeSql(createTableSql.toString(), Connections.getConnection());
-        
-       
+        return JdbcUtil.executeSql(createTableSql.toString(),
+                Connections.getConnection());
+
     }
 
     /**
@@ -70,9 +88,5 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param createTableSql createSql 
      */
     protected abstract void createTableEnd(StringBuffer createTableSql);
-
-    
-    
-  
 
 }
