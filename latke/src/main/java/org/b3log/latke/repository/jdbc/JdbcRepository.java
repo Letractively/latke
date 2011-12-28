@@ -782,6 +782,22 @@ public class JdbcRepository implements Repository {
     }
 
     /**
+     * dispose the resource when requestDestroyed .
+     */
+    public static void dispose() {
+
+        final JdbcTransaction jdbcTransaction = TX.get();
+        if (jdbcTransaction == null) {
+            return;
+        }
+
+        if (jdbcTransaction.getConnection() != null) {
+            jdbcTransaction.dispose();
+        }
+
+    }
+
+    /**
      * 
      * getConnection.
      * default using current JdbcTransaction's connection,if null get a new one.
