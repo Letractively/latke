@@ -343,6 +343,17 @@ public final class Latkes {
     }
 
     /**
+     * Determines whether Latkes runs with a JDBC database.
+     * 
+     * @return {@code true} if Latkes runs with a JDBC database, returns 
+     * {@code false} otherwise
+     */
+    public static boolean runsWithJDBCDatabase() {
+        return RuntimeEnv.LOCAL == Latkes.getRuntimeEnv()
+               && RuntimeDatabase.SLEEPYCAT != Latkes.getRuntimeDatabase();
+    }
+
+    /**
      * Shutdowns Latkes.
      */
     public static void shutdown() {

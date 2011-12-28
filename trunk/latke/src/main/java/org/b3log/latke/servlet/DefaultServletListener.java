@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSessionEvent;
  * Default servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Oct 4, 2011
+ * @version 1.0.0.1, Dec 28, 2011
  */
 public final class DefaultServletListener extends AbstractServletListener {
 
@@ -34,6 +34,7 @@ public final class DefaultServletListener extends AbstractServletListener {
 
     @Override
     public void requestDestroyed(final ServletRequestEvent servletRequestEvent) {
+        super.requestDestroyed(servletRequestEvent);
     }
 
     @Override
