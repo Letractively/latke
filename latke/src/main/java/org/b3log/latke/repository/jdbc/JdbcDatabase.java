@@ -49,8 +49,8 @@ public interface JdbcDatabase {
      * @param tableName tableName
      * @return sql 
      */
-    String queryPage(int start, int end, StringBuffer filterSql,
-            StringBuffer orderBySql, String tableName);
+    String queryPage(int start, int end, String filterSql,
+            String orderBySql, String tableName);
 
     /**
      * getRandomlySql.

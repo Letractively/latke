@@ -526,7 +526,7 @@ public class JdbcRepository implements Repository {
         final int end = start + pageSize;
 
         sql.append(JdbcFactory.createJdbcFactory().queryPage(start, end,
-                filterSql, orderBySql, getName()));
+                filterSql.toString(), orderBySql.toString(), getName()));
 
     }
 
