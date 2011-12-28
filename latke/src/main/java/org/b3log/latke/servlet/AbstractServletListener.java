@@ -27,12 +27,13 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
+import org.b3log.latke.repository.jdbc.JdbcRepository;
 
 /**
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.9, Sep 24, 2011
+ * @version 1.0.3.0, Dec 28, 2011
  */
 public abstract class AbstractServletListener implements ServletContextListener,
                                                          ServletRequestListener,
@@ -82,8 +83,11 @@ public abstract class AbstractServletListener implements ServletContextListener,
     }
 
     @Override
-    public abstract void requestDestroyed(
-            final ServletRequestEvent servletRequestEvent);
+    public void requestDestroyed(final ServletRequestEvent servletRequestEvent) {
+        if (Latkes.runsWithJDBCDatabase()) {
+            JdbcRepository.dispose();
+        }
+    }
 
     @Override
     public abstract void requestInitialized(
