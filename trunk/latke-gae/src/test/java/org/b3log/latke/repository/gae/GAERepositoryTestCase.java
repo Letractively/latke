@@ -16,6 +16,7 @@
 package org.b3log.latke.repository.gae;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalMemcacheServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
@@ -37,7 +38,8 @@ public class GAERepositoryTestCase {
      * Local service test helper.
      */
     private final LocalServiceTestHelper localServiceTestHelper =
-            new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+            new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig(),
+                                       new LocalMemcacheServiceTestConfig());
 
     /**
      * Before class.
@@ -67,34 +69,34 @@ public class GAERepositoryTestCase {
     @Test
     public void add() throws Exception {
         final GAERepository repository = new GAERepository("test repository");
-        
+
         final GAETransaction transaction = repository.beginTransaction();
-        
+
         try {
             final JSONObject json = new JSONObject();
-            
+
             json.put(Keys.OBJECT_ID, "88250");
             json.put("key1", 1);
             json.put("key2", 2D);
             json.put("key3", true);
-            
+
             repository.add(json);
-            
+
             transaction.commit();
         } catch (final Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
         }
-        
+
         final long count = repository.count();
-        
+
         assertEquals(count, 1);
-        
+
         final JSONObject json = repository.get("88250");
         assertNotNull(json);
-        
+
         assertTrue(json.optBoolean("key3"));
-        
+
     }
 }
