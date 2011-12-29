@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, Dec 22, 2011
+ * @version 1.0.1.0, Dec 29, 2011
  * @see #initRuntimeEnv() 
  */
 public final class Latkes {
@@ -358,6 +358,10 @@ public final class Latkes {
      */
     public static void shutdown() {
         try {
+            if (RuntimeEnv.LOCAL != getRuntimeEnv()) {
+                return;
+            }
+
             final RuntimeDatabase runtimeDatabase = getRuntimeDatabase();
             switch (runtimeDatabase) {
                 case SLEEPYCAT:
