@@ -142,12 +142,16 @@ public final class Latkes {
     }
 
     /**
-     * Gets Latke configurations.
+     * Gets runtime configuration of a service specified by the given service 
+     * name.
      * 
-     * @return Latke properties
+     * @param serviceName the given service name
+     * @return runtime configuration, returns {@code null} if not found
      */
-    public static Properties getProperties() {
-        return LATKE_PROPS;
+    public static RuntimeEnv getRuntime(final String serviceName) {
+        final String value = LATKE_PROPS.getProperty(serviceName);
+
+        return RuntimeEnv.valueOf(value);
     }
 
     /**
