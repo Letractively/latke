@@ -17,13 +17,12 @@ package org.b3log.latke.user;
 
 import freemarker.log.Logger;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.RuntimeEnv;
 
 /**
  * User service factory.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Dec 20, 2011
+ * @version 1.0.0.3, Dec 29, 2011
  */
 public final class UserServiceFactory {
 
@@ -40,13 +39,10 @@ public final class UserServiceFactory {
     static {
         LOGGER.info("Constructing User Service....");
 
-        final String runtime = Latkes.getProperties().getProperty("userService");
-        final RuntimeEnv runtimeEnv = RuntimeEnv.valueOf(runtime);
-
         try {
             Class<UserService> serviceClass = null;
 
-            switch (runtimeEnv) {
+            switch (Latkes.getRuntime("userService")) {
                 case GAE:
                     serviceClass =
                             (Class<UserService>) Class.forName(
