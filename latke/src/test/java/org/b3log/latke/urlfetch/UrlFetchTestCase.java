@@ -55,7 +55,7 @@ public class UrlFetchTestCase {
 
         final HTTPResponse httpResponse = fetchService.fetch(request);
 
-        printHttpREsponse(httpResponse);
+        printHttpResponse(httpResponse);
     }
 
     /**
@@ -75,7 +75,7 @@ public class UrlFetchTestCase {
 
         final HTTPResponse httpResponse = fetchService.fetch(request);
 
-        printHttpREsponse(httpResponse);
+        printHttpResponse(httpResponse);
     }
 
     /**
@@ -83,7 +83,7 @@ public class UrlFetchTestCase {
      * @param httpResponse XXX
      * @throws IOException XXX
      */
-    private void printHttpREsponse(final HTTPResponse httpResponse) throws
+    private void printHttpResponse(final HTTPResponse httpResponse) throws
             IOException {
         System.out.println("responseCode == " + httpResponse.getResponseCode());
         System.out.println("finalUrl == " + httpResponse.getFinalURL());
