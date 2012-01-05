@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.model.Pagination;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -138,22 +137,17 @@ public final class Requests {
      * @see #PAGINATION_PATH_PATTERN
      */
     public static JSONObject buildPaginationRequest(final String path) {
-        try {
-            final Integer currentPageNum = getCurrentPageNum(path);
-            final Integer pageSize = getPageSize(path);
-            final Integer windowSize = getWindowSize(path);
+        final Integer currentPageNum = getCurrentPageNum(path);
+        final Integer pageSize = getPageSize(path);
+        final Integer windowSize = getWindowSize(path);
 
-            final JSONObject ret = new JSONObject();
-            ret.put(Pagination.PAGINATION_CURRENT_PAGE_NUM,
-                    currentPageNum);
-            ret.put(Pagination.PAGINATION_PAGE_SIZE, pageSize);
-            ret.put(Pagination.PAGINATION_WINDOW_SIZE, windowSize);
+        final JSONObject ret = new JSONObject();
+        ret.put(Pagination.PAGINATION_CURRENT_PAGE_NUM,
+                currentPageNum);
+        ret.put(Pagination.PAGINATION_PAGE_SIZE, pageSize);
+        ret.put(Pagination.PAGINATION_WINDOW_SIZE, windowSize);
 
-            return ret;
-        } catch (final JSONException e) {
-            // Should never
-            throw new RuntimeException(e);
-        }
+        return ret;
     }
 
     /**

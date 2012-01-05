@@ -27,7 +27,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -132,19 +131,15 @@ public final class LangPropsService {
         final Enumeration<String> keys = langBundle.getKeys();
         final JSONArray labels = new JSONArray();
 
-        try {
-            ret.put(Label.LABELS, labels);
+        ret.put(Label.LABELS, labels);
 
-            while (keys.hasMoreElements()) {
-                final JSONObject label = new JSONObject();
-                final String key = keys.nextElement();
-                label.put(Label.LABEL_ID, key);
-                label.put(Label.LABEL_TEXT, langBundle.getString(key));
+        while (keys.hasMoreElements()) {
+            final JSONObject label = new JSONObject();
+            final String key = keys.nextElement();
+            label.put(Label.LABEL_ID, key);
+            label.put(Label.LABEL_TEXT, langBundle.getString(key));
 
-                labels.put(label);
-            }
-        } catch (final JSONException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            labels.put(label);
         }
 
         return ret;
