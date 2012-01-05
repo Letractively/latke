@@ -985,7 +985,7 @@ public final class GAERepository implements Repository {
                                     currentPageNum,
                                     pageSize,
                                     getName()});
-        } catch (final JSONException e) {
+        } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RepositoryException(e);
         }
