@@ -1067,13 +1067,14 @@ public class JSONObject implements Serializable {
      *  types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String,
      *  or the JSONObject.NULL object.
      * @return this.
-     * @throws JSONException If the value is non-finite number
+     * @throws IllegalArgumentException if the value is non-finite number
      *  or if the key is null.
      */
-    public JSONObject put(String key, Object value) throws JSONException {
+    public JSONObject put(String key, Object value)  {
         if (key == null) {
-            throw new JSONException("Null key.");
+            throw new IllegalArgumentException("Null key.");
         }
+        
         if (value != null) {
             testValidity(value);
             this.map.put(key, value);
@@ -1276,18 +1277,18 @@ public class JSONObject implements Serializable {
     /**
      * Throw an exception if the object is an NaN or infinite number.
      * @param o The object to test.
-     * @throws JSONException If o is a non-finite number.
+     * @throws IllegalArgumentException if o is a non-finite number.
      */
-    static void testValidity(Object o) throws JSONException {
+    static void testValidity(Object o)  {
         if (o != null) {
             if (o instanceof Double) {
                 if (((Double)o).isInfinite() || ((Double)o).isNaN()) {
-                    throw new JSONException(
+                    throw new IllegalArgumentException(
                         "JSON does not allow non-finite numbers.");
                 }
             } else if (o instanceof Float) {
                 if (((Float)o).isInfinite() || ((Float)o).isNaN()) {
-                    throw new JSONException(
+                    throw new IllegalArgumentException(
                         "JSON does not allow non-finite numbers.");
                 }
             }
