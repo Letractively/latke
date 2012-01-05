@@ -151,6 +151,12 @@ public final class Latkes {
     public static RuntimeEnv getRuntime(final String serviceName) {
         final String value = LATKE_PROPS.getProperty(serviceName);
 
+        if (null == value) {
+            LOGGER.log(Level.WARNING,
+                       "Rutnime service[name={0}" + "] is undefined, "
+                       + "please configure it in latkes.properties", serviceName);
+        }
+
         return RuntimeEnv.valueOf(value);
     }
 
