@@ -169,10 +169,10 @@ public class JSONObject implements Serializable {
      *
      * @param jo A JSONObject.
      * @param names An array of strings.
-     * @exception JSONException If a value is a non-finite number or if a name
-     * is duplicated.
+     * @exception IllegalArgumentException if a value is a non-finite number 
+     * or if a name is duplicated.
      */
-    public JSONObject(JSONObject jo, String[] names) throws JSONException {
+    public JSONObject(JSONObject jo, String[] names) {
         this();
         for (int i = 0; i < names.length; i += 1) {
             putOnce(names[i], jo.opt(names[i]));
@@ -1066,12 +1066,13 @@ public class JSONObject implements Serializable {
      * @param key
      * @param value
      * @return his.
-     * @throws JSONException if the key is a duplicate
+     * @throws IllegalArgumentException if the key is a duplicate
      */
-    public JSONObject putOnce(String key, Object value) throws JSONException {
+    public JSONObject putOnce(String key, Object value) {
         if (key != null && value != null) {
             if (opt(key) != null) {
-                throw new JSONException("Duplicate key \"" + key + "\"");
+                throw new IllegalArgumentException("Duplicate key \"" + key
+                                                   + "\"");
             }
             put(key, value);
         }
@@ -1087,9 +1088,9 @@ public class JSONObject implements Serializable {
      * types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String, or
      * the JSONObject.NULL object.
      * @return this.
-     * @throws JSONException If the value is a non-finite number.
+     * @throws IllegalArgumentException If the value is a non-finite number.
      */
-    public JSONObject putOpt(String key, Object value) throws JSONException {
+    public JSONObject putOpt(String key, Object value) {
         if (key != null && value != null) {
             put(key, value);
         }
