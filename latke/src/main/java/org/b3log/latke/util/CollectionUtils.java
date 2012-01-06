@@ -22,13 +22,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 /**
  * Collection utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Dec 15, 2011
+ * @version 1.0.0.7, Jan 6, 2012
  */
 public final class CollectionUtils {
 
@@ -116,12 +115,10 @@ public final class CollectionUtils {
      * @param <T> the type of elements maintained by the specified list
      * @param list the specified list
      * @return a {@link JSONArray JSON array}
-     * @throws JSONException json exception
      */
-    public static <T> JSONArray listToJSONArray(final List<T> list)
-            throws JSONException {
+    public static <T> JSONArray listToJSONArray(final List<T> list) {
         final JSONArray ret = new JSONArray();
-        
+
         if (null == list) {
             return ret;
         }
@@ -186,12 +183,10 @@ public final class CollectionUtils {
      * @param jsonArray the specified json array
      * @param newType the class of the copy to be returned
      * @return an array
-     * @throws JSONException json exception
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] jsonArrayToArray(final JSONArray jsonArray,
-                                           final Class<? extends T[]> newType)
-            throws JSONException {
+                                           final Class<? extends T[]> newType) {
         if (null == jsonArray) {
             return (T[]) new Object[]{};
         }
@@ -199,7 +194,7 @@ public final class CollectionUtils {
         final int newLength = jsonArray.length();
         final Object[] original = new Object[newLength];
         for (int i = 0; i < newLength; i++) {
-            original[i] = jsonArray.get(i);
+            original[i] = jsonArray.opt(i);
         }
 
         return Arrays.copyOf(original, newLength, newType);
