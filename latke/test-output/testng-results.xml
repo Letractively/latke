@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="485" started-at="2012-01-07T17:06:03Z" finished-at="2012-01-07T17:06:04Z">
+    <groups>
+      <group name="jdbc">
+        <method signature="JdbcRepositoryTestCase.update(org.json.JSONObject)[pri:0, instance:org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase@5e1077]" name="update" class="org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase"/>
+      </group>
+    </groups>
+    <test name="Default test" duration-ms="485" started-at="2012-01-07T17:06:03Z" finished-at="2012-01-07T17:06:04Z">
+      <class name="org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase">
+        <test-method status="PASS" signature="createTestTable()[pri:0, instance:org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase@5e1077]" name="createTestTable" is-config="true" duration-ms="317" started-at="2012-01-07T17:06:03Z" finished-at="2012-01-07T17:06:04Z">
+        </test-method>
+        <test-method status="PASS" signature="update(org.json.JSONObject)[pri:0, instance:org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase@5e1077]" name="update" duration-ms="146" started-at="2012-01-07T17:06:04Z" finished-at="2012-01-07T17:06:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[{"col4":true,"col1":100,"col3":"1.4","col2":"=================bbbb========================","oId":"1325927164042"}]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>
