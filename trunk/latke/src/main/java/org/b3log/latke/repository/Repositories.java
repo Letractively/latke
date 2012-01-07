@@ -34,7 +34,7 @@ import org.json.JSONObject;
  * Repository utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Dec 20, 2011
+ * @version 1.0.0.3, Jan 7, 2012
  */
 public final class Repositories {
 
@@ -75,9 +75,9 @@ public final class Repositories {
     }
 
     /**
-     * Determines whether the specified json object can not be persisted 
-     * (add or update) into an repository which specified by the given 
-     * repository name.
+     * Determines whether the specified json object can not be 
+     * persisted (add or update) into an repository which specified by 
+     * the given repository name.
      * 
      * <p>
      * A valid json object to persist must match keys definitions 
@@ -93,19 +93,18 @@ public final class Repositories {
      * @param repositoryName the given repository name
      * @param jsonObject the specified json object
      * @param ignoredKeys the specified keys to ignore
-     * @return {@code true} if can not be persisted, returns {@code false} 
-     * otherwise
+     * @throws RepositoryException if the specified json object can not be 
+     * persisted
      * @see Repository#add(org.json.JSONObject) 
      * @see Repository#update(java.lang.String, org.json.JSONObject) 
      */
-    public static boolean invalid(final String repositoryName,
-                                  final JSONObject jsonObject,
-                                  final String... ignoredKeys) {
+    public static void check(final String repositoryName,
+                             final JSONObject jsonObject,
+                             final String... ignoredKeys)
+            throws RepositoryException {
         if (null == jsonObject) {
-            LOGGER.log(Level.WARNING, "Null to persist to repository[{0}]",
-                       repositoryName);
-
-            return true;
+            throw new RepositoryException("Null to persist to repository["
+                                          + repositoryName + "]");
         }
 
         final boolean needIgnoreKeys = null != ignoredKeys
@@ -118,7 +117,7 @@ public final class Repositories {
                 getRepositoryKeysDescription(repositoryName);
         if (null == keysDescription) { // Not found repository description
             // Skips the checks
-            return false;
+            return;
         }
 
         final Set<String> keySet = new HashSet<String>();
@@ -137,32 +136,30 @@ public final class Repositories {
             }
 
             if (!nameSet.contains(key)) {
-                LOGGER.log(Level.WARNING,
-                           "A json object to persist to repository[name="
-                           + repositoryName + "] does not contain a key[{0}]",
-                           key);
-
-                return true;
+                throw new RepositoryException(
+                        "A json object to persist to repository[name="
+                        + repositoryName + "] does not contain a key["
+                        + key + "]");
             }
 
             // TODO: 88250, type and length validation
             /*
-            final String type = keyDescription.optString("type");
-            final Object value = jsonObject.opt(key);
+             final String type = keyDescription.optString("type");
+             final Object value = jsonObject.opt(key);
             
-            if (("String".equals(type) && !(value instanceof String))
-            || ("int".equals(type) && !(value instanceof Integer))
-            || ("long".equals(type) && !(value instanceof Long))
-            || ("double".equals(type) && !(value instanceof Double))
-            || ("boolean".equals(type) && !(value instanceof Boolean))) {
-            LOGGER.log(Level.WARNING,
-            "A json object to persist to repository[name={0}] has "
-            + "a wrong value type[definedType={1}, currentType={2}] with key["
-            + key + "]",
-            new Object[]{repositoryName, type, value.getClass()});
+             if (("String".equals(type) && !(value instanceof String))
+             || ("int".equals(type) && !(value instanceof Integer))
+             || ("long".equals(type) && !(value instanceof Long))
+             || ("double".equals(type) && !(value instanceof Double))
+             || ("boolean".equals(type) && !(value instanceof Boolean))) {
+             LOGGER.log(Level.WARNING,
+             "A json object to persist to repository[name={0}] has "
+             + "a wrong value type[definedType={1}, currentType={2}] with key["
+             + key + "]",
+             new Object[]{repositoryName, type, value.getClass()});
             
-            return true;
-            }
+             return true;
+             }
              */
         }
 
@@ -171,16 +168,12 @@ public final class Repositories {
             final String name = names.optString(i);
 
             if (!keySet.contains(name)) {
-                LOGGER.log(Level.WARNING,
-                           "A json object to persist to repository[name="
-                           + repositoryName + "] contains an redundant key[{0}]",
-                           name);
-
-                return true;
+                throw new RepositoryException(
+                        "A json object to persist to repository[name="
+                        + repositoryName + "] contains an redundant key[" + name
+                        + "]");
             }
         }
-
-        return false;
     }
 
     /**
