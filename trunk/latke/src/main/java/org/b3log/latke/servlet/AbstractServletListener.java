@@ -17,6 +17,7 @@ package org.b3log.latke.servlet;
 
 import java.util.logging.Level;
 import java.io.File;
+import java.net.URL;
 import java.util.Locale;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -47,8 +48,14 @@ public abstract class AbstractServletListener implements ServletContextListener,
     /**
      * Web root.
      */
-    private static String webRoot = 
-            ClassLoader.class.getResource("/").getPath();
+    private static String webRoot;
+
+    static {
+        final URL resource = ClassLoader.class.getResource("/");
+        if (null != resource) { // Running unit tests
+            webRoot = resource.getPath();
+        }
+    }
 
     /**
      * Initializes context, {@linkplain #webRoot web root}, locale and runtime
