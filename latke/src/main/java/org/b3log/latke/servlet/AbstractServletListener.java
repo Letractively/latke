@@ -47,7 +47,8 @@ public abstract class AbstractServletListener implements ServletContextListener,
     /**
      * Web root.
      */
-    private static String webRoot;
+    private static String webRoot = 
+            ClassLoader.class.getResource("/").getPath();
 
     /**
      * Initializes context, {@linkplain #webRoot web root}, locale and runtime
