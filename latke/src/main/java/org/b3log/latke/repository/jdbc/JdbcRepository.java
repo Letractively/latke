@@ -368,6 +368,8 @@ public class JdbcRepository implements Repository {
             throw new RepositoryException(e);
         }
 
+        closeQueryConnection(connection);
+
         return jsonObject;
 
     }
@@ -414,9 +416,11 @@ public class JdbcRepository implements Repository {
                 .append(" where ").append(JdbcRepositories.OID).append("=")
                 .append(id);
 
-        if (count(sql.append(sql.toString())) > 0) {
+        if (count(sql) > 0) {
+
             return true;
         }
+
         return false;
     }
 
@@ -453,6 +457,8 @@ public class JdbcRepository implements Repository {
             LOGGER.log(Level.SEVERE, "query :" + e.getMessage(), e);
             throw new RepositoryException(e);
         }
+
+        closeQueryConnection(connection);
 
         return jsonObject;
 
@@ -669,6 +675,7 @@ public class JdbcRepository implements Repository {
             throw new RepositoryException(e);
         }
 
+        closeQueryConnection(connection);
         return jsonObjects;
     }
 
@@ -714,6 +721,8 @@ public class JdbcRepository implements Repository {
             LOGGER.log(Level.SEVERE, "count :" + e.getMessage(), e);
             throw new RepositoryException(e);
         }
+
+        closeQueryConnection(connection);
 
         return count;
     }
@@ -804,6 +813,30 @@ public class JdbcRepository implements Repository {
         }
 
         return jdbcTransaction.getConnection();
+    }
+
+    /**
+     * closeQueryConnection,this connection not in JdbcTransaction,
+     * should be closed in code.
+     * 
+     * @param connection {@link Connection}
+     * @throws RepositoryException  RepositoryException
+    
+     */
+    private void closeQueryConnection(final Connection connection)
+            throws RepositoryException {
+
+        final JdbcTransaction jdbcTransaction = TX.get();
+        if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
+            try {
+                connection.close();
+            } catch (final SQLException e) {
+                LOGGER.log(Level.SEVERE,
+                        "closeQueryConnection :" + e.getMessage(), e);
+                throw new RepositoryException(e);
+            }
+        }
+
     }
 
 }

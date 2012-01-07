@@ -16,6 +16,8 @@
 package org.b3log.latke.repository.jdbc;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.sql.Connection;
 
@@ -118,7 +120,7 @@ public class JdbcRepositoryTestCase {
         assertNotNull(jsonObjectDb);
 
     }
- 
+
     /**
      * update test.
      * 
@@ -131,7 +133,7 @@ public class JdbcRepositoryTestCase {
         if (!ifRun) {
             return;
         }
-        
+
         final Transaction transaction = jdbcRepository.beginTransaction();
         jdbcRepository.add(jsonObject);
 
@@ -144,4 +146,55 @@ public class JdbcRepositoryTestCase {
 
     }
 
+    /**
+     * remove test.
+     * 
+     * @param jsonObject jsonObject
+     * @throws Exception Exception
+     */
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    public void remove(final JSONObject jsonObject) throws Exception {
+
+        if (!ifRun) {
+            return;
+        }
+
+        final Transaction transaction = jdbcRepository.beginTransaction();
+        jdbcRepository.add(jsonObject);
+        jdbcRepository.remove(jsonObject.getString(JdbcRepositories.OID));
+        transaction.commit();
+
+        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject
+                .getString(JdbcRepositories.OID));
+
+        assertNull(jsonObjectDB);
+
+    }
+
+    /**
+     * hasAndCount test.
+     * 
+     * @param jsonObject jsonObject
+     * @throws Exception Exception
+     */
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    public void hasAndCount(final JSONObject jsonObject) throws Exception {
+
+        if (!ifRun) {
+            return;
+        }
+
+        final long oCount = jdbcRepository.count();
+
+        final Transaction transaction = jdbcRepository.beginTransaction();
+        jdbcRepository.add(jsonObject);
+        transaction.commit();
+
+        assertTrue(jdbcRepository.has(jsonObject
+                .getString(JdbcRepositories.OID)));
+
+        final long nCount = jdbcRepository.count();
+        assertTrue(nCount > oCount);
+
+    }
 }

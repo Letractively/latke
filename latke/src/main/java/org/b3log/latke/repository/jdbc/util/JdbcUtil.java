@@ -55,6 +55,7 @@ public final class JdbcUtil {
     public static boolean executeSql(final String sql,
             final Connection connection) throws SQLException {
 
+        LOGGER.info("executeSql:" + sql);
         final Statement statement = connection.createStatement();
         final boolean isSuccess = statement.execute(sql);
         statement.close();
@@ -195,8 +196,11 @@ public final class JdbcUtil {
 
         if (ifOnlyOne) {
 
-            jsonObject = jsonArray.getJSONObject(0);
-            return jsonObject;
+            if (jsonArray.length() > 0) {
+                jsonObject = jsonArray.getJSONObject(0);
+                return jsonObject;
+            }
+            return null;
 
         }
 
