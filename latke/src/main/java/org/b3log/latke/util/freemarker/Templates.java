@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Utilities of <a href="http://www.freemarker.org">FreeMarker</a> template
- * engine.
+ * Utilities of <a href="http://www.freemarker.org">FreeMarker</a> 
+ * template engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Dec 6, 2011
+ * @version 1.0.1.2, Jan 7, 2012
  */
 public final class Templates {
 
@@ -61,6 +61,11 @@ public final class Templates {
      * Enables the {@linkplain #CACHE cache}? Default to {@code true}.
      */
     private static boolean cacheEnabled = true;
+
+    static {
+        MAIN_CFG.setDefaultEncoding("UTF-8");
+        MOBILE_CFG.setDefaultEncoding("UTF-8");
+    }
 
     /**
      * Private default constructor.
