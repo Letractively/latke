@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Dec 15, 2011
+ * @version 1.0.0.6, Jan 7, 2012
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -93,10 +93,7 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-        if (Repositories.invalid(getName(), jsonObject, Keys.OBJECT_ID)) {
-            throw new RepositoryException("The json object [" + jsonObject
-                                          + "] to persist is invalid");
-        }
+        Repositories.check(getName(), jsonObject, Keys.OBJECT_ID);
 
         return repository.add(jsonObject);
     }
@@ -104,10 +101,7 @@ public abstract class AbstractRepository implements Repository {
     @Override
     public void update(final String id, final JSONObject jsonObject)
             throws RepositoryException {
-        if (Repositories.invalid(getName(), jsonObject, Keys.OBJECT_ID)) {
-            throw new RepositoryException("The json object [" + jsonObject
-                                          + "] to persist is invalid");
-        }
+        Repositories.check(getName(), jsonObject, Keys.OBJECT_ID);
 
         repository.update(id, jsonObject);
     }
