@@ -5,8 +5,8 @@
     <classes>
       <class name="org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase">
         <methods>
+          <include name="hasAndCount" invocation-numbers="0"/>
           <include name="createTestTable"/>
-          <include name="update" invocation-numbers="0"/>
         </methods>
       </class>
     </classes>
