@@ -22,6 +22,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.b3log.latke.Keys;
 import org.json.JSONArray;
@@ -36,6 +37,12 @@ import org.json.JSONObject;
  * @version 1.0.0.0, Dec 20, 2011
  */
 public final class JdbcUtil {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(JdbcUtil.class
+            .getName());
 
     /**
      * executeSql.
@@ -69,12 +76,14 @@ public final class JdbcUtil {
             final List<Object> paramList, final Connection connection)
             throws SQLException {
 
-        final PreparedStatement preparedStatement =
-                connection.prepareStatement(sql);
+        LOGGER.info("executeSql:" + sql);
+
+        final PreparedStatement preparedStatement = connection
+                .prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
 
-            preparedStatement.setObject(i, paramList.get(i));
+            preparedStatement.setObject(i, paramList.get(i - 1));
         }
         final boolean isSuccess = preparedStatement.execute();
         preparedStatement.close();
@@ -116,8 +125,8 @@ public final class JdbcUtil {
             final List<Object> paramList, final Connection connection)
             throws SQLException, JSONException {
 
-        final JSONObject jsonObject =
-                queryJson(sql, paramList, connection, false);
+        final JSONObject jsonObject = queryJson(sql, paramList, connection,
+                false);
         return jsonObject.getJSONArray(Keys.RESULTS);
 
     }
@@ -136,8 +145,10 @@ public final class JdbcUtil {
             final List<Object> paramList, final Connection connection,
             final boolean ifOnlyOne) throws SQLException, JSONException {
 
-        final PreparedStatement preparedStatement =
-                connection.prepareStatement(sql);
+        LOGGER.info("querySql:" + sql);
+
+        final PreparedStatement preparedStatement = connection
+                .prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
 
@@ -146,8 +157,8 @@ public final class JdbcUtil {
 
         final ResultSet resultSet = preparedStatement.executeQuery();
 
-        final JSONObject jsonObject =
-                resultSetToJsonObject(resultSet, ifOnlyOne);
+        final JSONObject jsonObject = resultSetToJsonObject(resultSet,
+                ifOnlyOne);
         preparedStatement.close();
         return jsonObject;
 

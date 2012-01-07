@@ -73,8 +73,7 @@ public class JdbcRepository implements Repository {
     /**
      * The current transaction.
      */
-    public static final ThreadLocal<JdbcTransaction> TX =
-            new InheritableThreadLocal<JdbcTransaction>();
+    public static final ThreadLocal<JdbcTransaction> TX = new InheritableThreadLocal<JdbcTransaction>();
 
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
@@ -225,8 +224,8 @@ public class JdbcRepository implements Repository {
             final JSONObject jsonObject, final List<Object> paramList,
             final StringBuffer sql) throws JSONException {
 
-        final JSONObject needUpdateJsonObject =
-                getNeedUpdateJsonObject(oldJsonObject, jsonObject);
+        final JSONObject needUpdateJsonObject = getNeedUpdateJsonObject(
+                oldJsonObject, jsonObject);
 
         if (needUpdateJsonObject.length() == 0) {
             LOGGER.log(Level.INFO,
@@ -264,7 +263,7 @@ public class JdbcRepository implements Repository {
             key = keys.next();
 
             if (isFirst) {
-                wildcardString.append("set ").append(key).append("=?");
+                wildcardString.append(" set ").append(key).append("=?");
                 isFirst = false;
             } else {
                 wildcardString.append(",").append(key).append("=?");
@@ -274,7 +273,7 @@ public class JdbcRepository implements Repository {
         }
 
         sql.append("update ").append(getName()).append(wildcardString)
-                .append("where ").append(JdbcRepositories.OID).append("=")
+                .append(" where ").append(JdbcRepositories.OID).append("=")
                 .append(id);
 
     }
@@ -312,7 +311,7 @@ public class JdbcRepository implements Repository {
 
         }
 
-        return jsonObject;
+        return needUpdateJsonObject;
     }
 
     @Override
@@ -362,9 +361,8 @@ public class JdbcRepository implements Repository {
 
         try {
             get(id, sql);
-            jsonObject =
-                    JdbcUtil.queryJsonObject(sql.toString(),
-                            new ArrayList<Object>(), connection);
+            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
+                    new ArrayList<Object>(), connection);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
             throw new RepositoryException(e);
@@ -411,10 +409,10 @@ public class JdbcRepository implements Repository {
     @Override
     public boolean has(final String id) throws RepositoryException {
 
-        final StringBuffer sql =
-                new StringBuffer("select count(" + JdbcRepositories.OID
-                        + ") from ").append(getName()).append(" where ")
-                        .append(JdbcRepositories.OID).append("=").append(id);
+        final StringBuffer sql = new StringBuffer("select count("
+                + JdbcRepositories.OID + ") from ").append(getName())
+                .append(" where ").append(JdbcRepositories.OID).append("=")
+                .append(id);
 
         if (count(sql.append(sql.toString())) > 0) {
             return true;
@@ -438,14 +436,12 @@ public class JdbcRepository implements Repository {
 
         try {
 
-            final int pageCnt =
-                    get(currentPageNum, pageSize, pageCount, sorts, filters,
-                            sql, paramList);
+            final int pageCnt = get(currentPageNum, pageSize, pageCount, sorts,
+                    filters, sql, paramList);
 
             //result
-            final JSONArray jsonResults =
-                    JdbcUtil.queryJsonArray(sql.toString(), paramList,
-                            connection);
+            final JSONArray jsonResults = JdbcUtil.queryJsonArray(
+                    sql.toString(), paramList, connection);
             jsonObject.put(Keys.RESULTS, jsonResults);
 
             //page
@@ -489,9 +485,8 @@ public class JdbcRepository implements Repository {
         getOrderBySql(orderBySql, sorts);
 
         if (-1 == pageCount) {
-            final StringBuffer countSql =
-                    new StringBuffer("select count(" + JdbcRepositories.OID
-                            + ") from ").append(getName());
+            final StringBuffer countSql = new StringBuffer("select count("
+                    + JdbcRepositories.OID + ") from ").append(getName());
 
             countSql.append("where ").append(filterSql);
             final long count = count(countSql);
@@ -587,8 +582,8 @@ public class JdbcRepository implements Repository {
             } else {
 
                 @SuppressWarnings("unchecked")
-                final Collection<Object> objects =
-                        (Collection<Object>) filter.getValue();
+                final Collection<Object> objects = (Collection<Object>) filter
+                        .getValue();
 
                 boolean isSubFist = true;
                 if (objects != null && objects.size() > 0) {
@@ -663,9 +658,8 @@ public class JdbcRepository implements Repository {
         final Connection connection = getConnection();
         getRandomly(fetchSize, sql);
         try {
-            jsonArray =
-                    JdbcUtil.queryJsonArray(sql.toString(),
-                            new ArrayList<Object>(), connection);
+            jsonArray = JdbcUtil.queryJsonArray(sql.toString(),
+                    new ArrayList<Object>(), connection);
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 jsonObjects.add(jsonArray.getJSONObject(i));
@@ -693,9 +687,8 @@ public class JdbcRepository implements Repository {
     @Override
     public long count() throws RepositoryException {
 
-        final StringBuffer sql =
-                new StringBuffer("select count(" + JdbcRepositories.OID
-                        + ") from ").append(getName());
+        final StringBuffer sql = new StringBuffer("select count("
+                + JdbcRepositories.OID + ") from ").append(getName());
         return count(sql);
     }
 
@@ -713,9 +706,8 @@ public class JdbcRepository implements Repository {
         JSONObject jsonObject;
         long count;
         try {
-            jsonObject =
-                    JdbcUtil.queryJsonObject(sql.toString(),
-                            new ArrayList<Object>(), connection);
+            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
+                    new ArrayList<Object>(), connection);
 
             count = jsonObject.getLong(jsonObject.keys().next().toString());
         } catch (final Exception e) {
@@ -752,7 +744,7 @@ public class JdbcRepository implements Repository {
         }
         TX.set(jdbcTransaction);
 
-        return ret;
+        return jdbcTransaction;
 
     }
 
@@ -807,7 +799,7 @@ public class JdbcRepository implements Repository {
     private Connection getConnection() {
 
         final JdbcTransaction jdbcTransaction = TX.get();
-        if (jdbcTransaction == null) {
+        if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
             return Connections.getConnection();
         }
 

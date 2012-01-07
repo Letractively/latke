@@ -35,10 +35,9 @@ public final class Connections {
 
         Connection con = null;
         try {
-            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            con =
-                    DriverManager.getConnection("jdbc:odbc:wombat", "login",
-                            "password");
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/b3log", "root", "b3log");
             return con;
         } catch (final Exception e) {
             e.printStackTrace();
@@ -53,4 +52,5 @@ public final class Connections {
     private Connections() {
 
     }
+  
 }

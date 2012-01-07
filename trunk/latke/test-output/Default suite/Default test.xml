@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="LoveYao-PC" name="org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase" tests="1" failures="0" timestamp="7 Jan 2012 09:06:04 GMT" time="0.485" errors="0">
+  <testcase name="update" time="0.146" classname="org.b3log.latke.repository.jdbc.JdbcRepositoryTestCase"/>
+</testsuite>
