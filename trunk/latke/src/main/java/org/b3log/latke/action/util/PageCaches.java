@@ -58,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.7, Dec 12, 2011
+ * @version 1.0.1.8, Jan 9, 2012
  * @since 0.3.1
  */
 @SuppressWarnings("unchecked")
@@ -293,15 +293,21 @@ public final class PageCaches {
     private static void syncKeys() {
         @SuppressWarnings("unchecked")
         final Iterator<String> iterator = KEYS.iterator();
+        final Set<String> toRemove = new HashSet<String>();
+
         while (iterator.hasNext()) {
             final String key = iterator.next();
 
             if (!CACHE.contains(key)) {
-                iterator.remove();
-
-                LOGGER.log(Level.FINER, "Removed a page cache key[{0}] for sync",
-                           key);
+                toRemove.add(key);
+                //  iterator.remove() will also throw ConcurrentModificationException on GAE
             }
+        }
+
+        if (!toRemove.isEmpty()) {
+            KEYS.removeAll(toRemove);
+            LOGGER.log(Level.FINER, "Removed page cache keys[{0}] for sync",
+                       toRemove);
         }
     }
 
