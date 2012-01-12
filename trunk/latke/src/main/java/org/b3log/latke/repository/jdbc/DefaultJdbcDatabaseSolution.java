@@ -51,6 +51,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     protected void createTableBody(final StringBuffer createTableSql, final List<FieldDefinition> fieldDefinitions) {
 
         
+        
     }
 
     @Override
