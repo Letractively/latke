@@ -31,7 +31,7 @@ public class FieldDefinition {
     /**
      * field type.
      */
-    private String type;
+    private Integer type;
 
     /**
      * the legnth of the type.
@@ -71,7 +71,7 @@ public class FieldDefinition {
      * 
      * @return type
      */
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
@@ -80,7 +80,7 @@ public class FieldDefinition {
      * 
      * @param type type.
      */
-    public void setType(final String type) {
+    public void setType(final Integer type) {
         this.type = type;
     }
 
