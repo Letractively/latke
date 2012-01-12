@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
 
 /**
  * JdbcRepositoryTestCase,now using mysql5.5.9 for test.
-
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Jan 7, 2012
@@ -45,7 +44,7 @@ public class JdbcRepositoryTestCase {
     private JdbcRepository jdbcRepository = new JdbcRepository("basetable");
 
     /**
-     * if the datebase environment  is wrong,do not run all the other test.
+     * if the datebase environment is wrong,do not run all the other test.
      */
     private boolean ifRun = true;
 
@@ -90,8 +89,9 @@ public class JdbcRepositoryTestCase {
             final Connection connection = Connections.getConnection();
             JdbcUtil.executeSql(createTableSql.toString(), connection);
             connection.close();
+
         } catch (final Exception e) {
-            //e.printStackTrace();
+            // e.printStackTrace();
             ifRun = false;
             System.out.println("skip JdbcRepositoryTestCase test");
         }
@@ -102,7 +102,7 @@ public class JdbcRepositoryTestCase {
      * add test.
      * 
      * @param jsonObject jsonObject
-     * @throws Exception Exception  
+     * @throws Exception Exception
      */
     @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
     public void add(final JSONObject jsonObject) throws Exception {
@@ -115,8 +115,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.add(jsonObject);
         transaction.commit();
 
-        final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject
-                .getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDb =
+                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
         assertNotNull(jsonObjectDb);
 
     }
@@ -164,8 +164,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.remove(jsonObject.getString(JdbcRepositories.OID));
         transaction.commit();
 
-        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject
-                .getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDB =
+                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
 
         assertNull(jsonObjectDB);
 

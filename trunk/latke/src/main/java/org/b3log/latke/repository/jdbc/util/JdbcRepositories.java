@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.jdbc.util;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,23 @@ public final class JdbcRepositories {
      */
     private static final Logger LOGGER = Logger
             .getLogger(JdbcRepositories.class.getName());
+
+    /**
+     * the String jsonType to JdbcType.
+     */
+    @SuppressWarnings("serial")
+    private static final Map<String, Integer> JSONTYPETOJDBCTYPEMAP =
+            new HashMap<String, Integer>() {
+                {
+
+                    put("int", Types.INTEGER);
+                    put("long", Types.BIGINT);
+                    put("String", Types.VARCHAR);
+                    put("boolean", Types.BOOLEAN);
+                    put("double", Types.DOUBLE);
+
+                }
+            };
 
     /**
      * /** to json "repositories".
@@ -185,7 +203,19 @@ public final class JdbcRepositories {
 
         final FieldDefinition fieldDefinition = new FieldDefinition();
         fieldDefinition.setName(fieldDefinitionObject.getString(NAME));
-        fieldDefinition.setType(fieldDefinitionObject.getString(TYPE));
+
+        final Integer type =
+                JSONTYPETOJDBCTYPEMAP
+                        .get(fieldDefinitionObject.getString(TYPE));
+        if (type == null) {
+            LOGGER.severe("the type [" + fieldDefinitionObject.getString(TYPE)
+                    + "] no mapping defined now!!!!");
+            throw new RuntimeException("the type ["
+                    + fieldDefinitionObject.getString(TYPE)
+                    + "] no mapping defined now!!!!");
+        }
+
+        fieldDefinition.setType(type);
         fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE,
                 true));
         fieldDefinition.setLength(fieldDefinitionObject.optInt(LENGTH));
