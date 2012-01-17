@@ -15,8 +15,10 @@
  */
 package org.b3log.latke.repository.jdbc;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
 /**
@@ -28,7 +30,8 @@ import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
-    public String queryPage(final int start, final int end, final String filterSql, final String orderBySql,
+    public String queryPage(final int start, final int end,
+            final String filterSql, final String orderBySql,
             final String tableName) {
         // TODO Auto-generated method stub
         return null;
@@ -41,17 +44,79 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    protected void createTableHead(final StringBuffer createTableSql, final String tableName) {
-        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName).append(";");
+    protected void createTableHead(final StringBuffer createTableSql,
+            final String tableName) {
+        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
+                .append(";");
         createTableSql.append("CREATE TABLE ").append(tableName).append("(");
 
     }
 
     @Override
-    protected void createTableBody(final StringBuffer createTableSql, final List<FieldDefinition> fieldDefinitions) {
-        
-        
-        
+    protected void createTableBody(final StringBuffer createTableSql,
+            final List<FieldDefinition> fieldDefinitions) {
+
+        final List<FieldDefinition> keyDefinitionList =
+                new ArrayList<FieldDefinition>();
+        for (FieldDefinition fieldDefinition : fieldDefinitions) {
+
+            final String type = fieldDefinition.getType();
+            if (type == null) {
+                throw new RuntimeException(
+                        "the type of fieldDefinitions should not be null");
+            }
+            final Mapping mapping = getJdbcTypeMapping().get(type);
+            if (mapping != null) {
+
+                createTableSql.append(mapping.toDataBaseSting(fieldDefinition))
+                        .append(",   ");
+
+                if (fieldDefinition.getIsKey()) {
+                    keyDefinitionList.add(fieldDefinition);
+                }
+            } else {
+
+                throw new RuntimeException("the type["
+                        + fieldDefinition.getType()
+                        + "] is not register for mapping ");
+            }
+
+        }
+
+        if (keyDefinitionList.size() < 0) {
+            throw new RuntimeException("no key talbe is not allow");
+
+        } else {
+            createTableSql.append(createKeyDefinition(keyDefinitionList));
+        }
+
+    }
+
+    /**
+     * 
+     * the keyDefinitionList tableSql.
+     * 
+     * 
+     * @param keyDefinitionList keyDefinitionList
+     * @return createKeyDefinitionsql
+     */
+    private String createKeyDefinition(
+            final List<FieldDefinition> keyDefinitionList) {
+
+        final StringBuffer sql = new StringBuffer();
+        boolean isFirst = true;
+        for (FieldDefinition fieldDefinition : keyDefinitionList) {
+            if (isFirst) {
+                sql.append("(");
+                isFirst = false;
+            } else {
+                sql.append(",");
+            }
+            sql.append(fieldDefinition.getName());
+        }
+
+        sql.append(")");
+        return sql.toString();
     }
 
     @Override
