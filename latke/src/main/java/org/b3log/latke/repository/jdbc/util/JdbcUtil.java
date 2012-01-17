@@ -22,7 +22,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.b3log.latke.Keys;
@@ -181,19 +180,19 @@ public final class JdbcUtil {
             RepositoryException {
 
         final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        final List<FieldDefinition> definitioList =
-                JdbcRepositories.getRepositoriesMap().get(
-                        resultSetMetaData.getTableName(1));
-
-        if (definitioList == null) {
-
-            LOGGER.log(Level.SEVERE,
-                    "resultSetToJsonObject: null definitioList finded for table  "
-                            + resultSetMetaData.getTableName(1));
-            throw new RepositoryException(
-                    "resultSetToJsonObject: null definitioList finded for table  "
-                            + resultSetMetaData.getTableName(1));
-        }
+//        final List<FieldDefinition> definitioList =
+//                JdbcRepositories.getRepositoriesMap().get(
+//                        resultSetMetaData.getTableName(1));
+//
+//        if (definitioList == null) {
+//
+//            LOGGER.log(Level.SEVERE,
+//                    "resultSetToJsonObject: null definitioList finded for table  "
+//                            + resultSetMetaData.getTableName(1));
+//            throw new RepositoryException(
+//                    "resultSetToJsonObject: null definitioList finded for table  "
+//                            + resultSetMetaData.getTableName(1));
+//        }
 
         final int numColumns = resultSetMetaData.getColumnCount();
 
