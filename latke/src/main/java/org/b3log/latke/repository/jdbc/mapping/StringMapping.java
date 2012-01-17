@@ -27,8 +27,18 @@ public class StringMapping implements Mapping {
 
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
-        // TODO Auto-generated method stub
-        return null;
+
+        final StringBuffer sql = new StringBuffer();
+        sql.append(definition.getName());
+        sql.append("varchar(").append(
+                definition.getLength() < 1 ? new Integer("100") : definition.getLength());
+        sql.append(")");
+        if (definition.getNullable()) {
+            sql.append(" not null");
+
+        }
+
+        return sql.toString();
     }
 
 }

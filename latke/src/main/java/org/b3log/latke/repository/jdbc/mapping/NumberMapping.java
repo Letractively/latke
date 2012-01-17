@@ -17,7 +17,6 @@ package org.b3log.latke.repository.jdbc.mapping;
 
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
-
 /**
  * NumberMapping.
  * 
@@ -28,8 +27,16 @@ public class NumberMapping implements Mapping {
 
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
-        // TODO Auto-generated method stub
-        return null;
+
+        final StringBuffer sql = new StringBuffer();
+        sql.append(definition.getName());
+        sql.append("  number ");
+        if (definition.getNullable()) {
+            sql.append(" not null");
+        }
+
+        return sql.toString();
+
     }
 
 }
