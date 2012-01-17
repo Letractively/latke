@@ -49,7 +49,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
     protected void createTableBody(final StringBuffer createTableSql, final List<FieldDefinition> fieldDefinitions) {
-
+        
         
         
     }

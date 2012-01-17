@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 import org.b3log.latke.repository.jdbc.util.JdbcUtil;
@@ -36,17 +37,18 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
     /**
      * the map Mapping type to real database type. 
      */
-    private Map<String, String> jdbcTypeMap = new HashMap<String, String>();
+    private Map<String, Mapping> jdbcTypeMapping =
+            new HashMap<String, Mapping>();
 
     /**
      * 
-     * registerType.
+     * register type to mapping solution.
      * 
      * @param type type from json
-     * @param databaseType real databaseType
+     * @param mapping  {@link Mapping}
      */
-    protected void registerType(final String type, final String databaseType) {
-        jdbcTypeMap.put(type, databaseType);
+    protected void registerType(final String type, final Mapping mapping) {
+        jdbcTypeMapping.put(type, mapping);
     }
 
     @Override
