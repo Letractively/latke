@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.jdbc.util;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.b3log.latke.repository.Repositories;
 import org.b3log.latke.repository.RepositoryException;
+import org.b3log.latke.repository.jdbc.JdbcFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,7 +158,7 @@ public final class JdbcRepositories {
      * @param jsonObject json Model
      * @throws JSONException JSONException
      */
-    public static void jsonToRepositoriesMap(final JSONObject jsonObject)
+    private static void jsonToRepositoriesMap(final JSONObject jsonObject)
             throws JSONException {
 
         repositoriesMap = new HashMap<String, List<FieldDefinition>>();
@@ -228,6 +230,98 @@ public final class JdbcRepositories {
         }
 
         return fieldDefinition;
+
+    }
+
+    /**
+     *createTableResult model for view to show.
+     *
+     */
+    public class CreateTableResult {
+
+        /**
+         * table name.
+         */
+        private String name;
+
+        /**
+         * isCreate success.
+         */
+        private boolean isSuccess;
+
+        /**
+         * 
+         * @return name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * 
+         * @param name tableName
+         */
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        /**
+         * 
+         * @return isSuccess
+         */
+        public boolean isSuccess() {
+            return isSuccess;
+        }
+
+        /**
+         * 
+         * @param isSuccess isSuccess
+         */
+        public void setSuccess(final boolean isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        /**
+         * constructor.
+         * 
+         * @param name table
+         * @param isSuccess isSuccess
+         */
+        public CreateTableResult(final String name, final boolean isSuccess) {
+            super();
+            this.name = name;
+            this.isSuccess = isSuccess;
+        }
+
+    }
+
+    /**
+     * initAllTables from json.
+     * @return List<CreateTableResult>
+     */
+    public List<CreateTableResult> initAllTables() {
+
+        final List<CreateTableResult> results =
+                new ArrayList<JdbcRepositories.CreateTableResult>();
+        final Map<String, List<FieldDefinition>> map = getRepositoriesMap();
+
+        boolean isSuccess = false;
+
+        for (String tableName : map.keySet()) {
+
+            try {
+                isSuccess =
+                        JdbcFactory.createJdbcFactory().createTable(tableName,
+                                map.get(tableName));
+            } catch (final SQLException e) {
+                LOGGER.log(Level.SEVERE,
+                        "createTable[" + tableName + "] error", e);
+            }
+
+            results.add(new CreateTableResult(tableName, isSuccess));
+        }
+
+        return results;
 
     }
 
