@@ -47,7 +47,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param type type from json
      * @param mapping  {@link Mapping}
      */
-    protected void registerType(final String type, final Mapping mapping) {
+    public void registerType(final String type, final Mapping mapping) {
         jdbcTypeMapping.put(type, mapping);
     }
 
@@ -90,5 +90,13 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param createTableSql createSql 
      */
     protected abstract void createTableEnd(StringBuffer createTableSql);
+
+    /**
+     * 
+     * @return jdbcTypeMapping
+     */
+    public Map<String, Mapping> getJdbcTypeMapping() {
+        return jdbcTypeMapping;
+    }
 
 }

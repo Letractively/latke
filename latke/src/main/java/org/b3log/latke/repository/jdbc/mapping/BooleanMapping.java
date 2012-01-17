@@ -27,8 +27,17 @@ public class BooleanMapping implements Mapping {
 
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
-        
-        return null;
+
+        final StringBuffer sql = new StringBuffer();
+        sql.append(definition.getName());
+        sql.append(" char(1)");
+        if (definition.getNullable()) {
+            sql.append(" not null");
+
+        }
+
+        return sql.toString();
+
     }
 
 }
