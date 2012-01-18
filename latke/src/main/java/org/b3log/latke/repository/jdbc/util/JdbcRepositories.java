@@ -183,7 +183,7 @@ public final class JdbcRepositories {
 
             FieldDefinition definition = null;
             for (int j = 0; j < keysJsonArray.length(); j++) {
-                fieldDefinitionObject = keysJsonArray.getJSONObject(i);
+                fieldDefinitionObject = keysJsonArray.getJSONObject(j);
                 definition = fillFieldDefinitionData(fieldDefinitionObject);
                 fieldDefinitions.add(definition);
             }
@@ -237,7 +237,7 @@ public final class JdbcRepositories {
      *createTableResult model for view to show.
      *
      */
-    public class CreateTableResult {
+    public static class CreateTableResult {
 
         /**
          * table name.
@@ -299,7 +299,7 @@ public final class JdbcRepositories {
      * initAllTables from json.
      * @return List<CreateTableResult>
      */
-    public List<CreateTableResult> initAllTables() {
+    public static List<CreateTableResult> initAllTables() {
 
         final List<CreateTableResult> results =
                 new ArrayList<JdbcRepositories.CreateTableResult>();

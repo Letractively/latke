@@ -18,7 +18,11 @@ package org.b3log.latke.repository.jdbc;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.b3log.latke.repository.jdbc.mapping.BooleanMapping;
+import org.b3log.latke.repository.jdbc.mapping.IntMapping;
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
+import org.b3log.latke.repository.jdbc.mapping.NumberMapping;
+import org.b3log.latke.repository.jdbc.mapping.StringMapping;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
 /**
@@ -28,6 +32,18 @@ import org.b3log.latke.repository.jdbc.util.FieldDefinition;
  * @version 1.0.0.0, Jan 12, 2012
  */
 public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
+
+    /**
+     * public constructor.
+     */
+    public DefaultJdbcDatabaseSolution() {
+        registerType("int", new IntMapping());
+        registerType("boolean", new BooleanMapping());
+        registerType("long", new IntMapping());
+        registerType("double", new NumberMapping());
+        registerType("String", new StringMapping());
+
+    }
 
     @Override
     public String queryPage(final int start, final int end,
@@ -104,6 +120,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
             final List<FieldDefinition> keyDefinitionList) {
 
         final StringBuffer sql = new StringBuffer();
+        sql.append(" PRIMARY KEY");
         boolean isFirst = true;
         for (FieldDefinition fieldDefinition : keyDefinitionList) {
             if (isFirst) {
