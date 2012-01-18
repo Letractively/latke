@@ -15,6 +15,8 @@
  */
 package org.b3log.latke.repository.jdbc;
 
+import org.testng.annotations.Test;
+
 /**
  * JdbcRepositoriesTestCase.
  * 
@@ -22,11 +24,29 @@ package org.b3log.latke.repository.jdbc;
  * @version 1.0.0.0, Jan 7, 2012
  */
 public class JdbcRepositoriesTestCase {
- 
-    
-    
-    
-    
-    
-    
+
+    /**
+     * jsonToModel.
+     */
+    @Test
+    public void jsonToModel() {
+//        Latkes.initRuntimeEnv();
+//        final Map<String, List<FieldDefinition>> map =
+//                JdbcRepositories.getRepositoriesMap();
+//
+//        assertNotNull(map);
+
+    }
+
+    /**
+     * jsonToDB.
+     */
+    @Test
+    public void jsonToDB() {
+
+        //        Latkes.initRuntimeEnv();
+        //        JdbcRepositories.initAllTables();
+
+    }
+
 }

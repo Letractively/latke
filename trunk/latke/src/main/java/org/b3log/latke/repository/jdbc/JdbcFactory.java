@@ -46,8 +46,14 @@ public final class JdbcFactory implements JdbcDatabase {
     /**
      * all JdbcDatabaseSolution in here.
      */
+    @SuppressWarnings("serial")
     private static Map<RuntimeDatabase, AbstractJdbcDatabaseSolution> jdbcDatabaseSolutionMap =
-            new HashMap<RuntimeDatabase, AbstractJdbcDatabaseSolution>();
+            new HashMap<RuntimeDatabase, AbstractJdbcDatabaseSolution>() {
+                {
+                    put(RuntimeDatabase.MYSQL,
+                            new DefaultJdbcDatabaseSolution());
+                }
+            };
 
     @Override
     public boolean createTable(final String tableName,

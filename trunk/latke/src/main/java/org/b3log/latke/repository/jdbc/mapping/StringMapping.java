@@ -30,7 +30,7 @@ public class StringMapping implements Mapping {
 
         final StringBuffer sql = new StringBuffer();
         sql.append(definition.getName());
-        sql.append("varchar(").append(
+        sql.append(" varchar(").append(
                 definition.getLength() < 1 ? new Integer("100") : definition.getLength());
         sql.append(")");
         if (definition.getNullable()) {
