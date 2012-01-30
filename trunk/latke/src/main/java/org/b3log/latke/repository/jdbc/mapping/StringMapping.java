@@ -35,7 +35,7 @@ public class StringMapping implements Mapping {
             definition.setLength(new Integer("0"));
         }
 
-        if (definition.getLength() > 255) {
+        if (definition.getLength() > new Integer("255")) {
             sql.append(" blob");
         } else {
 

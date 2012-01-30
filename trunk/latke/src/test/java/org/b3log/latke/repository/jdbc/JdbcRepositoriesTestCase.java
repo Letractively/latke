@@ -25,7 +25,6 @@ import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
 import org.testng.annotations.Test;
 
-;
 /**
  * JdbcRepositoriesTestCase.
  * 
