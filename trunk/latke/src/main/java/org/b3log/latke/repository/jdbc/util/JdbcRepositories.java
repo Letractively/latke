@@ -144,7 +144,7 @@ public final class JdbcRepositories {
 
         if (jsonObject == null) {
 
-            LOGGER.warning("the repository description[repository.json]");
+            LOGGER.warning("the repository description[repository.json] miss");
             return;
         }
 

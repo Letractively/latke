@@ -30,7 +30,7 @@ public class NumberMapping implements Mapping {
 
         final StringBuffer sql = new StringBuffer();
         sql.append(definition.getName());
-        sql.append("  number ");
+        sql.append("  double ");
         if (definition.getNullable()) {
             sql.append(" not null");
         }

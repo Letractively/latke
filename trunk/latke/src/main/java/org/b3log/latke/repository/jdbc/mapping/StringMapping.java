@@ -30,14 +30,26 @@ public class StringMapping implements Mapping {
 
         final StringBuffer sql = new StringBuffer();
         sql.append(definition.getName());
-        sql.append(" varchar(").append(
-                definition.getLength() < 1 ? new Integer("100") : definition.getLength());
-        sql.append(")");
-        if (definition.getNullable()) {
-            sql.append(" not null");
 
+        if (definition.getLength() == null) {
+            definition.setLength(new Integer("0"));
         }
 
+        if (definition.getLength() > 255) {
+            sql.append(" blob");
+        } else {
+
+            sql.append(" varchar(").append(
+                    definition.getLength() < 1 ? new Integer("100")
+                            : definition.getLength());
+            sql.append(")");
+
+            if (definition.getNullable()) {
+                sql.append(" not null");
+
+            }
+
+        }
         return sql.toString();
     }
 

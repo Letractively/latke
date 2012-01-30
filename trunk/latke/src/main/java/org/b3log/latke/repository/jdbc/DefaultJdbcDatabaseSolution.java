@@ -62,8 +62,8 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     @Override
     protected void createTableHead(final StringBuffer createTableSql,
             final String tableName) {
-        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
-                .append(";");
+        //        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
+        //                .append(";");
         createTableSql.append("CREATE TABLE ").append(tableName).append("(");
 
     }
