@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.repository.jdbc;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +38,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
     /**
      * the map Mapping type to real database type. 
      */
-    private Map<String, Mapping> jdbcTypeMapping =
-            new HashMap<String, Mapping>();
+    private Map<String, Mapping> jdbcTypeMapping = new HashMap<String, Mapping>();
 
     /**
      * 
@@ -55,16 +55,31 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
     public boolean createTable(final String tableName,
             final List<FieldDefinition> fieldDefinitions) throws SQLException {
 
+        final Connection connection = Connections.getConnection();
+
+        final StringBuffer dropTableSql = new StringBuffer();
+        createDropTableSql(dropTableSql, tableName);
+        JdbcUtil.executeSql(dropTableSql.toString(), connection);
+
         final StringBuffer createTableSql = new StringBuffer();
 
         createTableHead(createTableSql, tableName);
         createTableBody(createTableSql, fieldDefinitions);
         createTableEnd(createTableSql);
 
-        return JdbcUtil.executeSql(createTableSql.toString(),
-                Connections.getConnection());
+        return JdbcUtil.executeSql(createTableSql.toString(), connection);
 
     }
+
+    /**
+     * 
+     * abstract createTableHead for each DB to impl.
+     * 
+     * @param dropTableSql dropTableSql
+     * @param tableName talbename
+     */
+    protected abstract void createDropTableSql(StringBuffer dropTableSql,
+            String tableName);
 
     /**
      * 

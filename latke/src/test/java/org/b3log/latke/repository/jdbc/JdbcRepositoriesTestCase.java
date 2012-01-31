@@ -49,7 +49,7 @@ public class JdbcRepositoriesTestCase {
     /**
      * jsonToDB.
      */
-    @Test
+    @Test(groups = {"jdbc" })
     public void jsonToDB() {
 
         Latkes.initRuntimeEnv();

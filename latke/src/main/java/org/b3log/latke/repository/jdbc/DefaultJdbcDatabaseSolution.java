@@ -60,6 +60,14 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
+    protected void createDropTableSql(final StringBuffer dropTableSql,
+            final String tableName) {
+        dropTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
+                .append(";");
+
+    }
+
+    @Override
     protected void createTableHead(final StringBuffer createTableSql,
             final String tableName) {
         //        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
@@ -141,5 +149,6 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
         createTableSql.append(") ENGINE= InnoDB DEFAULT CHARSET= utf8;");
 
     }
+
 
 }
