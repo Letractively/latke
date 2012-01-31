@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.0, Dec 29, 2011
+ * @version 1.0.1.1, Jan 31, 2012
  * @see #initRuntimeEnv() 
  */
 public final class Latkes {
@@ -142,13 +142,21 @@ public final class Latkes {
     }
 
     /**
-     * Gets runtime configuration of a service specified by the given service 
-     * name.
+     * Gets runtime configuration of a service specified by the given 
+     * service name.
+     * 
+     * <p>
+     * If current runtime environment is local, returns local in any case.
+     * </p>
      * 
      * @param serviceName the given service name
      * @return runtime configuration, returns {@code null} if not found
      */
     public static RuntimeEnv getRuntime(final String serviceName) {
+        if (RuntimeEnv.LOCAL == getRuntimeEnv()) {
+            return RuntimeEnv.LOCAL;
+        }
+        
         final String value = LATKE_PROPS.getProperty(serviceName);
 
         if (null == value) {
