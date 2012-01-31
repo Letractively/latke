@@ -49,8 +49,11 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     public String queryPage(final int start, final int end,
             final String filterSql, final String orderBySql,
             final String tableName) {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuffer sql = new StringBuffer();
+        sql.append("select * from ").append(tableName);
+        sql.append(" where ").append(filterSql).append(orderBySql);
+        sql.append("limit ").append(start).append(",").append(end);
+        return sql.toString();
     }
 
     @Override
@@ -80,8 +83,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     protected void createTableBody(final StringBuffer createTableSql,
             final List<FieldDefinition> fieldDefinitions) {
 
-        final List<FieldDefinition> keyDefinitionList =
-                new ArrayList<FieldDefinition>();
+        final List<FieldDefinition> keyDefinitionList = new ArrayList<FieldDefinition>();
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
 
             final String type = fieldDefinition.getType();
@@ -149,6 +151,5 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
         createTableSql.append(") ENGINE= InnoDB DEFAULT CHARSET= utf8;");
 
     }
-
 
 }

@@ -115,8 +115,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.add(jsonObject);
         transaction.commit();
 
-        final JSONObject jsonObjectDb =
-                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject
+                .getString(JdbcRepositories.OID));
         assertNotNull(jsonObjectDb);
 
     }
@@ -164,8 +164,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.remove(jsonObject.getString(JdbcRepositories.OID));
         transaction.commit();
 
-        final JSONObject jsonObjectDB =
-                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject
+                .getString(JdbcRepositories.OID));
 
         assertNull(jsonObjectDB);
 
@@ -197,4 +197,5 @@ public class JdbcRepositoryTestCase {
         assertTrue(nCount > oCount);
 
     }
+
 }
