@@ -49,7 +49,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     public String queryPage(final int start, final int end,
             final String filterSql, final String orderBySql,
             final String tableName) {
-        StringBuffer sql = new StringBuffer();
+        final StringBuffer sql = new StringBuffer();
         sql.append("select * from ").append(tableName);
         sql.append(" where ").append(filterSql).append(orderBySql);
         sql.append("limit ").append(start).append(",").append(end);
