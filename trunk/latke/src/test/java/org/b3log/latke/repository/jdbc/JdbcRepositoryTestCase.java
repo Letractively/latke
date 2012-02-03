@@ -22,6 +22,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.sql.Connection;
 import java.util.ArrayList;
 
+import org.b3log.latke.Latkes;
 import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.RepositoryException;
@@ -211,7 +212,8 @@ public class JdbcRepositoryTestCase {
         if (!ifRun) {
             return;
         }
-       final Query query = new Query();
+
+        final Query query = new Query();
         query.addFilter("col1", FilterOperator.EQUAL, new Integer("1"));
         query.addFilter("col1", FilterOperator.GREATER_THAN, new Integer("1"));
         query.addFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL,
@@ -232,6 +234,20 @@ public class JdbcRepositoryTestCase {
         } catch (final RepositoryException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * jsonToDB.
+     */
+    @Test(groups = {"jdbc" })
+    public void jsonToDB() {
+
+        if (!ifRun) {
+            return;
+        }
+        Latkes.initRuntimeEnv();
+        JdbcRepositories.initAllTables();
+
     }
 
 }
