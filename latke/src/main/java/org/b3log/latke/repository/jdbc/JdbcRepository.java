@@ -73,7 +73,8 @@ public class JdbcRepository implements Repository {
     /**
      * The current transaction.
      */
-    public static final ThreadLocal<JdbcTransaction> TX = new InheritableThreadLocal<JdbcTransaction>();
+    public static final ThreadLocal<JdbcTransaction> TX =
+            new InheritableThreadLocal<JdbcTransaction>();
 
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
@@ -224,8 +225,8 @@ public class JdbcRepository implements Repository {
             final JSONObject jsonObject, final List<Object> paramList,
             final StringBuffer sql) throws JSONException {
 
-        final JSONObject needUpdateJsonObject = getNeedUpdateJsonObject(
-                oldJsonObject, jsonObject);
+        final JSONObject needUpdateJsonObject =
+                getNeedUpdateJsonObject(oldJsonObject, jsonObject);
 
         if (needUpdateJsonObject.length() == 0) {
             LOGGER.log(Level.INFO,
@@ -361,8 +362,9 @@ public class JdbcRepository implements Repository {
 
         try {
             get(id, sql);
-            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
-                    new ArrayList<Object>(), connection);
+            jsonObject =
+                    JdbcUtil.queryJsonObject(sql.toString(),
+                            new ArrayList<Object>(), connection);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
             throw new RepositoryException(e);
@@ -411,12 +413,12 @@ public class JdbcRepository implements Repository {
     @Override
     public boolean has(final String id) throws RepositoryException {
 
-        final StringBuffer sql = new StringBuffer("select count("
-                + JdbcRepositories.OID + ") from ").append(getName())
-                .append(" where ").append(JdbcRepositories.OID).append("=")
-                .append(id);
+        final StringBuffer sql =
+                new StringBuffer("select count(" + JdbcRepositories.OID
+                        + ") from ").append(getName()).append(" where ")
+                        .append(JdbcRepositories.OID).append("=").append(id);
 
-        if (count(sql) > 0) {
+        if (count(sql, new ArrayList<Object>()) > 0) {
 
             return true;
         }
@@ -440,12 +442,19 @@ public class JdbcRepository implements Repository {
 
         try {
 
-            final int pageCnt = get(currentPageNum, pageSize, pageCount, sorts,
-                    filters, sql, paramList);
+            final int pageCnt =
+                    get(currentPageNum, pageSize, pageCount, sorts, filters,
+                            sql, paramList);
+
+            if (pageCnt == 0) {
+                jsonObject.put(Keys.RESULTS, new JSONArray());
+                return jsonObject;
+            }
 
             //result
-            final JSONArray jsonResults = JdbcUtil.queryJsonArray(
-                    sql.toString(), paramList, connection);
+            final JSONArray jsonResults =
+                    JdbcUtil.queryJsonArray(sql.toString(), paramList,
+                            connection);
             jsonObject.put(Keys.RESULTS, jsonResults);
 
             //page
@@ -491,18 +500,22 @@ public class JdbcRepository implements Repository {
         getOrderBySql(orderBySql, sorts);
 
         if (-1 == pageCount) {
-            final StringBuffer countSql = new StringBuffer("select count("
-                    + JdbcRepositories.OID + ") from ").append(getName());
+            final StringBuffer countSql =
+                    new StringBuffer("select count(" + JdbcRepositories.OID
+                            + ") from ").append(getName());
 
-            countSql.append("where ").append(filterSql);
-            final long count = count(countSql);
+            countSql.append(" where ").append(filterSql);
+            final long count = count(countSql, paramList);
             pageCnt = (int) Math.ceil((double) count / (double) pageSize);
         }
 
-        if (currentPageNum > pageCnt) {
-            LOGGER.severe("currentPageNum pageCount ");
-            throw new RepositoryException("currentPageNum pageCount");
+        if (pageCnt == 0) {
+            return 0;
+        }
 
+        if (currentPageNum >  pageCnt) {
+            LOGGER.severe("currentPageNum > pageCount ");
+            throw new RepositoryException("currentPageNum > pageCount");
         }
 
         getQuerySql(currentPageNum, pageSize, filterSql, orderBySql, sql);
@@ -576,9 +589,10 @@ public class JdbcRepository implements Repository {
                         + filter.getOperator() + "]");
             }
 
-            if (!isFirst) {
-                filterSql.append(" and ");
+            if (isFirst) {
                 isFirst = false;
+            } else {
+                filterSql.append(" and ");
             }
 
             if (FilterOperator.IN != filter.getOperator()) {
@@ -588,8 +602,8 @@ public class JdbcRepository implements Repository {
             } else {
 
                 @SuppressWarnings("unchecked")
-                final Collection<Object> objects = (Collection<Object>) filter
-                        .getValue();
+                final Collection<Object> objects =
+                        (Collection<Object>) filter.getValue();
 
                 boolean isSubFist = true;
                 if (objects != null && objects.size() > 0) {
@@ -664,8 +678,9 @@ public class JdbcRepository implements Repository {
         final Connection connection = getConnection();
         getRandomly(fetchSize, sql);
         try {
-            jsonArray = JdbcUtil.queryJsonArray(sql.toString(),
-                    new ArrayList<Object>(), connection);
+            jsonArray =
+                    JdbcUtil.queryJsonArray(sql.toString(),
+                            new ArrayList<Object>(), connection);
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 jsonObjects.add(jsonArray.getJSONObject(i));
@@ -694,27 +709,31 @@ public class JdbcRepository implements Repository {
     @Override
     public long count() throws RepositoryException {
 
-        final StringBuffer sql = new StringBuffer("select count("
-                + JdbcRepositories.OID + ") from ").append(getName());
-        return count(sql);
+        final StringBuffer sql =
+                new StringBuffer("select count(" + JdbcRepositories.OID
+                        + ") from ").append(getName());
+        return count(sql, new ArrayList<Object>());
     }
 
     /**
      * count.
      * 
      * @param sql sql
+     * @param paramList paramList
      * @return count
      * @throws RepositoryException RepositoryException
      */
-    private long count(final StringBuffer sql) throws RepositoryException {
+    private long count(final StringBuffer sql, final List<Object> paramList)
+            throws RepositoryException {
 
         final Connection connection = getConnection();
 
         JSONObject jsonObject;
         long count;
         try {
-            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
-                    new ArrayList<Object>(), connection);
+            jsonObject =
+                    JdbcUtil.queryJsonObject(sql.toString(), paramList,
+                            connection);
 
             count = jsonObject.getLong(jsonObject.keys().next().toString());
         } catch (final Exception e) {

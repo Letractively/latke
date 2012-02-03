@@ -20,7 +20,11 @@ import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 
+import org.b3log.latke.repository.FilterOperator;
+import org.b3log.latke.repository.Query;
+import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
@@ -115,8 +119,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.add(jsonObject);
         transaction.commit();
 
-        final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject
-                .getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDb =
+                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
         assertNotNull(jsonObjectDb);
 
     }
@@ -164,8 +168,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.remove(jsonObject.getString(JdbcRepositories.OID));
         transaction.commit();
 
-        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject
-                .getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDB =
+                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
 
         assertNull(jsonObjectDB);
 
@@ -196,6 +200,38 @@ public class JdbcRepositoryTestCase {
         final long nCount = jdbcRepository.count();
         assertTrue(nCount > oCount);
 
+    }
+
+    /**
+     * base query test.
+     */
+    @Test(groups = {"jdbc" })
+    public void queryTest() {
+
+        if (!ifRun) {
+            return;
+        }
+       final Query query = new Query();
+        query.addFilter("col1", FilterOperator.EQUAL, new Integer("1"));
+        query.addFilter("col1", FilterOperator.GREATER_THAN, new Integer("1"));
+        query.addFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL,
+                new Integer("1"));
+        query.addFilter("col1", FilterOperator.LESS_THAN, new Integer("1"));
+        query.addFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer(
+                "1"));
+        query.addFilter("col1", FilterOperator.NOT_EQUAL, new Integer("1"));
+
+        final ArrayList<Integer> inList = new ArrayList<Integer>();
+        inList.add(new Integer("1"));
+        inList.add(new Integer("2"));
+        inList.add(new Integer("3"));
+        query.addFilter("col1", FilterOperator.IN, inList);
+
+        try {
+            jdbcRepository.get(query);
+        } catch (final RepositoryException e) {
+            e.printStackTrace();
+        }
     }
 
 }

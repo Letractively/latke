@@ -153,7 +153,7 @@ public final class JdbcUtil {
 
         for (int i = 1; i <= paramList.size(); i++) {
 
-            preparedStatement.setObject(i, paramList.get(i));
+            preparedStatement.setObject(i, paramList.get(i-1));
         }
 
         final ResultSet resultSet = preparedStatement.executeQuery();
