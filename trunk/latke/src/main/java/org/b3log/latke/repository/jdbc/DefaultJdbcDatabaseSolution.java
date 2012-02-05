@@ -52,7 +52,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
         final StringBuffer sql = new StringBuffer();
         sql.append("select * from ").append(tableName);
         sql.append(" where ").append(filterSql).append(orderBySql);
-        sql.append("limit ").append(start).append(",").append(end);
+        sql.append(" limit ").append(start).append(",").append(end - start);
         return sql.toString();
     }
 

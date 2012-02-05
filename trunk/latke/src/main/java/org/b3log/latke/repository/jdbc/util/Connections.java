@@ -37,7 +37,7 @@ public final class Connections {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/b3log", "root", "111");
+                    "jdbc:mysql://localhost:3306/b3log", "root", "b3log");
             return con;
         } catch (final Exception e) {
             e.printStackTrace();

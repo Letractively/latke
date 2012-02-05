@@ -16,16 +16,19 @@
 package org.b3log.latke.repository.jdbc;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 
+import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.RepositoryException;
+import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
@@ -94,6 +97,7 @@ public class JdbcRepositoryTestCase {
             final Connection connection = Connections.getConnection();
             JdbcUtil.executeSql(createTableSql.toString(), connection);
             connection.close();
+            Latkes.initRuntimeEnv();
 
         } catch (final Exception e) {
             // e.printStackTrace();
@@ -120,8 +124,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.add(jsonObject);
         transaction.commit();
 
-        final JSONObject jsonObjectDb =
-                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject
+                .getString(JdbcRepositories.OID));
         assertNotNull(jsonObjectDb);
 
     }
@@ -130,24 +134,29 @@ public class JdbcRepositoryTestCase {
      * update test.
      * 
      * @param jsonObject jsonObject
-     * @throws Exception Exception
      */
     @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
-    public void update(final JSONObject jsonObject) throws Exception {
+    public void update(final JSONObject jsonObject) {
 
         if (!ifRun) {
             return;
         }
 
-        final Transaction transaction = jdbcRepository.beginTransaction();
-        jdbcRepository.add(jsonObject);
+        try {
 
-        jsonObject.put("col2", "=================bbbb========================");
-        jsonObject.put("col4", true);
+            final Transaction transaction = jdbcRepository.beginTransaction();
+            jdbcRepository.add(jsonObject);
 
-        jdbcRepository.update(jsonObject.getString(JdbcRepositories.OID),
-                jsonObject);
-        transaction.commit();
+            jsonObject.put("col2",
+                    "=================bbbb========================");
+            jsonObject.put("col4", true);
+
+            jdbcRepository.update(jsonObject.getString(JdbcRepositories.OID),
+                    jsonObject);
+            transaction.commit();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -169,8 +178,8 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.remove(jsonObject.getString(JdbcRepositories.OID));
         transaction.commit();
 
-        final JSONObject jsonObjectDB =
-                jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject
+                .getString(JdbcRepositories.OID));
 
         assertNull(jsonObjectDB);
 
@@ -234,6 +243,40 @@ public class JdbcRepositoryTestCase {
         } catch (final RepositoryException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * page query test.
+     * 
+     * @param jsonObject jsonObject
+     * @throws Exception Exception
+     */
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    public void queryPageTest(final JSONObject jsonObject) throws Exception {
+
+        if (!ifRun) {
+            return;
+        }
+
+        final Transaction transaction = jdbcRepository.beginTransaction();
+        final int im = 10;
+        for (int i = 0; i < im; i++) {
+            jdbcRepository.add(jsonObject);
+            jsonObject.remove(JdbcRepositories.OID);
+        }
+        transaction.commit();
+
+        final Query query = new Query();
+        query.addFilter("col1", FilterOperator.EQUAL, new Integer("100"));
+        query.addSort("oId", SortDirection.ASCENDING);
+        query.setPageSize(new Integer("4"));
+        query.setCurrentPageNum(2);
+
+        final JSONObject ret = jdbcRepository.get(query);
+
+        final int eCount = 4;
+        assertEquals(ret.getJSONArray(Keys.RESULTS).length(), eCount);
+
     }
 
     /**
