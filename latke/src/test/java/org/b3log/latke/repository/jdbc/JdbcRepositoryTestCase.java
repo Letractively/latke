@@ -22,6 +22,9 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
@@ -31,6 +34,7 @@ import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
+import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
 import org.b3log.latke.repository.jdbc.util.JdbcUtil;
 import org.json.JSONObject;
@@ -104,6 +108,38 @@ public class JdbcRepositoryTestCase {
             ifRun = false;
             System.out.println("skip JdbcRepositoryTestCase test");
         }
+        
+        final Map<String, List<FieldDefinition>> map = new HashMap<String, List<FieldDefinition>>();
+        final List<FieldDefinition> dList = new ArrayList<FieldDefinition>();
+
+        FieldDefinition definition = new FieldDefinition();
+        definition.setName("oId");
+        definition.setIsKey(true);
+        definition.setType("String");
+        dList.add(definition);
+
+        definition = new FieldDefinition();
+        definition.setName("col1");
+        definition.setType("int");
+        dList.add(definition);
+
+        definition = new FieldDefinition();
+        definition.setName("col2");
+        definition.setType("String");
+        dList.add(definition);
+
+        definition = new FieldDefinition();
+        definition.setName("col3");
+        definition.setType("double");
+        dList.add(definition);
+
+        definition = new FieldDefinition();
+        definition.setName("col4");
+        definition.setType("boolean");
+        dList.add(definition);
+        
+        map.put("basetable", dList);
+        JdbcRepositories.setRepositoriesMap(map);
 
     }
 
@@ -279,18 +315,5 @@ public class JdbcRepositoryTestCase {
 
     }
 
-    /**
-     * jsonToDB.
-     */
-    @Test(groups = {"jdbc" })
-    public void jsonToDB() {
-
-        if (!ifRun) {
-            return;
-        }
-        Latkes.initRuntimeEnv();
-        JdbcRepositories.initAllTables();
-
-    }
 
 }
