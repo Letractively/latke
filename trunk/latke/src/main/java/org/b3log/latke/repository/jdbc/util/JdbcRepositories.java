@@ -163,8 +163,8 @@ public final class JdbcRepositories {
 
         repositoriesMap = new HashMap<String, List<FieldDefinition>>();
 
-        final JSONArray repositoritArray =
-                jsonObject.getJSONArray(REPOSITORIES);
+        final JSONArray repositoritArray = jsonObject
+                .getJSONArray(REPOSITORIES);
 
         JSONObject repositoritObject = null;
         JSONObject fieldDefinitionObject = null;
@@ -174,12 +174,11 @@ public final class JdbcRepositories {
             repositoritObject = repositoritArray.getJSONObject(i);
             final String repositoryName = repositoritObject.getString(NAME);
 
-            final List<FieldDefinition> fieldDefinitions =
-                    new ArrayList<FieldDefinition>();
+            final List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
             repositoriesMap.put(repositoryName, fieldDefinitions);
 
-            final JSONArray keysJsonArray =
-                    repositoritObject.getJSONArray(KEYS);
+            final JSONArray keysJsonArray = repositoritObject
+                    .getJSONArray(KEYS);
 
             FieldDefinition definition = null;
             for (int j = 0; j < keysJsonArray.length(); j++) {
@@ -301,8 +300,7 @@ public final class JdbcRepositories {
      */
     public static List<CreateTableResult> initAllTables() {
 
-        final List<CreateTableResult> results =
-                new ArrayList<JdbcRepositories.CreateTableResult>();
+        final List<CreateTableResult> results = new ArrayList<JdbcRepositories.CreateTableResult>();
         final Map<String, List<FieldDefinition>> map = getRepositoriesMap();
 
         boolean isSuccess = false;
@@ -310,9 +308,8 @@ public final class JdbcRepositories {
         for (String tableName : map.keySet()) {
 
             try {
-                isSuccess =
-                        JdbcFactory.createJdbcFactory().createTable(tableName,
-                                map.get(tableName));
+                isSuccess = JdbcFactory.createJdbcFactory().createTable(
+                        tableName, map.get(tableName));
             } catch (final SQLException e) {
                 LOGGER.log(Level.SEVERE,
                         "createTable[" + tableName + "] error", e);
@@ -323,6 +320,16 @@ public final class JdbcRepositories {
 
         return results;
 
+    }
+
+    /**
+     * set the repositoriesMap.
+     * 
+     * @param repositoriesMap  repositoriesMap
+     */
+    public static void setRepositoriesMap(
+            final Map<String, List<FieldDefinition>> repositoriesMap) {
+        JdbcRepositories.repositoriesMap = repositoriesMap;
     }
 
     /**

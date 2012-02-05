@@ -46,6 +46,15 @@ public class JdbcRepositoriesTestCase {
 
     }
 
-    
+    /**
+     * jsonToDB.
+     */
+    @Test(groups = {"jdbc" })
+    public void jsonToDB() {
+
+        Latkes.initRuntimeEnv();
+        //JdbcRepositories.initAllTables();
+
+    }
 
 }
