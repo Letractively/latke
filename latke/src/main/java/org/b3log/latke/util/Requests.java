@@ -73,6 +73,13 @@ public final class Requests {
             + "|palm( os)?|phone|p(ixi|re)|plucker|pocket|psp|symbian|treo|up.(browser"
             + "|link)|ucweb|vodafone|wap|webos|windows (ce|phone)|xda|xiino|htc",
             Pattern.CASE_INSENSITIVE);
+    /**
+     * HTTP header "User-Agent" pattern for search engine bot requests.
+     */
+    private static final Pattern SEARCH_ENGINE_BOT_USER_AGENT_PATTERN =
+            Pattern.compile(
+            "Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot",
+            Pattern.CASE_INSENSITIVE);
 
     /**
      * Mobile and normal skin toggle.
@@ -101,6 +108,25 @@ public final class Requests {
         }
 
         return ret;
+    }
+
+    /**
+     * Determines whether the specified request dose come from a search
+     * engine bot or not with its header "User-Agent".
+     * 
+     * @param request the specified request
+     * @return {@code true} if the specified request comes from a search 
+     * engine bot, returns {@code false} otherwise
+     */
+    public static boolean searchEngineBotRequest(
+            final HttpServletRequest request) {
+        final String userAgent = request.getHeader("User-Agent");
+
+        if (Strings.isEmptyOrNull(userAgent)) {
+            return false;
+        }
+
+        return SEARCH_ENGINE_BOT_USER_AGENT_PATTERN.matcher(userAgent).find();
     }
 
     /**
