@@ -174,7 +174,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
                                            final String pageCacheKey) {
         LOGGER.log(Level.FINER, "Request[pageCacheKey={0}]", pageCacheKey);
         final JSONObject cachedPageContentObject = PageCaches.get(pageCacheKey,
-                                                                  true);
+                                                                  request);
 
         if (null == cachedPageContentObject) { // Miss
             LOGGER.log(Level.FINER, "Page cache miss");
@@ -304,7 +304,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             writer.close();
 
             if (Latkes.isPageCacheEnabled()) {
-                PageCaches.put(cachedPageKey, cachedValue);
+                PageCaches.put(cachedPageKey, cachedValue, request);
                 LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                            cachedPageKey);
             }

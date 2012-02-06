@@ -86,7 +86,7 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
             cachedValue.put(CACHED_TITLE, request.getAttribute(CACHED_TITLE));
             cachedValue.put(CACHED_LINK, request.getAttribute(CACHED_LINK));
 
-            PageCaches.put(cachedPageKey, cachedValue);
+            PageCaches.put(cachedPageKey, cachedValue, request);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
                        cachedPageKey);
         }

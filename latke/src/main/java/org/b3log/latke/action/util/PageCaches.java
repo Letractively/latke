@@ -22,11 +22,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.action.AbstractCacheablePageAction;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.cache.CacheFactory;
+import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.Serializer;
 import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.freemarker.Templates;
@@ -164,20 +166,19 @@ public final class PageCaches {
     }
 
     /**
-     * Gets a cached page with the specified page cache key and update stat. 
-     * flag. 
+     * Gets a cached page with the specified page cache key.
      * 
-     * <p>Invoking this method will change statistic of a cached page if the 
-     * specified update stat. flag is {@code true}, such as to update the 
-     * cache hit count.</p>
+     * <p>
+     * Invoking this method will NOT change statistic (cache view count), 
+     * see {@link #get(java.lang.String, javax.servlet.http.HttpServletRequest)} 
+     * if you want to update the statistic.
+     * </p>
      * 
      * <p>
      *   <b>Note</b>: Do NOT modify properties of the returned json object,
      * </p>
      *
      * @param pageCacheKey the specified page cache key
-     * @param needUpdateStat the specified update stat. flag, {@code true} 
-     * indicates that need to update the statistic, {@code false} otherwise
      * @return for example,
      * <pre>
      * {
@@ -190,25 +191,67 @@ public final class PageCaches {
      *     "cachedTime": long
      * }
      * </pre>
+     * @see #get(java.lang.String, javax.servlet.http.HttpServletRequest) 
+     */
+    public static JSONObject get(final String pageCacheKey) {
+        return (JSONObject) CACHE.get(pageCacheKey);
+    }
+
+    /**
+     * Gets a cached page with the specified page cache key and update 
+     * stat. flag. 
+     * 
+     * <p>
+     * Invoking this method may change statistic, such as to update the 
+     * cache hit count. But if the specified request made from a search engine 
+     * bot, will NOT change statistic field.
+     * </p>
+     * 
+     * <p>
+     * The {@link #get(java.lang.String)} method will return a cached page 
+     * without update statistic.
+     * </p>
+     * 
+     * <p>
+     *   <b>Note</b>: Do NOT modify properties of the returned json object,
+     * </p>
+     *
+     * @param pageCacheKey the specified page cache key
+     * @param request the specified request
+     * @return for example,
+     * <pre>
+     * {
+     *     "cachedContent: "",
+     *     "cachedOid": "",
+     *     "cachedTitle": "",
+     *     "cachedType": "",
+     *     "cachedBytesLength": int,
+     *     "cachedHitCount": long,
+     *     "cachedTime": long
+     * }
+     * </pre>
+     * @see Requests#searchEngineBotRequest(javax.servlet.http.HttpServletRequest) 
+     * @see #get(java.lang.String) 
      */
     public static JSONObject get(final String pageCacheKey,
-                                 final boolean needUpdateStat) {
+                                 final HttpServletRequest request) {
         final JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
 
-        if (needUpdateStat && null != ret) {
-            try {
-                final long hitCount = ret.getLong(CACHED_HIT_COUNT);
-                ret.put(CACHED_HIT_COUNT, hitCount + 1);
-
-                CACHE.put(pageCacheKey, ret);
-            } catch (final Exception e) {
-                LOGGER.log(Level.WARNING, "Set stat. of cached page[pageCacheKey="
-                                          + pageCacheKey + "] failed", e);
-            }
+        if (null == ret) {
+            return null;
         }
 
-        if (null != ret) {
+        try {
+            if (!Requests.searchEngineBotRequest(request)) {
+                final long hitCount = ret.getLong(CACHED_HIT_COUNT);
+                ret.put(CACHED_HIT_COUNT, hitCount + 1);
+            }
+
+            CACHE.put(pageCacheKey, ret);
             KEYS.add(pageCacheKey);
+        } catch (final Exception e) {
+            LOGGER.log(Level.WARNING, "Set stat. of cached page[pageCacheKey="
+                                      + pageCacheKey + "] failed", e);
         }
 
         return ret;
@@ -216,6 +259,12 @@ public final class PageCaches {
 
     /**
      * Puts a page into cache.
+     * 
+     * <p>
+     * Invoking this method may change statistic, such as to initialize the 
+     * cache hit count to 1. But if the specified request made from a search 
+     * engine bot, will initialize the cache hit count to 0.
+     * </p>
      *
      * @param pageKey key of the page to put
      * @param cachedValue value to put, for example, 
@@ -230,8 +279,10 @@ public final class PageCaches {
      *     "cachedTime": long
      * }
      * </pre>
+     * @param request the specified request 
      */
-    public static void put(final String pageKey, final JSONObject cachedValue) {
+    public static void put(final String pageKey, final JSONObject cachedValue,
+                           final HttpServletRequest request) {
         check(cachedValue);
 
         try {
@@ -239,7 +290,11 @@ public final class PageCaches {
                     AbstractCacheablePageAction.CACHED_CONTENT);
             final byte[] bytes = Serializer.serialize(content);
 
-            cachedValue.put(CACHED_HIT_COUNT, 1L);
+            if (Requests.searchEngineBotRequest(request)) {
+                cachedValue.put(CACHED_HIT_COUNT, 0L);
+            } else {
+                cachedValue.put(CACHED_HIT_COUNT, 1L);
+            }
             cachedValue.put(CACHED_BYTES_LENGTH, bytes.length);
             cachedValue.put(CACHED_TIME, System.currentTimeMillis());
         } catch (final Exception e) {
