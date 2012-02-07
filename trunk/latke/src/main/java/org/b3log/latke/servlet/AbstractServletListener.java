@@ -36,85 +36,80 @@ import org.b3log.latke.repository.jdbc.JdbcRepository;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.3.0, Dec 28, 2011
  */
-public abstract class AbstractServletListener implements ServletContextListener,
-                                                         ServletRequestListener,
-                                                         HttpSessionListener {
+public abstract class AbstractServletListener implements ServletContextListener, ServletRequestListener, HttpSessionListener {
 
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER =
-            Logger.getLogger(AbstractServletListener.class.getName());
-    /**
-     * Web root.
-     */
-    private static String webRoot;
+	/**
+	 * Logger.
+	 */
+	private static final Logger LOGGER = Logger.getLogger(AbstractServletListener.class.getName());
+	/**
+	 * Web root.
+	 */
+	private static String webRoot;
 
-    static {
-        final URL resource = ClassLoader.class.getResource("/");
-        if (null != resource) { // Running unit tests
-            webRoot = resource.getPath();
-        }
-    }
+	static {
+		final URL resource = ClassLoader.class.getResource("/");
+		if (null != resource) { // Running unit tests
+			webRoot = resource.getPath();
+		}
+	}
 
-    /**
-     * Initializes context, {@linkplain #webRoot web root}, locale and runtime
-     * environment.
-     * 
-     * @param servletContextEvent servlet context event
-     */
-    @Override
-    public void contextInitialized(final ServletContextEvent servletContextEvent) {
-        Latkes.initRuntimeEnv();
-        LOGGER.info("Initializing the context....");
+	/**
+	 * Initializes context, {@linkplain #webRoot web root}, locale and runtime
+	 * environment.
+	 * 
+	 * @param servletContextEvent
+	 *            servlet context event
+	 */
+	@Override
+	public void contextInitialized(final ServletContextEvent servletContextEvent) {
+		Latkes.initRuntimeEnv();
+		LOGGER.info("Initializing the context....");
 
-        Latkes.setLocale(Locale.SIMPLIFIED_CHINESE);
-        LOGGER.log(Level.INFO, "Default locale[{0}]", Latkes.getLocale());
+		Latkes.setLocale(Locale.SIMPLIFIED_CHINESE);
+		LOGGER.log(Level.INFO, "Default locale[{0}]", Latkes.getLocale());
 
-        final ServletContext servletContext =
-                servletContextEvent.getServletContext();
-        webRoot = servletContext.getRealPath("") + File.separator;
-        final String catalinaBase = System.getProperty("catalina.base");
-        LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]",
-                   new Object[]{webRoot, catalinaBase});
-    }
+		final ServletContext servletContext = servletContextEvent.getServletContext();
+		webRoot = servletContext.getRealPath("") + File.separator;
+		final String catalinaBase = System.getProperty("catalina.base");
+		LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]", new Object[] { webRoot, catalinaBase });
+	}
 
-    /**
-     * Destroys the context, unregisters remote JavaScript services.
-     *
-     * @param servletContextEvent servlet context event
-     */
-    @Override
-    public void contextDestroyed(final ServletContextEvent servletContextEvent) {
-        LOGGER.info("Destroying the context....");
-        Latkes.shutdown();
-    }
+	/**
+	 * Destroys the context, unregisters remote JavaScript services.
+	 * 
+	 * @param servletContextEvent
+	 *            servlet context event
+	 */
+	@Override
+	public void contextDestroyed(final ServletContextEvent servletContextEvent) {
+		LOGGER.info("Destroying the context....");
+		Latkes.shutdown();
+	}
 
-    @Override
-    public void requestDestroyed(final ServletRequestEvent servletRequestEvent) {
-        if (Latkes.runsWithJDBCDatabase()) {
-            JdbcRepository.dispose();
-        }
-    }
+	@Override
+	public void requestDestroyed(final ServletRequestEvent servletRequestEvent) {
+		if (Latkes.runsWithJDBCDatabase()) {
+			JdbcRepository.dispose();
+		}
+	}
 
-    @Override
-    public abstract void requestInitialized(
-            final ServletRequestEvent servletRequestEvent);
+	@Override
+	public abstract void requestInitialized(final ServletRequestEvent servletRequestEvent);
 
-    @Override
-    public abstract void sessionCreated(final HttpSessionEvent httpSessionEvent);
+	@Override
+	public abstract void sessionCreated(final HttpSessionEvent httpSessionEvent);
 
-    @Override
-    public abstract void sessionDestroyed(
-            final HttpSessionEvent httpSessionEvent);
+	@Override
+	public abstract void sessionDestroyed(final HttpSessionEvent httpSessionEvent);
 
-    /**
-     * Gets the absolute file path of web root directory on the server's
-     * file system.
-     *
-     * @return the directory file path(tailing with {@link File#separator}).
-     */
-    public static String getWebRoot() {
-        return webRoot;
-    }
+	/**
+	 * Gets the absolute file path of web root directory on the server's file
+	 * system.
+	 * 
+	 * @return the directory file path(tailing with {@link File#separator}).
+	 */
+	public static String getWebRoot() {
+		return webRoot;
+	}
 }
