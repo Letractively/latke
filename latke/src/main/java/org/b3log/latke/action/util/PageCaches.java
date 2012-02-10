@@ -60,7 +60,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.8, Jan 9, 2012
+ * @version 1.0.1.9, Feb 10, 2012
  * @since 0.3.1
  */
 @SuppressWarnings("unchecked")
@@ -148,12 +148,17 @@ public final class PageCaches {
     /**
      * Gets all cached page keys.
      * 
+     * <p>
+     * <b>Note</b>: Do NOT modify the returned keys set directly.
+     * </p>
+     * 
      * @return cached page keys, returns an empty set if not found
      */
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
         syncKeys();
-        return Collections.unmodifiableSet(KEYS);
+        
+        return KEYS;
     }
 
     /**
