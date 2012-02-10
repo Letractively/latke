@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.7.2, Jan 11, 2012
+    Version: 1.0.7.3, Feb 10, 2012
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -110,13 +110,13 @@
         <repository>
             <id>m2-release</id>
             <name>Maven Repository at Google</name>
-            <url>dav:https://m2-repos.googlecode.com/svn/release</url>
+            <url>https://m2-repos.googlecode.com/svn/release</url>
         </repository>
 
         <snapshotRepository>
             <id>m2-snapshot</id>
             <name>Maven Repository at Google</name>
-            <url>dav:https://m2-repos.googlecode.com/svn/snapshot</url>
+            <url>https://m2-repos.googlecode.com/svn/snapshot</url>
             <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
@@ -361,6 +361,7 @@
 
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.5</version>
                 <configuration>
                     <updateReleaseInfo>true</updateReleaseInfo>
                 </configuration>
