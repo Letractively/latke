@@ -27,25 +27,25 @@ import javax.servlet.http.HttpSessionEvent;
  */
 public final class DefaultServletListener extends AbstractServletListener {
 
-	@Override
-	public void contextInitialized(final ServletContextEvent servletContextEvent) {
-		super.contextInitialized(servletContextEvent);
-	}
+    @Override
+    public void contextInitialized(final ServletContextEvent servletContextEvent) {
+        super.contextInitialized(servletContextEvent);
+    }
 
-	@Override
-	public void requestDestroyed(final ServletRequestEvent servletRequestEvent) {
-		super.requestDestroyed(servletRequestEvent);
-	}
+    @Override
+    public void requestDestroyed(final ServletRequestEvent servletRequestEvent) {
+        super.requestDestroyed(servletRequestEvent);
+    }
 
-	@Override
-	public void requestInitialized(final ServletRequestEvent servletRequestEvent) {
-	}
+    @Override
+    public void requestInitialized(final ServletRequestEvent servletRequestEvent) {
+    }
 
-	@Override
-	public void sessionCreated(final HttpSessionEvent httpSessionEvent) {
-	}
+    @Override
+    public void sessionCreated(final HttpSessionEvent httpSessionEvent) {
+    }
 
-	@Override
-	public void sessionDestroyed(final HttpSessionEvent httpSessionEvent) {
-	}
+    @Override
+    public void sessionDestroyed(final HttpSessionEvent httpSessionEvent) {
+    }
 }
