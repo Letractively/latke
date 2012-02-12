@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.event.EventManager;
 import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.json.JSONException;
 import org.json.JSONObject;
