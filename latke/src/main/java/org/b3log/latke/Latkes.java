@@ -202,12 +202,17 @@ public final class Latkes {
     /**
      * Initializes {@linkplain RuntimeEnv runtime environment}.
      * 
-     * <p>
-     * If the GAERepository class (org.b3log.latke.repository.gae.GAERepository)
-     * is on the classpath, considered Latke is running on <a
-     * href="http://code.google.com/appengine">Google App Engine</a>, otherwise,
-     * considered Latke is running on standard Servlet container.
-     * </p>
+     * <ol>
+     *   <li>
+     *   If the "latke.properties" has a valid runtime environment configuration (for example, 
+     *   runtimeEnv=GAE or runtimeEnv=LOCAL), initializes the runtime environment as its specified
+     *   </li>
+     *   <li>
+     *   If the GAERepository class (org.b3log.latke.repository.gae.GAERepository)
+     *   is on the classpath, considered Latke is running on <a href="http://code.google.com/appengine">Google App Engine</a>, 
+     *   otherwise, considered Latke is running on standard Servlet container.
+     *   </li>
+     * </ol>
      * 
      * <p>
      * If the Latke runs on the standard Servlet container (local environment),
@@ -224,13 +229,21 @@ public final class Latkes {
     public static void initRuntimeEnv() {
         setRuntimeMode(RuntimeMode.DEVELOPMENT); // Defaults to dev mode
 
-        try {
-            runtimeEnv = RuntimeEnv.GAE;
-            Class.forName("org.b3log.latke.repository.gae.GAERepository");
-            LOGGER.log(Level.INFO, "Latke is running on [GAE]", Latkes.getRuntimeEnv());
-        } catch (final ClassNotFoundException e) {
-            runtimeEnv = RuntimeEnv.LOCAL;
-            LOGGER.log(Level.INFO, "Latke is running on [Local]", Latkes.getRuntimeEnv());
+        LOGGER.log(Level.FINEST, "Initializes runtime environment from configuration file");
+        final String value = LATKE_PROPS.getProperty("runtimeEnv");
+        runtimeEnv = RuntimeEnv.valueOf(value);
+
+        if (null == runtimeEnv) {
+            LOGGER.log(Level.FINEST, "Initializes runtime environment by class loading");
+            
+            try {
+                runtimeEnv = RuntimeEnv.GAE;
+                Class.forName("org.b3log.latke.repository.gae.GAERepository");
+                LOGGER.log(Level.INFO, "Latke is running on [GAE]", Latkes.getRuntimeEnv());
+            } catch (final ClassNotFoundException e) {
+                runtimeEnv = RuntimeEnv.LOCAL;
+                LOGGER.log(Level.INFO, "Latke is running on [Local]", Latkes.getRuntimeEnv());
+            }
         }
 
         if (RuntimeEnv.LOCAL == runtimeEnv) {
