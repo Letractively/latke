@@ -127,8 +127,10 @@ public final class RequestProcessors {
     /**
      * Scans classpath to discover request processor classes via annotation
      * {@linkplain org.b3log.latke.annotation.RequestProcessor}.
+     * 
+     * @throws Exception exception
      */
-    public static void discover() {
+    public static void discover() throws Exception {
         discoverFromClassesDir();
         discoverFromLibDir();
     }
@@ -138,35 +140,25 @@ public final class RequestProcessors {
      */
     private static void discoverFromClassesDir() {
         final String webRoot = AbstractServletListener.getWebRoot();
-        final File classesDir = new File(webRoot + File.separator + "WEB-INF"
-                                         + File.separator
-                                         + "classes" + File.separator);
+        final File classesDir = new File(webRoot + File.separator + "WEB-INF" + File.separator + "classes" + File.separator);
         @SuppressWarnings("unchecked")
-        final Collection<File> classes =
-                FileUtils.listFiles(classesDir, new String[]{"class"}, true);
+        final Collection<File> classes = FileUtils.listFiles(classesDir, new String[]{"class"}, true);
         final ClassLoader classLoader = RequestProcessors.class.getClassLoader();
 
         try {
             for (final File classFile : classes) {
                 final String path = classFile.getPath();
-                final String className =
-                        StringUtils.substringBetween(path, "WEB-INF"
-                                                           + File.separator
-                                                           + "classes"
-                                                           + File.separator,
-                                                     ".class").
+                final String className = StringUtils.substringBetween(path, "WEB-INF" + File.separator + "classes" + File.separator,
+                                                                      ".class").
                         replaceAll("\\/", ".").replaceAll("\\\\", ".");
                 final Class<?> clz = classLoader.loadClass(className);
 
                 if (clz.isAnnotationPresent(RequestProcessor.class)) {
-                    LOGGER.log(Level.FINER,
-                               "Found a request processor[className={0}]",
-                               className);
+                    LOGGER.log(Level.FINER, "Found a request processor[className={0}]", className);
                     final Method[] declaredMethods = clz.getDeclaredMethods();
                     for (int i = 0; i < declaredMethods.length; i++) {
                         final Method mthd = declaredMethods[i];
-                        final RequestProcessing annotation =
-                                mthd.getAnnotation(RequestProcessing.class);
+                        final RequestProcessing annotation = mthd.getAnnotation(RequestProcessing.class);
 
                         if (null == annotation) {
                             continue;
@@ -187,11 +179,9 @@ public final class RequestProcessors {
      */
     private static void discoverFromLibDir() {
         final String webRoot = AbstractServletListener.getWebRoot();
-        final File libDir = new File(webRoot + File.separator + "WEB-INF"
-                                     + File.separator + "lib" + File.separator);
+        final File libDir = new File(webRoot + File.separator + "WEB-INF" + File.separator + "lib" + File.separator);
         @SuppressWarnings("unchecked")
-        final Collection<File> files =
-                FileUtils.listFiles(libDir, new String[]{"jar"}, true);
+        final Collection<File> files = FileUtils.listFiles(libDir, new String[]{"jar"}, true);
 
         final ClassLoader classLoader = RequestProcessors.class.getClassLoader();
 
@@ -221,43 +211,32 @@ public final class RequestProcessors {
                         continue;
                     }
 
-                    final DataInputStream dataInputStream =
-                            new DataInputStream(jarFile.getInputStream(jarEntry));
+                    final DataInputStream dataInputStream = new DataInputStream(jarFile.getInputStream(jarEntry));
 
                     final ClassFile classFile = new ClassFile(dataInputStream);
                     final AnnotationsAttribute annotationsAttribute =
-                            (AnnotationsAttribute) classFile.getAttribute(
-                            AnnotationsAttribute.visibleTag);
+                            (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
                     if (null == annotationsAttribute) {
                         continue;
                     }
 
-                    for (Annotation annotation : annotationsAttribute.
-                            getAnnotations()) {
-                        if ((annotation.getTypeName()).equals(
-                                RequestProcessor.class.getName())) {
+                    for (Annotation annotation : annotationsAttribute.getAnnotations()) {
+                        if ((annotation.getTypeName()).equals(RequestProcessor.class.getName())) {
                             // Found a request processor class, loads it
                             final String className = classFile.getName();
-                            final Class<?> clz =
-                                    classLoader.loadClass(className);
+                            final Class<?> clz = classLoader.loadClass(className);
 
-                            LOGGER.log(Level.FINER,
-                                       "Found a request processor[className={0}]",
-                                       className);
-                            final Method[] declaredMethods =
-                                    clz.getDeclaredMethods();
+                            LOGGER.log(Level.FINER, "Found a request processor[className={0}]", className);
+                            final Method[] declaredMethods = clz.getDeclaredMethods();
                             for (int i = 0; i < declaredMethods.length; i++) {
                                 final Method mthd = declaredMethods[i];
-                                final RequestProcessing requestProcessingMethodAnn =
-                                        mthd.getAnnotation(
-                                        RequestProcessing.class);
+                                final RequestProcessing requestProcessingMethodAnn = mthd.getAnnotation(RequestProcessing.class);
 
                                 if (null == requestProcessingMethodAnn) {
                                     continue;
                                 }
 
-                                addProcessorMethod(requestProcessingMethodAnn,
-                                                   clz, mthd);
+                                addProcessorMethod(requestProcessingMethodAnn, clz, mthd);
                             }
                         }
                     }
@@ -291,17 +270,14 @@ public final class RequestProcessors {
 
                 switch (processorMethod.getURIPatternMode()) {
                     case ANT_PATH:
-                        found = AntPathMatcher.match(processorMethod.
-                                getURIPattern(), requestURI);
+                        found = AntPathMatcher.match(processorMethod.getURIPattern(), requestURI);
                         break;
                     case REGEX:
-                        found = RegexPathMatcher.match(processorMethod.
-                                getURIPattern(), requestURI);
+                        found = RegexPathMatcher.match(processorMethod.getURIPattern(), requestURI);
                         break;
                     default:
                         throw new IllegalStateException(
-                                "Can not process URI pattern[uriPattern="
-                                + processorMethod.getURIPattern() + ", mode="
+                                "Can not process URI pattern[uriPattern=" + processorMethod.getURIPattern() + ", mode="
                                 + processorMethod.getURIPatternMode() + "]");
                 }
 
