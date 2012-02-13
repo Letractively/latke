@@ -34,6 +34,7 @@ import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
+import org.b3log.latke.util.Stopwatchs;
 
 /**
  * Front controller for HTTP request dispatching.
@@ -64,9 +65,18 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      */
     @Override
     public void init() throws ServletException {
-        LOGGER.info("Discovering request processors....");
-        RequestProcessors.discover();
-        LOGGER.info("Discovered request processors");
+        Stopwatchs.start("Discovering Request Processors");
+        try {
+            LOGGER.info("Discovering request processors....");
+            RequestProcessors.discover();
+            LOGGER.info("Discovered request processors");
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "Initializes request processors failed", e);
+
+        } finally {
+            Stopwatchs.end();
+        }
+
     }
 
     /**
