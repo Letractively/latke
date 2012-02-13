@@ -39,7 +39,7 @@ import static org.b3log.latke.action.AbstractCacheablePageAction.*;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Dec 22, 2011
+ * @version 1.0.1.3, Feb 13, 2012
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -52,7 +52,18 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      */
     private static final Logger LOGGER = Logger.getLogger(HTTPRequestDispatcher.class.getName());
 
-    static {
+    /**
+     * Initializes this servlet.
+     * 
+     * <p>
+     * Scans classpath for discovering request processors.
+     * </p>
+     * 
+     * @throws ServletException servlet exception
+     * @see RequestProcessors#discover() 
+     */
+    @Override
+    public void init() throws ServletException {
         LOGGER.info("Discovering request processors....");
         RequestProcessors.discover();
         LOGGER.info("Discovered request processors");
