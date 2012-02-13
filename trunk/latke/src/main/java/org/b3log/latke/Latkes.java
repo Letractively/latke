@@ -239,12 +239,12 @@ public final class Latkes {
             try {
                 runtimeEnv = RuntimeEnv.GAE;
                 Class.forName("org.b3log.latke.repository.gae.GAERepository");
-                LOGGER.log(Level.INFO, "Latke is running on [GAE]", Latkes.getRuntimeEnv());
             } catch (final ClassNotFoundException e) {
                 runtimeEnv = RuntimeEnv.LOCAL;
-                LOGGER.log(Level.INFO, "Latke is running on [Local]", Latkes.getRuntimeEnv());
             }
         }
+        
+        LOGGER.log(Level.INFO, "Latke is running on [{0}]", Latkes.getRuntimeEnv());
 
         if (RuntimeEnv.LOCAL == runtimeEnv) {
             // Read local database configurations
