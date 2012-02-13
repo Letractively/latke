@@ -155,6 +155,7 @@ public final class Latkes {
         if (null == value) {
             LOGGER.log(Level.WARNING, "Rutnime service[name={0}" + "] is undefined, " + "please configure it in latkes.properties",
                        serviceName);
+            return null;
         }
 
         return RuntimeEnv.valueOf(value);
@@ -231,11 +232,13 @@ public final class Latkes {
 
         LOGGER.log(Level.FINEST, "Initializes runtime environment from configuration file");
         final String value = LATKE_PROPS.getProperty("runtimeEnv");
-        runtimeEnv = RuntimeEnv.valueOf(value);
+        if (null != value) {
+            runtimeEnv = RuntimeEnv.valueOf(value);
+        }
 
         if (null == runtimeEnv) {
             LOGGER.log(Level.FINEST, "Initializes runtime environment by class loading");
-            
+
             try {
                 runtimeEnv = RuntimeEnv.GAE;
                 Class.forName("org.b3log.latke.repository.gae.GAERepository");
@@ -243,7 +246,7 @@ public final class Latkes {
                 runtimeEnv = RuntimeEnv.LOCAL;
             }
         }
-        
+
         LOGGER.log(Level.INFO, "Latke is running on [{0}]", Latkes.getRuntimeEnv());
 
         if (RuntimeEnv.LOCAL == runtimeEnv) {
@@ -300,10 +303,13 @@ public final class Latkes {
         }
 
         final String runtimeDatabase = LOCAL_PROPS.getProperty("runtimeDatabase");
+        if (null == runtimeDatabase) {
+            throw new RuntimeException("Please configures runtime database in local.properties!");
+        }
 
         final RuntimeDatabase ret = RuntimeDatabase.valueOf(runtimeDatabase);
         if (null == ret) {
-            throw new RuntimeException("Please configures runtime database in local.properties!");
+            throw new RuntimeException("Please configures a valid runtime database in local.properties!");
         }
 
         return ret;
