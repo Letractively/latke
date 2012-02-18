@@ -75,7 +75,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
             final String tableName) {
         //        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
         //                .append(";");
-        createTableSql.append("CREATE TABLE ").append(tableName).append("(");
+        createTableSql.append("CREATE TABLE  IF NOT EXISTS ").append(tableName).append("(");
 
     }
 

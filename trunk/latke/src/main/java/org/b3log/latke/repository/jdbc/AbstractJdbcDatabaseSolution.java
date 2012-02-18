@@ -57,9 +57,10 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
 
         final Connection connection = Connections.getConnection();
 
-        final StringBuffer dropTableSql = new StringBuffer();
-        createDropTableSql(dropTableSql, tableName);
-        JdbcUtil.executeSql(dropTableSql.toString(), connection);
+        //need config
+//        final StringBuffer dropTableSql = new StringBuffer();
+//        createDropTableSql(dropTableSql, tableName);
+//        JdbcUtil.executeSql(dropTableSql.toString(), connection);
 
         final StringBuffer createTableSql = new StringBuffer();
 

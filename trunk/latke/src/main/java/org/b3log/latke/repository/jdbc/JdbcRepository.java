@@ -360,9 +360,11 @@ public class JdbcRepository implements Repository {
         JSONObject jsonObject = null;
 
         try {
-            get(id, sql);
+            get(sql);
+            final ArrayList<Object> paramList = new ArrayList<Object>();
+            paramList.add(id);
             jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
-                    new ArrayList<Object>(), connection, getName());
+                    paramList, connection, getName());
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
             throw new RepositoryException(e);
@@ -377,13 +379,12 @@ public class JdbcRepository implements Repository {
     /**
      * get.
      * 
-     * @param id id
      * @param sql sql
      */
-    private void get(final String id, final StringBuffer sql) {
+    private void get(final StringBuffer sql) {
 
         sql.append("select * from ").append(getName()).append(" where ")
-                .append(JdbcRepositories.OID).append("=").append(id);
+                .append(JdbcRepositories.OID).append("=").append("?");
 
     }
 
