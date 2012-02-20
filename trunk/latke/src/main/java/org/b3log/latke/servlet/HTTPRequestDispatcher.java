@@ -92,6 +92,8 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                            final HttpServletResponse response)
             throws ServletException, IOException {
         final String resourcePath = request.getPathTranslated();
+        
+        System.out.println(request.getRequestURI());
 
         if ((!request.getRequestURI().equals("/")
              && new File(resourcePath).isDirectory())
@@ -102,6 +104,10 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         }
 
         final String requestURI = request.getRequestURI();
+//        final String contextPath = request.getContextPath();
+//        System.out.println("------------:"+contextPath);
+//        requestURI = requestURI.substring(contextPath.length());
+        
         if (requestURI.startsWith("/css/")
             || requestURI.startsWith("/images/")
             || requestURI.startsWith("/js/")
