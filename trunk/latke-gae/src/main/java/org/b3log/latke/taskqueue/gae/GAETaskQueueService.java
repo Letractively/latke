@@ -17,7 +17,9 @@ package org.b3log.latke.taskqueue.gae;
 
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.b3log.latke.servlet.HTTPRequestMethod;
 import org.b3log.latke.taskqueue.Queue;
 import org.b3log.latke.taskqueue.Task;
 import org.b3log.latke.taskqueue.TaskHandle;
@@ -27,7 +29,7 @@ import org.b3log.latke.taskqueue.TaskQueueService;
  * Task.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Nov 15, 2011
+ * @version 1.0.0.1, Feb 21, 2012
  */
 public final class GAETaskQueueService implements TaskQueueService {
 
@@ -49,6 +51,29 @@ public final class GAETaskQueueService implements TaskQueueService {
                 final TaskOptions taskOptions =
                         TaskOptions.Builder.withTaskName(task.getName()).
                         url(task.getURL());
+                final HTTPRequestMethod requestMethod = task.getRequestMethod();
+
+                switch (requestMethod) {
+                    case GET:
+                        taskOptions.method(TaskOptions.Method.GET);
+                        break;
+                    case DELETE:
+                        taskOptions.method(TaskOptions.Method.DELETE);
+                        break;
+                    case HEAD:
+                        taskOptions.method(TaskOptions.Method.HEAD);
+                        break;
+                    case POST:
+                        taskOptions.method(TaskOptions.Method.POST);
+                        break;
+                    case PUT:
+                        taskOptions.method(TaskOptions.Method.PUT);
+                        break;
+                    default:
+                        LOGGER.log(Level.WARNING, "Task request method[{0}], uses GET method instead", requestMethod);
+                        taskOptions.method(TaskOptions.Method.GET);
+                        break;
+                }
 
                 final com.google.appengine.api.taskqueue.TaskHandle handle =
                         queue.add(taskOptions);
