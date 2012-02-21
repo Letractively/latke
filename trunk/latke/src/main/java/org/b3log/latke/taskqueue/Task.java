@@ -15,11 +15,13 @@
  */
 package org.b3log.latke.taskqueue;
 
+import org.b3log.latke.servlet.HTTPRequestMethod;
+
 /**
  * Task.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Nov 15, 2011
+ * @version 1.0.0.1, Feb 21, 2012
  */
 public final class Task {
 
@@ -31,6 +33,28 @@ public final class Task {
      * Name.
      */
     private String name;
+    /**
+     * HTTP method.
+     */
+    private HTTPRequestMethod requestMethod = HTTPRequestMethod.GET;
+
+    /**
+     * Gets the request method.
+     * 
+     * @return request method of this task
+     */
+    public HTTPRequestMethod getRequestMethod() {
+        return requestMethod;
+    }
+
+    /**
+     * Sets the request method with the specified request method.
+     * 
+     * @param requestMethod the specified request method
+     */
+    public void setRequestMethod(final HTTPRequestMethod requestMethod) {
+        this.requestMethod = requestMethod;
+    }
 
     /**
      * Gets the URL of this task.
