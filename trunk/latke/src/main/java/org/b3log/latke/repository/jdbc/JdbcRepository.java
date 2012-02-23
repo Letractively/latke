@@ -27,8 +27,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.cache.Cache;
+import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.FilterOperator;
@@ -52,6 +54,7 @@ import org.json.JSONObject;
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Dec 20, 2011
  */
+@SuppressWarnings("unchecked")
 public class JdbcRepository implements Repository {
 
     /**
@@ -69,6 +72,24 @@ public class JdbcRepository implements Repository {
      * Is cache enabled?
      */
     private boolean cacheEnabled = true;
+    
+    /**
+     * Repository cache.
+     * <p>
+     * &lt;oId, JSONObject&gt;
+     * </p>
+     */
+    public static final Cache<String, Serializable> CACHE;
+    
+    /**
+     * Repository cache name.
+     */
+    public static final String REPOSITORY_CACHE_NAME = "repositoryCache";
+    
+    static {
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
+                REPOSITORY_CACHE_NAME);
+    }
 
     /**
      * The current transaction.
@@ -274,7 +295,8 @@ public class JdbcRepository implements Repository {
 
         sql.append("update ").append(getName()).append(wildcardString)
                 .append(" where ").append(JdbcRepositories.OID).append("=")
-                .append(id);
+                .append("?");
+        paramList.add(id);
 
     }
 
@@ -500,7 +522,9 @@ public class JdbcRepository implements Repository {
             final StringBuffer countSql = new StringBuffer("select count("
                     + JdbcRepositories.OID + ") from ").append(getName());
 
-            countSql.append(" where ").append(filterSql);
+            if(StringUtils.isNotBlank(filterSql.toString())){
+            	countSql.append(" where ").append(filterSql);
+            }
             final long count = count(countSql, paramList);
             pageCnt = (int) Math.ceil((double) count / (double) pageSize);
         }
@@ -782,7 +806,7 @@ public class JdbcRepository implements Repository {
     @Override
     public Cache<String, Serializable> getCache() {
         // TODO Auto-generated method stub
-        return null;
+        return CACHE;
     }
 
     /**

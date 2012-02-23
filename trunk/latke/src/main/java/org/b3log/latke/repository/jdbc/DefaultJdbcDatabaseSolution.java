@@ -18,6 +18,7 @@ package org.b3log.latke.repository.jdbc;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.repository.jdbc.mapping.BooleanMapping;
 import org.b3log.latke.repository.jdbc.mapping.IntMapping;
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
@@ -51,7 +52,10 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
             final String tableName) {
         final StringBuffer sql = new StringBuffer();
         sql.append("select * from ").append(tableName);
-        sql.append(" where ").append(filterSql).append(orderBySql);
+        if(StringUtils.isNotBlank(filterSql)){
+        	sql.append(" where ").append(filterSql);
+        }
+        sql.append(orderBySql);
         sql.append(" limit ").append(start).append(",").append(end - start);
         return sql.toString();
     }
