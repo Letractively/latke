@@ -85,7 +85,6 @@ public final class JdbcUtil {
                 .prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
-
             preparedStatement.setObject(i, paramList.get(i - 1));
         }
         final boolean isSuccess = preparedStatement.execute();

@@ -217,7 +217,7 @@ public final class JdbcRepositories {
 
         fieldDefinition.setType(fieldDefinitionObject.getString(TYPE));
         fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE,
-                true));
+                false));
         fieldDefinition.setLength(fieldDefinitionObject.optInt(LENGTH));
         fieldDefinition.setIsKey(fieldDefinitionObject.optBoolean(ISKEY));
 
