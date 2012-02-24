@@ -21,7 +21,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.b3log.latke.action.util.PageCaches;
+
+import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.repository.Transaction;
 import org.json.JSONObject;
 
