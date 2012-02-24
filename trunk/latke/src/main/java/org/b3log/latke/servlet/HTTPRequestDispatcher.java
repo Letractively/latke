@@ -19,7 +19,7 @@ import java.io.File;
 import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import java.io.InputStream;
 import org.b3log.latke.Keys;
-import org.b3log.latke.action.util.PageCaches;
+import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.util.Strings;
 import java.util.logging.Level;
 import java.io.IOException;
