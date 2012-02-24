@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.action.util.PageCaches;
+import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.servlet.HTTPRequestContext;
 import org.b3log.latke.util.Strings;
 import org.json.JSONObject;

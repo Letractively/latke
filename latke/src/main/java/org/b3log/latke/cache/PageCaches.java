@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.action.util;
+package org.b3log.latke.cache;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.action.AbstractCacheablePageAction;
-import org.b3log.latke.cache.Cache;
-import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.Serializer;
 import org.b3log.latke.util.Strings;
