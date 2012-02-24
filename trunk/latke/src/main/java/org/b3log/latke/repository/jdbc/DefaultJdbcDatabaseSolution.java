@@ -48,12 +48,12 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
     public String queryPage(final int start, final int end,
-            final String filterSql, final String orderBySql,
-            final String tableName) {
+                            final String filterSql, final String orderBySql,
+                            final String tableName) {
         final StringBuffer sql = new StringBuffer();
         sql.append("select * from ").append(tableName);
-        if(StringUtils.isNotBlank(filterSql)){
-        	sql.append(" where ").append(filterSql);
+        if (StringUtils.isNotBlank(filterSql)) {
+            sql.append(" where ").append(filterSql);
         }
         sql.append(orderBySql);
         sql.append(" limit ").append(start).append(",").append(end - start);
@@ -68,15 +68,14 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
     protected void createDropTableSql(final StringBuffer dropTableSql,
-            final String tableName) {
-        dropTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
-                .append(";");
+                                      final String tableName) {
+        dropTableSql.append("DROP TABLE  IF EXISTS ").append(tableName).append(";");
 
     }
 
     @Override
     protected void createTableHead(final StringBuffer createTableSql,
-            final String tableName) {
+                                   final String tableName) {
         //        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
         //                .append(";");
         createTableSql.append("CREATE TABLE  IF NOT EXISTS ").append(tableName).append("(");
@@ -85,7 +84,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
     protected void createTableBody(final StringBuffer createTableSql,
-            final List<FieldDefinition> fieldDefinitions) {
+                                   final List<FieldDefinition> fieldDefinitions) {
 
         final List<FieldDefinition> keyDefinitionList = new ArrayList<FieldDefinition>();
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
@@ -98,8 +97,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
             final Mapping mapping = getJdbcTypeMapping().get(type);
             if (mapping != null) {
 
-                createTableSql.append(mapping.toDataBaseSting(fieldDefinition))
-                        .append(",   ");
+                createTableSql.append(mapping.toDataBaseSting(fieldDefinition)).append(",   ");
 
                 if (fieldDefinition.getIsKey()) {
                     keyDefinitionList.add(fieldDefinition);
@@ -107,8 +105,8 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
             } else {
 
                 throw new RuntimeException("the type["
-                        + fieldDefinition.getType()
-                        + "] is not register for mapping ");
+                                           + fieldDefinition.getType()
+                                           + "] is not register for mapping ");
             }
 
         }
@@ -155,5 +153,4 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
         createTableSql.append(") ENGINE= InnoDB DEFAULT CHARSET= utf8;");
 
     }
-
 }

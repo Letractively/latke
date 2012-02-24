@@ -15,15 +15,21 @@
  */
 package org.b3log.latke.taskqueue;
 
+import java.io.Serializable;
 import org.b3log.latke.servlet.HTTPRequestMethod;
 
 /**
  * Task.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Feb 21, 2012
+ * @version 1.0.0.2, Feb 24, 2012
  */
-public final class Task {
+public final class Task implements Serializable {
+    
+    /**
+     * Default serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
 
     /**
      * URL.
@@ -90,5 +96,14 @@ public final class Task {
      */
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder stringBuilder = new StringBuilder().
+                append("url=").append(url).append(", name=").append(name).append(
+                ", requestMethod=").append(requestMethod);
+
+        return stringBuilder.toString();
     }
 }
