@@ -15,7 +15,7 @@
  */
 package org.b3log.latke.repository.sleepycat;
 
-import org.b3log.latke.action.util.PageCaches;
+import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.repository.Transaction;
 
 /**
