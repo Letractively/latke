@@ -41,9 +41,7 @@ public final class JdbcRepositories {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(JdbcRepositories.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(JdbcRepositories.class.getName());
     /**
      * the String jsonType to JdbcType.
      */
@@ -60,47 +58,38 @@ public final class JdbcRepositories {
     //
     //                }
     //            };
-
     /**
      * /** to json "repositories".
      */
     private static final String REPOSITORIES = "repositories";
-
     /**
      * /** to json "name".
      */
     private static final String NAME = "name";
-
     /**
      * /** to json "keys".
      */
     private static final String KEYS = "keys";
-
     /**
      * /** to json "type".
      */
     private static final String TYPE = "type";
-
     /**
      * /** to json "nullable".
      */
     private static final String NULLABLE = "nullable";
-
     /**
      * /** to json "length".
      */
     private static final String LENGTH = "length";
-
     /**
      * ** to json "iskey".
      */
     private static final String ISKEY = "iskey";
-
     /**
      * the default keyname.
      */
     public static final String OID = "oId";
-
     /**
      * store all repository filed definition in a Map.
      * <p>
@@ -123,7 +112,7 @@ public final class JdbcRepositories {
             } catch (final Exception e) {
 
                 LOGGER.log(Level.SEVERE,
-                        "initRepositoriesMap mistake " + e.getMessage(), e);
+                           "initRepositoriesMap mistake " + e.getMessage(), e);
             }
         }
 
@@ -138,7 +127,7 @@ public final class JdbcRepositories {
      * @throws RepositoryException RepositoryException
      */
     private static void initRepositoriesMap() throws JSONException,
-            RepositoryException {
+                                                     RepositoryException {
 
         final JSONObject jsonObject = Repositories.getRepositoriesDescription();
 
@@ -163,8 +152,7 @@ public final class JdbcRepositories {
 
         repositoriesMap = new HashMap<String, List<FieldDefinition>>();
 
-        final JSONArray repositoritArray = jsonObject
-                .getJSONArray(REPOSITORIES);
+        final JSONArray repositoritArray = jsonObject.getJSONArray(REPOSITORIES);
 
         JSONObject repositoritObject = null;
         JSONObject fieldDefinitionObject = null;
@@ -177,8 +165,7 @@ public final class JdbcRepositories {
             final List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
             repositoriesMap.put(repositoryName, fieldDefinitions);
 
-            final JSONArray keysJsonArray = repositoritObject
-                    .getJSONArray(KEYS);
+            final JSONArray keysJsonArray = repositoritObject.getJSONArray(KEYS);
 
             FieldDefinition definition = null;
             for (int j = 0; j < keysJsonArray.length(); j++) {
@@ -217,7 +204,7 @@ public final class JdbcRepositories {
 
         fieldDefinition.setType(fieldDefinitionObject.getString(TYPE));
         fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE,
-                false));
+                                                                     false));
         fieldDefinition.setLength(fieldDefinitionObject.optInt(LENGTH));
         fieldDefinition.setIsKey(fieldDefinitionObject.optBoolean(ISKEY));
 
@@ -242,7 +229,6 @@ public final class JdbcRepositories {
          * table name.
          */
         private String name;
-
         /**
          * isCreate success.
          */
@@ -291,7 +277,6 @@ public final class JdbcRepositories {
             this.name = name;
             this.isSuccess = isSuccess;
         }
-
     }
 
     /**
@@ -312,7 +297,7 @@ public final class JdbcRepositories {
                         tableName, map.get(tableName));
             } catch (final SQLException e) {
                 LOGGER.log(Level.SEVERE,
-                        "createTable[" + tableName + "] error", e);
+                           "createTable[" + tableName + "] error", e);
             }
 
             results.add(new CreateTableResult(tableName, isSuccess));
@@ -336,7 +321,5 @@ public final class JdbcRepositories {
      * Private constructor.
      */
     private JdbcRepositories() {
-
     }
-
 }

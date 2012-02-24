@@ -40,7 +40,7 @@ import org.b3log.latke.util.Stopwatchs;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Feb 13, 2012
+ * @version 1.0.1.4, Feb 24, 2012
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -88,12 +88,12 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * @throws IOException io exception
      */
     @Override
-    protected void service(final HttpServletRequest request,
-                           final HttpServletResponse response)
+    protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         final String resourcePath = request.getPathTranslated();
-        
-        System.out.println(request.getRequestURI());
+
+        LOGGER.log(Level.FINEST, "Request[contextPath={0}, pathTranslated={1}, requestURI={2}]",
+                   new Object[]{request.getContextPath(), resourcePath, request.getRequestURI()});
 
         if ((!request.getRequestURI().equals("/")
              && new File(resourcePath).isDirectory())
@@ -104,10 +104,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         }
 
         final String requestURI = request.getRequestURI();
-//        final String contextPath = request.getContextPath();
-//        System.out.println("------------:"+contextPath);
-//        requestURI = requestURI.substring(contextPath.length());
-        
+
         if (requestURI.startsWith("/css/")
             || requestURI.startsWith("/images/")
             || requestURI.startsWith("/js/")
@@ -120,15 +117,13 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             // TODO: 1. Reads these from appengine-web.xml?
             //       2. Etag/Expires/Last-Modified/Cache-Control
             //       3. Content-Encoding, etc headers
-            final InputStream staticResourceInputStream =
-                    getServletContext().getResourceAsStream(requestURI);
+            final InputStream staticResourceInputStream = getServletContext().getResourceAsStream(requestURI);
             if (null == staticResourceInputStream) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            final String mimeType = getServletContext().
-                    getMimeType(resourcePath);
+            final String mimeType = getServletContext().getMimeType(resourcePath);
             response.setContentType(mimeType);
             IOUtils.copy(staticResourceInputStream, response.getOutputStream());
 
@@ -140,11 +135,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         if (Latkes.isPageCacheEnabled()) {
             final String queryString = request.getQueryString();
-            String pageCacheKey =
-                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            String pageCacheKey = (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
             if (Strings.isEmptyOrNull(pageCacheKey)) {
-                pageCacheKey = PageCaches.getPageCacheKey(requestURI,
-                                                          queryString);
+                pageCacheKey = PageCaches.getPageCacheKey(requestURI, queryString);
                 request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
             }
         }
@@ -167,12 +160,10 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * @throws ServletException servlet exception
      * @throws IOException io exception 
      */
-    public static void dispatch(final HTTPRequestContext context)
-            throws ServletException, IOException {
+    public static void dispatch(final HTTPRequestContext context) throws ServletException, IOException {
         final HttpServletRequest request = context.getRequest();
 
-        final Integer sc =
-                (Integer) request.getAttribute("javax.servlet.error.status_code");
+        final Integer sc = (Integer) request.getAttribute("javax.servlet.error.status_code");
         if (null != sc) {
             request.setAttribute("requestURI", "/error.do");
         }
@@ -187,34 +178,27 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             method = request.getMethod();
         }
 
-        LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]",
-                   new Object[]{requestURI, method});
+        LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]", new Object[]{requestURI, method});
 
         try {
-            final Object processorMethodRet =
-                    RequestProcessors.invoke(requestURI, method, context);
+            final Object processorMethodRet = RequestProcessors.invoke(requestURI, method, context);
         } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,
                        "Occured error while processing request[requestURI={0}, method={1}, exceptionTypeName={2}, errorMsg={3}]",
                        new Object[]{requestURI, method, exceptionTypeName, e.getMessage()});
-            if ("com.google.apphosting.api.ApiProxy$OverQuotaException".equals(
-                    exceptionTypeName)) {
+            if ("com.google.apphosting.api.ApiProxy$OverQuotaException".equals(exceptionTypeName)) {
                 PageCaches.removeAll();
 
-                context.getResponse().sendError(
-                        HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                context.getResponse().sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 return;
             }
 
             throw new ServletException(e);
         } catch (final Error e) {
             final Runtime runtime = Runtime.getRuntime();
-            LOGGER.log(Level.FINER,
-                       "Memory status[total={0}, max={1}, free={2}]",
-                       new Object[]{runtime.totalMemory(),
-                                    runtime.maxMemory(),
-                                    runtime.freeMemory()});
+            LOGGER.log(Level.FINER, "Memory status[total={0}, max={1}, free={2}]",
+                       new Object[]{runtime.totalMemory(), runtime.maxMemory(), runtime.freeMemory()});
 
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
@@ -239,8 +223,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * query string, returns an empty json object;
      * @throws JSONException json exception
      */
-    private JSONObject getQueryStringJSONObject(
-            final HttpServletRequest request) throws JSONException {
+    private JSONObject getQueryStringJSONObject(final HttpServletRequest request) throws JSONException {
         JSONObject ret = null;
         final String tmp = request.getQueryString();
         if (null == tmp) {
