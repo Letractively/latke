@@ -26,13 +26,11 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Aug 8, 2011
  */
 public final class URLFetchServiceFactory {
-    
+
     /**
      * Logger.
      */
-    private static final Logger LOGGER 
-            = Logger.getLogger(URLFetchServiceFactory.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(URLFetchServiceFactory.class.getName());
     /**
      * URL fetch service.
      */
@@ -40,7 +38,7 @@ public final class URLFetchServiceFactory {
 
     static {
         LOGGER.info("Constructing URL Fetch Service....");
-        
+
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -48,26 +46,22 @@ public final class URLFetchServiceFactory {
 
             switch (runtimeEnv) {
                 case LOCAL:
-                    serviceClass =
-                            (Class<URLFetchService>) Class.forName(
+                    serviceClass = (Class<URLFetchService>) Class.forName(
                             "org.b3log.latke.urlfetch.local.LocalURLFetchService");
                     URL_FETCH_SERVICE = serviceClass.newInstance();
                     break;
                 case GAE:
-                    serviceClass =
-                            (Class<URLFetchService>) Class.forName(
+                    serviceClass = (Class<URLFetchService>) Class.forName(
                             "org.b3log.latke.urlfetch.gae.GAEURLFetchService");
                     URL_FETCH_SERVICE = serviceClass.newInstance();
                     break;
                 default:
-                    throw new RuntimeException(
-                            "Latke runs in the hell.... "
-                            + "Please set the enviornment correctly");
+                    throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
             }
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize URL Fetch Service!", e);
         }
-        
+
         LOGGER.info("Constructed URL Fetch Service");
     }
 

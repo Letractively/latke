@@ -35,34 +35,28 @@ public final class LocalURLFetchService implements URLFetchService {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(LocalURLFetchService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LocalURLFetchService.class.getName());
 
     @Override
     public HTTPResponse fetch(final HTTPRequest request) throws IOException {
         final HTTPRequestMethod requestMethod = request.getRequestMethod();
         if (requestMethod == null) {
-            throw new IOException(
-                    "RequestMethod  for URLFetch should not be null");
+            throw new IOException("RequestMethod  for URLFetch should not be null");
         }
 
-        return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(
-                request);
+        return UrlFetchHandlerFactory.getFetchHandler(requestMethod).doFetch(request);
     }
 
     @Override
     public Future<?> fetchAsync(final HTTPRequest request) {
-        final FutureTask<HTTPResponse> futureTask =
-                new FutureTask<HTTPResponse>(
-                new Callable<HTTPResponse>() {
+        final FutureTask<HTTPResponse> futureTask = new FutureTask<HTTPResponse>(new Callable<HTTPResponse>() {
 
-                    @Override
-                    public HTTPResponse call() throws Exception {
-                        return fetch(request);
-                    }
-                });
+            @Override
+            public HTTPResponse call() throws Exception {
+                return fetch(request);
+            }
+        });
 
         return futureTask;
-
     }
 }

@@ -45,8 +45,7 @@ public abstract class AbstractRepository implements Repository {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(AbstractRepository.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractRepository.class.getName());
     /**
      * Repository.
      */
@@ -65,38 +64,28 @@ public abstract class AbstractRepository implements Repository {
             Class<Repository> repositoryClass = null;
 
             switch (runtimeEnv) {
-            //local:sleepcat,mysql.
-            case LOCAL:
-                final RuntimeDatabase runtimeDatabase =
-                        Latkes.getRuntimeDatabase();
-                switch (runtimeDatabase) {
-                case SLEEPYCAT:
-                    repositoryClass =
-                            (Class<Repository>) Class
-                                    .forName("org.b3log.latke.repository.sleepycat.SleepycatRepository");
+                //local:sleepcat,mysql.
+                case LOCAL:
+                    final RuntimeDatabase runtimeDatabase = Latkes.getRuntimeDatabase();
+                    switch (runtimeDatabase) {
+                        case SLEEPYCAT:
+                            repositoryClass = (Class<Repository>) Class.forName("org.b3log.latke.repository.sleepycat.SleepycatRepository");
+                            break;
+                        case MYSQL:
+                            repositoryClass = (Class<Repository>) Class.forName("org.b3log.latke.repository.jdbc.JdbcRepository");
+                            break;
+                        default:
+                            throw new RuntimeException("the runtimeDatabase[" + runtimeDatabase + "] is not support NOW!  ");
+                    }
                     break;
-                case MYSQL:
-                    repositoryClass =
-                            (Class<Repository>) Class
-                                    .forName("org.b3log.latke.repository.jdbc.JdbcRepository");
+                case GAE:
+                    repositoryClass = (Class<Repository>) Class.forName("org.b3log.latke.repository.gae.GAERepository");
                     break;
                 default:
-                    throw new RuntimeException("the runtimeDatabase["
-                            + runtimeDatabase + "] is not support NOW!  ");
-                }
-                break;
-            case GAE:
-                repositoryClass =
-                        (Class<Repository>) Class
-                                .forName("org.b3log.latke.repository.gae.GAERepository");
-                break;
-            default:
-                throw new RuntimeException("Latke runs in the hell.... "
-                        + "Please set the enviornment correctly");
+                    throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
             }
 
-            final Constructor<Repository> constructor =
-                    repositoryClass.getConstructor(String.class);
+            final Constructor<Repository> constructor = repositoryClass.getConstructor(String.class);
 
             repository = constructor.newInstance(name);
         } catch (final Exception e) {

@@ -35,14 +35,12 @@ import org.b3log.latke.util.Serializer;
  * @version 1.0.2.9, Dec 3, 2011
  */
 public final class LruMemoryCache<K extends Serializable, V extends Serializable>
-        extends AbstractMemoryCache<K, V>
-        implements Serializable {
+        extends AbstractMemoryCache<K, V> implements Serializable {
 
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(LruMemoryCache.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LruMemoryCache.class.getName());
     /**
      * Default serial version uid.
      */
@@ -104,8 +102,7 @@ public final class LruMemoryCache<K extends Serializable, V extends Serializable
             try {
                 return (V) Serializer.deserialize(bytes);
             } catch (final Exception e) {
-                LOGGER.log(Level.SEVERE, "Gets cached object failed[key=" + key
-                                         + "]", e);
+                LOGGER.log(Level.SEVERE, "Gets cached object failed[key=" + key + "]", e);
                 return null;
             }
         }

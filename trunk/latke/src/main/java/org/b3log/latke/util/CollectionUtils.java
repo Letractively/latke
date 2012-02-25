@@ -46,12 +46,9 @@ public final class CollectionUtils {
      * @param size the given size
      * @return a list of integers
      */
-    public static List<Integer> getRandomIntegers(final int start,
-                                                  final int end,
-                                                  final int size) {
+    public static List<Integer> getRandomIntegers(final int start, final int end, final int size) {
         if (size > (end - start + 1)) {
-            throw new IllegalArgumentException(
-                    "The specified size more then (end - start + 1)!");
+            throw new IllegalArgumentException("The specified size more then (end - start + 1)!");
         }
 
         final List<Integer> integers = genIntegers(start, end);
@@ -185,8 +182,7 @@ public final class CollectionUtils {
      * @return an array
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] jsonArrayToArray(final JSONArray jsonArray,
-                                           final Class<? extends T[]> newType) {
+    public static <T> T[] jsonArrayToArray(final JSONArray jsonArray, final Class<? extends T[]> newType) {
         if (null == jsonArray) {
             return (T[]) new Object[]{};
         }

@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.commons.io.IOUtils;
 import org.b3log.latke.repository.impl.UserRepositoryImpl;
 import org.b3log.latke.util.CollectionUtils;
@@ -98,16 +97,13 @@ public final class Repositories {
      * @see Repository#add(org.json.JSONObject) 
      * @see Repository#update(java.lang.String, org.json.JSONObject) 
      */
-    public static void check(final String repositoryName,
-                             final JSONObject jsonObject, final String... ignoredKeys)
+    public static void check(final String repositoryName, final JSONObject jsonObject, final String... ignoredKeys)
             throws RepositoryException {
         if (null == jsonObject) {
-            throw new RepositoryException("Null to persist to repository["
-                                          + repositoryName + "]");
+            throw new RepositoryException("Null to persist to repository[" + repositoryName + "]");
         }
 
-        final boolean needIgnoreKeys = null != ignoredKeys
-                                       && 0 < ignoredKeys.length;
+        final boolean needIgnoreKeys = null != ignoredKeys && 0 < ignoredKeys.length;
 
         final JSONArray names = jsonObject.names();
         final Set<Object> nameSet = CollectionUtils.jsonArrayToSet(names);
@@ -134,10 +130,8 @@ public final class Repositories {
             }
 
             if (!nameSet.contains(key)) {
-                throw new RepositoryException(
-                        "A json object to persist to repository[name="
-                        + repositoryName + "] does not contain a key["
-                        + key + "]");
+                throw new RepositoryException("A json object to persist to repository[name="
+                                              + repositoryName + "] does not contain a key[" + key + "]");
             }
 
             // TODO: 88250, type and length validation
@@ -166,10 +160,8 @@ public final class Repositories {
             final String name = names.optString(i);
 
             if (!keySet.contains(name)) {
-                throw new RepositoryException(
-                        "A json object to persist to repository[name="
-                        + repositoryName
-                        + "] contains an redundant key[" + name + "]");
+                throw new RepositoryException("A json object to persist to repository[name="
+                                              + repositoryName + "] contains an redundant key[" + name + "]");
             }
         }
     }
@@ -269,8 +261,7 @@ public final class Repositories {
 
         final InputStream inputStream = AbstractRepository.class.getClassLoader().getResourceAsStream("repository.json");
         if (null == inputStream) {
-            LOGGER.log(Level.INFO,
-                       "Not found repository description[repository.json] file under classpath");
+            LOGGER.log(Level.INFO, "Not found repository description[repository.json] file under classpath");
             return;
         }
 

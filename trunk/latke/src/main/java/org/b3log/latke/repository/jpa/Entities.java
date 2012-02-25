@@ -30,8 +30,7 @@ public final class Entities {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Entities.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Entities.class.getName());
     /**
      * Meta entities.
      * 
@@ -39,8 +38,7 @@ public final class Entities {
      * &lt;entityClass,{@link MetaEntity meta entity}&gt;
      * </p>
      */
-    private static final Map<Class<?>, MetaEntity> META_ENTITY_HOLDER =
-            new ConcurrentHashMap<Class<?>, MetaEntity>();
+    private static final Map<Class<?>, MetaEntity> META_ENTITY_HOLDER = new ConcurrentHashMap<Class<?>, MetaEntity>();
 
     /**
      * Adds the specified meta entity.

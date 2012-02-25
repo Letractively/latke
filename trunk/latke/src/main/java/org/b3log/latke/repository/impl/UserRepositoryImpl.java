@@ -39,8 +39,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(UserRepositoryImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UserRepositoryImpl.class.getName());
 
     /**
      * Gets user by the specified email.
@@ -50,8 +49,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
      */
     public JSONObject getByEmail(final String email) {
         final Query query = new Query();
-        query.addFilter(User.USER_EMAIL, FilterOperator.EQUAL,
-                        email.toLowerCase().trim());
+        query.addFilter(User.USER_EMAIL, FilterOperator.EQUAL, email.toLowerCase().trim());
 
         try {
             final JSONObject result = get(query);
@@ -76,8 +74,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
      */
     public JSONObject getAdmin() {
         final Query query = new Query();
-        query.addFilter(User.USER_ROLE, FilterOperator.EQUAL,
-                        Role.ADMIN_ROLE);
+        query.addFilter(User.USER_ROLE, FilterOperator.EQUAL, Role.ADMIN_ROLE);
         try {
             final JSONObject result = get(query);
             final JSONArray array = result.getJSONArray(Keys.RESULTS);
@@ -101,8 +98,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
      * @return {@code true} if it is, returns {@code false} otherwise
      * @throws RepositoryException repository exception
      */
-    public boolean isAdminEmail(final String email)
-            throws RepositoryException {
+    public boolean isAdminEmail(final String email) throws RepositoryException {
         final JSONObject user = getByEmail(email);
 
         if (null == user) {

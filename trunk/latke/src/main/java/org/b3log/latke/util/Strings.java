@@ -34,8 +34,7 @@ public final class Strings {
     /**
      * Line separator.
      */
-    public static final String LINE_SEPARATOR =
-            System.getProperty("line.separator");
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     /**
      * Maximum length of local part of a valid email address.
      */
@@ -52,8 +51,7 @@ public final class Strings {
      * Email pattern.
      */
     private static final Pattern EMAIL_PATTERN =
-            Pattern.compile(
-            "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+            Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
     /**
      * Private default constructor.
@@ -69,14 +67,12 @@ public final class Strings {
      * string is {@code null}
      * @throws IOException io exception
      */
-    public static List<String> toLines(final String string)
-            throws IOException {
+    public static List<String> toLines(final String string) throws IOException {
         if (null == string) {
             return null;
         }
 
-        final BufferedReader bufferedReader =
-                new BufferedReader(new StringReader(string));
+        final BufferedReader bufferedReader = new BufferedReader(new StringReader(string));
         final List<String> ret = new ArrayList<String>();
 
         try {

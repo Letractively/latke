@@ -54,18 +54,15 @@ public final class RequestProcessors {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(RequestProcessors.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RequestProcessors.class.getName());
     /**
      * Processor methods.
      */
-    private static Set<ProcessorMethod> processorMethods =
-            new HashSet<ProcessorMethod>();
+    private static Set<ProcessorMethod> processorMethods = new HashSet<ProcessorMethod>();
     /**
      * Processors.
      */
-    private static Map<Method, Object> processors =
-            new HashMap<Method, Object>();
+    private static Map<Method, Object> processors = new HashMap<Method, Object>();
 
     /**
      * Invokes a processor method with the specified request URI, method and 
@@ -76,14 +73,11 @@ public final class RequestProcessors {
      * @param context the specified context
      * @return invoke result, returns {@code null} if invoke failed
      */
-    public static Object invoke(final String requestURI, final String method,
-                                final HTTPRequestContext context) {
-        final ProcessorMethod processMethod = getProcessorMethod(requestURI,
-                                                                 method);
+    public static Object invoke(final String requestURI, final String method, final HTTPRequestContext context) {
+        final ProcessorMethod processMethod = getProcessorMethod(requestURI, method);
 
         if (null == processMethod) {
-            LOGGER.log(Level.WARNING,
-                       "Can not find process method for request[requestURI={0}, method={1}]",
+            LOGGER.log(Level.WARNING, "Can not find process method for request[requestURI={0}, method={1}]",
                        new Object[]{requestURI, method});
             return null;
         }
@@ -93,8 +87,7 @@ public final class RequestProcessors {
 
         try {
             if (null == processorObject) {
-                final Class<?> processorClass =
-                        processMethod.getProcessorClass();
+                final Class<?> processorClass = processMethod.getProcessorClass();
                 final Object instance = processorClass.newInstance();
 
                 processors.put(processorMethod, instance);
@@ -103,8 +96,7 @@ public final class RequestProcessors {
             }
 
             final List<Object> args = new ArrayList<Object>();
-            final Class<?>[] parameterTypes =
-                    processorMethod.getParameterTypes();
+            final Class<?>[] parameterTypes = processorMethod.getParameterTypes();
             for (int i = 0; i < parameterTypes.length; i++) {
                 final Class<?> paramClass = parameterTypes[i];
                 if (paramClass.equals(HTTPRequestContext.class)) {
@@ -169,8 +161,7 @@ public final class RequestProcessors {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE,
-                       "Scans classpath (classes directory) failed", e);
+            LOGGER.log(Level.SEVERE, "Scans classpath (classes directory) failed", e);
         }
     }
 
@@ -192,9 +183,7 @@ public final class RequestProcessors {
                     || file.getName().startsWith("javassist")
                     || file.getName().startsWith("commons-")) {
                     // Just skips some known dependencies hardly....
-                    LOGGER.log(Level.INFO,
-                               "Skipped request processing discovery[jarName={0}]",
-                               file.getName());
+                    LOGGER.log(Level.INFO, "Skipped request processing discovery[jarName={0}]", file.getName());
 
                     continue;
                 }
@@ -243,8 +232,7 @@ public final class RequestProcessors {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE,
-                       "Scans classpath (classes directory) failed", e);
+            LOGGER.log(Level.SEVERE, "Scans classpath (classes directory) failed", e);
 
         }
     }
@@ -256,8 +244,7 @@ public final class RequestProcessors {
      * @param method the specified method
      * @return process method, returns {@code null} if not found
      */
-    private static ProcessorMethod getProcessorMethod(final String requestURI,
-                                                      final String method) {
+    private static ProcessorMethod getProcessorMethod(final String requestURI, final String method) {
         final List<ProcessorMethod> matches = new ArrayList<ProcessorMethod>();
         int i = 0;
         for (final ProcessorMethod processorMethod : processorMethods) {
@@ -300,11 +287,9 @@ public final class RequestProcessors {
                 final ProcessorMethod processMethod = iterator.next();
 
                 stringBuilder.append("[className=");
-                stringBuilder.append(processMethod.getProcessorMethod().
-                        getDeclaringClass().getSimpleName());
+                stringBuilder.append(processMethod.getProcessorMethod().getDeclaringClass().getSimpleName());
                 stringBuilder.append(", methodName=");
-                stringBuilder.append(
-                        processMethod.getProcessorMethod().getName());
+                stringBuilder.append(processMethod.getProcessorMethod().getName());
                 stringBuilder.append(", patterns=");
                 stringBuilder.append(processMethod.getURIPattern());
                 stringBuilder.append("]");
@@ -328,23 +313,18 @@ public final class RequestProcessors {
      * @param clz the specified class
      * @param method the specified method 
      */
-    private static void addProcessorMethod(
-            final RequestProcessing requestProcessing, final Class<?> clz,
-            final Method method) {
+    private static void addProcessorMethod(final RequestProcessing requestProcessing, final Class<?> clz, final Method method) {
         final String[] uriPatterns = requestProcessing.value();
-        final URIPatternMode uriPatternsMode =
-                requestProcessing.uriPatternsMode();
+        final URIPatternMode uriPatternsMode = requestProcessing.uriPatternsMode();
 
         for (int i = 0; i < uriPatterns.length; i++) {
             final String uriPattern = uriPatterns[i];
-            final HTTPRequestMethod[] requestMethods =
-                    requestProcessing.method();
+            final HTTPRequestMethod[] requestMethods = requestProcessing.method();
 
             for (int j = 0; j < requestMethods.length; j++) {
                 final HTTPRequestMethod requestMethod = requestMethods[j];
 
-                final ProcessorMethod processorMethod =
-                        new ProcessorMethod();
+                final ProcessorMethod processorMethod = new ProcessorMethod();
                 processorMethods.add(processorMethod);
 
                 processorMethod.setMethod(requestMethod.name());

@@ -44,21 +44,17 @@ public final class UserServiceFactory {
 
             switch (Latkes.getRuntime("userService")) {
                 case GAE:
-                    serviceClass =
-                            (Class<UserService>) Class.forName(
+                    serviceClass = (Class<UserService>) Class.forName(
                             "org.b3log.latke.user.gae.GAEUserService");
                     USER_SERVICE = serviceClass.newInstance();
                     break;
                 case LOCAL:
-                    serviceClass =
-                            (Class<UserService>) Class.forName(
+                    serviceClass = (Class<UserService>) Class.forName(
                             "org.b3log.latke.user.local.LocalUserService");
                     USER_SERVICE = serviceClass.newInstance();
                     break;
                 default:
-                    throw new RuntimeException(
-                            "Latke runs in the hell.... "
-                            + "Please set the enviornment correctly");
+                    throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
             }
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize User Service!", e);

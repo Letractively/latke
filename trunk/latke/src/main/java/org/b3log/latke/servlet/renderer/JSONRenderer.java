@@ -34,8 +34,7 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(JSONRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(JSONRenderer.class.getName());
     /**
      * JSON object to render.
      */
@@ -66,10 +65,10 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
      */
     public JSONRenderer setJSONP(final boolean isJSONP) {
         this.isJSONP = isJSONP;
-        
+
         return this;
     }
-    
+
     /**
      * Sets JSONP callback function.
      * 
@@ -82,7 +81,7 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
      */
     public void setCallback(final String callback) {
         this.callback = callback;
-        
+
         setJSONP(true);
     }
 
@@ -100,7 +99,7 @@ public final class JSONRenderer extends AbstractHTTPResponseRenderer {
             } else {
                 writer.print(callback + "(" + jsonObject + ")");
             }
-            
+
             writer.close();
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "FreeMarker renders error", e);

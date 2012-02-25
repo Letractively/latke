@@ -43,8 +43,7 @@ public abstract class AbstractGZIPFilter implements Filter {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(AbstractGZIPFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractGZIPFilter.class.getName());
 
     @Override
     public void init(final FilterConfig cfg) throws ServletException {
@@ -60,23 +59,18 @@ public abstract class AbstractGZIPFilter implements Filter {
      * @throws ServletException servlet exception
      */
     @Override
-    public void doFilter(final ServletRequest request,
-                         final ServletResponse response,
-                         final FilterChain chain) throws IOException,
-                                                         ServletException {
-        final HttpServletRequest httpServletRequest =
-                (HttpServletRequest) request;
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         final String requestURI = httpServletRequest.getRequestURI();
         if (shouldSkip(requestURI)) {
-            LOGGER.log(Level.FINEST, "Skip GZIP filter request[URI={0}]",
-                       requestURI);
+            LOGGER.log(Level.FINEST, "Skip GZIP filter request[URI={0}]", requestURI);
             chain.doFilter(request, response);
 
             return;
         }
 
-        final String acceptEncoding =
-                httpServletRequest.getHeader("Accept-Encoding");
+        final String acceptEncoding = httpServletRequest.getHeader("Accept-Encoding");
         boolean supportGZIP = false;
         if (null != acceptEncoding
             && 0 <= acceptEncoding.indexOf("gzip")) {
@@ -90,12 +84,10 @@ public abstract class AbstractGZIPFilter implements Filter {
             return;
         }
 
-        final HttpServletResponse httpServletResponse =
-                (HttpServletResponse) response;
+        final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.addHeader("Content-Encoding", "gzip");
         httpServletResponse.addHeader("Vary", "Accept-Encoding");
-        chain.doFilter(request,
-                       new GZIPServletResponseWrapper(httpServletResponse));
+        chain.doFilter(request, new GZIPServletResponseWrapper(httpServletResponse));
     }
 
     /**
@@ -160,9 +152,7 @@ public abstract class AbstractGZIPFilter implements Filter {
         @Override
         public PrintWriter getWriter() throws IOException {
             if (null == printWriter) {
-                printWriter = new PrintWriter(
-                        new OutputStreamWriter(getOutputStream(),
-                                               getCharacterEncoding()));
+                printWriter = new PrintWriter(new OutputStreamWriter(getOutputStream(), getCharacterEncoding()));
             }
 
             return printWriter;
@@ -205,8 +195,7 @@ public abstract class AbstractGZIPFilter implements Filter {
                 }
 
                 @Override
-                public void write(final byte[] b, final int off, final int len)
-                        throws IOException {
+                public void write(final byte[] b, final int off, final int len) throws IOException {
                     gzipStream.write(b, off, len);
                 }
             };

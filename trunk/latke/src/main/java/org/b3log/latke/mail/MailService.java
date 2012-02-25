@@ -68,7 +68,7 @@ public interface MailService {
          */
         public Set<String> getRecipients() {
             return Collections.unmodifiableSet(recipients);
-}
+        }
 
         /**
          * Adds the specified recipient.

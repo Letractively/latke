@@ -65,20 +65,17 @@ class UrlFetchCommonHandler {
      * @return {@link HttpURLConnection}
      * @throws IOException IOException from java.net
      */
-    protected HttpURLConnection prepareConnection(final HTTPRequest request)
-            throws IOException {
+    protected HttpURLConnection prepareConnection(final HTTPRequest request) throws IOException {
         if (request.getURL() == null) {
             throw new IOException("URL for URLFetch should not be null");
         }
 
-        final HttpURLConnection ret =
-                (HttpURLConnection) request.getURL().openConnection();
+        final HttpURLConnection ret = (HttpURLConnection) request.getURL().openConnection();
         ret.setRequestMethod(request.getRequestMethod().toString());
 
         for (HTTPHeader httpHeader : request.getHeaders()) {
             // XXX set or add
-            ret.setRequestProperty(httpHeader.getName(), httpHeader.
-                    getValue());
+            ret.setRequestProperty(httpHeader.getName(), httpHeader.getValue());
         }
 
         // Properties prop = System.getProperties();
@@ -96,9 +93,8 @@ class UrlFetchCommonHandler {
      * @param request the specified HTTP request 
      * @throws IOException IOException from java.net
      */
-    protected void configConnection(final HttpURLConnection httpURLConnection,
-                                    final HTTPRequest request) throws
-            IOException {
+    protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
+            throws IOException {
     }
 
     /**
@@ -107,15 +103,12 @@ class UrlFetchCommonHandler {
      * @return HTTPResponse the http response
      * @throws IOException IOException from java.net
      */
-    protected HTTPResponse resultConnection(
-            final HttpURLConnection httpURLConnection)
-            throws IOException {
+    protected HTTPResponse resultConnection(final HttpURLConnection httpURLConnection) throws IOException {
         final HTTPResponse ret = new HTTPResponse();
 
         ret.setResponseCode(httpURLConnection.getResponseCode());
         ret.setFinalURL(httpURLConnection.getURL());
-        ret.setContent(inputStreamToByte(httpURLConnection.
-                getInputStream()));
+        ret.setContent(inputStreamToByte(httpURLConnection.getInputStream()));
 
         fillHttpResponseHeader(ret, httpURLConnection.getHeaderFields());
 
@@ -127,11 +120,9 @@ class UrlFetchCommonHandler {
      * @param httpResponse HTTP Rsponse
      * @param headerFields headerFiedls in HTTP response
      */
-    protected void fillHttpResponseHeader(final HTTPResponse httpResponse,
-                                          final Map<String, List<String>> headerFields) {
+    protected void fillHttpResponseHeader(final HTTPResponse httpResponse, final Map<String, List<String>> headerFields) {
         for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
-            httpResponse.addHeader(new HTTPHeader(entry.getKey(),
-                                                  entry.getValue().toString()));
+            httpResponse.addHeader(new HTTPHeader(entry.getKey(), entry.getValue().toString()));
         }
     }
 
@@ -148,7 +139,7 @@ class UrlFetchCommonHandler {
         while ((ch = is.read()) != -1) {
             bytestream.write(ch);
         }
-        
+
         final byte[] ret = bytestream.toByteArray();
         bytestream.close();
 

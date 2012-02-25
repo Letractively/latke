@@ -39,8 +39,7 @@ public final class AuthenticationFilter implements Filter {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(AuthenticationFilter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AuthenticationFilter.class.getName());
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -57,18 +56,13 @@ public final class AuthenticationFilter implements Filter {
      * @throws ServletException servlet exception
      */
     @Override
-    public void doFilter(final ServletRequest request,
-                         final ServletResponse response,
-                         final FilterChain chain) throws IOException,
-                                                         ServletException {
-        final HttpServletRequest httpServletRequest =
-                (HttpServletRequest) request;
-        final HttpServletResponse httpServletResponse =
-                (HttpServletResponse) response;
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         if (!hasLoggedIn(httpServletRequest)) {
-            LOGGER.log(Level.WARNING,
-                       "Authenticate fail for request[{0}]", request);
+            LOGGER.log(Level.WARNING, "Authenticate fail for request[{0}]", request);
 
             httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
@@ -89,8 +83,7 @@ public final class AuthenticationFilter implements Filter {
     private boolean hasLoggedIn(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
         final String requestURL = request.getRequestURL().toString();
-        LOGGER.log(Level.FINEST, "Request[URI={0}, URL={1}]",
-                   new Object[]{requestURI, requestURL});
+        LOGGER.log(Level.FINEST, "Request[URI={0}, URL={1}]", new Object[]{requestURI, requestURL});
 
         final String userName = Sessions.currentUserName(request);
         LOGGER.log(Level.FINEST, "Session[userName={0}]", userName);

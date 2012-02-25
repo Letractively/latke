@@ -32,8 +32,7 @@ public final class EventManager {
     /**
      * Synchronized event queue.
      */
-    private SynchronizedEventQueue synchronizedEventQueue =
-            new SynchronizedEventQueue(this);
+    private SynchronizedEventQueue synchronizedEventQueue = new SynchronizedEventQueue(this);
 
     /**
      * Fire the specified event synchronously.
@@ -41,8 +40,7 @@ public final class EventManager {
      * @param event the specified event
      * @throws EventException event exception
      */
-    public void fireEventSynchronously(final Event<?> event)
-            throws EventException {
+    public void fireEventSynchronously(final Event<?> event) throws EventException {
         synchronizedEventQueue.fireEvent(event);
     }
 
@@ -54,13 +52,10 @@ public final class EventManager {
      * @return future result
      * @throws EventException event exception
      */
-    public <T> Future<T> fireEventAsynchronously(final Event<?> event)
-            throws EventException {
-        final ExecutorService executorService =
-                Executors.newSingleThreadExecutor();
+    public <T> Future<T> fireEventAsynchronously(final Event<?> event) throws EventException {
+        final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        final FutureTask<T> futureTask =
-                new FutureTask<T>(new Callable<T>() {
+        final FutureTask<T> futureTask = new FutureTask<T>(new Callable<T>() {
 
             @Override
             public T call() throws Exception {

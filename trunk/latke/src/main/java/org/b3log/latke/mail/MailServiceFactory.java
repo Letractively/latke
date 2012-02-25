@@ -27,13 +27,11 @@ import org.b3log.latke.RuntimeEnv;
  */
 @SuppressWarnings("unchecked")
 public final class MailServiceFactory {
-    
+
     /**
      * Logger.
      */
-    private static final Logger LOGGER 
-            = Logger.getLogger(MailServiceFactory.class.getName());
-
+    private static final Logger LOGGER = Logger.getLogger(MailServiceFactory.class.getName());
     /**
      * Mail service.
      */
@@ -41,7 +39,7 @@ public final class MailServiceFactory {
 
     static {
         LOGGER.info("Constructing Mail Service....");
-        
+
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -49,26 +47,20 @@ public final class MailServiceFactory {
 
             switch (runtimeEnv) {
                 case LOCAL:
-                    mailServiceClass =
-                            (Class<MailService>) Class.forName(
-                            "org.b3log.latke.mail.local.LocalMailService");
+                    mailServiceClass = (Class<MailService>) Class.forName("org.b3log.latke.mail.local.LocalMailService");
                     MAIL_SERVICE = mailServiceClass.newInstance();
                     break;
                 case GAE:
-                    mailServiceClass =
-                            (Class<MailService>) Class.forName(
-                            "org.b3log.latke.mail.gae.GAEMailService");
+                    mailServiceClass = (Class<MailService>) Class.forName("org.b3log.latke.mail.gae.GAEMailService");
                     MAIL_SERVICE = mailServiceClass.newInstance();
                     break;
                 default:
-                    throw new RuntimeException(
-                            "Latke runs in the hell.... "
-                            + "Please set the enviornment correctly");
+                    throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
             }
         } catch (final Exception e) {
             throw new RuntimeException("Can not initialize Mail Service!", e);
         }
-        
+
         LOGGER.info("Constructed Mail Service");
     }
 

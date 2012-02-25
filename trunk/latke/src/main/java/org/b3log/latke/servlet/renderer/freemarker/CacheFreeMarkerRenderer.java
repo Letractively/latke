@@ -42,12 +42,10 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(CacheFreeMarkerRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CacheFreeMarkerRenderer.class.getName());
 
     @Override
-    protected void beforeRender(final HTTPRequestContext context)
-            throws Exception {
+    protected void beforeRender(final HTTPRequestContext context) throws Exception {
     }
 
     /**
@@ -58,8 +56,7 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
      * </p>
      */
     @Override
-    protected void afterRender(final HTTPRequestContext context)
-            throws Exception {
+    protected void afterRender(final HTTPRequestContext context) throws Exception {
         final HttpServletRequest request = context.getRequest();
         final String pageContent = (String) request.getAttribute(CACHED_CONTENT);
 
@@ -68,14 +65,12 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
         }
 
         if (Latkes.isPageCacheEnabled()) {
-            final String cachedPageKey =
-                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            final String cachedPageKey = (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
             if (Strings.isEmptyOrNull(cachedPageKey)) {
                 return;
             }
 
-            LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
-                       cachedPageKey);
+            LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]", cachedPageKey);
 
             check(request, pageContent);
 
@@ -87,8 +82,7 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
             cachedValue.put(CACHED_LINK, request.getAttribute(CACHED_LINK));
 
             PageCaches.put(cachedPageKey, cachedValue, request);
-            LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
-                       cachedPageKey);
+            LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]", cachedPageKey);
         }
     }
 }

@@ -31,8 +31,7 @@ final class SynchronizedEventQueue extends AbstractEventQueue {
     /**
      * Synchronized event queue.
      */
-    private Map<String, List<Event<?>>> synchronizedEvents =
-            new HashMap<String, List<Event<?>>>();
+    private Map<String, List<Event<?>>> synchronizedEvents = new HashMap<String, List<Event<?>>>();
     /**
      * Event manager.
      */

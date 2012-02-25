@@ -38,8 +38,7 @@ public final class Templates {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Templates.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Templates.class.getName());
     /**
      * Main template {@link Configuration configuration}.
      */
@@ -55,8 +54,7 @@ public final class Templates {
      * &lt;templateDirName/templateName, template&gt;
      * </p>
      */
-    public static final Map<String, Template> CACHE =
-            new HashMap<String, Template>();
+    public static final Map<String, Template> CACHE = new HashMap<String, Template>();
     /**
      * Enables the {@linkplain #CACHE cache}? Default to {@code true}.
      */
@@ -82,8 +80,7 @@ public final class Templates {
      * "${aVariable}", "&lt;#list recentComments as comment&gt;"
      * @return {@code true} if it exists, returns {@code false} otherwise
      */
-    public static boolean hasExpression(final Template template,
-                                        final String expression) {
+    public static boolean hasExpression(final Template template, final String expression) {
         final TemplateElement rootTreeNode = template.getRootTreeNode();
 
         return hasExpression(template, expression, rootTreeNode);
@@ -103,10 +100,8 @@ public final class Templates {
                                          final TemplateElement templateElement) {
         final String canonicalForm = templateElement.getCanonicalForm();
         if (canonicalForm.startsWith(expression)) {
-            LOGGER.log(Level.FINEST,
-                       "Template has expression[nodeName={0}, expression={1}]",
-                       new Object[]{templateElement.getNodeName(),
-                                    expression});
+            LOGGER.log(Level.FINEST, "Template has expression[nodeName={0}, expression={1}]",
+                       new Object[]{templateElement.getNodeName(), expression});
 
             return true;
         }
@@ -151,10 +146,8 @@ public final class Templates {
                     return MOBILE_CFG.getTemplate(templateName);
                 }
             } catch (final Exception e) {
-                LOGGER.log(Level.SEVERE,
-                           "Can not load mobile template[templateDirName={0}, templateName={1}]",
-                           new Object[]{templateDirName,
-                                        templateName});
+                LOGGER.log(Level.SEVERE, "Can not load mobile template[templateDirName={0}, templateName={1}]",
+                           new Object[]{templateDirName, templateName});
                 return null;
             }
 
@@ -163,26 +156,20 @@ public final class Templates {
             }
 
             if (null != ret) {
-                LOGGER.log(Level.FINEST,
-                           "Got template[templateName={0}] from cache",
-                           templateName);
+                LOGGER.log(Level.FINEST, "Got template[templateName={0}] from cache", templateName);
                 return ret;
             }
 
             ret = MAIN_CFG.getTemplate(templateName);
 
             if (cacheEnabled) {
-                CACHE.put(templateDirName + File.separator + templateName,
-                          ret);
-                LOGGER.log(Level.FINEST,
-                           "Got template[templateName={0}], then put it into template cache",
-                           templateName);
+                CACHE.put(templateDirName + File.separator + templateName, ret);
+                LOGGER.log(Level.FINEST, "Got template[templateName={0}], then put it into template cache", templateName);
             }
 
             return ret;
         } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, "Gets template[name="
-                                     + templateName + "] failed", e);
+            LOGGER.log(Level.SEVERE, "Gets template[name=" + templateName + "] failed", e);
             return null;
         }
     }

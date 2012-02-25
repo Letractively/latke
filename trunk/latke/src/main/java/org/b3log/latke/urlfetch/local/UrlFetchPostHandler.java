@@ -33,16 +33,14 @@ import org.b3log.latke.urlfetch.HTTPRequest;
 class UrlFetchPostHandler extends UrlFetchCommonHandler {
 
     @Override
-    protected void configConnection(final HttpURLConnection httpURLConnection,
-                                    final HTTPRequest request)
+    protected void configConnection(final HttpURLConnection httpURLConnection, final HTTPRequest request)
             throws IOException {
         httpURLConnection.setDoOutput(true);
         httpURLConnection.setUseCaches(false);
 
         if (request.getPayload() != null) {
 
-            final OutputStream outputStream =
-                    httpURLConnection.getOutputStream();
+            final OutputStream outputStream = httpURLConnection.getOutputStream();
             outputStream.write(request.getPayload());
 
             outputStream.flush();

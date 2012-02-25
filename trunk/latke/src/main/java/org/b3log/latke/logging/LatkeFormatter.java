@@ -74,8 +74,7 @@ public final class LatkeFormatter extends Formatter {
     /**
      * Simple date format, (yyyy-MM-dd HH:mm:ss Z).
      */
-    private final DateFormat dateFormat =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
     /**
      * Index of %m.
      */
@@ -132,8 +131,7 @@ public final class LatkeFormatter extends Formatter {
         }
 
         // convert it into the MessageFormat form
-        format = format.replace("%L", "{0}").replace("%m", "{1}").replace("%M",
-                                                                          "{2}").
+        format = format.replace("%L", "{0}").replace("%m", "{1}").replace("%M", "{2}").
                 replace("%t", "{3}").replace("%c", "{4}").replace("%T", "{5}").
                 replace("%n", "{6}").replace("%C", "{7}").replace("%ln", "{8}")
                  + System.getProperty("line.separator");
@@ -173,8 +171,7 @@ public final class LatkeFormatter extends Formatter {
             arguments[INDEX_TIME] = dateFormat.format(date);
         }
 
-        final StackTraceElement[] stackTrace =
-                Thread.currentThread().getStackTrace();
+        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         final int lastCallDepthInLoggerJavaFile = 5;
         int currentCallerDepth = lastCallDepthInLoggerJavaFile;
         String className = null;
@@ -226,8 +223,7 @@ public final class LatkeFormatter extends Formatter {
         // %C
         final int start = arguments[INDEX_CLASS_NAME].lastIndexOf(".") + 1;
         if (start > 0 && start < arguments[INDEX_CLASS_NAME].length()) {
-            arguments[INDEX_SIMPLE_CLASS_NAME] = arguments[INDEX_CLASS_NAME].
-                    substring(start);
+            arguments[INDEX_SIMPLE_CLASS_NAME] = arguments[INDEX_CLASS_NAME].substring(start);
         } else {
             arguments[INDEX_SIMPLE_CLASS_NAME] = arguments[INDEX_CLASS_NAME];
         }
@@ -243,8 +239,7 @@ public final class LatkeFormatter extends Formatter {
             if (record.getThrown() != null) {
                 try {
                     final StringWriter stringWriter = new StringWriter();
-                    final PrintWriter printWriter =
-                            new PrintWriter(stringWriter);
+                    final PrintWriter printWriter = new PrintWriter(stringWriter);
                     record.getThrown().printStackTrace(printWriter);
                     printWriter.close();
                     stringBuilder.append(stringWriter.toString());

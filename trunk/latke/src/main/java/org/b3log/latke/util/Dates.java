@@ -30,8 +30,7 @@ public final class Dates {
     /**
      * English month.
      */
-    public static final Map<String, String> EN_MONTHS =
-            new HashMap<String, String>();
+    public static final Map<String, String> EN_MONTHS = new HashMap<String, String>();
 
     static {
         EN_MONTHS.put("01", "January");

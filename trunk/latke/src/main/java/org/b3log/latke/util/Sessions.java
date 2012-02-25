@@ -35,8 +35,7 @@ public final class Sessions {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Sessions.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Sessions.class.getName());
     /**
      * Cookie expiry: one year.
      */
@@ -55,22 +54,17 @@ public final class Sessions {
      * @param response the specified response
      * @param user the specified user
      */
-    public static void login(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final JSONObject user) {
+    public static void login(final HttpServletRequest request, final HttpServletResponse response, final JSONObject user) {
         final HttpSession session = request.getSession();
 
         session.setAttribute(User.USER, user);
 
         try {
             final JSONObject cookieJSONObject = new JSONObject();
-            cookieJSONObject.put(User.USER_EMAIL,
-                                 user.optString(User.USER_EMAIL));
-            cookieJSONObject.put(User.USER_PASSWORD,
-                                 MD5.hash(user.optString(User.USER_PASSWORD)));
+            cookieJSONObject.put(User.USER_EMAIL, user.optString(User.USER_EMAIL));
+            cookieJSONObject.put(User.USER_PASSWORD, MD5.hash(user.optString(User.USER_PASSWORD)));
 
-            final Cookie cookie =
-                    new Cookie("b3log-latke", cookieJSONObject.toString());
+            final Cookie cookie = new Cookie("b3log-latke", cookieJSONObject.toString());
             cookie.setMaxAge(COOKIE_EXPIRY);
             response.addCookie(cookie);
         } catch (final Exception e) {
@@ -85,8 +79,7 @@ public final class Sessions {
      * @param response the specified response
      * @return {@code true} if succeed, otherwise returns {@code false}
      */
-    public static boolean logout(final HttpServletRequest request,
-                                 final HttpServletResponse response) {
+    public static boolean logout(final HttpServletRequest request, final HttpServletResponse response) {
         final HttpSession session = request.getSession(false);
 
         if (null != session) {
