@@ -36,21 +36,17 @@ public final class GAETaskQueueService implements TaskQueueService {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(GAETaskQueueService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GAETaskQueueService.class.getName());
 
     @Override
     public Queue getQueue(final String queueName) {
-        final com.google.appengine.api.taskqueue.Queue queue =
-                QueueFactory.getQueue(queueName);
+        final com.google.appengine.api.taskqueue.Queue queue = QueueFactory.getQueue(queueName);
 
         return new Queue() {
 
             @Override
             public TaskHandle add(final Task task) {
-                final TaskOptions taskOptions =
-                        TaskOptions.Builder.withTaskName(task.getName()).
-                        url(task.getURL());
+                final TaskOptions taskOptions = TaskOptions.Builder.withTaskName(task.getName()).url(task.getURL());
                 final HTTPRequestMethod requestMethod = task.getRequestMethod();
 
                 switch (requestMethod) {
@@ -75,8 +71,7 @@ public final class GAETaskQueueService implements TaskQueueService {
                         break;
                 }
 
-                final com.google.appengine.api.taskqueue.TaskHandle handle =
-                        queue.add(taskOptions);
+                final com.google.appengine.api.taskqueue.TaskHandle handle = queue.add(taskOptions);
                 final TaskHandle ret = new GAETaskHandle(handle);
 
                 return ret;

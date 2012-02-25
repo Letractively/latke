@@ -34,8 +34,7 @@ public final class GAEImageService implements ImageService {
     /**
      * Images service.
      */
-    private static final ImagesService SVC =
-            ImagesServiceFactory.getImagesService();
+    private static final ImagesService SVC = ImagesServiceFactory.getImagesService();
 
     @Override
     public Image makeImage(final byte[] data) {
@@ -55,12 +54,10 @@ public final class GAEImageService implements ImageService {
         for (int i = 0; i < length; i++) {
             final Image image = images.get(i);
             final byte[] imageData = image.getData();
-            final com.google.appengine.api.images.Image gaeImage =
-                    ImagesServiceFactory.makeImage(imageData);
+            final com.google.appengine.api.images.Image gaeImage = ImagesServiceFactory.makeImage(imageData);
 
             final Composite composite = ImagesServiceFactory.makeComposite(
-                    gaeImage, i * gaeImage.getWidth(), 0,
-                    1.0F, Composite.Anchor.TOP_LEFT);
+                    gaeImage, i * gaeImage.getWidth(), 0, 1.0F, Composite.Anchor.TOP_LEFT);
             composites.add(composite);
 
             if (i == length - 1) { // Using the last clip as the dimension of eatch one
@@ -69,8 +66,7 @@ public final class GAEImageService implements ImageService {
             }
         }
 
-        final com.google.appengine.api.images.Image gaeImage =
-                SVC.composite(composites, width * length, height, 0);
+        final com.google.appengine.api.images.Image gaeImage = SVC.composite(composites, width * length, height, 0);
 
         return makeImage(gaeImage.getImageData());
     }
