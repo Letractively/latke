@@ -32,8 +32,7 @@ public final class GAEUserService implements UserService {
     /**
      * URL fetch service.
      */
-    private static final com.google.appengine.api.users.UserService USER_SERVICE =
-            UserServiceFactory.getUserService();
+    private static final com.google.appengine.api.users.UserService USER_SERVICE = UserServiceFactory.getUserService();
 
     @Override
     public GeneralUser getCurrentUser(final HttpServletRequest request) {

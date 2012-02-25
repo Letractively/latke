@@ -30,13 +30,11 @@ public final class GAEMailService implements MailService {
     /**
      * Mail service.
      */
-    private static final com.google.appengine.api.mail.MailService MAIL_SERVICE =
-            MailServiceFactory.getMailService();
+    private static final com.google.appengine.api.mail.MailService MAIL_SERVICE = MailServiceFactory.getMailService();
 
     @Override
     public void send(final Message message) throws IOException {
-        final com.google.appengine.api.mail.MailService.Message gaeMsg =
-                toGAEMailMsg(message);
+        final com.google.appengine.api.mail.MailService.Message gaeMsg = toGAEMailMsg(message);
 
         MAIL_SERVICE.send(gaeMsg);
     }
@@ -47,10 +45,8 @@ public final class GAEMailService implements MailService {
      * @param message the specified message
      * @return GAE mail message
      */
-    private static com.google.appengine.api.mail.MailService.Message toGAEMailMsg(
-            final Message message) {
-        final com.google.appengine.api.mail.MailService.Message ret =
-                new com.google.appengine.api.mail.MailService.Message();
+    private static com.google.appengine.api.mail.MailService.Message toGAEMailMsg(final Message message) {
+        final com.google.appengine.api.mail.MailService.Message ret = new com.google.appengine.api.mail.MailService.Message();
 
         ret.setSender(message.getFrom());
         ret.setTo(message.getRecipients());

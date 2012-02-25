@@ -48,8 +48,7 @@ public final class GAETransaction implements Transaction {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(GAETransaction.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GAETransaction.class.getName());
     /**
      * Underlying Google App Engine transaction.
      */
@@ -195,8 +194,7 @@ public final class GAETransaction implements Transaction {
 
                 // Flushes transaction cache into global query (by id) cache.
                 for (final Entry<String, JSONObject> cached : cache.entrySet()) {
-                    final String cacheKey = GAERepository.CACHE_KEY_PREFIX
-                                            + cached.getKey();
+                    final String cacheKey = GAERepository.CACHE_KEY_PREFIX + cached.getKey();
                     final JSONObject value = cached.getValue();
 
                     // If the value is null, it means the value has been removed
@@ -223,10 +221,8 @@ public final class GAETransaction implements Transaction {
                 }
 
                 --retries;
-                LOGGER.log(Level.WARNING,
-                           "Retrying to commit this transaction[id={0}, app={1}]",
-                           new Object[]{appEngineDatastoreTx.getId(),
-                                        appEngineDatastoreTx.getApp()});
+                LOGGER.log(Level.WARNING, "Retrying to commit this transaction[id={0}, app={1}]",
+                           new Object[]{appEngineDatastoreTx.getId(), appEngineDatastoreTx.getApp()});
             }
         }
     }

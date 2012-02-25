@@ -35,8 +35,7 @@ public final class GAETaskHandle implements TaskHandle {
      * 
      * @param gaeTaskHandle the specified GAE task handle
      */
-    public GAETaskHandle(
-            final com.google.appengine.api.taskqueue.TaskHandle gaeTaskHandle) {
+    public GAETaskHandle(final com.google.appengine.api.taskqueue.TaskHandle gaeTaskHandle) {
         this.gaeTaskHandle = gaeTaskHandle;
     }
 

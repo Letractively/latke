@@ -47,11 +47,9 @@ public final class GAEURLFetchService implements URLFetchService {
 
     @Override
     public HTTPResponse fetch(final HTTPRequest request) throws IOException {
-        final com.google.appengine.api.urlfetch.HTTPRequest gaeHTTPRequest =
-                toGAEHTTPRequest(request);
-        final com.google.appengine.api.urlfetch.HTTPResponse gaeHTTPResponse =
-                URL_FETCH_SERVICE.fetch(gaeHTTPRequest);
-        
+        final com.google.appengine.api.urlfetch.HTTPRequest gaeHTTPRequest = toGAEHTTPRequest(request);
+        final com.google.appengine.api.urlfetch.HTTPResponse gaeHTTPResponse = URL_FETCH_SERVICE.fetch(gaeHTTPRequest);
+
         return toHTTPResponse(gaeHTTPResponse);
     }
 
@@ -63,8 +61,7 @@ public final class GAEURLFetchService implements URLFetchService {
      */
     @Override
     public Future<?> fetchAsync(final HTTPRequest request) {
-        final com.google.appengine.api.urlfetch.HTTPRequest gaeHTTPRequest =
-                toGAEHTTPRequest(request);
+        final com.google.appengine.api.urlfetch.HTTPRequest gaeHTTPRequest = toGAEHTTPRequest(request);
 
         return URL_FETCH_SERVICE.fetchAsync(gaeHTTPRequest);
     }
@@ -83,12 +80,9 @@ public final class GAEURLFetchService implements URLFetchService {
         ret.setFinalURL(response.getFinalUrl());
         ret.setResponseCode(response.getResponseCode());
 
-        final List<com.google.appengine.api.urlfetch.HTTPHeader> gaeHTTPHeaders =
-                response.getHeaders();
-        for (final com.google.appengine.api.urlfetch.HTTPHeader gaeHTTPHeader 
-                : gaeHTTPHeaders) {
-            final HTTPHeader header = new HTTPHeader(gaeHTTPHeader.getName(),
-                                                     gaeHTTPHeader.getValue());
+        final List<com.google.appengine.api.urlfetch.HTTPHeader> gaeHTTPHeaders = response.getHeaders();
+        for (final com.google.appengine.api.urlfetch.HTTPHeader gaeHTTPHeader : gaeHTTPHeaders) {
+            final HTTPHeader header = new HTTPHeader(gaeHTTPHeader.getName(), gaeHTTPHeader.getValue());
             ret.addHeader(header);
         }
 
@@ -101,8 +95,7 @@ public final class GAEURLFetchService implements URLFetchService {
      * @param request the specified HTTP request
      * @return GAE HTTP request
      */
-    private static com.google.appengine.api.urlfetch.HTTPRequest toGAEHTTPRequest(
-            final HTTPRequest request) {
+    private static com.google.appengine.api.urlfetch.HTTPRequest toGAEHTTPRequest(final HTTPRequest request) {
         final URL url = request.getURL();
         final HTTPRequestMethod requestMethod = request.getRequestMethod();
 
@@ -113,41 +106,29 @@ public final class GAEURLFetchService implements URLFetchService {
                 ret = new com.google.appengine.api.urlfetch.HTTPRequest(url);
                 break;
             case DELETE:
-                ret =
-                        new com.google.appengine.api.urlfetch.HTTPRequest(url,
-                                                                          HTTPMethod.DELETE);
+                ret = new com.google.appengine.api.urlfetch.HTTPRequest(url, HTTPMethod.DELETE);
                 break;
             case HEAD:
-                ret =
-                        new com.google.appengine.api.urlfetch.HTTPRequest(url,
-                                                                          HTTPMethod.HEAD);
+                ret = new com.google.appengine.api.urlfetch.HTTPRequest(url, HTTPMethod.HEAD);
                 break;
             case POST:
-
-                ret =
-                        new com.google.appengine.api.urlfetch.HTTPRequest(url,
-                                                                          HTTPMethod.POST);
+                ret = new com.google.appengine.api.urlfetch.HTTPRequest(url, HTTPMethod.POST);
                 break;
             case PUT:
-                ret =
-                        new com.google.appengine.api.urlfetch.HTTPRequest(url,
-                                                                          HTTPMethod.PUT);
+                ret = new com.google.appengine.api.urlfetch.HTTPRequest(url, HTTPMethod.PUT);
                 break;
             default:
-                throw new RuntimeException("Unsupported HTTP request method["
-                                           + requestMethod.name() + "]");
+                throw new RuntimeException("Unsupported HTTP request method[" + requestMethod.name() + "]");
         }
 
         final List<HTTPHeader> headers = request.getHeaders();
         for (final HTTPHeader header : headers) {
-            ret.addHeader(new com.google.appengine.api.urlfetch.HTTPHeader(
-                    header.getName(), header.getValue()));
+            ret.addHeader(new com.google.appengine.api.urlfetch.HTTPHeader(header.getName(), header.getValue()));
         }
 
         ret.setPayload(request.getPayload());
-        
         ret.getFetchOptions().setDeadline(DEFAULT_TIMEOUT);
-        
+
         return ret;
     }
 }
