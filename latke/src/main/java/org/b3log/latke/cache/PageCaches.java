@@ -298,7 +298,8 @@ public final class PageCaches {
         CACHE.put(pageKey, cachedValue);
         KEYS.add(pageKey);
 
-        LOGGER.log(Level.FINEST, "Put a page[key={0}] into page cache, cached keys[size={1}, {2}]", new Object[]{pageKey, KEYS.size(), KEYS});
+        LOGGER.log(Level.FINEST, "Put a page[key={0}] into page cache, cached keys[size={1}, {2}]",
+                   new Object[]{pageKey, KEYS.size(), KEYS});
     }
 
     /**
