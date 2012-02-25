@@ -66,8 +66,7 @@ public final class PageCaches {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(
-            PageCaches.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PageCaches.class.getName());
     /**
      * Page cache.
      * <p>
@@ -108,13 +107,11 @@ public final class PageCaches {
      * Initializes the cache.
      */
     static {
-        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
-                PAGE_CACHE_NAME);
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(PAGE_CACHE_NAME);
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
         if (runtimeEnv.equals(RuntimeEnv.LOCAL)) {
             CACHE.setMaxCount(MAX_CACHEABLE_PAGE_CNT);
-            LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]",
-                       MAX_CACHEABLE_PAGE_CNT);
+            LOGGER.log(Level.INFO, "Initialized page cache[maxCount={0}]", MAX_CACHEABLE_PAGE_CNT);
         }
     }
 
@@ -125,8 +122,7 @@ public final class PageCaches {
      * @param queryString the specified query string
      * @return cache key
      */
-    public static String getPageCacheKey(final String uri,
-                                         final String queryString) {
+    public static String getPageCacheKey(final String uri, final String queryString) {
         String ret = uri;
 
         try {
@@ -154,7 +150,7 @@ public final class PageCaches {
     @SuppressWarnings("unchecked")
     public static Set<String> getKeys() {
         syncKeys();
-        
+
         return KEYS;
     }
 
@@ -235,8 +231,7 @@ public final class PageCaches {
      * @see Requests#searchEngineBotRequest(javax.servlet.http.HttpServletRequest) 
      * @see #get(java.lang.String) 
      */
-    public static JSONObject get(final String pageCacheKey,
-                                 final HttpServletRequest request) {
+    public static JSONObject get(final String pageCacheKey, final HttpServletRequest request) {
         final JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
 
         if (null == ret) {
@@ -252,8 +247,7 @@ public final class PageCaches {
             CACHE.put(pageCacheKey, ret);
             KEYS.add(pageCacheKey);
         } catch (final Exception e) {
-            LOGGER.log(Level.WARNING, "Set stat. of cached page[pageCacheKey="
-                                      + pageCacheKey + "] failed", e);
+            LOGGER.log(Level.WARNING, "Set stat. of cached page[pageCacheKey=" + pageCacheKey + "] failed", e);
         }
 
         return ret;
@@ -283,13 +277,11 @@ public final class PageCaches {
      * </pre>
      * @param request the specified request 
      */
-    public static void put(final String pageKey, final JSONObject cachedValue,
-                           final HttpServletRequest request) {
+    public static void put(final String pageKey, final JSONObject cachedValue, final HttpServletRequest request) {
         check(cachedValue);
 
         try {
-            final String content = cachedValue.getString(
-                    AbstractCacheablePageAction.CACHED_CONTENT);
+            final String content = cachedValue.getString(AbstractCacheablePageAction.CACHED_CONTENT);
             final byte[] bytes = Serializer.serialize(content);
 
             if (Requests.searchEngineBotRequest(request)) {
@@ -300,16 +292,13 @@ public final class PageCaches {
             cachedValue.put(CACHED_BYTES_LENGTH, bytes.length);
             cachedValue.put(CACHED_TIME, System.currentTimeMillis());
         } catch (final Exception e) {
-            LOGGER.log(Level.WARNING, "Cache stat. failed[pageKey=" + pageKey
-                                      + "]", e);
+            LOGGER.log(Level.WARNING, "Cache stat. failed[pageKey=" + pageKey + "]", e);
         }
 
         CACHE.put(pageKey, cachedValue);
         KEYS.add(pageKey);
 
-        LOGGER.log(Level.FINEST, "Put a page[key={0}] into page cache,"
-                                 + " cached keys[size={1}, {2}]",
-                   new Object[]{pageKey, KEYS.size(), KEYS});
+        LOGGER.log(Level.FINEST, "Put a page[key={0}] into page cache, cached keys[size={1}, {2}]", new Object[]{pageKey, KEYS.size(), KEYS});
     }
 
     /**
@@ -363,8 +352,7 @@ public final class PageCaches {
 
         if (!toRemove.isEmpty()) {
             KEYS.removeAll(toRemove);
-            LOGGER.log(Level.FINER, "Removed page cache keys[{0}] for sync",
-                       toRemove);
+            LOGGER.log(Level.FINER, "Removed page cache keys[{0}] for sync", toRemove);
         }
     }
 
@@ -379,8 +367,7 @@ public final class PageCaches {
             || !cachedPage.has(AbstractCacheablePageAction.CACHED_TITLE)
             || !cachedPage.has(AbstractCacheablePageAction.CACHED_TYPE)
             || !cachedPage.has(AbstractCacheablePageAction.CACHED_LINK)) {
-            throw new IllegalArgumentException("Illegal arguments for caching page, "
-                                               + "resolve this bug first!");
+            throw new IllegalArgumentException("Illegal arguments for caching page, resolve this bug first!");
         }
     }
 
