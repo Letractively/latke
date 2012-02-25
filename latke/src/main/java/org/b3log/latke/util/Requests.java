@@ -36,8 +36,7 @@ public final class Requests {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Requests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Requests.class.getName());
     /**
      * The pagination path pattern.
      * 
@@ -67,19 +66,17 @@ public final class Requests {
      * HTTP header "User-Agent" pattern for mobile device requests.
      */
     private static final Pattern MOBILE_USER_AGENT_PATTERN =
-            Pattern.compile(
-            "android.+mobile|avantgo|bada|blackberry|blazer|compal|elaine|fennec"
-            + "|hiptop|iemobile|ip(hone|od)|iris|kindle|lge|maemo|midp|mmp|opera m(ob|in)i"
-            + "|palm( os)?|phone|p(ixi|re)|plucker|pocket|psp|symbian|treo|up.(browser"
-            + "|link)|ucweb|vodafone|wap|webos|windows (ce|phone)|xda|xiino|htc",
-            Pattern.CASE_INSENSITIVE);
+            Pattern.compile("android.+mobile|avantgo|bada|blackberry|blazer|compal|elaine|fennec"
+                            + "|hiptop|iemobile|ip(hone|od)|iris|kindle|lge|maemo|midp|mmp|opera m(ob|in)i"
+                            + "|palm( os)?|phone|p(ixi|re)|plucker|pocket|psp|symbian|treo|up.(browser"
+                            + "|link)|ucweb|vodafone|wap|webos|windows (ce|phone)|xda|xiino|htc",
+                            Pattern.CASE_INSENSITIVE);
     /**
      * HTTP header "User-Agent" pattern for search engine bot requests.
      */
     private static final Pattern SEARCH_ENGINE_BOT_USER_AGENT_PATTERN =
-            Pattern.compile(
-            "Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot",
-            Pattern.CASE_INSENSITIVE);
+            Pattern.compile("Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot",
+                            Pattern.CASE_INSENSITIVE);
 
     /**
      * Mobile and normal skin toggle.

@@ -33,8 +33,7 @@ public final class AtomRenderer extends AbstractHTTPResponseRenderer {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(AtomRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AtomRenderer.class.getName());
     /**
      * Content to render.
      */

@@ -26,13 +26,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Aug 8, 2011
  */
 public final class ImageServiceFactory {
-    
+
     /**
      * Logger.
      */
     private static final Logger LOGGER =
             Logger.getLogger(ImageServiceFactory.class.getName());
-
     /**
      * Image service.
      */
@@ -40,7 +39,7 @@ public final class ImageServiceFactory {
 
     static {
         LOGGER.info("Constructing Image Service....");
-        
+
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -49,26 +48,21 @@ public final class ImageServiceFactory {
             switch (runtimeEnv) {
                 case LOCAL:
                     serviceClass =
-                            (Class<ImageService>) Class.forName(
-                            "org.b3log.latke.image.local.LocalImageService");
+                            (Class<ImageService>) Class.forName("org.b3log.latke.image.local.LocalImageService");
                     IMAGE_SERVICE = serviceClass.newInstance();
                     break;
                 case GAE:
                     serviceClass =
-                            (Class<ImageService>) Class.forName(
-                            "org.b3log.latke.image.gae.GAEImageService");
+                            (Class<ImageService>) Class.forName("org.b3log.latke.image.gae.GAEImageService");
                     IMAGE_SERVICE = serviceClass.newInstance();
                     break;
                 default:
-                    throw new RuntimeException(
-                            "Latke runs in the hell.... "
-                            + "Please set the enviornment correctly");
+                    throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
             }
         } catch (final Exception e) {
-            throw new RuntimeException("Can not initialize Image Service!",
-                                       e);
+            throw new RuntimeException("Can not initialize Image Service!", e);
         }
-        
+
         LOGGER.info("Constructed Image Service");
     }
 

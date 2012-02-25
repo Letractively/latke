@@ -36,8 +36,7 @@ public abstract class AbstractEventQueue {
     /**
      * Listeners.
      */
-    private Map<String, List<AbstractEventListener<?>>> listeners =
-            new HashMap<String, List<AbstractEventListener<?>>>();
+    private Map<String, List<AbstractEventListener<?>>> listeners = new HashMap<String, List<AbstractEventListener<?>>>();
 
     /**
      * Adds the specified listener to the set of listeners for this object,
@@ -79,8 +78,7 @@ public abstract class AbstractEventQueue {
             throw new NullPointerException();
         }
 
-        final List<AbstractEventListener<?>> listenerList =
-                listeners.get(eventType);
+        final List<AbstractEventListener<?>> listenerList = listeners.get(eventType);
 
         if (null != listenerList) {
             listenerList.remove(listener);
@@ -134,11 +132,9 @@ public abstract class AbstractEventQueue {
             }
 
             final String eventType = event.getType();
-            final List<AbstractEventListener<?>> listenerList =
-                    listeners.get(eventType);
+            final List<AbstractEventListener<?>> listenerList = listeners.get(eventType);
 
-            final AbstractEventListener<?>[] types =
-                    new AbstractEventListener<?>[1];
+            final AbstractEventListener<?>[] types = new AbstractEventListener<?>[1];
             if (null != listenerList) {
                 arrLocal = listenerList.<AbstractEventListener<?>>toArray(types);
                 clearChanged();

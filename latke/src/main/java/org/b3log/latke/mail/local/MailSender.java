@@ -42,8 +42,7 @@ final class MailSender {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(MailSender.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MailSender.class.getName());
     /**
      * Mail configurations.
      * 
@@ -71,8 +70,7 @@ final class MailSender {
         props.setProperty("mail.smtp.port", getPort());
         props.put("mail.smtp.starttls.enable", "true");
 
-        final Session ret =
-                Session.getDefaultInstance(props, new SMTPAuthenticator());
+        final Session ret = Session.getDefaultInstance(props, new SMTPAuthenticator());
         ret.setDebug(getDebug());
 
         return ret;
@@ -152,10 +150,8 @@ final class MailSender {
         final String subject = message.getSubject();
         ret.setSubject(subject != null ? subject : "");
         final String htmlBody = message.getHtmlBody();
-        ret.setContent(htmlBody != null
-                       ? htmlBody : "", "text/html;charset=UTF-8");
-        ret.addRecipients(RecipientType.TO,
-                          transformRecipients(message.getRecipients()));
+        ret.setContent(htmlBody != null ? htmlBody : "", "text/html;charset=UTF-8");
+        ret.addRecipients(RecipientType.TO, transformRecipients(message.getRecipients()));
 
         return ret;
     }
@@ -167,15 +163,12 @@ final class MailSender {
      * @return  InternetAddress array of all recipients internetAddress
      * @throws MessagingException messagingException from javax.mail
      */
-    private InternetAddress[] transformRecipients(final Set<String> recipients)
-            throws MessagingException {
+    private InternetAddress[] transformRecipients(final Set<String> recipients) throws MessagingException {
         if (recipients.isEmpty()) {
-            throw new MessagingException(
-                    "recipients of mail should not be empty");
+            throw new MessagingException("recipients of mail should not be empty");
         }
 
-        final InternetAddress[] ret =
-                new InternetAddress[recipients.size()];
+        final InternetAddress[] ret = new InternetAddress[recipients.size()];
         int i = 0;
         for (String recipient : recipients) {
             ret[i] = new InternetAddress(recipient);
@@ -203,8 +196,7 @@ final class MailSender {
 
         @Override
         public PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(getUser(),
-                                              getPassword());
+            return new PasswordAuthentication(getUser(), getPassword());
         }
     }
 }

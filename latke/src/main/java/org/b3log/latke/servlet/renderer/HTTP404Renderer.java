@@ -32,8 +32,7 @@ public final class HTTP404Renderer extends AbstractHTTPResponseRenderer {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(HTTP404Renderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(HTTP404Renderer.class.getName());
 
     @Override
     public void render(final HTTPRequestContext context) {
@@ -41,7 +40,7 @@ public final class HTTP404Renderer extends AbstractHTTPResponseRenderer {
 
         try {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            
+
             return;
         } catch (final IOException e) {
             LOGGER.log(Level.SEVERE, "Renders 404 error", e);

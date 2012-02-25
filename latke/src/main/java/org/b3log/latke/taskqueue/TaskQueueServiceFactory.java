@@ -26,13 +26,12 @@ import org.b3log.latke.RuntimeEnv;
  * @version 1.0.0.0, Nov 15, 2011
  */
 public final class TaskQueueServiceFactory {
-    
+
     /**
      * Logger.
      */
-    private static final Logger LOGGER = 
+    private static final Logger LOGGER =
             Logger.getLogger(TaskQueueServiceFactory.class.getName());
-
     /**
      * Task queue service.
      */
@@ -40,7 +39,7 @@ public final class TaskQueueServiceFactory {
 
     static {
         LOGGER.info("Constructing Task Query Service....");
-        
+
         final RuntimeEnv runtimeEnv = Latkes.getRuntimeEnv();
 
         try {
@@ -48,27 +47,22 @@ public final class TaskQueueServiceFactory {
 
             switch (runtimeEnv) {
                 case LOCAL:
-                    serviceClass =
-                            (Class<TaskQueueService>) Class.forName(
+                    serviceClass = (Class<TaskQueueService>) Class.forName(
                             "org.b3log.latke.taskqueue.local.LocalTaskQueueService");
                     TASK_QUEUE_SERVICE = serviceClass.newInstance();
                     break;
                 case GAE:
-                    serviceClass =
-                            (Class<TaskQueueService>) Class.forName(
+                    serviceClass = (Class<TaskQueueService>) Class.forName(
                             "org.b3log.latke.taskqueue.gae.GAETaskQueueService");
                     TASK_QUEUE_SERVICE = serviceClass.newInstance();
                     break;
                 default:
-                    throw new RuntimeException(
-                            "Latke runs in the hell.... "
-                            + "Please set the enviornment correctly");
+                    throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
             }
         } catch (final Exception e) {
-            throw new RuntimeException("Can not initialize Task Queue Service!",
-                                       e);
+            throw new RuntimeException("Can not initialize Task Queue Service!", e);
         }
-        
+
         LOGGER.info("Constructed Task Query Service");
     }
 

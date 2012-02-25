@@ -40,13 +40,11 @@ public final class LangPropsService {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(LangPropsService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LangPropsService.class.getName());
     /**
      * Language properties.
      */
-    private static final Map<Locale, Map<String, String>> LANGS =
-            new HashMap<Locale, Map<String, String>>();
+    private static final Map<Locale, Map<String, String>> LANGS = new HashMap<Locale, Map<String, String>>();
 
     /**
      * Gets all language properties as a map by the specified locale.
@@ -63,19 +61,13 @@ public final class LangPropsService {
             try {
                 langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
             } catch (final MissingResourceException e) {
-                LOGGER.log(Level.WARNING,
-                           "{0}, using default locale[{1}] instead",
-                           new Object[]{e.getMessage(),
-                                        Latkes.getLocale()});
+                LOGGER.log(Level.WARNING, "{0}, using default locale[{1}] instead",
+                           new Object[]{e.getMessage(), Latkes.getLocale()});
 
                 try {
-                    langBundle = ResourceBundle.getBundle(
-                            Keys.LANGUAGE,
-                            Latkes.getLocale());
+                    langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, Latkes.getLocale());
                 } catch (final MissingResourceException ex) {
-                    LOGGER.log(Level.WARNING,
-                               "{0}, using default lang.properties instead",
-                               new Object[]{e.getMessage()});
+                    LOGGER.log(Level.WARNING, "{0}, using default lang.properties instead", new Object[]{e.getMessage()});
                     langBundle = ResourceBundle.getBundle(Keys.LANGUAGE);
                 }
             }
@@ -121,11 +113,9 @@ public final class LangPropsService {
             langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, locale);
         } catch (final MissingResourceException e) {
             LOGGER.log(Level.WARNING, "{0}, using default locale[{1}]  instead",
-                       new Object[]{e.getMessage(),
-                                    Latkes.getLocale()});
+                       new Object[]{e.getMessage(), Latkes.getLocale()});
 
-            langBundle = ResourceBundle.getBundle(Keys.LANGUAGE,
-                                                  Latkes.getLocale());
+            langBundle = ResourceBundle.getBundle(Keys.LANGUAGE, Latkes.getLocale());
         }
 
         final Enumeration<String> keys = langBundle.getKeys();
@@ -172,9 +162,7 @@ public final class LangPropsService {
     private String get(final String baseName, final String key,
                        final Locale locale) {
         if (!Keys.LANGUAGE.equals(baseName)) {
-            final RuntimeException e =
-                    new RuntimeException("i18n resource[baseName="
-                                         + baseName + "] not found");
+            final RuntimeException e = new RuntimeException("i18n resource[baseName=" + baseName + "] not found");
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
 
             throw e;
@@ -184,12 +172,9 @@ public final class LangPropsService {
             return ResourceBundle.getBundle(baseName, locale).
                     getString(key);
         } catch (final MissingResourceException e) {
-            LOGGER.log(Level.WARNING, "{0}, get it from default locale[{1}]",
-                       new Object[]{e.getMessage(),
-                                    Latkes.getLocale()});
+            LOGGER.log(Level.WARNING, "{0}, get it from default locale[{1}]", new Object[]{e.getMessage(), Latkes.getLocale()});
 
-            return ResourceBundle.getBundle(
-                    baseName, Latkes.getLocale()).getString(key);
+            return ResourceBundle.getBundle(baseName, Latkes.getLocale()).getString(key);
         }
     }
 

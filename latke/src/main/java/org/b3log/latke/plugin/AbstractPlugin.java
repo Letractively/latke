@@ -68,8 +68,7 @@ public abstract class AbstractPlugin implements Serializable {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(AbstractPlugin.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractPlugin.class.getName());
     /**
      * Id of this plugin.
      */
@@ -151,10 +150,9 @@ public abstract class AbstractPlugin implements Serializable {
         try {
             configuration.setDirectoryForTemplateLoading(dir);
         } catch (final IOException e) {
-            Logger.getLogger(getClass().getName()).
-                    log(Level.SEVERE, e.getMessage(), e);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
         }
-        
+
         LOGGER.log(Level.CONFIG, "Initialized template configuration");
     }
 
@@ -166,8 +164,7 @@ public abstract class AbstractPlugin implements Serializable {
 
             @Override
             public boolean accept(final File dir, final String name) {
-                if (name.startsWith(Keys.LANGUAGE)
-                    && name.endsWith(".properties")) {
+                if (name.startsWith(Keys.LANGUAGE) && name.endsWith(".properties")) {
                     return true;
                 }
 
@@ -178,18 +175,14 @@ public abstract class AbstractPlugin implements Serializable {
         for (int i = 0; i < langFiles.length; i++) {
             final File lang = langFiles[i];
             final String langFileName = lang.getName();
-            final String key =
-                    langFileName.substring(Keys.LANGUAGE.length() + 1,
-                                           langFileName.lastIndexOf("."));
+            final String key = langFileName.substring(Keys.LANGUAGE.length() + 1, langFileName.lastIndexOf("."));
             final Properties props = new Properties();
             try {
                 props.load(new FileInputStream(lang));
                 langs.put(key, props);
             } catch (final Exception e) {
                 Logger.getLogger(getClass().getName()).
-                        log(Level.SEVERE,
-                            "Get plugin[name="
-                            + name + "]'s language configuration failed", e);
+                        log(Level.SEVERE, "Get plugin[name=" + name + "]'s language configuration failed", e);
             }
         }
     }
@@ -269,19 +262,15 @@ public abstract class AbstractPlugin implements Serializable {
         }
 
         try {
-            final Template template =
-                    configuration.getTemplate(Plugin.PLUGIN + ".ftl");
+            final Template template = configuration.getTemplate(Plugin.PLUGIN + ".ftl");
             final StringWriter sw = new StringWriter();
             template.process(dataModel, sw);
 
             return sw.toString();
         } catch (final Exception e) {
             Logger.getLogger(getClass().getName()).
-                    log(Level.SEVERE,
-                        "Get plugin[name=" + name
-                        + "]'s view failed, will return warning", e);
-            return "<div style='color: red;'>Plugin[name="
-                   + name + "] runs failed</div>";
+                    log(Level.SEVERE, "Get plugin[name=" + name + "]'s view failed, will return warning", e);
+            return "<div style='color: red;'>Plugin[name=" + name + "] runs failed</div>";
         }
     }
 

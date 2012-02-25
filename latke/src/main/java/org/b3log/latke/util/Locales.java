@@ -36,8 +36,7 @@ public final class Locales {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Locales.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Locales.class.getName());
     /**
      * Language start description in Accept-Language of request header.
      */
@@ -95,15 +94,12 @@ public final class Locales {
             if (!hasLocale(locale)) {
                 // using default
                 locale = Latkes.getLocale();
-                LOGGER.log(Level.FINER, "Using the default locale[{0}]",
-                           locale.toString());
+                LOGGER.log(Level.FINER, "Using the default locale[{0}]", locale.toString());
             } else {
-                LOGGER.log(Level.FINER, "Got locale[{0}] from request.",
-                           locale.toString());
+                LOGGER.log(Level.FINER, "Got locale[{0}] from request.", locale.toString());
             }
         } else {
-            LOGGER.log(Level.FINER, "Got locale[{0}] from session.", locale.
-                    toString());
+            LOGGER.log(Level.FINER, "Got locale[{0}] from session.", locale.toString());
         }
 
         return locale;
@@ -133,8 +129,7 @@ public final class Locales {
      * @param request the specified request
      * @param locale a new locale
      */
-    public static void setLocale(final HttpServletRequest request,
-                                 final Locale locale) {
+    public static void setLocale(final HttpServletRequest request, final Locale locale) {
         final HttpSession session = request.getSession();
         session.setAttribute(Keys.LOCALE, locale);
         LOGGER.log(Level.FINER, "Client[sessionId={0}] sets locale to [{1}]",

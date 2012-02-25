@@ -38,8 +38,7 @@ public abstract class AbstractEventListener<T> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(AbstractEventListener.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractEventListener.class.getName());
 
     /**
      * Gets the event type of this listener could handle.
@@ -57,8 +56,7 @@ public abstract class AbstractEventListener<T> {
      * @throws EventException event exception
      * @see #action(org.b3log.latke.event.Event) 
      */
-    final void performAction(final AbstractEventQueue eventQueue,
-                             final Event<?> event) throws EventException {
+    final void performAction(final AbstractEventQueue eventQueue, final Event<?> event) throws EventException {
         @SuppressWarnings("unchecked")
         final Event<T> eventObject = (Event<T>) event;
         try {
@@ -67,8 +65,7 @@ public abstract class AbstractEventListener<T> {
             LOGGER.log(Level.WARNING, "Event perform failed", e);
         } finally { // remove event from event queue
             if (eventQueue instanceof SynchronizedEventQueue) {
-                final SynchronizedEventQueue synchronizedEventQueue =
-                        (SynchronizedEventQueue) eventQueue;
+                final SynchronizedEventQueue synchronizedEventQueue = (SynchronizedEventQueue) eventQueue;
                 synchronizedEventQueue.removeEvent(eventObject);
             }
         }

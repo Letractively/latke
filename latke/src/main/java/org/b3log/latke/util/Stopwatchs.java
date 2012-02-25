@@ -110,8 +110,7 @@ public final class Stopwatchs {
     /**
      * Thread-local variable of a stopwatch.
      */
-    private static final ThreadLocal<Stopwatch> STOPWATCH =
-            new ThreadLocal<Stopwatch>();
+    private static final ThreadLocal<Stopwatch> STOPWATCH = new ThreadLocal<Stopwatch>();
 
     /**
      * Starts a task timing with the specified task title.
@@ -236,8 +235,7 @@ public final class Stopwatchs {
      * @param taskTitle the specified task title
      * @return stopwatch, returns {@code null} if not found
      */
-    private static Stopwatch get(final Stopwatch parent,
-                                 final String taskTitle) {
+    private static Stopwatch get(final Stopwatch parent, final String taskTitle) {
         if (taskTitle.equals(parent.getTaskTitle())) {
             return parent;
         }
@@ -339,8 +337,7 @@ public final class Stopwatchs {
         /**
          * Math context for formatting percent.
          */
-        private static final MathContext MATH_CONTEXT =
-                new MathContext(4, RoundingMode.HALF_UP);
+        private static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_UP);
 
         /**
          * Constructs a stopwatch with the specified task title and starts it 
@@ -462,8 +459,7 @@ public final class Stopwatchs {
          * @param prefix the specified prefix
          * @param stringBuilder the specified string builder
          */
-        public void appendTimingStat(final String prefix,
-                                     final StringBuilder stringBuilder) {
+        public void appendTimingStat(final String prefix, final StringBuilder stringBuilder) {
             stringBuilder.append(toString());
 
             if (!leaves.isEmpty()) {
@@ -481,14 +477,11 @@ public final class Stopwatchs {
                 percentOfRoot = 0F;
             }
 
-            final BigDecimal percenOfRoot =
-                    new BigDecimal(percentOfRoot, MATH_CONTEXT);
+            final BigDecimal percenOfRoot = new BigDecimal(percentOfRoot, MATH_CONTEXT);
 
-            final StringBuilder stringBuilder =
-                    new StringBuilder("[").append(percenOfRoot).
+            final StringBuilder stringBuilder = new StringBuilder("[").append(percenOfRoot).
                     append("]%, [").append(getElapsedTime()).append("]ms [").
-                    append(getTaskTitle()).append("]").
-                    append(Strings.LINE_SEPARATOR);
+                    append(getTaskTitle()).append("]").append(Strings.LINE_SEPARATOR);
 
             return stringBuilder.toString();
         }

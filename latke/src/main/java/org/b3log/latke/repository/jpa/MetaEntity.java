@@ -39,8 +39,7 @@ public final class MetaEntity {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(MetaEntity.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MetaEntity.class.getName());
     /**
      * The type of entity.
      */
@@ -65,18 +64,15 @@ public final class MetaEntity {
         // XXX: Resolver checker for checks fail error messages output
 
         if (!EntityClassCheckers.isValid(entityClass)) {
-            throw new IllegalArgumentException("The specified class is not a "
-                                               + "valid entity class");
+            throw new IllegalArgumentException("The specified class is not a valid entity class");
         }
 
         this.entityClass = entityClass;
 
         final String entityClassName = entityClass.getSimpleName();
-        repositoryName = entityClassName.substring(0, 1).toLowerCase()
-                         + entityClassName.substring(1);
+        repositoryName = entityClassName.substring(0, 1).toLowerCase() + entityClassName.substring(1);
 
-        LOGGER.log(Level.FINER,
-                   "Entity[classSimpleName={0}] to repository[name={1}]",
+        LOGGER.log(Level.FINER, "Entity[classSimpleName={0}] to repository[name={1}]",
                    new Object[]{entityClass.getSimpleName(), repositoryName});
 
         final Field[] allFields = entityClass.getDeclaredFields();
@@ -103,9 +99,7 @@ public final class MetaEntity {
             }
 
             if (field.isAnnotationPresent(ManyToMany.class)) {
-                final String many2ManyReposName =
-                        fieldClass.getSimpleName()
-                        + '_' + entityClass.getSimpleName();
+                final String many2ManyReposName = fieldClass.getSimpleName() + '_' + entityClass.getSimpleName();
                 Relationships.addManyToManyRepositoryName(many2ManyReposName);
             }
 

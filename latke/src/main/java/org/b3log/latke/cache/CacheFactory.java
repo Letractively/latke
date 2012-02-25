@@ -35,14 +35,11 @@ public final class CacheFactory {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(CacheFactory.class.
-            getName());
+    private static final Logger LOGGER = Logger.getLogger(CacheFactory.class.getName());
     /**
      * Caches.
      */
-    private static final Map<String, Cache<String, ?>> CACHES =
-            Collections.synchronizedMap(
-            new HashMap<String, Cache<String, ?>>());
+    private static final Map<String, Cache<String, ?>> CACHES = Collections.synchronizedMap(new HashMap<String, Cache<String, ?>>());
 
     /**
      * Gets a cache specified by the given cache name.
@@ -62,22 +59,18 @@ public final class CacheFactory {
                 switch (Latkes.getRuntime("cache")) {
                     case LOCAL:
                         final Class<Cache<String, ?>> localLruCache =
-                                (Class<Cache<String, ?>>) Class.forName(
-                                "org.b3log.latke.cache.local.memory.LruMemoryCache");
+                                (Class<Cache<String, ?>>) Class.forName("org.b3log.latke.cache.local.memory.LruMemoryCache");
                         ret = localLruCache.newInstance();
                         break;
                     case GAE:
                         final Class<Cache<String, ?>> gaeMemcache =
-                                (Class<Cache<String, ?>>) Class.forName(
-                                "org.b3log.latke.cache.gae.Memcache");
+                                (Class<Cache<String, ?>>) Class.forName("org.b3log.latke.cache.gae.Memcache");
                         final Constructor<Cache<String, ?>> constructor =
                                 gaeMemcache.getConstructor(String.class);
                         ret = constructor.newInstance(cacheName);
                         break;
                     default:
-                        throw new RuntimeException(
-                                "Latke runs in the hell.... "
-                                + "Please set the enviornment correctly");
+                        throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
                 }
 
                 CACHES.put(cacheName, ret);

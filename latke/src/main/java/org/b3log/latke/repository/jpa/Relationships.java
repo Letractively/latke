@@ -37,13 +37,11 @@ final class Relationships {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Relationships.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Relationships.class.getName());
     /**
      * Many to many relationship repository names.
      */
-    private static Set<String> manyToManyRepositoryNames =
-            new HashSet<String>();
+    private static Set<String> manyToManyRepositoryNames = new HashSet<String>();
 
     /**
      * Gets a many to many repository name with the specified part of name.
@@ -77,16 +75,13 @@ final class Relationships {
     public static void addManyToManyRepositoryName(
             final String manyToManyRepositoryName) {
         if (Strings.isEmptyOrNull(manyToManyRepositoryName)) {
-            throw new IllegalArgumentException(
-                    "The many to many repository name is empty or null");
+            throw new IllegalArgumentException("The many to many repository name is empty or null");
         }
 
         final String m2mReposName = manyToManyRepositoryName.toLowerCase();
 
         if (!m2mReposName.matches("[a-z]+_[a-z]+")) {
-            throw new IllegalArgumentException(
-                    "The many to many repository name["
-                    + m2mReposName + "] is invalid");
+            throw new IllegalArgumentException("The many to many repository name[" + m2mReposName + "] is invalid");
         }
 
         if (manyToManyRepositoryNames.contains(m2mReposName)) {
@@ -97,14 +92,11 @@ final class Relationships {
         final String repositoryName1 = repositoryNames[0];
         final String repositoryName2 = repositoryNames[1];
 
-        if (manyToManyRepositoryNames.contains(repositoryName2 + '_'
-                                               + repositoryName1)) {
+        if (manyToManyRepositoryNames.contains(repositoryName2 + '_' + repositoryName1)) {
             return;
         }
 
-        LOGGER.log(Level.FINER,
-                   "Found a new many to many relationship[repositoryName={0}]",
-                   manyToManyRepositoryName);
+        LOGGER.log(Level.FINER, "Found a new many to many relationship[repositoryName={0}]", manyToManyRepositoryName);
         manyToManyRepositoryNames.add(manyToManyRepositoryName);
     }
 

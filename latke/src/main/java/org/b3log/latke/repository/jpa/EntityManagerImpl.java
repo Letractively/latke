@@ -43,28 +43,22 @@ public final class EntityManagerImpl implements EntityManager {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(EntityManagerImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EntityManagerImpl.class.getName());
 
     @Override
     public void persist(final Object entity) {
         final Class<? extends Object> clazz = entity.getClass();
         final MetaEntity metaEntity = Entities.getMetaEntity(clazz);
         if (null == metaEntity) {
-            throw new IllegalArgumentException("The specified object[class="
-                                               + clazz + ",toString="
-                                               + entity.toString()
-                                               + "] is not an entity");
+            throw new IllegalArgumentException("The specified object[class=" + clazz + ",toString="
+                                               + entity.toString() + "] is not an entity");
         }
 
         final String repositoryName = metaEntity.getRepositoryName();
-        final Repository repository =
-                Repositories.getRepository(repositoryName);
+        final Repository repository = Repositories.getRepository(repositoryName);
         if (null == repository) {
-            throw new IllegalArgumentException("The specified object[class="
-                                               + clazz + ",toString="
-                                               + entity.toString()
-                                               + "] is not an entity");
+            throw new IllegalArgumentException("The specified object[class=" + clazz + ",toString="
+                                               + entity.toString() + "] is not an entity");
         }
 
         try {
@@ -72,9 +66,7 @@ public final class EntityManagerImpl implements EntityManager {
             repository.add(jsonObject);
         } catch (final Exception e) {
             // XXX: maybe a transaction required exception....
-            final String errMsg = "Can not persist entity[class="
-                                  + clazz + ",toString=" + entity.toString()
-                                  + "]";
+            final String errMsg = "Can not persist entity[class=" + clazz + ",toString=" + entity.toString() + "]";
             LOGGER.log(Level.SEVERE, errMsg, e);
 
             throw new IllegalArgumentException(errMsg);

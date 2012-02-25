@@ -35,8 +35,7 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(ViewLoadEventHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ViewLoadEventHandler.class.getName());
 
     @Override
     public String getEventType() {
@@ -50,26 +49,21 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
         final String viewName = data.getViewName();
         final Map<String, Object> dataModel = data.getDataModel();
 
-        final Set<AbstractPlugin> plugins =
-                PluginManager.getInstance().getPlugins(viewName);
-        LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]",
-                   new Object[]{plugins.size(), viewName});
+        final Set<AbstractPlugin> plugins = PluginManager.getInstance().getPlugins(viewName);
+        LOGGER.log(Level.FINER, "Plugin count[{0}] of view[name={1}]", new Object[]{plugins.size(), viewName});
         for (final AbstractPlugin plugin : plugins) {
             switch (plugin.getStatus()) {
                 case ENABLED:
                     plugin.plug(dataModel);
-                    LOGGER.log(Level.FINER, "Plugged[name={0}]",
-                               plugin.getName());
+                    LOGGER.log(Level.FINER, "Plugged[name={0}]", plugin.getName());
                     break;
                 case DISABLED:
                     plugin.unplug();
-                    LOGGER.log(Level.FINER, "Unplugged[name={0}]",
-                               plugin.getName());
+                    LOGGER.log(Level.FINER, "Unplugged[name={0}]", plugin.getName());
                     break;
                 default:
-                    throw new AssertionError(
-                            "Plugin state error, this is a bug! Please report "
-                            + "this bug on http://code.google.com/p/b3log-solo/issues/list!");
+                    throw new AssertionError("Plugin state error, this is a bug! Please report "
+                                             + "this bug on http://code.google.com/p/b3log-solo/issues/list!");
             }
         }
     }

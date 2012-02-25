@@ -74,9 +74,8 @@ public final class EmailSender implements Runnable {
      * @param message message about
      * @param subject email subject
      */
-    public EmailSender(final String userName, final String password,
-            final String from, final String to,
-            final String message, final String subject) {
+    public EmailSender(final String userName, final String password, final String from, final String to,
+                       final String message, final String subject) {
         this.userName = userName;
         this.password = password;
         this.from = from;
@@ -91,7 +90,6 @@ public final class EmailSender implements Runnable {
      * @throws MessagingException message exception
      */
     private void sendMail() throws MessagingException {
-
         /*
          * Properties used to construct a email sending connection
          * protocal.
@@ -102,8 +100,7 @@ public final class EmailSender implements Runnable {
         props.put("mail.smtp.starttls.enable", "true");
 
         final Authenticator auth = new SMTPAuthenticator();
-        final MimeMessage msg =
-                new MimeMessage(Session.getDefaultInstance(props, auth));
+        final MimeMessage msg = new MimeMessage(Session.getDefaultInstance(props, auth));
         msg.setFrom(new InternetAddress(from));
         msg.setRecipient(RecipientType.TO, new InternetAddress(to));
         msg.setSubject(subject);

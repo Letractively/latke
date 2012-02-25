@@ -59,8 +59,7 @@ public final class Query {
     /**
      * Sorts.
      */
-    private Map<String, SortDirection> sorts =
-            new LinkedHashMap<String, SortDirection>();
+    private Map<String, SortDirection> sorts = new LinkedHashMap<String, SortDirection>();
     /**
      * Filters.
      */
@@ -110,8 +109,7 @@ public final class Query {
      * @param sortDirection the specified sort
      * @return the current query object
      */
-    public Query addSort(final String propertyName,
-                         final SortDirection sortDirection) {
+    public Query addSort(final String propertyName, final SortDirection sortDirection) {
         sorts.put(propertyName, sortDirection);
 
         return this;
@@ -126,9 +124,7 @@ public final class Query {
      * @param value the specified property value
      * @return the current query object
      */
-    public Query addFilter(final String propertyName,
-                           final FilterOperator filterOperator,
-                           final Object value) {
+    public Query addFilter(final String propertyName, final FilterOperator filterOperator, final Object value) {
         filters.add(new Filter(propertyName, filterOperator, value));
 
         return this;
@@ -269,13 +265,10 @@ public final class Query {
         if (this.pageSize != other.pageSize) {
             return false;
         }
-        if (this.sorts != other.sorts && (this.sorts == null || !this.sorts.
-                                          equals(other.sorts))) {
+        if (this.sorts != other.sorts && (this.sorts == null || !this.sorts.equals(other.sorts))) {
             return false;
         }
-        if (this.filters != other.filters && (this.filters == null
-                                              || !this.filters.equals(
-                                              other.filters))) {
+        if (this.filters != other.filters && (this.filters == null || !this.filters.equals(other.filters))) {
             return false;
         }
         return true;
@@ -295,18 +288,14 @@ public final class Query {
 
     @Override
     public String toString() {
-        final StringBuilder stringBuilder =
-                new StringBuilder("currentPageNum=").append(currentPageNum).
-                append(", pageSize=").append(pageSize).append(", pageCount=").
-                append(pageCount).append(", sorts=[");
+        final StringBuilder stringBuilder = new StringBuilder("currentPageNum=").append(currentPageNum).
+                append(", pageSize=").append(pageSize).append(", pageCount=").append(pageCount).append(", sorts=[");
 
         final Set<Entry<String, SortDirection>> entrySet = sorts.entrySet();
-        final Iterator<Entry<String, SortDirection>> iterator =
-                entrySet.iterator();
+        final Iterator<Entry<String, SortDirection>> iterator = entrySet.iterator();
         while (iterator.hasNext()) {
             final Entry<String, SortDirection> sort = iterator.next();
-            stringBuilder.append("[key=").append(sort.getKey()).append(
-                    ", direction=").append(sort.getValue().name()).append("]");
+            stringBuilder.append("[key=").append(sort.getKey()).append(", direction=").append(sort.getValue().name()).append("]");
 
             if (iterator.hasNext()) {
                 stringBuilder.append(", ");

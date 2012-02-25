@@ -33,8 +33,7 @@ public final class TextXMLRenderer extends AbstractHTTPResponseRenderer {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(TextXMLRenderer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TextXMLRenderer.class.getName());
     /**
      * Content to render.
      */
