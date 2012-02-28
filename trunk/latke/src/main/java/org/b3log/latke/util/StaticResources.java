@@ -79,7 +79,6 @@ public final class StaticResources {
         final Iterator<String> iterator = STATIC_RESOURCE_PATHS.iterator();
         while (iterator.hasNext()) {
             final String pattern = iterator.next();
-            LOGGER.log(Level.INFO, "    {0},", pattern);
             logBuilder.append("    ").append(pattern);
             if (iterator.hasNext()) {
                 logBuilder.append(',');
