@@ -115,8 +115,7 @@ public final class Requests {
      * @return {@code true} if the specified request comes from a search 
      * engine bot, returns {@code false} otherwise
      */
-    public static boolean searchEngineBotRequest(
-            final HttpServletRequest request) {
+    public static boolean searchEngineBotRequest(final HttpServletRequest request) {
         final String userAgent = request.getHeader("User-Agent");
 
         if (Strings.isEmptyOrNull(userAgent)) {
@@ -165,8 +164,7 @@ public final class Requests {
         final Integer windowSize = getWindowSize(path);
 
         final JSONObject ret = new JSONObject();
-        ret.put(Pagination.PAGINATION_CURRENT_PAGE_NUM,
-                currentPageNum);
+        ret.put(Pagination.PAGINATION_CURRENT_PAGE_NUM, currentPageNum);
         ret.put(Pagination.PAGINATION_PAGE_SIZE, pageSize);
         ret.put(Pagination.PAGINATION_WINDOW_SIZE, windowSize);
 

@@ -26,7 +26,9 @@ import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeDatabase;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.cache.Cache;
+import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.jdbc.JDBCRepositoryException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -128,8 +130,7 @@ public abstract class AbstractRepository implements Repository {
     }
 
     @Override
-    public Map<String, JSONObject> get(final Iterable<String> ids)
-            throws RepositoryException {
+    public Map<String, JSONObject> get(final Iterable<String> ids) throws RepositoryException {
         return repository.get(ids);
     }
 
@@ -140,12 +141,25 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public JSONObject get(final Query query) throws RepositoryException {
-        return repository.get(query);
+        try {
+            return repository.get(query);
+        } catch (final JDBCRepositoryException e) {
+            LOGGER.log(Level.WARNING, "SQL exception[msg={0}]", e.getMessage());
+
+            // XXX: Results.defaultPagination?
+            final JSONObject ret = new JSONObject();
+            final JSONObject pagination = new JSONObject();
+            ret.put(Pagination.PAGINATION, pagination);
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, 0);
+            final JSONArray results = new JSONArray();
+            ret.put(Keys.RESULTS, results);
+
+            return ret;
+        }
     }
 
     @Override
-    public List<JSONObject> getRandomly(final int fetchSize)
-            throws RepositoryException {
+    public List<JSONObject> getRandomly(final int fetchSize) throws RepositoryException {
         return repository.getRandomly(fetchSize);
     }
 
