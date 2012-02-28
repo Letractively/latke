@@ -367,7 +367,6 @@ public class JdbcRepository implements Repository {
 
     @Override
     public JSONObject get(final String id) throws RepositoryException {
-
         final StringBuffer sql = new StringBuffer();
         final Connection connection = getConnection();
         JSONObject jsonObject = null;
@@ -376,8 +375,10 @@ public class JdbcRepository implements Repository {
             get(sql);
             final ArrayList<Object> paramList = new ArrayList<Object>();
             paramList.add(id);
-            jsonObject = JdbcUtil.queryJsonObject(sql.toString(),
-                                                  paramList, connection, getName());
+            jsonObject = JdbcUtil.queryJsonObject(sql.toString(), paramList, connection, getName());
+        } catch (final SQLException e) {
+            LOGGER.log(Level.SEVERE, "Gets SQL exception");
+            throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
             throw new RepositoryException(e);
@@ -386,7 +387,6 @@ public class JdbcRepository implements Repository {
         closeQueryConnection(connection);
 
         return jsonObject;
-
     }
 
     /**

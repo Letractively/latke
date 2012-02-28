@@ -19,12 +19,14 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeDatabase;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.cache.Cache;
+import org.b3log.latke.repository.jdbc.JDBCRepositoryException;
 import org.json.JSONObject;
 
 /**
@@ -38,7 +40,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jan 7, 2012
+ * @version 1.0.0.7, Feb 28, 2012
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -117,7 +119,12 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public JSONObject get(final String id) throws RepositoryException {
-        return repository.get(id);
+        try {
+            return repository.get(id);
+        } catch (final JDBCRepositoryException e) {
+            LOGGER.log(Level.WARNING, "SQL exception[msg={0}]", e.getMessage());
+            return null;
+        }
     }
 
     @Override
