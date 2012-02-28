@@ -401,21 +401,13 @@ public class JdbcRepository implements Repository {
     }
 
     @Override
-    public Map<String, JSONObject> get(final Iterable<String> ids)
-            throws RepositoryException {
-
+    public Map<String, JSONObject> get(final Iterable<String> ids) throws RepositoryException {
         final Map<String, JSONObject> map = new HashMap<String, JSONObject>();
-
         JSONObject jsonObject = null;
 
-        try {
-            for (String id : ids) {
-                jsonObject = get(id);
-                map.put(jsonObject.getString(JdbcRepositories.OID), jsonObject);
-            }
-        } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, "get ids :" + e.getMessage(), e);
-            throw new RepositoryException(e);
+        for (final String id : ids) {
+            jsonObject = get(id);
+            map.put(jsonObject.optString(JdbcRepositories.OID), jsonObject);
         }
 
         return map;
@@ -423,22 +415,15 @@ public class JdbcRepository implements Repository {
 
     @Override
     public boolean has(final String id) throws RepositoryException {
-
         final StringBuffer sql = new StringBuffer("select count("
                                                   + JdbcRepositories.OID + ") from ").append(getName()).append(" where ").append(
                 JdbcRepositories.OID).append("=").append(id);
 
-        if (count(sql, new ArrayList<Object>()) > 0) {
-
-            return true;
-        }
-
-        return false;
+        return count(sql, new ArrayList<Object>()) > 0;
     }
 
     @Override
     public JSONObject get(final Query query) throws RepositoryException {
-
         final int currentPageNum = query.getCurrentPageNum();
         final List<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
@@ -470,6 +455,9 @@ public class JdbcRepository implements Repository {
             pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCnt);
             jsonObject.put(Pagination.PAGINATION, pagination);
 
+        } catch (final SQLException e) {
+            LOGGER.log(Level.SEVERE, "Gets SQL exception");
+            throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "query :" + e.getMessage(), e);
             throw new RepositoryException(e);
