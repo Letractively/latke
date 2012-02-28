@@ -34,13 +34,14 @@ import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
+import org.b3log.latke.util.StaticResources;
 import org.b3log.latke.util.Stopwatchs;
 
 /**
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Feb 24, 2012
+ * @version 1.0.1.5, Feb 27, 2012
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -105,18 +106,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         final String requestURI = request.getRequestURI();
 
-        if (requestURI.startsWith("/css/")
-            || requestURI.startsWith("/images/")
-            || requestURI.startsWith("/js/")
-            || requestURI.startsWith("/skins/")
-            || requestURI.startsWith("/plugins/")
-            || requestURI.endsWith(".png")
-            || requestURI.endsWith(".ico")
-            || requestURI.endsWith(".txt")
-            || requestURI.equals("/403.html")) {
-            // TODO: 1. Reads these from appengine-web.xml?
-            //       2. Etag/Expires/Last-Modified/Cache-Control
-            //       3. Content-Encoding, etc headers
+        if (StaticResources.isStatic(requestURI)) {
+            // TODO: 1. Etag/Expires/Last-Modified/Cache-Control
+            //       2. Content-Encoding, etc headers
             final InputStream staticResourceInputStream = getServletContext().getResourceAsStream(requestURI);
             if (null == staticResourceInputStream) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
