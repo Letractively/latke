@@ -377,7 +377,7 @@ public class JdbcRepository implements Repository {
             paramList.add(id);
             jsonObject = JdbcUtil.queryJsonObject(sql.toString(), paramList, connection, getName());
         } catch (final SQLException e) {
-            LOGGER.log(Level.SEVERE, "Gets SQL exception");
+            LOGGER.log(Level.WARNING, "Gets SQL exception");
             throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
@@ -456,7 +456,7 @@ public class JdbcRepository implements Repository {
             jsonObject.put(Pagination.PAGINATION, pagination);
 
         } catch (final SQLException e) {
-            LOGGER.log(Level.SEVERE, "Gets SQL exception");
+            LOGGER.log(Level.WARNING, "Gets SQL exception");
             throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "query :" + e.getMessage(), e);
