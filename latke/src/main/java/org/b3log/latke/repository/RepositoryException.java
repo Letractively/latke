@@ -19,9 +19,9 @@ package org.b3log.latke.repository;
  * Repository exception.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Jul 21, 2010
+ * @version 1.0.0.1, Feb 28, 2012
  */
-public final class RepositoryException extends Exception {
+public class RepositoryException extends Exception {
     
     /**
      * Default serial version uid.
