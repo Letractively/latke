@@ -54,11 +54,14 @@ public class JdbcRepositoryTestCase {
      * jdbcRepository.
      */
     private JdbcRepository jdbcRepository = new JdbcRepository("basetable");
-
     /**
      * if the datebase environment is wrong,do not run all the other test.
      */
     private boolean ifRun = true;
+
+    static {
+        Latkes.initRuntimeEnv();
+    }
 
     /**
      * test JsonData.
@@ -74,16 +77,15 @@ public class JdbcRepositoryTestCase {
         jsonObject.put("col3", "1.4");
         jsonObject.put("col4", false);
 
-        final Object[][] ret = new Object[][] {{jsonObject } };
+        final Object[][] ret = new Object[][]{{jsonObject}};
         return ret;
     }
 
     /**
      * createTestTable.
      */
-    @BeforeGroups(groups = {"jdbc" })
+    @BeforeGroups(groups = {"jdbc"})
     public void createTestTable() {
-
         final StringBuffer createTableSql = new StringBuffer();
 
         createTableSql.append("   CREATE TABLE IF NOT EXISTS basetable");
@@ -108,7 +110,7 @@ public class JdbcRepositoryTestCase {
             ifRun = false;
             System.out.println("skip JdbcRepositoryTestCase test");
         }
-        
+
         final Map<String, List<FieldDefinition>> map = new HashMap<String, List<FieldDefinition>>();
         final List<FieldDefinition> dList = new ArrayList<FieldDefinition>();
 
@@ -137,7 +139,7 @@ public class JdbcRepositoryTestCase {
         definition.setName("col4");
         definition.setType("boolean");
         dList.add(definition);
-        
+
         map.put("basetable", dList);
         JdbcRepositories.setRepositoriesMap(map);
 
@@ -149,7 +151,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void add(final JSONObject jsonObject) throws Exception {
 
         if (!ifRun) {
@@ -160,8 +162,7 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.add(jsonObject);
         transaction.commit();
 
-        final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject
-                .getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
         assertNotNull(jsonObjectDb);
 
     }
@@ -171,7 +172,7 @@ public class JdbcRepositoryTestCase {
      * 
      * @param jsonObject jsonObject
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void update(final JSONObject jsonObject) {
 
         if (!ifRun) {
@@ -184,11 +185,11 @@ public class JdbcRepositoryTestCase {
             jdbcRepository.add(jsonObject);
 
             jsonObject.put("col2",
-                    "=================bbbb========================");
+                           "=================bbbb========================");
             jsonObject.put("col4", true);
 
             jdbcRepository.update(jsonObject.getString(JdbcRepositories.OID),
-                    jsonObject);
+                                  jsonObject);
             transaction.commit();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -202,7 +203,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void remove(final JSONObject jsonObject) throws Exception {
 
         if (!ifRun) {
@@ -214,8 +215,7 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.remove(jsonObject.getString(JdbcRepositories.OID));
         transaction.commit();
 
-        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject
-                .getString(JdbcRepositories.OID));
+        final JSONObject jsonObjectDB = jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
 
         assertNull(jsonObjectDB);
 
@@ -227,7 +227,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void hasAndCount(final JSONObject jsonObject) throws Exception {
 
         if (!ifRun) {
@@ -240,8 +240,7 @@ public class JdbcRepositoryTestCase {
         jdbcRepository.add(jsonObject);
         transaction.commit();
 
-        assertTrue(jdbcRepository.has(jsonObject
-                .getString(JdbcRepositories.OID)));
+        assertTrue(jdbcRepository.has(jsonObject.getString(JdbcRepositories.OID)));
 
         final long nCount = jdbcRepository.count();
         assertTrue(nCount > oCount);
@@ -251,7 +250,7 @@ public class JdbcRepositoryTestCase {
     /**
      * base query test.
      */
-    @Test(groups = {"jdbc" })
+    @Test(groups = {"jdbc"})
     public void queryTest() {
 
         if (!ifRun) {
@@ -262,7 +261,7 @@ public class JdbcRepositoryTestCase {
         query.addFilter("col1", FilterOperator.EQUAL, new Integer("1"));
         query.addFilter("col1", FilterOperator.GREATER_THAN, new Integer("1"));
         query.addFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL,
-                new Integer("1"));
+                        new Integer("1"));
         query.addFilter("col1", FilterOperator.LESS_THAN, new Integer("1"));
         query.addFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer(
                 "1"));
@@ -287,7 +286,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void queryPageTest(final JSONObject jsonObject) throws Exception {
 
         if (!ifRun) {
@@ -314,6 +313,4 @@ public class JdbcRepositoryTestCase {
         assertEquals(ret.getJSONArray(Keys.RESULTS).length(), eCount);
 
     }
-
-
 }
