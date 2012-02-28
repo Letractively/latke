@@ -16,13 +16,13 @@
 package org.b3log.latke.util;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.servlet.AbstractServletListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,13 +41,13 @@ public final class StaticResources {
      */
     private static final Logger LOGGER = Logger.getLogger(StaticResources.class.getName());
     /**
-     * Static resource postfix.
+     * Static resource path patterns.
      * 
      * <p>
      * Initializes from  file appengine-web.xml.
      * </p>
      */
-    private static final Set<String> STATIC_RESOURCE_POSTFIX = new HashSet<String>();
+    private static final Set<String> STATIC_RESOURCE_PATHS = new TreeSet<String>();
 
     static {
         final String webRoot = AbstractServletListener.getWebRoot();
@@ -67,17 +67,28 @@ public final class StaticResources {
             for (int i = 0; i < includes.getLength(); i++) {
                 final Element include = (Element) includes.item(i);
                 final String path = include.getAttribute("path");
-                LOGGER.log(Level.CONFIG, "path=[{0}]", path);
-                final String postfix = StringUtils.substringAfterLast(path, ".");
-
-                STATIC_RESOURCE_POSTFIX.add(postfix);
+                LOGGER.log(Level.CONFIG, "path pattern=[{0}]", path);
+                STATIC_RESOURCE_PATHS.add(path);
             }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "Reads appengine-web.xml failed", e);
             throw new RuntimeException(e);
         }
 
-        LOGGER.log(Level.INFO, "Static files: {0}", STATIC_RESOURCE_POSTFIX);
+        final StringBuilder logBuilder = new StringBuilder("Static files: [").append(Strings.LINE_SEPARATOR);
+        final Iterator<String> iterator = STATIC_RESOURCE_PATHS.iterator();
+        while (iterator.hasNext()) {
+            final String pattern = iterator.next();
+            LOGGER.log(Level.INFO, "    {0},", pattern);
+            logBuilder.append("    ").append(pattern);
+            if (iterator.hasNext()) {
+                logBuilder.append(',');
+            }
+            logBuilder.append(Strings.LINE_SEPARATOR);
+        }
+        logBuilder.append("], ").append('[').append(STATIC_RESOURCE_PATHS.size()).append("] path patterns");
+
+        LOGGER.log(Level.INFO, logBuilder.toString());
     }
 
     /**
@@ -88,9 +99,13 @@ public final class StaticResources {
      * resource, returns {@code false} otherwise
      */
     public static boolean isStatic(final String requestURI) {
-        final String requestURIPostfix = StringUtils.substringAfterLast(requestURI, ".");
+        for (final String pattern : STATIC_RESOURCE_PATHS) {
+            if (AntPathMatcher.match(pattern, requestURI)) {
+                return true;
+            }
+        }
 
-        return STATIC_RESOURCE_POSTFIX.contains(requestURIPostfix);
+        return false;
     }
 
     /**

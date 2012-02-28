@@ -31,7 +31,9 @@ public class StaticResourcesTestCase {
      */
     @Test
     public void isStatic() {
-        Assert.assertTrue(StaticResources.isStatic("/test.css"));
+        Assert.assertTrue(StaticResources.isStatic("/css/test.css"));
+        Assert.assertTrue(StaticResources.isStatic("/images/test.jpg"));
         Assert.assertFalse(StaticResources.isStatic("/test.notExist"));
+        Assert.assertFalse(StaticResources.isStatic("/images/test"));
     }
 }
