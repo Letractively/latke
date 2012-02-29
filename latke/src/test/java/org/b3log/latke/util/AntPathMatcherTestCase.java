@@ -15,27 +15,26 @@
  */
 package org.b3log.latke.util;
 
-import org.testng.Assert;
+import junit.framework.Assert;
 import org.testng.annotations.Test;
 
 /**
- * {@link StaticResources} test case.
+ * {@link AntPathMatcher} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Feb 29, 2012
+ * @version 1.0.0.0, Feb 29, 2012
  */
-public class StaticResourcesTestCase {
-
+// 
+public final class AntPathMatcherTestCase {
+    
     /**
-     * Tests method {@link StaticResources#isStatic(java.lang.String)}.
+     * Tests method {@link AntPathMatcher#match(java.lang.String, java.lang.String)}.
      */
     @Test
-    public void isStatic() {
-        Assert.assertTrue(StaticResources.isStatic("/css/test.css"));
-        Assert.assertTrue(StaticResources.isStatic("/images/test.jpg"));
-        Assert.assertTrue(StaticResources.isStatic("/js/lib/jquery/jquery.min.js"));
-
-        Assert.assertFalse(StaticResources.isStatic("/test.notExist"));
-        Assert.assertFalse(StaticResources.isStatic("/images/test"));
+    public void match() {
+        Assert.assertTrue(AntPathMatcher.match("/js/**/*.js", "/js/lib/jquery/jquery.min.js"));
+        Assert.assertTrue(AntPathMatcher.match("/js/**/**.js", "/js/lib/jquery/jquery.min.js"));
+        
+        Assert.assertFalse(AntPathMatcher.match("/js/**.js", "/js/lib/jquery/jquery.min.js"));
     }
 }
