@@ -17,10 +17,10 @@ package org.b3log.latke.repository.jdbc;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.repository.jdbc.mapping.BooleanMapping;
 import org.b3log.latke.repository.jdbc.mapping.IntMapping;
+import org.b3log.latke.repository.jdbc.mapping.LongMapping;
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.mapping.NumberMapping;
 import org.b3log.latke.repository.jdbc.mapping.StringMapping;
@@ -40,10 +40,9 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     public DefaultJdbcDatabaseSolution() {
         registerType("int", new IntMapping());
         registerType("boolean", new BooleanMapping());
-        registerType("long", new IntMapping());
+        registerType("long", new LongMapping());
         registerType("double", new NumberMapping());
         registerType("String", new StringMapping());
-
     }
 
     @Override
@@ -83,37 +82,29 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    protected void createTableBody(final StringBuffer createTableSql,
-                                   final List<FieldDefinition> fieldDefinitions) {
-
+    protected void createTableBody(final StringBuffer createTableSql, final List<FieldDefinition> fieldDefinitions) {
         final List<FieldDefinition> keyDefinitionList = new ArrayList<FieldDefinition>();
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
 
             final String type = fieldDefinition.getType();
             if (type == null) {
-                throw new RuntimeException(
-                        "the type of fieldDefinitions should not be null");
+                throw new RuntimeException("the type of fieldDefinitions should not be null");
             }
             final Mapping mapping = getJdbcTypeMapping().get(type);
             if (mapping != null) {
-
                 createTableSql.append(mapping.toDataBaseSting(fieldDefinition)).append(",   ");
 
                 if (fieldDefinition.getIsKey()) {
                     keyDefinitionList.add(fieldDefinition);
                 }
             } else {
-
-                throw new RuntimeException("the type["
-                                           + fieldDefinition.getType()
-                                           + "] is not register for mapping ");
+                throw new RuntimeException("the type[" + fieldDefinition.getType() + "] is not register for mapping ");
             }
 
         }
 
         if (keyDefinitionList.size() < 0) {
             throw new RuntimeException("no key talbe is not allow");
-
         } else {
             createTableSql.append(createKeyDefinition(keyDefinitionList));
         }

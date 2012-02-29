@@ -34,7 +34,7 @@ public class FieldDefinition {
     private String type;
 
     /**
-     * the legnth of the type.
+     * the length of the type.
      */
     private Integer length;
 
@@ -44,7 +44,7 @@ public class FieldDefinition {
     private Boolean isKey;
 
     /**
-     * if nullable.
+     * if null-able.
      */
     private Boolean nullable = true;
 
