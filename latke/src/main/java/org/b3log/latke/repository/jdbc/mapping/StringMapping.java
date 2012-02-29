@@ -27,7 +27,6 @@ public class StringMapping implements Mapping {
 
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
-
         final StringBuffer sql = new StringBuffer();
         sql.append(definition.getName());
 
@@ -38,19 +37,14 @@ public class StringMapping implements Mapping {
         if (definition.getLength() > new Integer("255")) {
             sql.append(" text");
         } else {
-
-            sql.append(" varchar(").append(
-                    definition.getLength() < 1 ? new Integer("100")
-                            : definition.getLength());
+            sql.append(" varchar(").append(definition.getLength() < 1 ? new Integer("100") : definition.getLength());
             sql.append(")");
 
-            if (definition.getNullable()) {
+            if (!definition.getNullable()) {
                 sql.append(" not null");
-
             }
-
         }
+
         return sql.toString();
     }
-
 }

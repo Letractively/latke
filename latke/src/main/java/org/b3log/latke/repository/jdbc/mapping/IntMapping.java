@@ -31,7 +31,7 @@ public class IntMapping implements Mapping {
         final StringBuffer sql = new StringBuffer();
         sql.append(definition.getName());
         sql.append(" int");
-        if (definition.getNullable()) {
+        if (!definition.getNullable()) {
             sql.append(" not null");
         }
 
