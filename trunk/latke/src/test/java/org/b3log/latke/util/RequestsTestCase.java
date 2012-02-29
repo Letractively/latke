@@ -34,13 +34,12 @@ public class RequestsTestCase {
     public void searchEngineBotRequest() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        request.setHeader("User-Agent",
-                          "compatible; Googlebot/2.1; +http://www.google.com/bot.html");
+        request.setHeader("User-Agent", "compatible; Googlebot/2.1; +http://www.google.com/bot.html");
         Assert.assertTrue(Requests.searchEngineBotRequest(request));
 
         request.setHeader("User-Agent", "bingbot");
         Assert.assertTrue(Requests.searchEngineBotRequest(request));
-        
+
         request.setHeader("User-Agent", "not search engine");
         Assert.assertFalse(Requests.searchEngineBotRequest(request));
     }
