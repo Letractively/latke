@@ -104,20 +104,15 @@ public final class JdbcRepositories {
      * @return Map<String, List<FieldDefinition>>
      */
     public static Map<String, List<FieldDefinition>> getRepositoriesMap() {
-
         if (repositoriesMap == null) {
-
             try {
                 initRepositoriesMap();
             } catch (final Exception e) {
-
-                LOGGER.log(Level.SEVERE,
-                           "initRepositoriesMap mistake " + e.getMessage(), e);
+                LOGGER.log(Level.SEVERE, "initRepositoriesMap mistake " + e.getMessage(), e);
             }
         }
 
         return repositoriesMap;
-
     }
 
     /**
@@ -126,19 +121,14 @@ public final class JdbcRepositories {
      * @throws JSONException JSONException
      * @throws RepositoryException RepositoryException
      */
-    private static void initRepositoriesMap() throws JSONException,
-                                                     RepositoryException {
-
+    private static void initRepositoriesMap() throws JSONException, RepositoryException {
         final JSONObject jsonObject = Repositories.getRepositoriesDescription();
-
         if (jsonObject == null) {
-
             LOGGER.warning("the repository description[repository.json] miss");
             return;
         }
 
         jsonToRepositoriesMap(jsonObject);
-
     }
 
     /**
@@ -147,9 +137,7 @@ public final class JdbcRepositories {
      * @param jsonObject json Model
      * @throws JSONException JSONException
      */
-    private static void jsonToRepositoriesMap(final JSONObject jsonObject)
-            throws JSONException {
-
+    private static void jsonToRepositoriesMap(final JSONObject jsonObject) throws JSONException {
         repositoriesMap = new HashMap<String, List<FieldDefinition>>();
 
         final JSONArray repositoritArray = jsonObject.getJSONArray(REPOSITORIES);
@@ -158,7 +146,6 @@ public final class JdbcRepositories {
         JSONObject fieldDefinitionObject = null;
 
         for (int i = 0; i < repositoritArray.length(); i++) {
-
             repositoritObject = repositoritArray.getJSONObject(i);
             final String repositoryName = repositoritObject.getString(NAME);
 
@@ -173,9 +160,7 @@ public final class JdbcRepositories {
                 definition = fillFieldDefinitionData(fieldDefinitionObject);
                 fieldDefinitions.add(definition);
             }
-
         }
-
     }
 
     /**
@@ -185,9 +170,7 @@ public final class JdbcRepositories {
      * @return {@link FieldDefinition}
      * @throws JSONException JSONException
      */
-    private static FieldDefinition fillFieldDefinitionData(
-            final JSONObject fieldDefinitionObject) throws JSONException {
-
+    private static FieldDefinition fillFieldDefinitionData(final JSONObject fieldDefinitionObject) throws JSONException {
         final FieldDefinition fieldDefinition = new FieldDefinition();
         fieldDefinition.setName(fieldDefinitionObject.getString(NAME));
 
@@ -203,8 +186,7 @@ public final class JdbcRepositories {
         //        }
 
         fieldDefinition.setType(fieldDefinitionObject.getString(TYPE));
-        fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE,
-                                                                     false));
+        fieldDefinition.setNullable(fieldDefinitionObject.optBoolean(NULLABLE));
         fieldDefinition.setLength(fieldDefinitionObject.optInt(LENGTH));
         fieldDefinition.setIsKey(fieldDefinitionObject.optBoolean(ISKEY));
 
