@@ -24,18 +24,20 @@ import org.b3log.latke.repository.jdbc.mapping.LongMapping;
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.mapping.NumberMapping;
 import org.b3log.latke.repository.jdbc.mapping.StringMapping;
+import org.b3log.latke.repository.jdbc.mapping.DateMapping;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
 /**
  * DefaultJdbcDatabaseSolution,for extend .
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Jan 12, 2012
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Feb 29, 2012
  */
 public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     /**
-     * public constructor.
+     * Public constructor.
      */
     public DefaultJdbcDatabaseSolution() {
         registerType("int", new IntMapping());
@@ -43,6 +45,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
         registerType("long", new LongMapping());
         registerType("double", new NumberMapping());
         registerType("String", new StringMapping());
+        registerType("Date", new DateMapping());
     }
 
     @Override

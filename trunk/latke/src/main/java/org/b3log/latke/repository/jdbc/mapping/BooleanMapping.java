@@ -31,7 +31,7 @@ public class BooleanMapping implements Mapping {
         final StringBuffer sql = new StringBuffer();
         sql.append(definition.getName());
         sql.append(" char(1)");
-        if (definition.getNullable()) {
+        if (!definition.getNullable()) {
             sql.append(" not null");
 
         }

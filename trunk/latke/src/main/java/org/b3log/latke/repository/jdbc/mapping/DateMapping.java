@@ -18,25 +18,25 @@ package org.b3log.latke.repository.jdbc.mapping;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
 /**
- * NumberMapping.
+ * Date type mapping.
  * 
- * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Jan 12, 2012
+ * <p>
+ * Maps Java {@link java.util.Date} type to SQL DATETIME type.
+ * </p>
+ * 
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.0, Feb 29, 2012
  */
-public class NumberMapping implements Mapping {
+public final class DateMapping implements Mapping {
 
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
+        final StringBuilder builder = new StringBuilder(definition.getName()).append(" datetime");
 
-        final StringBuffer sql = new StringBuffer();
-        sql.append(definition.getName());
-        sql.append("  double ");
         if (!definition.getNullable()) {
-            sql.append(" not null");
+            builder.append(" not null");
         }
 
-        return sql.toString();
-
+        return builder.toString();
     }
-
 }
