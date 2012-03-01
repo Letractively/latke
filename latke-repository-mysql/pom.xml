@@ -22,6 +22,10 @@
         <org.b3log.latke.version>0.5.0-SNAPSHOT</org.b3log.latke.version>
         <!-- JDBC Drivers -->
         <mysql-connector-java.version>5.1.18</mysql-connector-java.version>
+        <!-- JDBC Connection Pool -->
+        <bonecp.version>0.7.1.RELEASE</bonecp.version>
+        <!-- Logging -->
+        <slf4j.version>1.5.10</slf4j.version>
         <!-- Maven Plugin -->
         <maven-license-plugin.version>1.9.0</maven-license-plugin.version>
         <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
@@ -136,6 +140,19 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>com.jolbox</groupId>
+                <artifactId>bonecp</artifactId>
+                <version>${bonecp.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 
@@ -155,6 +172,16 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
         </dependency>
 
     </dependencies>
