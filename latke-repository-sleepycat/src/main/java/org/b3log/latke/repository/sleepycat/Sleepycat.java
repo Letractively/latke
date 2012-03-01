@@ -42,8 +42,7 @@ public final class Sleepycat {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(Sleepycat.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Sleepycat.class.getName());
     /**
      * Default environment configurations. Set the following options explicitly: 
      * <ul>
@@ -60,8 +59,7 @@ public final class Sleepycat {
     /**
      * Database cache.
      */
-    private static final Map<String, Set<SleepycatDatabase>> DATABASES =
-            new HashMap<String, Set<SleepycatDatabase>>();
+    private static final Map<String, Set<SleepycatDatabase>> DATABASES = new HashMap<String, Set<SleepycatDatabase>>();
     /**
      * Default database configurations. Set the following options explicitly:
      * <ul>
@@ -77,8 +75,7 @@ public final class Sleepycat {
      *   <li>readCommitted=true</li>
      * </ul>
      */
-    public static final TransactionConfig DEFAULT_TXN_CONFIG = 
-            new TransactionConfig();
+    public static final TransactionConfig DEFAULT_TXN_CONFIG = new TransactionConfig();
     /**
      * Environment path.
      */
@@ -88,24 +85,19 @@ public final class Sleepycat {
         try {
             ENV_PATH = Latkes.getRepositoryPath();
 
-            final long txnTimeout = Long.valueOf(
-                    Latkes.getLocalProps().getProperty("je.txn.timeout"));
-            final long lockTimeout = Long.valueOf(
-                    Latkes.getLocalProps().getProperty("je.lock.timeout"));
+            final long txnTimeout = Long.valueOf(Latkes.getLocalProperty("je.txn.timeout"));
+            final long lockTimeout = Long.valueOf(Latkes.getLocalProperty("je.lock.timeout"));
 
             DEFAULT_ENV_CONFIG.setAllowCreate(true).
                     setTransactional(true).
-                    setTxnTimeout(txnTimeout,
-                                  TimeUnit.MILLISECONDS).setLockTimeout(
+                    setTxnTimeout(txnTimeout, TimeUnit.MILLISECONDS).setLockTimeout(
                     lockTimeout, TimeUnit.MILLISECONDS);
-            
+
             DEFAULT_TXN_CONFIG.setReadCommitted(true);
 
-            ENV = new Environment(new File(ENV_PATH),
-                                  DEFAULT_ENV_CONFIG);
+            ENV = new Environment(new File(ENV_PATH), DEFAULT_ENV_CONFIG);
 
-            DEFAULT_DB_CONFIG.setAllowCreate(true).
-                    setTransactional(true);
+            DEFAULT_DB_CONFIG.setAllowCreate(true).setTransactional(true);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException(e);
@@ -122,8 +114,7 @@ public final class Sleepycat {
      * and returns a new database with the specified repository name and
      * database configuration
      */
-    public static synchronized Database get(final String repositoryName,
-                                            final DatabaseConfig databaseConfig) {
+    public static synchronized Database get(final String repositoryName, final DatabaseConfig databaseConfig) {
         if (DATABASES.containsKey(repositoryName)) {
             final Set<SleepycatDatabase> sleepycatDatabases = DATABASES.get(
                     repositoryName);
@@ -134,14 +125,10 @@ public final class Sleepycat {
             }
         }
 
-        final Database ret = ENV.openDatabase(null,
-                                              repositoryName,
-                                              databaseConfig);
-        LOGGER.log(Level.INFO, "Created database[repositoryName={0}]",
-                   repositoryName);
+        final Database ret = ENV.openDatabase(null, repositoryName, databaseConfig);
+        LOGGER.log(Level.INFO, "Created database[repositoryName={0}]", repositoryName);
 
-        final Set<SleepycatDatabase> sleepycatDatabases =
-                new HashSet<SleepycatDatabase>();
+        final Set<SleepycatDatabase> sleepycatDatabases = new HashSet<SleepycatDatabase>();
         sleepycatDatabases.add(new SleepycatDatabase(ret, databaseConfig));
         DATABASES.put(repositoryName, sleepycatDatabases);
 
@@ -157,8 +144,7 @@ public final class Sleepycat {
             for (final SleepycatDatabase sleepycatDatabase : sleepycatDatabases) {
                 final Database database = sleepycatDatabase.getDatabase();
                 database.close();
-                LOGGER.log(Level.INFO, "Closed database[name={0}]",
-                           entry.getKey());
+                LOGGER.log(Level.INFO, "Closed database[name={0}]", entry.getKey());
             }
         }
 
@@ -199,8 +185,7 @@ final class SleepycatDatabase {
      * @param database database
      * @param databaseConfig database configuration
      */
-    SleepycatDatabase(final Database database,
-                      final DatabaseConfig databaseConfig) {
+    SleepycatDatabase(final Database database, final DatabaseConfig databaseConfig) {
         this.database = database;
         this.databaseConfig = databaseConfig;
     }
