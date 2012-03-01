@@ -166,8 +166,7 @@ public final class GAERepository implements Repository {
                                        + "using GAE repository.");
         }
 
-        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
-                REPOSITORY_CACHE_NAME);
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(REPOSITORY_CACHE_NAME);
 
         // TODO: Intializes the runtime mode at application startup
         LOGGER.info("Initializing runtime mode....");
@@ -785,16 +784,13 @@ public final class GAERepository implements Repository {
      * @param jsonObject the specified json object
      * @throws JSONException json exception
      */
-    public static void setProperties(final Entity entity, final JSONObject jsonObject)
-            throws JSONException {
-        @SuppressWarnings("unchecked")
+    public static void setProperties(final Entity entity, final JSONObject jsonObject) throws JSONException {
         final Iterator<String> keys = jsonObject.keys();
         while (keys.hasNext()) {
             final String key = keys.next();
             final Object value = jsonObject.get(key);
 
-            if (!GAE_SUPPORTED_TYPES.contains(value.getClass())
-                && !(value instanceof Blob)) {
+            if (!GAE_SUPPORTED_TYPES.contains(value.getClass()) && !(value instanceof Blob)) {
                 throw new RuntimeException("Unsupported type[class=" + value.getClass().getName() + "] in Latke GAE repository");
             }
 
@@ -802,7 +798,6 @@ public final class GAERepository implements Repository {
                 final String valueString = (String) value;
                 if (valueString.length() > DataTypeUtils.MAX_STRING_PROPERTY_LENGTH) {
                     final Text text = new Text(valueString);
-
                     entity.setProperty(key, text);
                 } else {
                     entity.setProperty(key, value);
@@ -850,8 +845,7 @@ public final class GAERepository implements Repository {
                            final int currentPageNum,
                            final int pageSize,
                            final int pageCount,
-                           final String cacheKey)
-            throws RepositoryException {
+                           final String cacheKey) throws RepositoryException {
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
         int pageCnt = pageCount;
