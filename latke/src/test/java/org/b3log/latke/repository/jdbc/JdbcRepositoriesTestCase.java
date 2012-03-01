@@ -39,22 +39,17 @@ public class JdbcRepositoriesTestCase {
     @Test
     public void jsonToModel() {
         Latkes.initRuntimeEnv();
-        final Map<String, List<FieldDefinition>> map = JdbcRepositories
-                .getRepositoriesMap();
+        final Map<String, List<FieldDefinition>> map = JdbcRepositories.getRepositoriesMap();
 
         assertNotNull(map);
-
     }
 
     /**
      * jsonToDB.
      */
-    @Test(groups = {"jdbc" })
+    @Test(groups = {"jdbc"})
     public void jsonToDB() {
-
         Latkes.initRuntimeEnv();
         //JdbcRepositories.initAllTables();
-
     }
-
 }

@@ -55,7 +55,7 @@ public class JdbcRepositoryTestCase {
      */
     private JdbcRepository jdbcRepository = new JdbcRepository("basetable");
     /**
-     * if the datebase environment is wrong,do not run all the other test.
+     * if the database environment is wrong,do not run all the other test.
      */
     private boolean ifRun = true;
 
@@ -73,7 +73,7 @@ public class JdbcRepositoryTestCase {
 
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put("col1", new Integer("100"));
-        jsonObject.put("col2", "======aaaaaaaaaaaaaaaaaaaaaaaaaaaaa=======");
+        jsonObject.put("col2", "a测试中文a");
         jsonObject.put("col3", "1.4");
         jsonObject.put("col4", false);
 
@@ -142,7 +142,6 @@ public class JdbcRepositoryTestCase {
 
         map.put("basetable", dList);
         JdbcRepositories.setRepositoriesMap(map);
-
     }
 
     /**
@@ -153,7 +152,6 @@ public class JdbcRepositoryTestCase {
      */
     @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void add(final JSONObject jsonObject) throws Exception {
-
         if (!ifRun) {
             return;
         }
@@ -164,7 +162,6 @@ public class JdbcRepositoryTestCase {
 
         final JSONObject jsonObjectDb = jdbcRepository.get(jsonObject.getString(JdbcRepositories.OID));
         assertNotNull(jsonObjectDb);
-
     }
 
     /**
@@ -174,7 +171,6 @@ public class JdbcRepositoryTestCase {
      */
     @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void update(final JSONObject jsonObject) {
-
         if (!ifRun) {
             return;
         }
@@ -184,17 +180,14 @@ public class JdbcRepositoryTestCase {
             final Transaction transaction = jdbcRepository.beginTransaction();
             jdbcRepository.add(jsonObject);
 
-            jsonObject.put("col2",
-                           "=================bbbb========================");
+            jsonObject.put("col2", "=================bbbb========================");
             jsonObject.put("col4", true);
 
-            jdbcRepository.update(jsonObject.getString(JdbcRepositories.OID),
-                                  jsonObject);
+            jdbcRepository.update(jsonObject.getString(JdbcRepositories.OID), jsonObject);
             transaction.commit();
         } catch (final Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -205,7 +198,6 @@ public class JdbcRepositoryTestCase {
      */
     @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void remove(final JSONObject jsonObject) throws Exception {
-
         if (!ifRun) {
             return;
         }
@@ -229,7 +221,6 @@ public class JdbcRepositoryTestCase {
      */
     @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void hasAndCount(final JSONObject jsonObject) throws Exception {
-
         if (!ifRun) {
             return;
         }
@@ -252,7 +243,6 @@ public class JdbcRepositoryTestCase {
      */
     @Test(groups = {"jdbc"})
     public void queryTest() {
-
         if (!ifRun) {
             return;
         }
@@ -260,11 +250,9 @@ public class JdbcRepositoryTestCase {
         final Query query = new Query();
         query.addFilter("col1", FilterOperator.EQUAL, new Integer("1"));
         query.addFilter("col1", FilterOperator.GREATER_THAN, new Integer("1"));
-        query.addFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL,
-                        new Integer("1"));
+        query.addFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL, new Integer("1"));
         query.addFilter("col1", FilterOperator.LESS_THAN, new Integer("1"));
-        query.addFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer(
-                "1"));
+        query.addFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer("1"));
         query.addFilter("col1", FilterOperator.NOT_EQUAL, new Integer("1"));
 
         final ArrayList<Integer> inList = new ArrayList<Integer>();
@@ -288,7 +276,6 @@ public class JdbcRepositoryTestCase {
      */
     @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void queryPageTest(final JSONObject jsonObject) throws Exception {
-
         if (!ifRun) {
             return;
         }
