@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Description: Latke web framework project.
-    Version: 1.0.7.3, Feb 10, 2012
+    Version: 1.0.7.4, Mar 1, 2012
     Author: Liang Ding
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -33,6 +33,8 @@
         <testng.version>6.1.1</testng.version>
         <!-- JDBC Drivers -->
         <mysql-connector-java.version>5.1.18</mysql-connector-java.version>
+        <!-- JDBC Connection Pool -->
+        <bonecp.version>0.7.1.RELEASE</bonecp.version>
 	<!-- -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -167,6 +169,12 @@
                 <version>${javassist.version}</version>
             </dependency>
             
+            <dependency>
+                <groupId>com.jolbox</groupId>
+                <artifactId>bonecp</artifactId>
+                <version>${bonecp.version}</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
 
@@ -213,6 +221,13 @@
             <version>${mysql-connector-java.version}</version>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
