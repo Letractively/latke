@@ -367,9 +367,7 @@ public class JdbcRepository implements Repository {
      * @param sql sql
      */
     private void get(final StringBuffer sql) {
-
         sql.append("select * from ").append(getName()).append(" where ").append(JdbcRepositories.OID).append("=").append("?");
-
     }
 
     @Override
@@ -684,17 +682,13 @@ public class JdbcRepository implements Repository {
      * @return count
      * @throws RepositoryException RepositoryException
      */
-    private long count(final StringBuffer sql, final List<Object> paramList)
-            throws RepositoryException {
-
+    private long count(final StringBuffer sql, final List<Object> paramList) throws RepositoryException {
         final Connection connection = getConnection();
 
         JSONObject jsonObject;
         long count;
         try {
-            jsonObject = JdbcUtil.queryJsonObject(sql.toString(), paramList,
-                                                  connection, getName());
-
+            jsonObject = JdbcUtil.queryJsonObject(sql.toString(), paramList, connection, getName());
             count = jsonObject.getLong(jsonObject.keys().next().toString());
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "count :" + e.getMessage(), e);
@@ -713,12 +707,9 @@ public class JdbcRepository implements Repository {
 
     @Override
     public Transaction beginTransaction() {
-
         final JdbcTransaction ret = TX.get();
         if (null != ret) {
-            LOGGER.log(Level.FINER,
-                       "There is a transaction[isActive={0}] in current thread",
-                       ret.isActive());
+            LOGGER.log(Level.FINER, "There is a transaction[isActive={0}] in current thread", ret.isActive());
             if (ret.isActive()) {
                 return TX.get(); // Using 'the current transaction'
             }
@@ -730,10 +721,10 @@ public class JdbcRepository implements Repository {
         } catch (final SQLException e) {
             LOGGER.severe("init jdbcTransaction wrong");
         }
+
         TX.set(jdbcTransaction);
 
         return jdbcTransaction;
-
     }
 
     @Override
@@ -778,17 +769,19 @@ public class JdbcRepository implements Repository {
     }
 
     /**
-     * 
      * getConnection.
      * default using current JdbcTransaction's connection,if null get a new one.
      * 
      * @return {@link Connection}
      */
     private Connection getConnection() {
-
         final JdbcTransaction jdbcTransaction = TX.get();
         if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
-            return Connections.getConnection();
+            try {
+                return Connections.getConnection();
+            } catch (final SQLException e) {
+                LOGGER.log(Level.SEVERE, "Gets connection error", e);
+            }
         }
 
         return jdbcTransaction.getConnection();
@@ -802,19 +795,15 @@ public class JdbcRepository implements Repository {
      * @throws RepositoryException  RepositoryException
     
      */
-    private void closeQueryConnection(final Connection connection)
-            throws RepositoryException {
-
+    private void closeQueryConnection(final Connection connection) throws RepositoryException {
         final JdbcTransaction jdbcTransaction = TX.get();
         if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
             try {
                 connection.close();
             } catch (final SQLException e) {
-                LOGGER.log(Level.SEVERE,
-                           "closeQueryConnection :" + e.getMessage(), e);
+                LOGGER.log(Level.SEVERE, "closeQueryConnection :" + e.getMessage(), e);
                 throw new RepositoryException(e);
             }
         }
-
     }
 }

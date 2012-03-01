@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.b3log.latke.cache.PageCaches;
+import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.util.Strings;
 
 /**
@@ -34,7 +35,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Jan 31, 2012
+ * @version 1.0.1.2, Mar 1, 2012
  * @see #initRuntimeEnv()
  */
 public final class Latkes {
@@ -160,15 +161,6 @@ public final class Latkes {
         }
 
         return RuntimeEnv.valueOf(value);
-    }
-
-    /**
-     * Gets local (standard Servlet container) configurations.
-     * 
-     * @return local properties
-     */
-    public static Properties getLocalProps() {
-        return LOCAL_PROPS;
     }
 
     /**
@@ -376,7 +368,17 @@ public final class Latkes {
     }
 
     /**
-     * Shutdowns Latkes.
+     * Gets a property specified by the given key from file "local.properties".
+     * 
+     * @param key the given key
+     * @return the value, returns {@code null} if not found
+     */
+    public static String getLocalProperty(final String key) {
+        return LOCAL_PROPS.getProperty(key);
+    }
+
+    /**
+     * Shutdowns Latke.
      */
     public static void shutdown() {
         try {
@@ -393,7 +395,7 @@ public final class Latkes {
 
                     break;
                 default:
-                    break;
+                    Connections.shutdownConnectionPool();
             }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "Shutdowns Latke failed", e);

@@ -39,12 +39,10 @@ public final class JdbcTransaction implements Transaction {
         connection.setAutoCommit(false);
         isActive = true;
     }
-
     /**
      * connecton.
      */
     private Connection connection;
-
     /**
      * isActive.
      */
@@ -58,7 +56,6 @@ public final class JdbcTransaction implements Transaction {
 
     @Override
     public void commit() {
-
         boolean ifSuccess = false;
         try {
             connection.commit();
@@ -70,7 +67,6 @@ public final class JdbcTransaction implements Transaction {
         if (ifSuccess) {
             dispose();
         }
-
     }
 
     @Override
@@ -102,7 +98,6 @@ public final class JdbcTransaction implements Transaction {
 
     @Override
     public void clearQueryCache(final boolean flag) {
-
     }
 
     /**
@@ -117,7 +112,6 @@ public final class JdbcTransaction implements Transaction {
             isActive = false;
             connection = null;
         }
-
     }
 
     /**
@@ -128,5 +122,4 @@ public final class JdbcTransaction implements Transaction {
     public Connection getConnection() {
         return connection;
     }
-
 }
