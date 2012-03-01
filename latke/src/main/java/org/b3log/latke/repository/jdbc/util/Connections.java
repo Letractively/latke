@@ -32,12 +32,10 @@ public final class Connections {
      * @return {@link Connection}
      */
     public static Connection getConnection() {
-
         Connection con = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/b3log", "root", "");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/b3log?useUnicode=yes&characterEncoding=UTF-8", "root", "");
             return con;
         } catch (final Exception e) {
             e.printStackTrace();
@@ -50,7 +48,5 @@ public final class Connections {
      * Private constructor.
      */
     private Connections() {
-
     }
-  
 }
