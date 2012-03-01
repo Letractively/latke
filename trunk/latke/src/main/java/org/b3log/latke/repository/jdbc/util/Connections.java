@@ -15,33 +15,71 @@
  */
 package org.b3log.latke.repository.jdbc.util;
 
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+import org.b3log.latke.Latkes;
 
 /**
- * the jdbc connection pool TODO.
+ * JDBC connection utilities.
+ * 
+ * <p>
+ * Uses <a href="http://jolbox.com/">BoneCP</a> as the underlying connection pool.
+ * </p>
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Dec 20, 2011
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Mar 1, 2012
  */
 public final class Connections {
 
     /**
-     * getConnetcion from pool --TODO pool.
-     * 
-     * @return {@link Connection}
+     * Logger.
      */
-    public static Connection getConnection() {
-        Connection con = null;
+    private static final Logger LOGGER = Logger.getLogger(Connections.class.getName());
+    /**
+     * Connection pool.
+     */
+    private static final BoneCP CONN_POOL;
+    
+    static {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/b3log?useUnicode=yes&characterEncoding=UTF-8", "root", "");
-            return con;
+            Class.forName(Latkes.getLocalProperty("jdbc.driver"));
+            
+            final BoneCPConfig config = new BoneCPConfig();
+            config.setJdbcUrl(Latkes.getLocalProperty("jdbc.URL"));
+            config.setUsername(Latkes.getLocalProperty("jdbc.username"));
+            config.setPassword(Latkes.getLocalProperty("jdbc.password"));
+            config.setMinConnectionsPerPartition(Integer.valueOf(Latkes.getLocalProperty("jdbc.minConnCnt")));
+            config.setMaxConnectionsPerPartition(Integer.valueOf(Latkes.getLocalProperty("jdbc.maxConnCnt")));
+            config.setPartitionCount(1);
+            
+            CONN_POOL = new BoneCP(config);
+            
+            LOGGER.info("Initialized connection pool");
         } catch (final Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
 
-        return con;
+    /**
+     * Gets a connection.
+     * 
+     * @return a connection
+     * @throws SQLException SQL exception 
+     */
+    public static Connection getConnection() throws SQLException {
+        return CONN_POOL.getConnection();
+    }
+
+    /**
+     * Shutdowns the connection pool.
+     */
+    public static void shutdownConnectionPool() {
+        CONN_POOL.shutdown();
+        LOGGER.info("Shutdowns connection pool sucessfully");
     }
 
     /**

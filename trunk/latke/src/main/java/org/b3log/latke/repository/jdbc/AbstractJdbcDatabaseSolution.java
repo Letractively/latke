@@ -52,9 +52,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
     }
 
     @Override
-    public boolean createTable(final String tableName,
-            final List<FieldDefinition> fieldDefinitions) throws SQLException {
-
+    public boolean createTable(final String tableName, final List<FieldDefinition> fieldDefinitions) throws SQLException {
         final Connection connection = Connections.getConnection();
 
         //need config
@@ -80,7 +78,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param tableName talbename
      */
     protected abstract void createDropTableSql(StringBuffer dropTableSql,
-            String tableName);
+                                               String tableName);
 
     /**
      * 
@@ -90,7 +88,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param tableName tableName
      */
     protected abstract void createTableHead(StringBuffer createTableSql,
-            String tableName);
+                                            String tableName);
 
     /**
      * abstract createTableBody for each DB to impl.
@@ -99,7 +97,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param fieldDefinitions {@link FieldDefinition}
      */
     protected abstract void createTableBody(StringBuffer createTableSql,
-            List<FieldDefinition> fieldDefinitions);
+                                            List<FieldDefinition> fieldDefinitions);
 
     /**
      * abstract createTableEnd for each DB to impl.
@@ -114,5 +112,4 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
     public Map<String, Mapping> getJdbcTypeMapping() {
         return jdbcTypeMapping;
     }
-
 }
