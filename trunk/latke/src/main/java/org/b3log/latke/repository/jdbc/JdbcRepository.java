@@ -80,23 +80,20 @@ public class JdbcRepository implements Repository {
      * Repository cache name.
      */
     public static final String REPOSITORY_CACHE_NAME = "repositoryCache";
-
-    static {
-        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(
-                REPOSITORY_CACHE_NAME);
-    }
     /**
      * The current transaction.
      */
     public static final ThreadLocal<JdbcTransaction> TX = new InheritableThreadLocal<JdbcTransaction>();
 
+    static {
+        CACHE = (Cache<String, Serializable>) CacheFactory.getCache(REPOSITORY_CACHE_NAME);
+    }
+
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-
         final JdbcTransaction currentTransaction = TX.get();
         if (null == currentTransaction) {
-            throw new RepositoryException(
-                    "Invoking add() outside a transaction");
+            throw new RepositoryException("Invoking add() outside a transaction");
         }
 
         final Connection connection = getConnection();
@@ -121,12 +118,10 @@ public class JdbcRepository implements Repository {
      * @param paramlist paramlist 
      * @param sql sql
      * @return id
-     * @throws JSONException  JSONException
+     * @throws Exception  exception
      */
-    private String buildAddSql(final JSONObject jsonObject,
-                               final List<Object> paramlist, final StringBuffer sql)
-            throws JSONException {
-
+    private String buildAddSql(final JSONObject jsonObject, final List<Object> paramlist, final StringBuffer sql)
+            throws Exception {
         String ret = null;
 
         if (!jsonObject.has(Keys.OBJECT_ID)) {
@@ -139,7 +134,6 @@ public class JdbcRepository implements Repository {
         setProperties(jsonObject, paramlist, sql);
 
         return ret;
-
     }
 
     /**
@@ -148,13 +142,10 @@ public class JdbcRepository implements Repository {
      * @param jsonObject jsonObject
      * @param paramlist paramlist
      * @param sql sql
-     * @throws JSONException JSONException 
+     * @throws Exception exception 
      */
-    private void setProperties(final JSONObject jsonObject,
-                               final List<Object> paramlist, final StringBuffer sql)
-            throws JSONException {
-
-        @SuppressWarnings("unchecked")
+    private void setProperties(final JSONObject jsonObject, final List<Object> paramlist, final StringBuffer sql)
+            throws Exception {
         final Iterator<String> keys = jsonObject.keys();
 
         final StringBuffer insertString = new StringBuffer();
@@ -165,7 +156,6 @@ public class JdbcRepository implements Repository {
         Object value = null;
 
         while (keys.hasNext()) {
-
             key = keys.next();
 
             if (isFirst) {
@@ -186,17 +176,14 @@ public class JdbcRepository implements Repository {
             }
         }
 
-        /**
-         * TODO table name Prefix.
+        /*
+         * TODO: Y, table name Prefix.
          */
         sql.append("insert into ").append(getName()).append(insertString).append(" value ").append(wildcardString);
-
     }
 
     @Override
-    public void update(final String id, final JSONObject jsonObject)
-            throws RepositoryException {
-
+    public void update(final String id, final JSONObject jsonObject) throws RepositoryException {
         if (Strings.isEmptyOrNull(id)) {
             return;
         }
@@ -204,8 +191,7 @@ public class JdbcRepository implements Repository {
         final JdbcTransaction currentTransaction = TX.get();
 
         if (null == currentTransaction) {
-            throw new RepositoryException(
-                    "Invoking update() outside a transaction");
+            throw new RepositoryException("Invoking update() outside a transaction");
         }
 
         final JSONObject oldJsonObject = get(id);
@@ -220,7 +206,6 @@ public class JdbcRepository implements Repository {
             LOGGER.log(Level.SEVERE, "update:" + e.getMessage(), e);
             throw new RepositoryException(e);
         }
-
     }
 
     /**
@@ -237,19 +222,15 @@ public class JdbcRepository implements Repository {
     private void update(final String id, final JSONObject oldJsonObject,
                         final JSONObject jsonObject, final List<Object> paramList,
                         final StringBuffer sql) throws JSONException {
-
         final JSONObject needUpdateJsonObject = getNeedUpdateJsonObject(
                 oldJsonObject, jsonObject);
 
         if (needUpdateJsonObject.length() == 0) {
-            LOGGER.log(Level.INFO,
-                       "nothing to update [{0}]for  repository[{1}]",
-                       new Object[]{id, getName()});
+            LOGGER.log(Level.INFO, "nothing to update [{0}]for  repository[{1}]", new Object[]{id, getName()});
             return;
         }
 
         setUpdateProperties(id, needUpdateJsonObject, paramList, sql);
-
     }
 
     /**
@@ -265,7 +246,6 @@ public class JdbcRepository implements Repository {
                                      final JSONObject needUpdateJsonObject,
                                      final List<Object> paramList, final StringBuffer sql)
             throws JSONException {
-
         @SuppressWarnings("unchecked")
         final Iterator<String> keys = needUpdateJsonObject.keys();
         String key;
@@ -289,7 +269,6 @@ public class JdbcRepository implements Repository {
         sql.append("update ").append(getName()).append(wildcardString).append(" where ").
                 append(JdbcRepositories.OID).append("=").append("?");
         paramList.add(id);
-
     }
 
     /**
@@ -303,15 +282,12 @@ public class JdbcRepository implements Repository {
      */
     private JSONObject getNeedUpdateJsonObject(final JSONObject oldJsonObject,
                                                final JSONObject jsonObject) throws JSONException {
-
         final JSONObject needUpdateJsonObject = new JSONObject();
 
-        @SuppressWarnings("unchecked")
         final Iterator<String> keys = jsonObject.keys();
 
         String key = null;
         while (keys.hasNext()) {
-
             key = keys.next();
 
             if (jsonObject.get(key) == null && oldJsonObject.get(key) == null) {
@@ -322,7 +298,6 @@ public class JdbcRepository implements Repository {
                     oldJsonObject.getString(key))) {
                 needUpdateJsonObject.put(key, jsonObject.get(key));
             }
-
         }
 
         return needUpdateJsonObject;
@@ -330,7 +305,6 @@ public class JdbcRepository implements Repository {
 
     @Override
     public void remove(final String id) throws RepositoryException {
-
         if (Strings.isEmptyOrNull(id)) {
             return;
         }
@@ -338,8 +312,7 @@ public class JdbcRepository implements Repository {
         final JdbcTransaction currentTransaction = TX.get();
 
         if (null == currentTransaction) {
-            throw new RepositoryException(
-                    "Invoking remove() outside a transaction");
+            throw new RepositoryException("Invoking remove() outside a transaction");
         }
 
         final StringBuffer sql = new StringBuffer();
@@ -352,7 +325,6 @@ public class JdbcRepository implements Repository {
             LOGGER.log(Level.SEVERE, "remove:" + e.getMessage(), e);
             throw new RepositoryException(e);
         }
-
     }
 
     /**
@@ -436,9 +408,7 @@ public class JdbcRepository implements Repository {
         final JSONObject jsonObject = new JSONObject();
 
         try {
-
-            final int pageCnt = get(currentPageNum, pageSize, pageCount, sorts,
-                                    filters, sql, paramList);
+            final int pageCnt = get(currentPageNum, pageSize, pageCount, sorts, filters, sql, paramList);
 
             if (pageCnt == 0) {
                 jsonObject.put(Keys.RESULTS, new JSONArray());
@@ -466,7 +436,6 @@ public class JdbcRepository implements Repository {
         closeQueryConnection(connection);
 
         return jsonObject;
-
     }
 
     /**
