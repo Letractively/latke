@@ -19,6 +19,7 @@ import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
 
@@ -31,7 +32,7 @@ import org.b3log.latke.Latkes;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Mar 1, 2012
+ * @version 1.0.0.2, Mar 2, 2012
  */
 public final class Connections {
 
@@ -43,11 +44,11 @@ public final class Connections {
      * Connection pool.
      */
     private static final BoneCP CONN_POOL;
-    
+
     static {
         try {
             Class.forName(Latkes.getLocalProperty("jdbc.driver"));
-            
+
             final BoneCPConfig config = new BoneCPConfig();
             config.setJdbcUrl(Latkes.getLocalProperty("jdbc.URL"));
             config.setUsername(Latkes.getLocalProperty("jdbc.username"));
@@ -55,9 +56,9 @@ public final class Connections {
             config.setMinConnectionsPerPartition(Integer.valueOf(Latkes.getLocalProperty("jdbc.minConnCnt")));
             config.setMaxConnectionsPerPartition(Integer.valueOf(Latkes.getLocalProperty("jdbc.maxConnCnt")));
             config.setPartitionCount(1);
-            
+
             CONN_POOL = new BoneCP(config);
-            
+
             LOGGER.info("Initialized connection pool");
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -71,6 +72,8 @@ public final class Connections {
      * @throws SQLException SQL exception 
      */
     public static Connection getConnection() throws SQLException {
+        LOGGER.log(Level.FINEST, "Connection pool[createdConns={0}, freeConns={1}, leasedConns={2}]",
+                   new Object[]{CONN_POOL.getTotalCreatedConnections(), CONN_POOL.getTotalFree(), CONN_POOL.getTotalLeased()});
         return CONN_POOL.getConnection();
     }
 
