@@ -49,13 +49,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * JdbcRepository.
+ * JDBC repository implementation.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Dec 20, 2011
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Mar 2, 2012
  */
 @SuppressWarnings("unchecked")
-public class JdbcRepository implements Repository {
+public final class JdbcRepository implements Repository {
 
     /**
      * Logger.
@@ -354,9 +355,9 @@ public class JdbcRepository implements Repository {
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:" + e.getMessage(), e);
             throw new RepositoryException(e);
+        } finally {
+            closeQueryConnection(connection);
         }
-
-        closeQueryConnection(connection);
 
         return jsonObject;
     }
@@ -429,9 +430,9 @@ public class JdbcRepository implements Repository {
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "query :" + e.getMessage(), e);
             throw new RepositoryException(e);
+        } finally {
+            closeQueryConnection(connection);
         }
-
-        closeQueryConnection(connection);
 
         return jsonObject;
     }
@@ -454,7 +455,6 @@ public class JdbcRepository implements Repository {
                     final int pageCount, final Map<String, SortDirection> sorts,
                     final List<Filter> filters, final StringBuffer sql,
                     final List<Object> paramList) throws RepositoryException {
-
         int pageCnt = pageCount;
 
         final StringBuffer filterSql = new StringBuffer();
@@ -499,13 +499,11 @@ public class JdbcRepository implements Repository {
     private void getQuerySql(final int currentPageNum, final int pageSize,
                              final StringBuffer filterSql, final StringBuffer orderBySql,
                              final StringBuffer sql) {
-
         final int start = (currentPageNum - 1) * pageSize;
         final int end = start + pageSize;
 
         sql.append(JdbcFactory.createJdbcFactory().queryPage(start, end,
                                                              filterSql.toString(), orderBySql.toString(), getName()));
-
     }
 
     /**
@@ -517,10 +515,8 @@ public class JdbcRepository implements Repository {
      * @param filters filters
      * @throws RepositoryException RepositoryException
      */
-    private void getFilterSql(final StringBuffer filterSql,
-                              final List<Object> paramList, final List<Filter> filters)
+    private void getFilterSql(final StringBuffer filterSql, final List<Object> paramList, final List<Filter> filters)
             throws RepositoryException {
-
         boolean isFirst = true;
         String filterOperator = null;
 
@@ -563,7 +559,6 @@ public class JdbcRepository implements Repository {
                 filterSql.append(filter.getKey()).append(filterOperator).append("?");
                 paramList.add(filter.getValue());
             } else {
-
                 @SuppressWarnings("unchecked")
                 final Collection<Object> objects = (Collection<Object>) filter.getValue();
 
@@ -585,14 +580,10 @@ public class JdbcRepository implements Repository {
                         if (!obs.hasNext()) {
                             filterSql.append(") ");
                         }
-
                     }
-
                 }
             }
-
         }
-
     }
 
     /**
@@ -602,9 +593,7 @@ public class JdbcRepository implements Repository {
      * @param orderBySql orderBySql
      * @param sorts sorts
      */
-    private void getOrderBySql(final StringBuffer orderBySql,
-                               final Map<String, SortDirection> sorts) {
-
+    private void getOrderBySql(final StringBuffer orderBySql, final Map<String, SortDirection> sorts) {
         boolean isFirst = true;
         String querySortDirection = null;
         for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
@@ -622,15 +611,11 @@ public class JdbcRepository implements Repository {
             }
 
             orderBySql.append(sort.getKey()).append(" ").append(querySortDirection);
-
         }
-
     }
 
     @Override
-    public List<JSONObject> getRandomly(final int fetchSize)
-            throws RepositoryException {
-
+    public List<JSONObject> getRandomly(final int fetchSize) throws RepositoryException {
         final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 
         final StringBuffer sql = new StringBuffer();
@@ -639,8 +624,7 @@ public class JdbcRepository implements Repository {
         final Connection connection = getConnection();
         getRandomly(fetchSize, sql);
         try {
-            jsonArray = JdbcUtil.queryJsonArray(sql.toString(),
-                                                new ArrayList<Object>(), connection, getName());
+            jsonArray = JdbcUtil.queryJsonArray(sql.toString(), new ArrayList<Object>(), connection, getName());
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 jsonObjects.add(jsonArray.getJSONObject(i));
@@ -648,9 +632,10 @@ public class JdbcRepository implements Repository {
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "getRandomly :" + e.getMessage(), e);
             throw new RepositoryException(e);
+        } finally {
+            closeQueryConnection(connection);
         }
 
-        closeQueryConnection(connection);
         return jsonObjects;
     }
 
@@ -661,16 +646,12 @@ public class JdbcRepository implements Repository {
      * @param sql sql
      */
     private void getRandomly(final int fetchSize, final StringBuffer sql) {
-
-        sql.append(JdbcFactory.createJdbcFactory().getRandomlySql(getName(),
-                                                                  fetchSize));
+        sql.append(JdbcFactory.createJdbcFactory().getRandomlySql(getName(), fetchSize));
     }
 
     @Override
     public long count() throws RepositoryException {
-
-        final StringBuffer sql = new StringBuffer("select count("
-                                                  + JdbcRepositories.OID + ") from ").append(getName());
+        final StringBuffer sql = new StringBuffer("select count(" + JdbcRepositories.OID + ") from ").append(getName());
         return count(sql, new ArrayList<Object>());
     }
 
@@ -693,9 +674,9 @@ public class JdbcRepository implements Repository {
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "count :" + e.getMessage(), e);
             throw new RepositoryException(e);
+        } finally {
+            closeQueryConnection(connection);
         }
-
-        closeQueryConnection(connection);
 
         return count;
     }
