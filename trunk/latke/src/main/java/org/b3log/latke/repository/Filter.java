@@ -52,8 +52,8 @@ public final class Filter {
      * @param value the specified value
      */
     public Filter(final String key,
-                  final FilterOperator operator,
-                  final Object value) {
+            final FilterOperator operator,
+            final Object value) {
         this.key = key;
         this.operator = operator;
         this.value = value;
@@ -98,14 +98,15 @@ public final class Filter {
 
         final Filter other = (Filter) obj;
         if ((this.key == null) ? (other.key != null)
-            : !this.key.equals(other.key)) {
+                : !this.key.equals(other.key)) {
             return false;
         }
         if (this.operator != other.operator) {
             return false;
         }
-        if (this.value != other.value && (this.value == null || !this.value.
-                                          equals(other.value))) {
+        if (this.value != other.value
+                && (this.value == null || !this.value.
+                        equals(other.value))) {
             return false;
         }
 
@@ -115,10 +116,13 @@ public final class Filter {
     @Override
     public int hashCode() {
         int hash = INIT_HASH;
-        hash = BASE * hash + (this.key != null ? this.key.hashCode() : 0);
-        hash = BASE * hash + (this.operator != null ? this.operator.hashCode()
-                              : 0);
-        hash = BASE * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = BASE
+                * hash + (this.key != null ? this.key.hashCode() : 0);
+        hash = BASE
+                * hash + (this.operator != null ? this.operator.hashCode()
+                        : 0);
+        hash = BASE
+                * hash + (this.value != null ? this.value.hashCode() : 0);
 
         return hash;
     }

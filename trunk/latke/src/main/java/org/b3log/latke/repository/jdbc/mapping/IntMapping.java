@@ -28,7 +28,7 @@ public class IntMapping implements Mapping {
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
 
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         sql.append(definition.getName());
         sql.append(" int");
         if (!definition.getNullable()) {

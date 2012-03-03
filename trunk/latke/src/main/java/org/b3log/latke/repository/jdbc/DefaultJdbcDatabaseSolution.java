@@ -52,7 +52,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     public String queryPage(final int start, final int end,
                             final String filterSql, final String orderBySql,
                             final String tableName) {
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         sql.append("select * from ").append(tableName);
         if (StringUtils.isNotBlank(filterSql)) {
             sql.append(" where ").append(filterSql);
@@ -69,14 +69,14 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    protected void createDropTableSql(final StringBuffer dropTableSql,
+    protected void createDropTableSql(final StringBuilder dropTableSql,
                                       final String tableName) {
         dropTableSql.append("DROP TABLE  IF EXISTS ").append(tableName).append(";");
 
     }
 
     @Override
-    protected void createTableHead(final StringBuffer createTableSql,
+    protected void createTableHead(final StringBuilder createTableSql,
                                    final String tableName) {
         //        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
         //                .append(";");
@@ -85,7 +85,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    protected void createTableBody(final StringBuffer createTableSql, final List<FieldDefinition> fieldDefinitions) {
+    protected void createTableBody(final StringBuilder createTableSql, final List<FieldDefinition> fieldDefinitions) {
         final List<FieldDefinition> keyDefinitionList = new ArrayList<FieldDefinition>();
         for (FieldDefinition fieldDefinition : fieldDefinitions) {
 
@@ -125,7 +125,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     private String createKeyDefinition(
             final List<FieldDefinition> keyDefinitionList) {
 
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         sql.append(" PRIMARY KEY");
         boolean isFirst = true;
         for (FieldDefinition fieldDefinition : keyDefinitionList) {
@@ -143,7 +143,7 @@ public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    protected void createTableEnd(final StringBuffer createTableSql) {
+    protected void createTableEnd(final StringBuilder createTableSql) {
         createTableSql.append(") ENGINE= InnoDB DEFAULT CHARSET= utf8;");
 
     }

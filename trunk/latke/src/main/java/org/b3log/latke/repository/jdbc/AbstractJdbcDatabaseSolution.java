@@ -56,11 +56,11 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
         final Connection connection = Connections.getConnection();
 
         //need config
-//        final StringBuffer dropTableSql = new StringBuffer();
+//        final StringBuilder dropTableSql = new StringBuilder();
 //        createDropTableSql(dropTableSql, tableName);
 //        JdbcUtil.executeSql(dropTableSql.toString(), connection);
 
-        final StringBuffer createTableSql = new StringBuffer();
+        final StringBuilder createTableSql = new StringBuilder();
 
         createTableHead(createTableSql, tableName);
         createTableBody(createTableSql, fieldDefinitions);
@@ -77,7 +77,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param dropTableSql dropTableSql
      * @param tableName talbename
      */
-    protected abstract void createDropTableSql(StringBuffer dropTableSql,
+    protected abstract void createDropTableSql(StringBuilder dropTableSql,
                                                String tableName);
 
     /**
@@ -87,7 +87,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param createTableSql createSql
      * @param tableName tableName
      */
-    protected abstract void createTableHead(StringBuffer createTableSql,
+    protected abstract void createTableHead(StringBuilder createTableSql,
                                             String tableName);
 
     /**
@@ -96,14 +96,14 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param createTableSql createSql
      * @param fieldDefinitions {@link FieldDefinition}
      */
-    protected abstract void createTableBody(StringBuffer createTableSql,
+    protected abstract void createTableBody(StringBuilder createTableSql,
                                             List<FieldDefinition> fieldDefinitions);
 
     /**
      * abstract createTableEnd for each DB to impl.
      * @param createTableSql createSql 
      */
-    protected abstract void createTableEnd(StringBuffer createTableSql);
+    protected abstract void createTableEnd(StringBuilder createTableSql);
 
     /**
      * 

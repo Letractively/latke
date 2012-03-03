@@ -27,7 +27,7 @@ public class StringMapping implements Mapping {
 
     @Override
     public String toDataBaseSting(final FieldDefinition definition) {
-        final StringBuffer sql = new StringBuffer();
+        final StringBuilder sql = new StringBuilder();
         sql.append(definition.getName());
 
         if (definition.getLength() == null) {

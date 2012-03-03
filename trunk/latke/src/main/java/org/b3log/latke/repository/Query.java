@@ -84,7 +84,8 @@ public final class Query {
      * @return the current query object
      */
     public Query index(final String... properties) {
-        if (null == properties || 0 == properties.length) {
+        if (null == properties
+                || 0 == properties.length) {
             return this;
         }
 
@@ -265,10 +266,12 @@ public final class Query {
         if (this.pageSize != other.pageSize) {
             return false;
         }
-        if (this.sorts != other.sorts && (this.sorts == null || !this.sorts.equals(other.sorts))) {
+        if (this.sorts != other.sorts
+                && (this.sorts == null || !this.sorts.equals(other.sorts))) {
             return false;
         }
-        if (this.filters != other.filters && (this.filters == null || !this.filters.equals(other.filters))) {
+        if (this.filters != other.filters
+                && (this.filters == null || !this.filters.equals(other.filters))) {
             return false;
         }
         return true;
@@ -277,11 +280,15 @@ public final class Query {
     @Override
     public int hashCode() {
         int hash = INIT_HASH;
-        hash = BASE * hash + this.currentPageNum;
-        hash = BASE * hash + this.pageSize;
-        hash = BASE * hash + (this.sorts != null ? this.sorts.hashCode() : 0);
-        hash = BASE * hash
-               + (this.filters != null ? this.filters.hashCode() : 0);
+        hash = BASE
+                * hash + this.currentPageNum;
+        hash = BASE
+                * hash + this.pageSize;
+        hash = BASE
+                * hash + (this.sorts != null ? this.sorts.hashCode() : 0);
+        hash = BASE
+                * hash
+                + (this.filters != null ? this.filters.hashCode() : 0);
 
         return hash;
     }
