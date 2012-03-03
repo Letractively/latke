@@ -22,7 +22,7 @@ package org.b3log.latke.repository;
  * @version 1.0.0.1, Feb 28, 2012
  */
 public class RepositoryException extends Exception {
-    
+
     /**
      * Default serial version uid.
      */
