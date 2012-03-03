@@ -100,12 +100,10 @@ public final class Repositories {
     public static void check(final String repositoryName, final JSONObject jsonObject, final String... ignoredKeys)
             throws RepositoryException {
         if (null == jsonObject) {
-            throw new RepositoryException("Null to persist to repository["
-                    + repositoryName + "]");
+            throw new RepositoryException("Null to persist to repository[" + repositoryName + "]");
         }
 
-        final boolean needIgnoreKeys = null != ignoredKeys
-                && 0 < ignoredKeys.length;
+        final boolean needIgnoreKeys = null != ignoredKeys && 0 < ignoredKeys.length;
 
         final JSONArray names = jsonObject.names();
         final Set<Object> nameSet = CollectionUtils.jsonArrayToSet(names);
@@ -128,13 +126,13 @@ public final class Repositories {
             keySet.add(key);
 
             if (needIgnoreKeys
-                    && Strings.contains(key, ignoredKeys)) {
+                && Strings.contains(key, ignoredKeys)) {
                 continue;
             }
 
             if (!nameSet.contains(key)) {
                 throw new RepositoryException("A json object to persist to repository[name="
-                        + repositoryName + "] does not contain a key[" + key + "]");
+                                              + repositoryName + "] does not contain a key[" + key + "]");
             }
 
             // TODO: 88250, type and length validation
@@ -164,7 +162,7 @@ public final class Repositories {
 
             if (!keySet.contains(name)) {
                 throw new RepositoryException("A json object to persist to repository[name="
-                        + repositoryName + "] contains an redundant key[" + name + "]");
+                                              + repositoryName + "] contains an redundant key[" + name + "]");
             }
         }
     }
@@ -193,8 +191,7 @@ public final class Repositories {
         }
 
         throw new RuntimeException("Not found the repository[name="
-                + repositoryName
-                + "] description, please define it in repositories.json");
+                                   + repositoryName + "] description, please define it in repositories.json");
     }
 
     /**
@@ -224,8 +221,7 @@ public final class Repositories {
 
         if (null == keys) {
             throw new RuntimeException("Not found the repository[name="
-                    + repositoryName
-                    + "] description, please define it in repositories.json");
+                                       + repositoryName + "] description, please define it in repositories.json");
         }
 
         final Set<String> ret = new HashSet<String>();
@@ -275,8 +271,7 @@ public final class Repositories {
         try {
             final String description = IOUtils.toString(inputStream);
 
-            LOGGER.log(Level.CONFIG, "\n"
-                    + description);
+            LOGGER.log(Level.CONFIG, "\n" + description);
 
             repositoriesDescription = new JSONObject(description);
         } catch (final Exception e) {
