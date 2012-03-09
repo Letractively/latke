@@ -107,11 +107,11 @@ public final class JdbcRepository implements Repository {
             JdbcUtil.executeSql(sql.toString(), paramList, connection);
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "add:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "add:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         }
 
@@ -210,11 +210,11 @@ public final class JdbcRepository implements Repository {
             JdbcUtil.executeSql(sql.toString(), paramList, connection);
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         }
     }
@@ -231,13 +231,13 @@ public final class JdbcRepository implements Repository {
      * @throws JSONException JSONException
      */
     private void update(final String id, final JSONObject oldJsonObject,
-            final JSONObject jsonObject, final List<Object> paramList,
-            final StringBuilder sql) throws JSONException {
+                        final JSONObject jsonObject, final List<Object> paramList,
+                        final StringBuilder sql) throws JSONException {
         final JSONObject needUpdateJsonObject = getNeedUpdateJsonObject(
                 oldJsonObject, jsonObject);
 
         if (needUpdateJsonObject.length() == 0) {
-            LOGGER.log(Level.INFO, "nothing to update [{0}]for  repository[{1}]", new Object[] {id, getName() });
+            LOGGER.log(Level.INFO, "nothing to update [{0}]for  repository[{1}]", new Object[]{id, getName()});
             return;
         }
 
@@ -254,8 +254,8 @@ public final class JdbcRepository implements Repository {
      * @throws JSONException JSONException
      */
     private void setUpdateProperties(final String id,
-            final JSONObject needUpdateJsonObject,
-            final List<Object> paramList, final StringBuilder sql)
+                                     final JSONObject needUpdateJsonObject,
+                                     final List<Object> paramList, final StringBuilder sql)
             throws JSONException {
         @SuppressWarnings("unchecked")
         final Iterator<String> keys = needUpdateJsonObject.keys();
@@ -292,7 +292,7 @@ public final class JdbcRepository implements Repository {
      * @throws JSONException jsonObject
      */
     private JSONObject getNeedUpdateJsonObject(final JSONObject oldJsonObject,
-            final JSONObject jsonObject) throws JSONException {
+                                               final JSONObject jsonObject) throws JSONException {
         final JSONObject needUpdateJsonObject = new JSONObject();
 
         final Iterator<String> keys = jsonObject.keys();
@@ -302,7 +302,7 @@ public final class JdbcRepository implements Repository {
             key = keys.next();
 
             if (jsonObject.get(key) == null
-                    && oldJsonObject.get(key) == null) {
+                && oldJsonObject.get(key) == null) {
                 // ???????????????????????????
                 needUpdateJsonObject.put(key, jsonObject.get(key));
 
@@ -335,11 +335,11 @@ public final class JdbcRepository implements Repository {
             JdbcUtil.executeSql(sql.toString(), connection);
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "remove:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         }
     }
@@ -369,7 +369,7 @@ public final class JdbcRepository implements Repository {
             throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -403,7 +403,7 @@ public final class JdbcRepository implements Repository {
     @Override
     public boolean has(final String id) throws RepositoryException {
         final StringBuilder sql = new StringBuilder("select count("
-                + JdbcRepositories.OID + ") from ").append(getName()).append(" where ").append(
+                                                    + JdbcRepositories.OID + ") from ").append(getName()).append(" where ").append(
                 JdbcRepositories.OID).append("=").append(id);
 
         return count(sql, new ArrayList<Object>()) > 0;
@@ -444,7 +444,7 @@ public final class JdbcRepository implements Repository {
             throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "query :"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -468,9 +468,9 @@ public final class JdbcRepository implements Repository {
      * @throws RepositoryException  RepositoryException
      */
     private int get(final int currentPageNum, final int pageSize,
-            final int pageCount, final Map<String, SortDirection> sorts,
-            final List<Filter> filters, final StringBuilder sql,
-            final List<Object> paramList) throws RepositoryException {
+                    final int pageCount, final Map<String, SortDirection> sorts,
+                    final List<Filter> filters, final StringBuilder sql,
+                    final List<Object> paramList) throws RepositoryException {
         int pageCnt = pageCount;
 
         final StringBuilder filterSql = new StringBuilder();
@@ -480,14 +480,14 @@ public final class JdbcRepository implements Repository {
 
         if (-1 == pageCount) {
             final StringBuilder countSql = new StringBuilder("select count("
-                    + JdbcRepositories.OID + ") from ").append(getName());
+                                                             + JdbcRepositories.OID + ") from ").append(getName());
 
             if (StringUtils.isNotBlank(filterSql.toString())) {
                 countSql.append(" where ").append(filterSql);
             }
             final long count = count(countSql, paramList);
             pageCnt = (int) Math.ceil((double) count
-                    / (double) pageSize);
+                                      / (double) pageSize);
         }
 
         if (pageCnt == 0) {
@@ -514,15 +514,15 @@ public final class JdbcRepository implements Repository {
      * @param sql sql
      */
     private void getQuerySql(final int currentPageNum, final int pageSize,
-            final StringBuilder filterSql, final StringBuilder orderBySql,
-            final StringBuilder sql) {
+                             final StringBuilder filterSql, final StringBuilder orderBySql,
+                             final StringBuilder sql) {
         final int start = (currentPageNum - 1)
-                * pageSize;
+                          * pageSize;
         final int end = start
-                + pageSize;
+                        + pageSize;
 
         sql.append(JdbcFactory.createJdbcFactory().queryPage(start, end,
-                filterSql.toString(), orderBySql.toString(), getName()));
+                                                             filterSql.toString(), orderBySql.toString(), getName()));
     }
 
     /**
@@ -542,30 +542,30 @@ public final class JdbcRepository implements Repository {
         for (Filter filter : filters) {
 
             switch (filter.getOperator()) {
-            case EQUAL:
-                filterOperator = "=";
-                break;
-            case GREATER_THAN:
-                filterOperator = ">";
-                break;
-            case GREATER_THAN_OR_EQUAL:
-                filterOperator = ">=";
-                break;
-            case LESS_THAN:
-                filterOperator = "<";
-                break;
-            case LESS_THAN_OR_EQUAL:
-                filterOperator = "<=";
-                break;
-            case NOT_EQUAL:
-                filterOperator = "!=";
-                break;
-            case IN:
-                filterOperator = "in";
-                break;
-            default:
-                throw new RepositoryException("Unsupported filter operator["
-                        + filter.getOperator() + "]");
+                case EQUAL:
+                    filterOperator = "=";
+                    break;
+                case GREATER_THAN:
+                    filterOperator = ">";
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    filterOperator = ">=";
+                    break;
+                case LESS_THAN:
+                    filterOperator = "<";
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    filterOperator = "<=";
+                    break;
+                case NOT_EQUAL:
+                    filterOperator = "!=";
+                    break;
+                case IN:
+                    filterOperator = "in";
+                    break;
+                default:
+                    throw new RepositoryException("Unsupported filter operator["
+                                                  + filter.getOperator() + "]");
             }
 
             if (isFirst) {
@@ -583,7 +583,7 @@ public final class JdbcRepository implements Repository {
 
                 boolean isSubFist = true;
                 if (objects != null
-                        && objects.size() > 0) {
+                    && objects.size() > 0) {
                     filterSql.append(filter.getKey()).append(" in ");
 
                     final Iterator<Object> obs = objects.iterator();
@@ -651,11 +651,11 @@ public final class JdbcRepository implements Repository {
             }
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "getRandomly :"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -677,7 +677,7 @@ public final class JdbcRepository implements Repository {
     @Override
     public long count() throws RepositoryException {
         final StringBuilder sql = new StringBuilder("select count("
-                + JdbcRepositories.OID + ") from ").append(getName());
+                                                    + JdbcRepositories.OID + ") from ").append(getName());
         return count(sql, new ArrayList<Object>());
     }
 
@@ -699,11 +699,11 @@ public final class JdbcRepository implements Repository {
             count = jsonObject.getLong(jsonObject.keys().next().toString());
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "count :"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -789,7 +789,7 @@ public final class JdbcRepository implements Repository {
     private Connection getConnection() {
         final JdbcTransaction jdbcTransaction = TX.get();
         if (jdbcTransaction == null
-                || !jdbcTransaction.isActive()) {
+            || !jdbcTransaction.isActive()) {
             try {
                 return Connections.getConnection();
             } catch (final SQLException e) {
@@ -810,13 +810,11 @@ public final class JdbcRepository implements Repository {
      */
     private void closeQueryConnection(final Connection connection) throws RepositoryException {
         final JdbcTransaction jdbcTransaction = TX.get();
-        if (jdbcTransaction == null
-                || !jdbcTransaction.isActive()) {
+        if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
             try {
                 connection.close();
             } catch (final SQLException e) {
-                LOGGER.log(Level.SEVERE, "closeQueryConnection :"
-                        + e.getMessage(), e);
+                LOGGER.log(Level.SEVERE, "closeQueryConnection :" + e.getMessage(), e);
                 throw new RepositoryException(e);
             }
         }

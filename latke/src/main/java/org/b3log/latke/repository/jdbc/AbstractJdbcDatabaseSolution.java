@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
@@ -31,7 +30,8 @@ import org.b3log.latke.repository.jdbc.util.JdbcUtil;
  * JdbcDatabaseSolution.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Dec 20, 2011
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Mar 9, 2012
  */
 public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
 
@@ -55,19 +55,24 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
     public boolean createTable(final String tableName, final List<FieldDefinition> fieldDefinitions) throws SQLException {
         final Connection connection = Connections.getConnection();
 
-        //need config
+        try {
+            //need config
 //        final StringBuilder dropTableSql = new StringBuilder();
 //        createDropTableSql(dropTableSql, tableName);
 //        JdbcUtil.executeSql(dropTableSql.toString(), connection);
 
-        final StringBuilder createTableSql = new StringBuilder();
+            final StringBuilder createTableSql = new StringBuilder();
 
-        createTableHead(createTableSql, tableName);
-        createTableBody(createTableSql, fieldDefinitions);
-        createTableEnd(createTableSql);
+            createTableHead(createTableSql, tableName);
+            createTableBody(createTableSql, fieldDefinitions);
+            createTableEnd(createTableSql);
 
-        return JdbcUtil.executeSql(createTableSql.toString(), connection);
-
+            return JdbcUtil.executeSql(createTableSql.toString(), connection);
+        } catch (final SQLException e) {
+            throw e;
+        } finally {
+            connection.close();
+        }
     }
 
     /**
