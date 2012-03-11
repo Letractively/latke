@@ -811,7 +811,7 @@ public final class JdbcRepository implements Repository {
 
         final StringBuilder sql = new StringBuilder("select count("
                 + JdbcRepositories.OID + ") from ").append(getName());
-        long ret = count(sql, new ArrayList<Object>());
+        final long ret = count(sql, new ArrayList<Object>());
 
         if (cacheEnabled) {
             CACHE.putAsync(cacheKey, ret);

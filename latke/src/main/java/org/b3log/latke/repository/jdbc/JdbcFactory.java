@@ -19,6 +19,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeDatabase;
@@ -34,6 +36,10 @@ import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 public final class JdbcFactory implements JdbcDatabase {
 
     /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(JdbcRepository.class.getName());
+    /**
      * the holder of the databaseSolution.
      */
     private AbstractJdbcDatabaseSolution databaseSolution;
@@ -44,14 +50,14 @@ public final class JdbcFactory implements JdbcDatabase {
     private static JdbcFactory jdbcFactory;
 
     /**
-     * all JdbcDatabaseSolution in here.
+     * all JdbcDatabaseSolution className in here.
      */
     @SuppressWarnings("serial")
-    private static Map<RuntimeDatabase, AbstractJdbcDatabaseSolution> jdbcDatabaseSolutionMap =
-            new HashMap<RuntimeDatabase, AbstractJdbcDatabaseSolution>() {
+    private static Map<RuntimeDatabase, String> jdbcDatabaseSolutionMap =
+            new HashMap<RuntimeDatabase, String>() {
                 {
-                    put(RuntimeDatabase.MYSQL,
-                            new DefaultJdbcDatabaseSolution());
+                    put(RuntimeDatabase.MYSQL, "org.b3log.latke.repository.mysql.MysqlJdbcDatabaseSolution");
+
                 }
             };
 
@@ -80,10 +86,16 @@ public final class JdbcFactory implements JdbcDatabase {
     private JdbcFactory() {
 
         /**
-         * Latkes.getRuntimeDatabase();
+         * Latkes.getRuntimeDatabase(); 
          */
-        databaseSolution =
-                jdbcDatabaseSolutionMap.get(Latkes.getRuntimeDatabase());
+        final String databaseSolutionClassName = jdbcDatabaseSolutionMap.get(Latkes.getRuntimeDatabase());
+        try {
+            databaseSolution = (AbstractJdbcDatabaseSolution) Class.forName(databaseSolutionClassName).newInstance();
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "init the ["
+                    + databaseSolutionClassName + "]JdbcDatabaseSolution instance wrong", e);
+        }
+
     }
 
     @Override
