@@ -52,36 +52,39 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
     public String queryPage(final int start, final int end,
-                            final String filterSql, final String orderBySql,
-                            final String tableName) {
+            final String filterSql, final String orderBySql,
+            final String tableName) {
         final StringBuilder sql = new StringBuilder();
         sql.append("select * from ").append(tableName);
         if (StringUtils.isNotBlank(filterSql)) {
             sql.append(" where ").append(filterSql);
         }
         sql.append(orderBySql);
-        sql.append(" limit ").append(start).append(",").append(end - start);
+        sql.append(" limit ").append(start).append(",").append(end
+                - start);
         return sql.toString();
     }
 
     @Override
     public String getRandomlySql(final String tableName, final int fetchSize) {
-        // TODO Auto-generated method stub
-        return null;
+
+        final StringBuilder sql = new StringBuilder();
+        sql.append(" SELECT * FROM ").append(tableName).append(" ORDER BY RAND() LIMIT ").append(fetchSize);
+        return sql.toString();
     }
 
     @Override
     protected void createDropTableSql(final StringBuilder dropTableSql,
-                                      final String tableName) {
+            final String tableName) {
         dropTableSql.append("DROP TABLE  IF EXISTS ").append(tableName).append(";");
 
     }
 
     @Override
     protected void createTableHead(final StringBuilder createTableSql,
-                                   final String tableName) {
-        //        createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
-        //                .append(";");
+            final String tableName) {
+        // createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
+        // .append(";");
         createTableSql.append("CREATE TABLE  IF NOT EXISTS ").append(tableName).append("(");
 
     }
@@ -103,7 +106,8 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
                     keyDefinitionList.add(fieldDefinition);
                 }
             } else {
-                throw new RuntimeException("the type[" + fieldDefinition.getType() + "] is not register for mapping ");
+                throw new RuntimeException("the type["
+                        + fieldDefinition.getType() + "] is not register for mapping ");
             }
 
         }
