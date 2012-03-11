@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.b3log.latke.repository.jdbc;
+package org.b3log.latke.repository.mysql;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.b3log.latke.repository.jdbc.AbstractJdbcDatabaseSolution;
 import org.b3log.latke.repository.jdbc.mapping.BooleanMapping;
+import org.b3log.latke.repository.jdbc.mapping.DateMapping;
 import org.b3log.latke.repository.jdbc.mapping.IntMapping;
 import org.b3log.latke.repository.jdbc.mapping.LongMapping;
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.mapping.NumberMapping;
 import org.b3log.latke.repository.jdbc.mapping.StringMapping;
-import org.b3log.latke.repository.jdbc.mapping.DateMapping;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
 
 /**
@@ -34,12 +36,12 @@ import org.b3log.latke.repository.jdbc.util.FieldDefinition;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.1, Feb 29, 2012
  */
-public class DefaultJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
+public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     /**
      * Public constructor.
      */
-    public DefaultJdbcDatabaseSolution() {
+    public MysqlJdbcDatabaseSolution() {
         registerType("int", new IntMapping());
         registerType("boolean", new BooleanMapping());
         registerType("long", new LongMapping());
