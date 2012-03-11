@@ -18,6 +18,7 @@ package org.b3log.latke.repository.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.Connections;
 
@@ -58,8 +59,12 @@ public final class JdbcTransaction implements Transaction {
     public void commit() {
         boolean ifSuccess = false;
         try {
+            
             connection.commit();
             ifSuccess = true;
+            // remove all cache
+            JdbcRepository.CACHE.removeAll();
+            PageCaches.removeAll();
         } catch (final SQLException e) {
             throw new RuntimeException("commit mistake", e);
         }
