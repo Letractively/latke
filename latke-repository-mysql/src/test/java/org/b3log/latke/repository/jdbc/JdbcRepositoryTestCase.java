@@ -109,6 +109,10 @@ public class JdbcRepositoryTestCase {
             // e.printStackTrace();
             ifRun = false;
             System.out.println("skip JdbcRepositoryTestCase test");
+        }catch(final ExceptionInInitializerError e){
+            ifRun = false;
+            System.out.println("skip JdbcRepositoryTestCase test");
+            
         }
 
         final Map<String, List<FieldDefinition>> map = new HashMap<String, List<FieldDefinition>>();
