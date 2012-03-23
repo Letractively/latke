@@ -48,11 +48,13 @@ public final class CacheFactory {
     public static synchronized void removeAll() {
         switch (Latkes.getRuntimeEnv()) {
             case GAE:
-                // Clears one will clears all on GAE
                 final Iterator<Cache<String, ?>> iterator = CACHES.values().iterator();
                 if (iterator.hasNext()) {
                     iterator.next().removeAll();
+                    // Clears one will clears all on GAE
+                    break;
                 }
+                
                 break;
             case LOCAL:
                 // Clears cache one by one
