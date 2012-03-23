@@ -28,7 +28,7 @@ import org.b3log.latke.Latkes;
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Dec 29, 2011
+ * @version 1.0.0.6, Mar 22, 2012
  */
 public final class CacheFactory {
 
@@ -40,6 +40,29 @@ public final class CacheFactory {
      * Caches.
      */
     private static final Map<String, Cache<String, ?>> CACHES = Collections.synchronizedMap(new HashMap<String, Cache<String, ?>>());
+
+    /**
+     * Removes all caches.
+     */
+    public static synchronized void removeAll() {
+        switch (Latkes.getRuntimeEnv()) {
+            case GAE:
+                // Clears one will clears all on GAE
+                CACHES.values().iterator().next().removeAll();
+                break;
+            case LOCAL:
+                // Clears cache one by one
+                for (final Cache<String, ?> cache : CACHES.values()) {
+                    cache.removeAll();
+                }
+
+                break;
+            default:
+                throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
+        }
+
+        CACHES.clear();
+    }
 
     /**
      * Gets a cache specified by the given cache name.

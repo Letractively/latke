@@ -57,7 +57,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.9, Feb 10, 2012
+ * @version 1.0.2.0, Mar 22, 2012
  * @since 0.3.1
  */
 @SuppressWarnings("unchecked")
@@ -319,14 +319,14 @@ public final class PageCaches {
     }
 
     /**
-     * Removes all cached pages.
+     * Removes all cached pages and cached templates.
      *
      * <p>
-     *   <b>Note</b>: This method will flush the cache for every namespace.
+     *   <b>Note</b>: This method will flush the cache for every namespace (clears all caches).
      * </p>
      */
     public static void removeAll() {
-        CACHE.removeAll();
+        CacheFactory.removeAll();
         Templates.CACHE.clear();
 
         KEYS.clear();
