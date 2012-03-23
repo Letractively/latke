@@ -27,9 +27,23 @@ import org.b3log.latke.repository.jdbc.util.Connections;
  * JdbcTransaction.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Dec 20, 2011
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Mar 22, 2012
  */
 public final class JdbcTransaction implements Transaction {
+
+    /**
+     * Connection.
+     */
+    private Connection connection;
+    /**
+     * Is active.
+     */
+    private boolean isActive;
+    /**
+     * Flag of clear query cache.
+     */
+    private boolean clearQueryCache = true;
 
     /**
      * Public constructor.
@@ -40,14 +54,6 @@ public final class JdbcTransaction implements Transaction {
         connection.setAutoCommit(false);
         isActive = true;
     }
-    /**
-     * connecton.
-     */
-    private Connection connection;
-    /**
-     * isActive.
-     */
-    private boolean isActive;
 
     @Override
     public String getId() {
@@ -58,13 +64,15 @@ public final class JdbcTransaction implements Transaction {
     @Override
     public void commit() {
         boolean ifSuccess = false;
+
         try {
-            
             connection.commit();
             ifSuccess = true;
-            // remove all cache
-            JdbcRepository.CACHE.removeAll();
-            PageCaches.removeAll();
+
+            if (clearQueryCache) {
+                JdbcRepository.CACHE.removeAll();
+                PageCaches.removeAll();
+            }
         } catch (final SQLException e) {
             throw new RuntimeException("commit mistake", e);
         }
@@ -76,16 +84,13 @@ public final class JdbcTransaction implements Transaction {
 
     @Override
     public void rollback() {
-
         try {
             connection.rollback();
-
         } catch (final SQLException e) {
             throw new RuntimeException("rollback mistake", e);
         } finally {
             dispose();
         }
-
     }
 
     /**
@@ -103,6 +108,7 @@ public final class JdbcTransaction implements Transaction {
 
     @Override
     public void clearQueryCache(final boolean flag) {
+        this.clearQueryCache = flag;
     }
 
     /**
@@ -120,7 +126,6 @@ public final class JdbcTransaction implements Transaction {
     }
 
     /**
-     * 
      * getConnection.
      * @return {@link Connection}
      */

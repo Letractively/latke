@@ -44,8 +44,7 @@ public final class JdbcUtil {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(JdbcUtil.class
-            .getName());
+    private static final Logger LOGGER = Logger.getLogger(JdbcUtil.class.getName());
 
     /**
      * executeSql.
@@ -80,9 +79,8 @@ public final class JdbcUtil {
             throws SQLException {
 
         LOGGER.info("executeSql:" + sql);
-
-        final PreparedStatement preparedStatement = connection
-                .prepareStatement(sql);
+        
+        final PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
             preparedStatement.setObject(i, paramList.get(i - 1));
@@ -132,9 +130,7 @@ public final class JdbcUtil {
             final List<Object> paramList, final Connection connection,
             final String tableName) throws SQLException, JSONException,
             RepositoryException {
-
-        final JSONObject jsonObject = queryJson(sql, paramList, connection,
-                false, tableName);
+        final JSONObject jsonObject = queryJson(sql, paramList, connection, false, tableName);
         return jsonObject.getJSONArray(Keys.RESULTS);
 
     }
@@ -158,18 +154,15 @@ public final class JdbcUtil {
 
         LOGGER.info("querySql:" + sql);
 
-        final PreparedStatement preparedStatement = connection
-                .prepareStatement(sql);
+        final PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
         for (int i = 1; i <= paramList.size(); i++) {
-
             preparedStatement.setObject(i, paramList.get(i - 1));
         }
 
         final ResultSet resultSet = preparedStatement.executeQuery();
 
-        final JSONObject jsonObject = resultSetToJsonObject(resultSet,
-                ifOnlyOne, tableName);
+        final JSONObject jsonObject = resultSetToJsonObject(resultSet, ifOnlyOne, tableName);
         preparedStatement.close();
         return jsonObject;
 
@@ -190,20 +183,13 @@ public final class JdbcUtil {
     private static JSONObject resultSetToJsonObject(final ResultSet resultSet,
             final boolean ifOnlyOne, final String tableName)
             throws SQLException, JSONException, RepositoryException {
-
         final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
-        final List<FieldDefinition> definitioList = JdbcRepositories
-                .getRepositoriesMap().get(tableName);
+        final List<FieldDefinition> definitioList = JdbcRepositories.getRepositoriesMap().get(tableName);
 
         if (definitioList == null) {
-
-            LOGGER.log(Level.SEVERE,
-                    "resultSetToJsonObject: null definitioList finded for table  "
-                            + tableName);
-            throw new RepositoryException(
-                    "resultSetToJsonObject: null definitioList finded for table  "
-                            + tableName);
+            LOGGER.log(Level.SEVERE, "resultSetToJsonObject: null definitioList finded for table  {0}", tableName);
+            throw new RepositoryException("resultSetToJsonObject: null definitioList finded for table  " + tableName);
         }
 
         final Map<String, FieldDefinition> dMap = new HashMap<String, FieldDefinition>();
@@ -231,11 +217,9 @@ public final class JdbcUtil {
                     jsonObject.put(columnName, resultSet.getObject(columnName));
                 } else {
                     if ("boolean".equals(definition.getType())) {
-                        jsonObject.put(columnName,
-                                resultSet.getBoolean(columnName));
+                        jsonObject.put(columnName, resultSet.getBoolean(columnName));
                     } else {
-                        jsonObject.put(columnName,
-                                resultSet.getObject(columnName));
+                        jsonObject.put(columnName, resultSet.getObject(columnName));
                     }
                 }
             }
@@ -244,13 +228,12 @@ public final class JdbcUtil {
         }
 
         if (ifOnlyOne) {
-
             if (jsonArray.length() > 0) {
                 jsonObject = jsonArray.getJSONObject(0);
                 return jsonObject;
             }
-            return null;
 
+            return null;
         }
 
         jsonObject = new JSONObject();
@@ -264,7 +247,5 @@ public final class JdbcUtil {
      * Private constructor.
      */
     private JdbcUtil() {
-
     }
-
 }
