@@ -47,7 +47,7 @@ import org.b3log.latke.util.RegexPathMatcher;
  * Request processor utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Oct 24, 2011
+ * @version 1.0.0.7, Mar 23, 2012
  */
 public final class RequestProcessors {
 
@@ -181,7 +181,13 @@ public final class RequestProcessors {
                 if (file.getName().contains("appengine-api")
                     || file.getName().startsWith("freemarker")
                     || file.getName().startsWith("javassist")
-                    || file.getName().startsWith("commons-")) {
+                    || file.getName().startsWith("commons")
+                    || file.getName().startsWith("mail")
+                    || file.getName().startsWith("activation")
+                    || file.getName().startsWith("slf4j")
+                    || file.getName().startsWith("bonecp")
+                    || file.getName().startsWith("jsoup")
+                    || file.getName().startsWith("guava")) {
                     // Just skips some known dependencies hardly....
                     LOGGER.log(Level.INFO, "Skipped request processing discovery[jarName={0}]", file.getName());
 
@@ -204,7 +210,7 @@ public final class RequestProcessors {
 
                     final ClassFile classFile = new ClassFile(dataInputStream);
                     final AnnotationsAttribute annotationsAttribute =
-                            (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
+                                               (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
                     if (null == annotationsAttribute) {
                         continue;
                     }
