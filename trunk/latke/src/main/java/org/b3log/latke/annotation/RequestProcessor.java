@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Indicates that an annotated type for HTTP servlet request processing.
  * 
  * <p>
- * A request processor is the C (controller) of MVC pattern, and has some 
+ * A request processor is the C (controller) of MVC pattern, which has some 
  * methods for requests processing, see {@link RequestProcessing} for more 
  * details.
  * </p>
