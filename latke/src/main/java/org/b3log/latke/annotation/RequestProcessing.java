@@ -56,6 +56,4 @@ public @interface RequestProcessing {
      * The HTTP request methods the annotated method should process.
      */
     HTTPRequestMethod[] method() default {HTTPRequestMethod.GET};
-
-
 }
