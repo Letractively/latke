@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,7 +49,10 @@ public final class CacheFactory {
         switch (Latkes.getRuntimeEnv()) {
             case GAE:
                 // Clears one will clears all on GAE
-                CACHES.values().iterator().next().removeAll();
+                final Iterator<Cache<String, ?>> iterator = CACHES.values().iterator();
+                if (iterator.hasNext()) {
+                    iterator.next().removeAll();
+                }
                 break;
             case LOCAL:
                 // Clears cache one by one
