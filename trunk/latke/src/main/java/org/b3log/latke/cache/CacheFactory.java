@@ -79,8 +79,7 @@ public final class CacheFactory {
      * @return a cache specified by the given cache name
      */
     @SuppressWarnings("unchecked")
-    public static synchronized Cache<String, ? extends Serializable> getCache(
-            final String cacheName) {
+    public static synchronized Cache<String, ? extends Serializable> getCache(final String cacheName) {
         LOGGER.log(Level.INFO, "Constructing Cache[name={0}]....", cacheName);
 
         Cache<String, ?> ret = CACHES.get(cacheName);
@@ -89,16 +88,14 @@ public final class CacheFactory {
             if (null == ret) {
                 switch (Latkes.getRuntime("cache")) {
                     case LOCAL:
-                        final Class<Cache<String, ?>> localLruCache =
-                                                      (Class<Cache<String, ?>>) Class.forName(
+                        final Class<Cache<String, ?>> localLruCache = (Class<Cache<String, ?>>) Class.forName(
                                 "org.b3log.latke.cache.local.memory.LruMemoryCache");
                         ret = localLruCache.newInstance();
                         break;
                     case GAE:
-                        final Class<Cache<String, ?>> gaeMemcache =
-                                                      (Class<Cache<String, ?>>) Class.forName("org.b3log.latke.cache.gae.Memcache");
-                        final Constructor<Cache<String, ?>> constructor =
-                                                            gaeMemcache.getConstructor(String.class);
+                        final Class<Cache<String, ?>> gaeMemcache = (Class<Cache<String, ?>>) Class.forName(
+                                "org.b3log.latke.cache.gae.Memcache");
+                        final Constructor<Cache<String, ?>> constructor = gaeMemcache.getConstructor(String.class);
                         ret = constructor.newInstance(cacheName);
                         break;
                     default:
