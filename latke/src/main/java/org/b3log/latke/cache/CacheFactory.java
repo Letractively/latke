@@ -54,12 +54,14 @@ public final class CacheFactory {
                     // Clears one will clears all on GAE
                     break;
                 }
-                
+
                 break;
             case LOCAL:
                 // Clears cache one by one
-                for (final Cache<String, ?> cache : CACHES.values()) {
+                for (final Map.Entry<String, Cache<String, ?>> entry : CACHES.entrySet()) {
+                    final Cache<String, ?> cache = entry.getValue();
                     cache.removeAll();
+                    LOGGER.log(Level.FINEST, "Clears cache[name={0}]", entry.getKey());
                 }
 
                 break;
@@ -88,14 +90,15 @@ public final class CacheFactory {
                 switch (Latkes.getRuntime("cache")) {
                     case LOCAL:
                         final Class<Cache<String, ?>> localLruCache =
-                                (Class<Cache<String, ?>>) Class.forName("org.b3log.latke.cache.local.memory.LruMemoryCache");
+                                                      (Class<Cache<String, ?>>) Class.forName(
+                                "org.b3log.latke.cache.local.memory.LruMemoryCache");
                         ret = localLruCache.newInstance();
                         break;
                     case GAE:
                         final Class<Cache<String, ?>> gaeMemcache =
-                                (Class<Cache<String, ?>>) Class.forName("org.b3log.latke.cache.gae.Memcache");
+                                                      (Class<Cache<String, ?>>) Class.forName("org.b3log.latke.cache.gae.Memcache");
                         final Constructor<Cache<String, ?>> constructor =
-                                gaeMemcache.getConstructor(String.class);
+                                                            gaeMemcache.getConstructor(String.class);
                         ret = constructor.newInstance(cacheName);
                         break;
                     default:
