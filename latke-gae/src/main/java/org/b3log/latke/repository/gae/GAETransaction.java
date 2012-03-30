@@ -21,22 +21,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.repository.Transaction;
 import org.json.JSONObject;
 
 /**
- * Google App Engine datastore transaction. Just wraps
- * {@link com.google.appengine.api.datastore.Transaction} simply.
+ * Google App Engine datastore transaction. Just wraps {@link com.google.appengine.api.datastore.Transaction} simply.
  * 
  * <p>
- * In this transaction, the caller can {@link org.b3log.latke.repository.Repository#get(java.lang.String) 
- * get data} (by id) for retrieving previous writes. Because the
- * {@link #add(org.json.JSONObject) add}, 
- * {@link #update(java.lang.String, org.json.JSONObject) update} and
- * {@link #remove(java.lang.String) remove} will effect on the
- * {@link  #cache transaction cache}, operation results specified by id.
+ * In this transaction, the caller can {@link org.b3log.latke.repository.Repository#get(java.lang.String) get data} (by id) for retrieving 
+ * previous writes. Because the {@link #add(org.json.JSONObject) add}, {@link #update(java.lang.String, org.json.JSONObject) update} and
+ * {@link #remove(java.lang.String) remove} will effect on the {@link  #cache transaction cache}, operation results specified by id.
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
@@ -61,13 +56,10 @@ public final class GAETransaction implements Transaction {
      * Transaction cache.
      * 
      * <p>
-     * The cache is used to maintain transactional 
-     * {@link org.b3log.latke.repository.Repository#add(org.json.JSONObject) add}, 
-     * {@link org.b3log.latke.repository.Repository#update(java.lang.String, org.json.JSONObject) update} 
-     * and {@link org.b3log.latke.repository.Repository#remove(java.lang.String) remove} uncommitted 
-     * effects on datastore for subsequent 
-     * {@link org.b3log.latke.repository.Repository#get(java.lang.String) get} (by id) queries can retrieve
-     * the result made before.
+     * The cache is used to maintain transactional {@link org.b3log.latke.repository.Repository#add(org.json.JSONObject) add}, 
+     * {@link org.b3log.latke.repository.Repository#update(java.lang.String, org.json.JSONObject) update} and 
+     * {@link org.b3log.latke.repository.Repository#remove(java.lang.String) remove} uncommitted effects on datastore for subsequent 
+     * {@link org.b3log.latke.repository.Repository#get(java.lang.String) get} (by id) queries can retrieve the result made before.
      * </p>
      * 
      * <p>
@@ -81,15 +73,12 @@ public final class GAETransaction implements Transaction {
     private boolean clearQueryCache = true;
 
     /**
-     * Constructs a {@link GAETransaction} object with the specified Google App
-     * Engine datastore {@link com.google.appengine.api.datastore.Transaction
-     * transaction}.
+     * Constructs a {@link GAETransaction} object with the specified Google App Engine datastore 
+     * {@link com.google.appengine.api.datastore.Transaction transaction}.
      *
-     * @param appEngineDatastoreTx the specified Google App Engine datastore
-     * transaction
+     * @param appEngineDatastoreTx the specified Google App Engine datastore transaction
      */
-    public GAETransaction(
-            final com.google.appengine.api.datastore.Transaction appEngineDatastoreTx) {
+    public GAETransaction(final com.google.appengine.api.datastore.Transaction appEngineDatastoreTx) {
         this.appEngineDatastoreTx = appEngineDatastoreTx;
     }
 
@@ -99,8 +88,7 @@ public final class GAETransaction implements Transaction {
     }
 
     /**
-     * Gets a json object from uncommitted transaction cache with the specified 
-     * id.
+     * Gets a json object from uncommitted transaction cache with the specified id.
      * 
      * @param id the specified id
      * @return json object, returns {@code null} if not found
@@ -110,8 +98,7 @@ public final class GAETransaction implements Transaction {
     }
 
     /**
-     * Gets json objects from uncommitted transaction cache with the specified 
-     * ids.
+     * Gets json objects from uncommitted transaction cache with the specified ids.
      * 
      * @param ids the specified ids
      * @return json objects, return an empty map if not found
@@ -133,8 +120,7 @@ public final class GAETransaction implements Transaction {
      * Determines the specified id is in transaction cache or not.
      * 
      * @param id the specified id
-     * @return {@code true} if in transaction cache, returns {@code false} 
-     * otherwise
+     * @return {@code true} if in transaction cache, returns {@code false} otherwise
      */
     public boolean hasUncommitted(final String id) {
         return cache.containsKey(id);
@@ -144,8 +130,7 @@ public final class GAETransaction implements Transaction {
      * Determines the specified ids is in transaction cache or not.
      * 
      * @param ids the specified ids
-     * @return {@code true} if in transaction cache, returns {@code false} 
-     * otherwise
+     * @return {@code true} if in transaction cache, returns {@code false} otherwise
      */
     public boolean hasUncommitted(final Iterable<String> ids) {
         for (final String id : ids) {
@@ -158,8 +143,7 @@ public final class GAETransaction implements Transaction {
     }
 
     /**
-     * Puts the specified uncommitted json object into transaction cache with 
-     * the specified id.
+     * Puts the specified uncommitted json object into transaction cache with the specified id.
      * 
      * @param id the specified id
      * @param jsonObject the specified uncommitted json object
@@ -172,8 +156,8 @@ public final class GAETransaction implements Transaction {
      * Commits this transaction with {@value #COMMIT_RETRIES} times of retries.
      * 
      * <p>
-     * If the transaction committed, clears all transaction cache. If the {@link 
-     * #clearQueryCache flag} is {@code true}, clears global cache regions.
+     * If the transaction committed, clears all transaction cache. If the {@link #clearQueryCache flag} is {@code true}, clears global 
+     * cache regions.
      * </p>
      *
      * <p>
@@ -210,7 +194,6 @@ public final class GAETransaction implements Transaction {
                 GAERepository.TX.set(null);
 
                 if (clearQueryCache) {
-                    GAERepository.CACHE.removeAll();
                     PageCaches.removeAll();
                 }
 
