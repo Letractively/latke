@@ -50,6 +50,7 @@ public final class Connections {
             Class.forName(Latkes.getLocalProperty("jdbc.driver"));
 
             final BoneCPConfig config = new BoneCPConfig();
+            config.setDefaultAutoCommit(false);
             config.setJdbcUrl(Latkes.getLocalProperty("jdbc.URL"));
             config.setUsername(Latkes.getLocalProperty("jdbc.username"));
             config.setPassword(Latkes.getLocalProperty("jdbc.password"));
