@@ -70,7 +70,6 @@ public final class JdbcTransaction implements Transaction {
             ifSuccess = true;
 
             if (clearQueryCache) {
-                JdbcRepository.CACHE.removeAll();
                 PageCaches.removeAll();
             }
         } catch (final SQLException e) {
