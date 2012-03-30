@@ -68,8 +68,6 @@ public final class CacheFactory {
             default:
                 throw new RuntimeException("Latke runs in the hell.... Please set the enviornment correctly");
         }
-
-        CACHES.clear();
     }
 
     /**
