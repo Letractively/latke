@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
  * Mock HTTP servlet request.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Feb 6, 2012
+ * @version 1.0.0.1, Mar 31, 2012
  */
 public class MockHttpServletRequest implements HttpServletRequest {
 
@@ -41,6 +41,14 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * Header.
      */
     private Map<String, String> headers = new HashMap<String, String>();
+    /**
+     * Request URI.
+     */
+    private String requestURI = "/";
+    /**
+     * Attributes.
+     */
+    private Map<String, Object> attributes = new HashMap<String, Object>();
 
     @Override
     public String getAuthType() {
@@ -134,7 +142,16 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getRequestURI() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return requestURI;
+    }
+
+    /**
+     * Sets request URI with the specified request URI.
+     * 
+     * @param requestURI the specified request URI
+     */
+    public void setRequestURI(final String requestURI) {
+        this.requestURI = requestURI;
     }
 
     @Override
@@ -179,7 +196,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Object getAttribute(final String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return attributes.get(name);
     }
 
     @Override
@@ -270,7 +287,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     @Override
     public void setAttribute(final String name, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        attributes.put(name, o);
     }
 
     @Override
