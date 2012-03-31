@@ -106,7 +106,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         final String requestURI = request.getRequestURI();
 
-        if (StaticResources.isStatic(requestURI)) {
+        if (StaticResources.isStatic(request)) {
             // TODO: 1. Etag/Expires/Last-Modified/Cache-Control
             //       2. Content-Encoding, etc headers
             final InputStream staticResourceInputStream = getServletContext().getResourceAsStream(requestURI);

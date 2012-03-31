@@ -15,6 +15,8 @@
  */
 package org.b3log.latke.util;
 
+import javax.servlet.http.HttpServletRequest;
+import org.b3log.latke.mock.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -22,7 +24,7 @@ import org.testng.annotations.Test;
  * {@link StaticResources} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Feb 29, 2012
+ * @version 1.0.0.1, Mar 31, 2012
  */
 public class StaticResourcesTestCase {
 
@@ -31,11 +33,25 @@ public class StaticResourcesTestCase {
      */
     @Test
     public void isStatic() {
-        Assert.assertTrue(StaticResources.isStatic("/css/test.css"));
-        Assert.assertTrue(StaticResources.isStatic("/images/test.jpg"));
-        Assert.assertTrue(StaticResources.isStatic("/js/lib/jquery/jquery.min.js"));
+        HttpServletRequest request = new MockHttpServletRequest();
 
-        Assert.assertFalse(StaticResources.isStatic("/test.notExist"));
-        Assert.assertFalse(StaticResources.isStatic("/images/test"));
+        ((MockHttpServletRequest) request).setRequestURI("/css/test.css");
+        Assert.assertTrue(StaticResources.isStatic(request));
+
+        request = new MockHttpServletRequest();
+        ((MockHttpServletRequest) request).setRequestURI("/images/test.jpg");
+        Assert.assertTrue(StaticResources.isStatic(request));
+
+        request = new MockHttpServletRequest();
+        ((MockHttpServletRequest) request).setRequestURI("/js/lib/jquery/jquery.min.js");
+        Assert.assertTrue(StaticResources.isStatic(request));
+
+        request = new MockHttpServletRequest();
+        ((MockHttpServletRequest) request).setRequestURI("/test.notExist");
+        Assert.assertFalse(StaticResources.isStatic(request));
+
+        request = new MockHttpServletRequest();
+        ((MockHttpServletRequest) request).setRequestURI("/images/test");
+        Assert.assertFalse(StaticResources.isStatic(request));
     }
 }

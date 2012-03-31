@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.b3log.latke.servlet.AbstractServletListener;
@@ -32,7 +33,7 @@ import org.w3c.dom.NodeList;
  * Static resource utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Feb 27, 2012
+ * @version 1.0.0.1, Mar 31, 2012
  */
 public final class StaticResources {
 
@@ -48,6 +49,14 @@ public final class StaticResources {
      * </p>
      */
     private static final Set<String> STATIC_RESOURCE_PATHS = new TreeSet<String>();
+    /**
+     * Key of static resource checked.
+     */
+    public static final String REQUEST_STATIC_RESOURCE_CHECKED = "requestStaticResourceChecked";
+    /**
+     * Key of static resource requesting.
+     */
+    public static final String IS_REQUEST_STATIC_RESOURCE = "isRequestStaticResource";
 
     static {
         final String webRoot = AbstractServletListener.getWebRoot();
@@ -91,15 +100,26 @@ public final class StaticResources {
     }
 
     /**
-     * Determines whether the specified request URI points to a static resource.
+     * Determines whether the client requests a static resource with the specified request.
      * 
-     * @param requestURI the specified request URI
-     * @return {@code true} if the specified request URI points to a static 
-     * resource, returns {@code false} otherwise
+     * @param request the specified request
+     * @return {@code true} if the client requests a static resource, returns {@code false} otherwise
      */
-    public static boolean isStatic(final String requestURI) {
+    public static boolean isStatic(final HttpServletRequest request) {
+        final boolean requestStaticResourceChecked =
+                      null == request.getAttribute(REQUEST_STATIC_RESOURCE_CHECKED)
+                      ? false : (Boolean) request.getAttribute(REQUEST_STATIC_RESOURCE_CHECKED);
+        if (requestStaticResourceChecked) {
+            return (Boolean) request.getAttribute(IS_REQUEST_STATIC_RESOURCE);
+        }
+
+        request.setAttribute(REQUEST_STATIC_RESOURCE_CHECKED, true);
+        request.setAttribute(IS_REQUEST_STATIC_RESOURCE, false);
+
+        final String requestURI = request.getRequestURI();
         for (final String pattern : STATIC_RESOURCE_PATHS) {
             if (AntPathMatcher.match(pattern, requestURI)) {
+                request.setAttribute(IS_REQUEST_STATIC_RESOURCE, true);
                 return true;
             }
         }
