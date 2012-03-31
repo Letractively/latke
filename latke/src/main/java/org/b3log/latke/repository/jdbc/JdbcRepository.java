@@ -925,15 +925,15 @@ public final class JdbcRepository implements Repository {
      */
     private void closeQueryConnection(final Connection connection) throws RepositoryException {
         final JdbcTransaction jdbcTransaction = TX.get();
-        if (jdbcTransaction == null
-            || !jdbcTransaction.isActive()) {
+        if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
             try {
                 connection.close();
             } catch (final SQLException e) {
-                LOGGER.log(Level.SEVERE, "closeQueryConnection :"
-                                         + e.getMessage(), e);
+                LOGGER.log(Level.SEVERE, "Can not close database connection", e);
                 throw new RepositoryException(e);
             }
+        } else {
+            LOGGER.log(Level.FINEST, "Do not close query connection caused by in a transaction");
         }
     }
 }

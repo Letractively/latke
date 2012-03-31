@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
+import org.b3log.latke.util.Strings;
 
 /**
  * JDBC connection utilities.
@@ -73,6 +74,29 @@ public final class Connections {
      * @throws SQLException SQL exception 
      */
     public static Connection getConnection() throws SQLException {
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            // TODO: D, Call stack utilities
+            final Throwable throwable = new Throwable();
+            final StackTraceElement[] stackElements = throwable.getStackTrace();
+
+            if (null != stackElements) {
+                final StringBuilder stackBuilder = new StringBuilder("CallStack (org.b3lg.*)[").append(Strings.LINE_SEPARATOR);
+                
+                for (int i = 0; i < stackElements.length; i++) {
+                    if (!stackElements[i].getClassName().startsWith("org.b3log")) {
+                        continue;
+                    }
+
+                    stackBuilder.append("    [className=").append(stackElements[i].getClassName()).append(", fileName=").
+                            append(stackElements[i].getFileName()).append(", lineNumber=").append(stackElements[i].getLineNumber()).
+                            append(", methodName=").append(stackElements[i].getMethodName()).append(']').append(Strings.LINE_SEPARATOR);
+                }
+                stackBuilder.append("], fullDepth=[").append(stackElements.length).append("]");
+                
+                LOGGER.log(Level.FINEST, stackBuilder.toString());
+            }
+        }
+
         LOGGER.log(Level.FINEST, "Connection pool[createdConns={0}, freeConns={1}, leasedConns={2}]",
                    new Object[]{CONN_POOL.getTotalCreatedConnections(), CONN_POOL.getTotalFree(), CONN_POOL.getTotalLeased()});
         return CONN_POOL.getConnection();
