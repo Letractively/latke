@@ -92,19 +92,16 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         final String resourcePath = request.getPathTranslated();
+        final String requestURI = request.getRequestURI();
 
         LOGGER.log(Level.FINEST, "Request[contextPath={0}, pathTranslated={1}, requestURI={2}]",
-                   new Object[]{request.getContextPath(), resourcePath, request.getRequestURI()});
+                   new Object[]{request.getContextPath(), resourcePath, requestURI});
 
-        if ((!request.getRequestURI().equals("/")
-             && new File(resourcePath).isDirectory())
-            || resourcePath.endsWith(".ftl")) {
+        if ((!"/".equals(requestURI) && new File(resourcePath).isDirectory()) || resourcePath.endsWith(".ftl")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             return;
         }
-
-        final String requestURI = request.getRequestURI();
 
         if (StaticResources.isStatic(request)) {
             // TODO: 1. Etag/Expires/Last-Modified/Cache-Control
