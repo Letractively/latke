@@ -87,7 +87,7 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.7, Dec 26, 2011
+ * @version 1.0.4.8, Apr 1, 2012
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -550,7 +550,7 @@ public final class GAERepository implements Repository {
 
     @Override
     public boolean has(final String id) throws RepositoryException {
-        return null == get(id);
+        return null != get(id);
     }
 
     @Override
