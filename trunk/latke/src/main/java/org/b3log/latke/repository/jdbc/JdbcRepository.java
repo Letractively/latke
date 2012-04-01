@@ -433,7 +433,7 @@ public final class JdbcRepository implements Repository {
 
         // using get() method to get result.
 
-        return null == get(id);
+        return null != get(id);
     }
 
     @Override
