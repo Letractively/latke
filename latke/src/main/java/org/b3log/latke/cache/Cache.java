@@ -127,22 +127,21 @@ public interface Cache<K extends Serializable, V extends Serializable> {
      * Gets the maximum objects count of this cache.
      *
      * @return the maximum objects count of this cache, returns {@code -1} if
-     * cache unavailable.
+     * cache is unavailable.
      */
     long getMaxCount();
 
     /**
      * Gets the hit count of this cache.
      *
-     * @return hit count of this cache, returns {@code -1} if cache unavailable.
+     * @return hit count of this cache, returns {@code -1} if cache is unavailable.
      */
     long getHitCount();
 
     /**
      * Gets the miss count of this cache.
      *
-     * @return miss count of this cache, returns {@code -1} if cache
-     * unavailable.
+     * @return miss count of this cache, returns {@code -1} if cache is unavailable.
      */
     long getMissCount();
 
@@ -157,21 +156,21 @@ public interface Cache<K extends Serializable, V extends Serializable> {
      * Gets current cached object count of this cache.
      *
      * @return current cached object count of this cache, returns {@code -1}
-     * if cache unavailable.
+     * if cache is unavailable.
      */
     long getCachedCount();
 
     /**
      * Gets cached bytes.
      *
-     * @return cached bytes, returns {@code -1} if cache unavailable.
+     * @return cached bytes, returns {@code -1} if cache is unavailable.
      */
     long getCachedBytes();
 
     /**
      * Gets hit bytes.
      *
-     * @return hit bytes, returns {@code -1} if cache unavailable.
+     * @return hit bytes, returns {@code -1} if cache is unavailable.
      */
     long getHitBytes();
 
