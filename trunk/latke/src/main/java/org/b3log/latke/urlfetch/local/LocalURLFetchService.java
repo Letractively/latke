@@ -26,6 +26,7 @@ import org.b3log.latke.urlfetch.HTTPResponse;
 import org.b3log.latke.urlfetch.URLFetchService;
 
 /**
+ * Local URL fetch service.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 0.0.0.3, Aug 21, 2011
