@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Mar 2, 2012
+ * @version 1.0.0.3, Apr 4, 2012
  */
 public final class Connections {
 
@@ -52,6 +52,7 @@ public final class Connections {
 
             final BoneCPConfig config = new BoneCPConfig();
             config.setDefaultAutoCommit(false);
+            config.setDefaultTransactionIsolation(Latkes.getLocalProperty("jdbc.transactionIsolation"));
             config.setJdbcUrl(Latkes.getLocalProperty("jdbc.URL"));
             config.setUsername(Latkes.getLocalProperty("jdbc.username"));
             config.setPassword(Latkes.getLocalProperty("jdbc.password"));
