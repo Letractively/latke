@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.concurrent.Future;
 
 import org.b3log.latke.Latkes;
 import org.b3log.latke.servlet.HTTPRequestMethod;
 import org.testng.annotations.Test;
 
 /**
+ * URL fetch test case.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 0.0.0.2, Aug 21, 2011
@@ -39,8 +41,7 @@ public class UrlFetchTestCase {
     /**
      * URL fetch service.
      */
-    private final URLFetchService fetchService =
-            URLFetchServiceFactory.getURLFetchService();
+    private final URLFetchService fetchService = URLFetchServiceFactory.getURLFetchService();
 
     /**
      * 
@@ -54,6 +55,24 @@ public class UrlFetchTestCase {
         request.setURL(new URL("http://www.baidu.com"));
 
         final HTTPResponse httpResponse = fetchService.fetch(request);
+
+        printHttpResponse(httpResponse);
+    }
+
+    /**
+     * Tests async get fetch.
+     * 
+     * @throws Exception exception
+     */
+    @Test
+    public void testAsyncGetFetch() throws Exception {
+        System.out.println("testAsyncGetFetch");
+        final HTTPRequest request = new HTTPRequest();
+        request.setRequestMethod(HTTPRequestMethod.GET);
+        request.setURL(new URL("http://www.baidu.com"));
+        
+        final Future<?> fetchAsync = fetchService.fetchAsync(request);
+        final HTTPResponse httpResponse = (HTTPResponse) fetchAsync.get();
 
         printHttpResponse(httpResponse);
     }
@@ -89,12 +108,11 @@ public class UrlFetchTestCase {
         System.out.println("finalUrl == " + httpResponse.getFinalURL());
 
         for (HTTPHeader httpHeader : httpResponse.getHeaders()) {
-            System.out.println(httpHeader.getName() + " == " + httpHeader.
-                    getValue());
+            System.out.println(httpHeader.getName() + " == " + httpHeader.getValue());
         }
 
         final BufferedReader reader =
-                new BufferedReader(new InputStreamReader(new ByteArrayInputStream(
+                             new BufferedReader(new InputStreamReader(new ByteArrayInputStream(
                 httpResponse.getContent())));
 
         String lines;
