@@ -15,19 +15,81 @@
  */
 package org.b3log.latke.taskqueue.local;
 
+import java.io.File;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.b3log.latke.servlet.AbstractServletListener;
 import org.b3log.latke.taskqueue.Queue;
 import org.b3log.latke.taskqueue.TaskQueueService;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Local task queue service.
- *
+ * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Apr 5, 2012
  */
 public final class LocalTaskQueueService implements TaskQueueService {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LocalTaskQueueService.class.getName());
+
+    /**
+     * the queueMap to hold all queue.
+     */
+    private static Map<String, Queue> queueMap = new Hashtable<String, Queue>();
+
+    /**
+     * reading config.
+     */
+    static {
+        final String webRoot = AbstractServletListener.getWebRoot();
+        final File queueXml = new File(webRoot
+                + File.separator + "WEB-INF" + File.separator + "queue.xml");
+
+        if (!queueXml.exists()) {
+            LOGGER.log(Level.INFO, "Not found queue, no cron jobs need to schedule");
+        }
+
+        final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        try {
+            final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            final Document document = documentBuilder.parse(queueXml);
+            final Element root = document.getDocumentElement();
+            root.normalize();
+
+            final NodeList queueRoot = root.getElementsByTagName("queue-entries");
+
+            LOGGER.log(Level.CONFIG, "Reading tasks: ");
+            for (int i = 0; i < queueRoot.getLength(); i++) {
+                final Element queueNode = (Element) queueRoot.item(i);
+                final String queueName = queueNode.getElementsByTagName("name").item(0).getTextContent();
+                final Element rparamNode =
+                        (Element) ((NodeList) queueNode.getElementsByTagName("retry-parameters")).item(0);
+                final String retryLimit = rparamNode.getElementsByTagName("task-retry-limit").item(0).getTextContent();
+
+                queueMap.put(queueName, new LocalTaskQueue(Integer.valueOf(retryLimit)));
+
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.SEVERE, "Reads queue.xml failed", e);
+            throw new RuntimeException(e);
+        }
+
+    }
+
     @Override
     public Queue getQueue(final String queueName) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return queueMap.get(queueName);
     }
 }
