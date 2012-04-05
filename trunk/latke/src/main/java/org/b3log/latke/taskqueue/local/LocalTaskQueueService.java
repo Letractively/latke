@@ -21,8 +21,8 @@ import org.b3log.latke.taskqueue.TaskQueueService;
 /**
  * Local task queue service.
  *
- * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Nov 19, 2011
+ * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
+ * @version 1.0.0.0, Apr 5, 2012
  */
 public final class LocalTaskQueueService implements TaskQueueService {
 
