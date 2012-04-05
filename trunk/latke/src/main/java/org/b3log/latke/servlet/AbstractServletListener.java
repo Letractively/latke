@@ -28,13 +28,14 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
+import org.b3log.latke.cron.CronService;
 import org.b3log.latke.repository.jdbc.JdbcRepository;
 
 /**
  * Abstract servlet listener.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.3.0, Dec 28, 2011
+ * @version 1.0.3.0, Apr 5, 2012
  */
 public abstract class AbstractServletListener implements ServletContextListener, ServletRequestListener, HttpSessionListener {
 
@@ -73,6 +74,8 @@ public abstract class AbstractServletListener implements ServletContextListener,
         webRoot = servletContext.getRealPath("") + File.separator;
         final String catalinaBase = System.getProperty("catalina.base");
         LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]", new Object[]{webRoot, catalinaBase});
+        
+        CronService.start();
     }
 
     /**

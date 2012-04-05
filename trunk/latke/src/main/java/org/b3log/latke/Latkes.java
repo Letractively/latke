@@ -35,7 +35,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Mar 1, 2012
+ * @version 1.0.1.3, Apr 5, 2012
  * @see #initRuntimeEnv()
  */
 public final class Latkes {
@@ -283,6 +283,24 @@ public final class Latkes {
         }
 
         return Latkes.runtimeMode;
+    }
+
+    /**
+     * Gets server address.
+     * 
+     * @return server address
+     */
+    public static String getServerAddress() {
+        if (RuntimeEnv.LOCAL != getRuntimeEnv()) {
+            throw new RuntimeException("Underlying database can be specified when Latke runs on Local environment only");
+        }
+
+        final String ret = LOCAL_PROPS.getProperty("server.address");
+        if (Strings.isEmptyOrNull(ret)) {
+            throw new RuntimeException("Please configures server address in local.properties!");
+        }
+
+        return ret;
     }
 
     /**
