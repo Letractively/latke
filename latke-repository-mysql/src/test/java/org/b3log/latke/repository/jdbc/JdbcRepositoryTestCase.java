@@ -109,10 +109,10 @@ public class JdbcRepositoryTestCase {
             // e.printStackTrace();
             ifRun = false;
             System.out.println("skip JdbcRepositoryTestCase test");
-        }catch(final ExceptionInInitializerError e){
+        } catch (final ExceptionInInitializerError e) {
             ifRun = false;
             System.out.println("skip JdbcRepositoryTestCase test");
-            
+
         }
 
         final Map<String, List<FieldDefinition>> map = new HashMap<String, List<FieldDefinition>>();
@@ -301,7 +301,7 @@ public class JdbcRepositoryTestCase {
         final JSONObject ret = jdbcRepository.get(query);
 
         final int eCount = 4;
-        assertEquals(ret.getJSONArray(Keys.RESULTS).length(), eCount);
+        assertEquals(eCount, ret.getJSONArray(Keys.RESULTS).length());
 
     }
 }
