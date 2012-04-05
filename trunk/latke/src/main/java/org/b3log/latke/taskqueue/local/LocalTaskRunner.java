@@ -15,44 +15,34 @@
  */
 package org.b3log.latke.taskqueue.local;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.b3log.latke.taskqueue.Queue;
 import org.b3log.latke.taskqueue.Task;
-import org.b3log.latke.taskqueue.TaskHandle;
 
 /**
- * LocalTaskQueue.
+ * run the task in queue, now using httpUrlfetch to handle the request.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @version 1.0.0.0, Apr 5, 2012
  */
-public class LocalTaskQueue implements Queue {
+public class LocalTaskRunner extends Thread {
 
     /**
-     * defalut retryLimit 2.
+     * the task need to do .
      */
-    private Integer retryLimit = 2;
+    private Task task;
 
     /**
      * default constructor.
      * 
-     * @param retryLimit retryLimit
+     * @param task task need to do 
      */
-    public LocalTaskQueue(final Integer retryLimit) {
-        this.retryLimit = retryLimit;
-
+    public LocalTaskRunner(final Task task) {
+        this.task = task;
     }
 
-    /**
-     * hold all task.
-     */
-    private ConcurrentLinkedQueue<Task> taskQueue = new ConcurrentLinkedQueue<Task>();
-
     @Override
-    public TaskHandle add(final Task task) {
-        taskQueue.add(task);
-        return new LocalTaskhandle();
+    public void run() {
+         
+       
     }
 
 }

@@ -58,6 +58,9 @@ public final class LocalURLFetchService implements URLFetchService {
             }
         });
 
+        // no pool
+        futureTask.run();
+
         return futureTask;
     }
 }
