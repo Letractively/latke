@@ -17,18 +17,18 @@ package org.b3log.latke.servlet;
 
 import java.io.File;
 import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
-import java.io.InputStream;
 import org.b3log.latke.Keys;
 import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.util.Strings;
 import java.util.logging.Level;
 import java.io.IOException;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.json.JSONException;
@@ -53,6 +53,30 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * Logger.
      */
     private static final Logger LOGGER = Logger.getLogger(HTTPRequestDispatcher.class.getName());
+    /** 
+     * Default Servlet name used by Tomcat, Jetty, JBoss, and GlassFish.
+     */
+    private static final String COMMON_DEFAULT_SERVLET_NAME = "default";
+    /** 
+     * Default Servlet name used by Google App Engine.
+     */
+    private static final String GAE_DEFAULT_SERVLET_NAME = "_ah_default";
+    /** 
+     * Default Servlet name used by Resin.
+     */
+    private static final String RESIN_DEFAULT_SERVLET_NAME = "resin-file";
+    /** 
+     * Default Servlet name used by WebLogic.
+     */
+    private static final String WEBLOGIC_DEFAULT_SERVLET_NAME = "FileServlet";
+    /**
+     * Default Servlet name used by WebSphere.
+     */
+    private static final String WEBSPHERE_DEFAULT_SERVLET_NAME = "SimpleFileServlet";
+    /**
+     * Current default servlet name.
+     */
+    private String defaultServletName;
 
     /**
      * Initializes this servlet.
@@ -73,11 +97,28 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             LOGGER.info("Discovered request processors");
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "Initializes request processors failed", e);
-
         } finally {
             Stopwatchs.end();
         }
-
+        
+        final ServletContext servletContext = getServletContext();
+        if (servletContext.getNamedDispatcher(COMMON_DEFAULT_SERVLET_NAME) != null) {
+            defaultServletName = COMMON_DEFAULT_SERVLET_NAME;
+        } else if (servletContext.getNamedDispatcher(GAE_DEFAULT_SERVLET_NAME) != null) {
+            defaultServletName = GAE_DEFAULT_SERVLET_NAME;
+        } else if (servletContext.getNamedDispatcher(RESIN_DEFAULT_SERVLET_NAME) != null) {
+            defaultServletName = RESIN_DEFAULT_SERVLET_NAME;
+        } else if (servletContext.getNamedDispatcher(WEBLOGIC_DEFAULT_SERVLET_NAME) != null) {
+            defaultServletName = WEBLOGIC_DEFAULT_SERVLET_NAME;
+        } else if (servletContext.getNamedDispatcher(WEBSPHERE_DEFAULT_SERVLET_NAME) != null) {
+            defaultServletName = WEBSPHERE_DEFAULT_SERVLET_NAME;
+        } else {
+            throw new IllegalStateException("Unable to locate the default servlet for serving static content. "
+                                            + "Please set the 'defaultServletName' property explicitly.");
+            // TODO: Loads from local.properties 
+        }
+        
+        LOGGER.log(Level.CONFIG, "The default servlet for serving static resource is [{0}]", defaultServletName);
     }
 
     /**
@@ -93,35 +134,30 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             throws ServletException, IOException {
         final String resourcePath = request.getPathTranslated();
         final String requestURI = request.getRequestURI();
-
+        
         LOGGER.log(Level.FINEST, "Request[contextPath={0}, pathTranslated={1}, requestURI={2}]",
                    new Object[]{request.getContextPath(), resourcePath, requestURI});
-
+        
         if ((!"/".equals(requestURI) && new File(resourcePath).isDirectory()) || resourcePath.endsWith(".ftl")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
-
+            
             return;
         }
-
+        
         if (StaticResources.isStatic(request)) {
-            // TODO: 1. Etag/Expires/Last-Modified/Cache-Control
-            //       2. Content-Encoding, etc headers
-            final InputStream staticResourceInputStream = getServletContext().getResourceAsStream(requestURI);
-            if (null == staticResourceInputStream) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
+            final RequestDispatcher requestDispatcher = getServletContext().getNamedDispatcher(defaultServletName);
+            if (null == requestDispatcher) {
+                throw new IllegalStateException("A RequestDispatcher could not be located for the default servlet ["
+                                                + this.defaultServletName + "]");
             }
-
-            final String mimeType = getServletContext().getMimeType(resourcePath);
-            response.setContentType(mimeType);
-            IOUtils.copy(staticResourceInputStream, response.getOutputStream());
-
+            
+            requestDispatcher.forward(request, response);
             return;
         }
-
+        
         final long startTimeMillis = System.currentTimeMillis();
         request.setAttribute(START_TIME_MILLIS, startTimeMillis);
-
+        
         if (Latkes.isPageCacheEnabled()) {
             final String queryString = request.getQueryString();
             String pageCacheKey = (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
@@ -130,15 +166,15 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                 request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
             }
         }
-
+        
         request.setCharacterEncoding("UTF-8");
-
+        
         response.setCharacterEncoding("UTF-8");
-
+        
         final HTTPRequestContext context = new HTTPRequestContext();
         context.setRequest(request);
         context.setResponse(response);
-
+        
         dispatch(context);
     }
 
@@ -151,24 +187,24 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      */
     public static void dispatch(final HTTPRequestContext context) throws ServletException, IOException {
         final HttpServletRequest request = context.getRequest();
-
+        
         final Integer sc = (Integer) request.getAttribute("javax.servlet.error.status_code");
         if (null != sc) {
             request.setAttribute("requestURI", "/error.do");
         }
-
+        
         String requestURI = (String) request.getAttribute("requestURI");
         if (Strings.isEmptyOrNull(requestURI)) {
             requestURI = request.getRequestURI();
         }
-
+        
         String method = (String) request.getAttribute("method");
         if (Strings.isEmptyOrNull(method)) {
             method = request.getMethod();
         }
-
+        
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]", new Object[]{requestURI, method});
-
+        
         try {
             final Object processorMethodRet = RequestProcessors.invoke(requestURI, method, context);
         } catch (final Exception e) {
@@ -178,19 +214,19 @@ public final class HTTPRequestDispatcher extends HttpServlet {
                        new Object[]{requestURI, method, exceptionTypeName, e.getMessage()});
             if ("com.google.apphosting.api.ApiProxy$OverQuotaException".equals(exceptionTypeName)) {
                 PageCaches.removeAll();
-
+                
                 context.getResponse().sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 return;
             }
-
+            
             throw new ServletException(e);
         } catch (final Error e) {
             final Runtime runtime = Runtime.getRuntime();
             LOGGER.log(Level.FINER, "Memory status[total={0}, max={1}, free={2}]",
                        new Object[]{runtime.totalMemory(), runtime.maxMemory(), runtime.freeMemory()});
-
+            
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
+            
             throw e;
         }
         // XXX: processor method ret?
@@ -199,7 +235,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         if (null == renderer) {
             renderer = new HTTP404Renderer();
         }
-
+        
         renderer.render(context);
     }
 
@@ -218,7 +254,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         if (null == tmp) {
             return new JSONObject();
         }
-
+        
         LOGGER.log(Level.FINEST, "Client is using QueryString[{0}]", tmp);
         final StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -229,7 +265,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             if (kv.length != 2) {
                 return new JSONObject();
             }
-
+            
             final String key = kv[0];
             final String value = kv[1];
             sb.append("\"");
@@ -243,9 +279,9 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             }
         }
         sb.append("}");
-
+        
         ret = new JSONObject(sb.toString());
-
+        
         return ret;
     }
 }
