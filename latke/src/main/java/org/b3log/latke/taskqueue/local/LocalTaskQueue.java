@@ -15,8 +15,6 @@
  */
 package org.b3log.latke.taskqueue.local;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.b3log.latke.taskqueue.Queue;
 import org.b3log.latke.taskqueue.Task;
 import org.b3log.latke.taskqueue.TaskHandle;
@@ -44,14 +42,13 @@ public class LocalTaskQueue implements Queue {
 
     }
 
-    /**
-     * hold all task.
-     */
-    private ConcurrentLinkedQueue<Task> taskQueue = new ConcurrentLinkedQueue<Task>();
-
     @Override
     public TaskHandle add(final Task task) {
-        taskQueue.add(task);
+
+        //trigger the task right now
+        final LocalTaskRunner localTaskRunner = new LocalTaskRunner(task, retryLimit);
+        localTaskRunner.start();
+
         return new LocalTaskhandle();
     }
 
