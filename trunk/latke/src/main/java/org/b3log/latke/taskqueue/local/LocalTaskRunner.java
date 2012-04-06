@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import org.b3log.latke.Latkes;
 import org.b3log.latke.taskqueue.Task;
 import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
@@ -73,7 +74,8 @@ public class LocalTaskRunner extends Thread {
 
         final HTTPRequest httpRequest = new HTTPRequest();
         try {
-            httpRequest.setURL(new URL(task.getURL()));
+            httpRequest.setURL(new URL("http://" + Latkes.getServerAddress()
+                    + task.getURL()));
         } catch (final MalformedURLException e) {
             e.printStackTrace();
         }
