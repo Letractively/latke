@@ -29,7 +29,7 @@ import org.b3log.latke.Latkes;
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Mar 22, 2012
+ * @version 1.0.0.7, Apr 6, 2012
  */
 public final class CacheFactory {
 
@@ -46,7 +46,7 @@ public final class CacheFactory {
      * Removes all caches.
      */
     public static synchronized void removeAll() {
-        switch (Latkes.getRuntimeEnv()) {
+         switch (Latkes.getRuntime("cache")) {
             case GAE:
                 final Iterator<Cache<String, ?>> iterator = CACHES.values().iterator();
                 if (iterator.hasNext()) {
