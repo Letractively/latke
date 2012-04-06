@@ -45,12 +45,16 @@ public class LocalTaskRunner extends Thread {
      */
     private Task task;
 
+    /**
+     * the retry time of a task.
+     */
     private Integer retryLimit;
 
     /**
      * default constructor.
      * 
      * @param task task need to do 
+     * @param retryLimit retryTime
      */
     public LocalTaskRunner(final Task task, final Integer retryLimit) {
         this.task = task;
@@ -70,7 +74,7 @@ public class LocalTaskRunner extends Thread {
         final HTTPRequest httpRequest = new HTTPRequest();
         try {
             httpRequest.setURL(new URL(task.getURL()));
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             e.printStackTrace();
         }
 
@@ -80,8 +84,8 @@ public class LocalTaskRunner extends Thread {
             if (!doUrlFetch(httpRequest)) {
                 retry++;
                 try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                    Thread.sleep(new Integer("1000"));
+                } catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -96,14 +100,14 @@ public class LocalTaskRunner extends Thread {
      * do task using urlfetch(method:get),if wrong return false.
      * 
      * @param httpRequest {@link HTTPRequest}
-     * @return
+     * @return isSuccess
      */
-    private boolean doUrlFetch(HTTPRequest httpRequest) {
+    private boolean doUrlFetch(final HTTPRequest httpRequest) {
 
         HTTPResponse httpResponse = null;
         try {
             httpResponse = urlFetchService.fetch(httpRequest);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.info("the task[" + task.getURL() + "] throw exception "
                     + e.getMessage());
             return false;
@@ -116,8 +120,12 @@ public class LocalTaskRunner extends Thread {
          * If the task returns a status code outside of this range" 
          *</p>
          */
-        if (httpResponse.getResponseCode() >= 200
-                && httpResponse.getResponseCode() <= 299) {
+
+        final Integer beginCode = 200;
+        final Integer endCode = 299;
+
+        if (httpResponse.getResponseCode() >= beginCode
+                && httpResponse.getResponseCode() <= endCode) {
             return true;
         }
         LOGGER.info("the task[" + task.getURL()
