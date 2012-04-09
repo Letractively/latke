@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.b3log.latke.repository.jdbc.mapping.Mapping;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.repository.jdbc.util.FieldDefinition;
@@ -56,10 +57,10 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
         final Connection connection = Connections.getConnection();
 
         try {
-            //need config
-//        final StringBuilder dropTableSql = new StringBuilder();
-//        createDropTableSql(dropTableSql, tableName);
-//        JdbcUtil.executeSql(dropTableSql.toString(), connection);
+            // need config
+            // final StringBuilder dropTableSql = new StringBuilder();
+            // createDropTableSql(dropTableSql, tableName);
+            // JdbcUtil.executeSql(dropTableSql.toString(), connection);
 
             final StringBuilder createTableSql = new StringBuilder();
 
@@ -83,7 +84,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param tableName talbename
      */
     protected abstract void createDropTableSql(StringBuilder dropTableSql,
-                                               String tableName);
+            String tableName);
 
     /**
      * 
@@ -93,7 +94,7 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param tableName tableName
      */
     protected abstract void createTableHead(StringBuilder createTableSql,
-                                            String tableName);
+            String tableName);
 
     /**
      * abstract createTableBody for each DB to impl.
@@ -102,13 +103,38 @@ public abstract class AbstractJdbcDatabaseSolution implements JdbcDatabase {
      * @param fieldDefinitions {@link FieldDefinition}
      */
     protected abstract void createTableBody(StringBuilder createTableSql,
-                                            List<FieldDefinition> fieldDefinitions);
+            List<FieldDefinition> fieldDefinitions);
 
     /**
      * abstract createTableEnd for each DB to impl.
      * @param createTableSql createSql 
      */
     protected abstract void createTableEnd(StringBuilder createTableSql);
+
+    @Override
+    public boolean clearTable(final String tableName, final boolean ifdrop) throws SQLException {
+
+        final Connection connection = Connections.getConnection();
+        try {
+            final StringBuilder clearTableSql = new StringBuilder();
+            clearTableSql(clearTableSql, tableName, ifdrop);
+            return JdbcUtil.executeSql(clearTableSql.toString(), connection);
+
+        } catch (final SQLException e) {
+            throw e;
+        } finally {
+            connection.close();
+        }
+    }
+
+    /**
+     * the clearTableSql for each Db to impl.
+     * 
+     * @param clearTableSql clearTableSql
+     * @param tableName tableName
+     * @param ifdrop ifdrop
+     */
+    public abstract void clearTableSql(final StringBuilder clearTableSql, final String tableName, final boolean ifdrop);
 
     /**
      * 
