@@ -73,6 +73,34 @@ public final class Repositories {
     }
 
     /**
+     * Gets repository names.
+     * 
+     * @return repository names, for example,
+     * <pre>
+     * [
+     *     "repository1", "repository2", ....
+     * ]
+     * </pre>
+     */
+    public static JSONArray getRepositoryNames() {
+        final JSONArray ret = new JSONArray();
+
+        if (null == repositoriesDescription) {
+            LOGGER.log(Level.INFO, "Not found repository description[repository.json] file under classpath");
+
+            return ret;
+        }
+
+        final JSONArray repositories = repositoriesDescription.optJSONArray("repositories");
+        for (int i = 0; i < repositories.length(); i++) {
+            final JSONObject repository = repositories.optJSONObject(i);
+            ret.put(repository.optString("name"));
+        }
+
+        return ret;
+    }
+
+    /**
      * Gets repositories description.
      * 
      * @return repositories description, returns {@code null} if not found or
