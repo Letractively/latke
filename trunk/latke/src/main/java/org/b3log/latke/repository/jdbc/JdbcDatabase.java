@@ -40,6 +40,19 @@ public interface JdbcDatabase {
             throws SQLException;
 
     /**
+     * 
+     * @param tableName tableName
+     * @param ifdrop ifdrop 
+     * <P>
+     *  ifdrop true: using drop
+     *         not: using truncate to clear data.
+     * </p>
+     * @throws SQLException   SQLException
+     * @return if success to clearTable
+     */
+    boolean clearTable(final String tableName, final boolean ifdrop) throws SQLException;
+
+    /**
      * queryPage sql.
      * 
      * @param start start
@@ -57,8 +70,8 @@ public interface JdbcDatabase {
      * 
      * @param tableName tableName
      * @param fetchSize fetchSize
-     * @return sql
+     * @return sql sql
      */
-    String getRandomlySql(String tableName, int fetchSize);
+    String getRandomlySql(final String tableName, int fetchSize);
 
 }

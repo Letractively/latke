@@ -67,6 +67,11 @@ public final class JdbcFactory implements JdbcDatabase {
         return databaseSolution.createTable(tableName, fieldDefinitions);
     }
 
+    @Override
+    public boolean clearTable(final String tableName, final boolean ifdrop) throws SQLException {
+        return databaseSolution.clearTable(tableName, ifdrop);
+    }
+
     /**
      * singleton way to get jdbcFactory.
      * 
