@@ -87,7 +87,7 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.8, Apr 1, 2012
+ * @version 1.0.4.9, Apr 9, 2012
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -137,6 +137,10 @@ public final class GAERepository implements Repository {
      * Is cache enabled?
      */
     private boolean cacheEnabled = true;
+    /**
+     * Writable?
+     */
+    private boolean writable = true;
     /**
      * Cache key prefix.
      */
@@ -952,6 +956,16 @@ public final class GAERepository implements Repository {
     @Override
     public void setCacheEnabled(final boolean isCacheEnabled) {
         this.cacheEnabled = isCacheEnabled;
+    }
+
+    @Override
+    public boolean isWritable() {
+        return writable;
+    }
+
+    @Override
+    public void setWritable(final boolean writable) {
+        this.writable = writable;
     }
 
     @Override
