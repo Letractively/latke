@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * Repository utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Feb 21, 2012
+ * @version 1.0.0.5, Apr 9, 2012
  */
 public final class Repositories {
 
@@ -55,6 +55,22 @@ public final class Repositories {
      * Repositories description (repository.json).
      */
     private static JSONObject repositoriesDescription;
+
+    /**
+     * Sets all repositories whether is writable with the specified flag.
+     * 
+     * @param writable the specified flat, {@code true} for writable, {@code false} otherwise
+     */
+    public void setRepositoriesWritable(final boolean writable) {
+        for (final Map.Entry<String, Repository> entry : REPOS_HOLDER.entrySet()) {
+            final String repositoryName = entry.getKey();
+            final Repository repository = entry.getValue();
+
+            repository.setWritable(writable);
+
+            LOGGER.log(Level.INFO, "Sets repository[name={0}] writable[{1}]", new Object[]{repositoryName, writable});
+        }
+    }
 
     /**
      * Gets repositories description.
@@ -220,8 +236,8 @@ public final class Repositories {
         }
 
         if (null == keys) {
-            throw new RuntimeException("Not found the repository[name="
-                                       + repositoryName + "] description, please define it in repositories.json");
+            throw new RuntimeException("Not found the repository[name=" + repositoryName
+                                       + "] description, please define it in repositories.json");
         }
 
         final Set<String> ret = new HashSet<String>();

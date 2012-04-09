@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * Repository.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Dec 3, 2011
+ * @version 1.0.2.1, Apr 9, 2012
  */
 public interface Repository {
 
@@ -73,8 +73,7 @@ public interface Repository {
      * @return json objects matched in the specified ids
      * @throws RepositoryException repository exception 
      */
-    Map<String, JSONObject> get(final Iterable<String> ids)
-            throws RepositoryException;
+    Map<String, JSONObject> get(final Iterable<String> ids) throws RepositoryException;
 
     /**
      * Determines a json object specified by the given id exists in this 
@@ -133,8 +132,7 @@ public interface Repository {
      * fetch size, returns an empty list if not found
      * @throws RepositoryException repository exception
      */
-    List<JSONObject> getRandomly(final int fetchSize)
-            throws RepositoryException;
+    List<JSONObject> getRandomly(final int fetchSize) throws RepositoryException;
 
     /**
      * Gets the count of all json objects.
@@ -191,6 +189,20 @@ public interface Repository {
      * cache, {@code false} otherwise
      */
     void setCacheEnabled(final boolean isCacheEnabled);
+    
+    /**
+     * Whether the repository is writable.
+     * 
+     * @return {@code true} if it is writable, returns {@code false} otherwise
+     */
+    boolean isWritable();
+    
+    /**
+     * Sets whether the repository is writable with the specified flag.
+     * 
+     * @param writable the specified flat, {@code true} for writable, {@code false} otherwise
+     */
+    void setWritable(final boolean writable);
 
     /**
      * Gets the query cache.

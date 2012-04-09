@@ -53,7 +53,7 @@ import org.json.JSONObject;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Mar 22, 2012
+ * @version 1.0.0.3, Apr 9, 2012
  */
 @SuppressWarnings("unchecked")
 public final class JdbcRepository implements Repository {
@@ -70,6 +70,10 @@ public final class JdbcRepository implements Repository {
      * Is cache enabled?
      */
     private boolean cacheEnabled = true;
+    /**
+     * Writable?
+     */
+    private boolean writable = true;
     /**
      * Cache key prefix.
      */
@@ -134,7 +138,7 @@ public final class JdbcRepository implements Repository {
      */
     private String buildAddSql(final JSONObject jsonObject, final List<Object> paramlist, final StringBuilder sql)
             throws Exception {
-        String ret = null;
+        String ret;
 
         if (!jsonObject.has(Keys.OBJECT_ID)) {
             ret = Ids.genTimeMillisId();
@@ -164,8 +168,8 @@ public final class JdbcRepository implements Repository {
         final StringBuilder wildcardString = new StringBuilder();
 
         boolean isFirst = true;
-        String key = null;
-        Object value = null;
+        String key;
+        Object value;
 
         while (keys.hasNext()) {
             key = keys.next();
@@ -306,7 +310,7 @@ public final class JdbcRepository implements Repository {
 
         final Iterator<String> keys = jsonObject.keys();
 
-        String key = null;
+        String key;
         while (keys.hasNext()) {
             key = keys.next();
 
@@ -412,7 +416,7 @@ public final class JdbcRepository implements Repository {
     @Override
     public Map<String, JSONObject> get(final Iterable<String> ids) throws RepositoryException {
         final Map<String, JSONObject> map = new HashMap<String, JSONObject>();
-        JSONObject jsonObject = null;
+        JSONObject jsonObject;
 
         for (final String id : ids) {
             jsonObject = get(id);
@@ -708,7 +712,7 @@ public final class JdbcRepository implements Repository {
      */
     private void getOrderBySql(final StringBuilder orderBySql, final Map<String, SortDirection> sorts) {
         boolean isFirst = true;
-        String querySortDirection = null;
+        String querySortDirection;
         for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
             if (isFirst) {
                 orderBySql.append(" order by ");
@@ -732,7 +736,7 @@ public final class JdbcRepository implements Repository {
         final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 
         final StringBuilder sql = new StringBuilder();
-        JSONArray jsonArray = null;
+        JSONArray jsonArray;
 
         final Connection connection = getConnection();
         getRandomly(fetchSize, sql);
@@ -743,12 +747,10 @@ public final class JdbcRepository implements Repository {
                 jsonObjects.add(jsonArray.getJSONObject(i));
             }
         } catch (final SQLException se) {
-            LOGGER.log(Level.SEVERE, "update:"
-                                     + se.getMessage(), se);
+            LOGGER.log(Level.SEVERE, "update:" + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, "getRandomly :"
-                                     + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "getRandomly :" + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -770,8 +772,7 @@ public final class JdbcRepository implements Repository {
     @Override
     public long count() throws RepositoryException {
 
-        final String cacheKey = CACHE_KEY_PREFIX
-                                + getName() + REPOSITORY_CACHE_COUNT;
+        final String cacheKey = CACHE_KEY_PREFIX + getName() + REPOSITORY_CACHE_COUNT;
         if (cacheEnabled) {
             final Object o = CACHE.get(cacheKey);
             if (null != o) {
@@ -864,6 +865,16 @@ public final class JdbcRepository implements Repository {
     @Override
     public void setCacheEnabled(final boolean isCacheEnabled) {
         cacheEnabled = isCacheEnabled;
+    }
+
+    @Override
+    public boolean isWritable() {
+        return writable;
+    }
+
+    @Override
+    public void setWritable(final boolean writable) {
+        this.writable = writable;
     }
 
     @Override
