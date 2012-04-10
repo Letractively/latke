@@ -61,7 +61,7 @@ public final class Repositories {
      * 
      * @param writable the specified flat, {@code true} for writable, {@code false} otherwise
      */
-    public void setRepositoriesWritable(final boolean writable) {
+    public static void setRepositoriesWritable(final boolean writable) {
         for (final Map.Entry<String, Repository> entry : REPOS_HOLDER.entrySet()) {
             final String repositoryName = entry.getKey();
             final Repository repository = entry.getValue();
