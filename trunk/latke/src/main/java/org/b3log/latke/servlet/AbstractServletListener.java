@@ -88,6 +88,7 @@ public abstract class AbstractServletListener implements ServletContextListener,
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         LOGGER.info("Destroying the context....");
         Latkes.shutdown();
+        // TODO: Stop cron jobs
     }
 
     @Override
