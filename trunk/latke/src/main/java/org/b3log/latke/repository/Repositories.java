@@ -35,7 +35,7 @@ import org.json.JSONObject;
  * Repository utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Apr 9, 2012
+ * @version 1.0.0.6, Apr 10, 2012
  */
 public final class Repositories {
 
@@ -55,6 +55,19 @@ public final class Repositories {
      * Repositories description (repository.json).
      */
     private static JSONObject repositoriesDescription;
+    /**
+     * Whether all repositories is writable.
+     */
+    private static boolean repositoryiesWritable;
+    
+    /**
+     * Whether all repositories is writable.
+     * 
+     * @return {@code true} if they are writable, returns {@code false} otherwise
+     */
+    public static boolean getReposirotiesWritable() {
+        return repositoryiesWritable;
+    }
 
     /**
      * Sets all repositories whether is writable with the specified flag.
@@ -70,6 +83,8 @@ public final class Repositories {
 
             LOGGER.log(Level.INFO, "Sets repository[name={0}] writable[{1}]", new Object[]{repositoryName, writable});
         }
+        
+        repositoryiesWritable = writable;
     }
 
     /**
