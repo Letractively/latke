@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.cron.CronService;
 import org.b3log.latke.repository.jdbc.JdbcRepository;
+import org.b3log.latke.util.Strings;
 
 /**
  * Abstract servlet listener.
@@ -72,9 +73,13 @@ public abstract class AbstractServletListener implements ServletContextListener,
 
         final ServletContext servletContext = servletContextEvent.getServletContext();
         webRoot = servletContext.getRealPath("") + File.separator;
+        LOGGER.log(Level.INFO, "Web root[path={0}]", webRoot);
+
         final String catalinaBase = System.getProperty("catalina.base");
-        LOGGER.log(Level.INFO, "[Web root[path={0}, catalina.base={1}]", new Object[]{webRoot, catalinaBase});
-        
+        if (!Strings.isEmptyOrNull(catalinaBase)) {
+            LOGGER.log(Level.INFO, "Servlet container[Tomcat, catalina.base={0}]", catalinaBase);
+        }
+
         CronService.start();
     }
 
