@@ -58,8 +58,8 @@ public final class Repositories {
     /**
      * Whether all repositories is writable.
      */
-    private static boolean repositoryiesWritable;
-    
+    private static boolean repositoryiesWritable = true;
+
     /**
      * Whether all repositories is writable.
      * 
@@ -83,7 +83,7 @@ public final class Repositories {
 
             LOGGER.log(Level.INFO, "Sets repository[name={0}] writable[{1}]", new Object[]{repositoryName, writable});
         }
-        
+
         repositoryiesWritable = writable;
     }
 
@@ -330,7 +330,7 @@ public final class Repositories {
         try {
             final String description = IOUtils.toString(inputStream);
 
-            LOGGER.log(Level.CONFIG, "\n" + description);
+            LOGGER.log(Level.CONFIG, "{0}{1}", new Object[]{Strings.LINE_SEPARATOR, description});
 
             repositoriesDescription = new JSONObject(description);
         } catch (final Exception e) {
