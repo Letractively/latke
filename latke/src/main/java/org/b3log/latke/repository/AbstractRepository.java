@@ -28,6 +28,7 @@ import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.cache.Cache;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.jdbc.JDBCRepositoryException;
+import org.b3log.latke.util.Callstacks;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,14 +36,12 @@ import org.json.JSONObject;
  * Abstract repository.
  * 
  * <p>
- * This is a base adapter for wrapped {@link #repository repository}, the 
- * underlying repository will be instantiated in the 
- * {@link #AbstractRepository(java.lang.String) constructor} with 
- * {@link Latkes#getRuntimeEnv() the current runtime environment}.
+ * This is a base adapter for wrapped {@link #repository repository}, the underlying repository will be instantiated in the 
+ * {@link #AbstractRepository(java.lang.String) constructor} with {@link Latkes#getRuntimeEnv() the current runtime environment}.
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Apr 9, 2012
+ * @version 1.0.0.9, Apr 11, 2012
  */
 public abstract class AbstractRepository implements Repository {
 
@@ -100,7 +99,7 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public String add(final JSONObject jsonObject) throws RepositoryException {
-        if (!isWritable()) {
+        if (!isWritable() && !isInternalCall()) {
             throw new RepositoryException("The repository[name=" + getName() + "] is not writable at present");
         }
 
@@ -111,7 +110,7 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public void update(final String id, final JSONObject jsonObject) throws RepositoryException {
-        if (!isWritable()) {
+        if (!isWritable() && !isInternalCall()) {
             throw new RepositoryException("The repository[name=" + getName() + "] is not writable at present");
         }
 
@@ -122,7 +121,7 @@ public abstract class AbstractRepository implements Repository {
 
     @Override
     public void remove(final String id) throws RepositoryException {
-        if (!isWritable()) {
+        if (!isWritable() && !isInternalCall()) {
             throw new RepositoryException("The repository[name=" + getName() + "] is not writable at present");
         }
 
@@ -220,5 +219,14 @@ public abstract class AbstractRepository implements Repository {
      */
     protected Repository getUnderlyingRepository() {
         return repository;
+    }
+
+    /**
+     * Checks the current method is whether invoked as internal call.
+     * 
+     * @return {@code true} if the current method is invoked as internal call, return {@code false} otherwise
+     */
+    private static boolean isInternalCall() {
+        return Callstacks.isCaller("org.b3log.latke.remote.RepositoryAccessor", "*");
     }
 }
