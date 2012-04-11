@@ -15,6 +15,7 @@
  */
 package org.b3log.latke.client;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -45,13 +47,25 @@ import org.apache.http.message.BasicNameValuePair;
 public final class LatkeClient {
 
     /**
+     * Client version.
+     */
+    private static final String VERSION = "0.1.0";
+    /**
      * Gets repository names.
      */
     private static final String GET_REPOSITORY_NAMES = "/latke/remote/repository/names";
     /**
+     * Sets repositories writable.
+     */
+    private static final String SET_REPOSITORIES_WRITABLE = "/latke/remote/repositories/writable";
+    /**
      * Server address, starts with http://.
      */
     private static String serverAddress = "";
+    /**
+     * Backup directory.
+     */
+    private static File backupDir;
     /**
      * User name.
      */
@@ -84,7 +98,18 @@ public final class LatkeClient {
                 return;
             }
 
-            serverAddress += cmd.getOptionValue("server");
+            serverAddress = cmd.getOptionValue("server");
+
+            if (!cmd.hasOption("backup_dir")) {
+                System.out.println("Expected [backup_dir]");
+                printHelp(options);
+                return;
+            }
+
+            backupDir = new File(cmd.getOptionValue("backup_dir"));
+            if (!backupDir.exists()) {
+                backupDir.mkdir();
+            }
 
             if (!cmd.hasOption("user_name")) {
                 System.out.println("Expected [user_name]");
@@ -107,14 +132,12 @@ public final class LatkeClient {
 
             password = cmd.getOptionValue("password");
 
-            final HttpGet request = new HttpGet();
-
             if (verbose) {
                 System.out.println("Requesting server[" + serverAddress + "]");
             }
 
             final HttpClient httpClient = new DefaultHttpClient();
-            
+
             final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
             qparams.add(new BasicNameValuePair("userName", userName));
             qparams.add(new BasicNameValuePair("password", password));
@@ -123,9 +146,38 @@ public final class LatkeClient {
                 try {
                     final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
                                                        URLEncodedUtils.format(qparams, "UTF-8"), null);
+                    final HttpGet request = new HttpGet();
                     request.setURI(uri);
+
                     if (verbose) {
                         System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
+                    }
+
+                    final HttpResponse httpResponse = httpClient.execute(request);
+                    final InputStream contentStream = httpResponse.getEntity().getContent();
+                    final String content = IOUtils.toString(contentStream).trim();
+
+                    if (verbose) {
+                        printResponse(content);
+                    }
+
+
+                } catch (final Exception e) {
+                    System.err.println("Requests server error: " + e.getMessage());
+                }
+            }
+
+            if (cmd.hasOption("writable")) {
+                try {
+                    final String writable = cmd.getOptionValue("writable");
+                    qparams.add(new BasicNameValuePair("writable", writable));
+                    final URI uri = URIUtils.createURI("http", serverAddress, -1, SET_REPOSITORIES_WRITABLE,
+                                                       URLEncodedUtils.format(qparams, "UTF-8"), null);
+                    final HttpPut request = new HttpPut();
+                    request.setURI(uri);
+
+                    if (verbose) {
+                        System.out.println("Setting repository writable[" + writable + "]");
                     }
 
                     final HttpResponse httpResponse = httpClient.execute(request);
@@ -178,9 +230,9 @@ public final class LatkeClient {
     private static Options getOptions() {
         final Options ret = new Options();
 
-        final Option srvAddress = new Option("server", "s", true, "Uses SERVER");
-        srvAddress.setArgName("SERVER");
-        ret.addOption(srvAddress);
+        final Option srvAddressOpt = new Option("server", "s", true, "Uses SERVER");
+        srvAddressOpt.setArgName("SERVER");
+        ret.addOption(srvAddressOpt);
 
         final Option userNameOpt = new Option("user_name", true, "Uses USER_NAME");
         userNameOpt.setArgName("USER_NAME");
@@ -190,19 +242,25 @@ public final class LatkeClient {
         passwordOpt.setArgName("PASSWORD");
         ret.addOption(passwordOpt);
 
+        final Option backupDirOpt = new Option("backup_dir", true, "Uses BACKUP_DIR");
+        backupDirOpt.setArgName("BACKUP_DIR");
+        ret.addOption(backupDirOpt);
 
-        final Option repositoryNames = new Option("repository_names", "rn", false, "Prints repositories names");
-        ret.addOption(repositoryNames);
+        final Option writableOpt = new Option("writable", true, "Uses WRITABLE");
+        writableOpt.setArgName("WRITABLE");
+        ret.addOption(writableOpt);
+
+        final Option repositoryNamesOpt = new Option("repository_names", "rn", false, "Prints repositories names");
+        ret.addOption(repositoryNamesOpt);
 
         final Option verboseOpt = new Option("verbose", false, "Runs with extra verbose");
         ret.addOption(verboseOpt);
 
-        final Option help = new Option("help", "h", false, "Prints this message");
-        ret.addOption(help);
+        final Option helpOpt = new Option("help", "h", false, "Prints this message");
+        ret.addOption(helpOpt);
 
-        final Option version = new Option("version", "v", false, "Prints the cient version information and exit");
-        ret.addOption(version);
-
+        final Option versionOpt = new Option("version", "v", false, "Prints the cient version information and exit");
+        ret.addOption(versionOpt);
 
         return ret;
     }
