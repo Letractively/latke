@@ -17,6 +17,8 @@ package org.b3log.latke.client;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.CommandLine;
@@ -26,9 +28,13 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIUtils;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Latke client.
@@ -45,7 +51,7 @@ public final class LatkeClient {
     /**
      * Server address, starts with http://.
      */
-    private static String serverAddress = "http://";
+    private static String serverAddress = "";
     /**
      * User name.
      */
@@ -112,7 +118,12 @@ public final class LatkeClient {
 
             if (cmd.hasOption("rn")) {
                 try {
-                    request.setURI(new URI(serverAddress + GET_REPOSITORY_NAMES));
+                    final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+                    qparams.add(new BasicNameValuePair("userName", userName));
+                    qparams.add(new BasicNameValuePair("password", password));
+                    final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
+                                                       URLEncodedUtils.format(qparams, "UTF-8"), null);
+                    request.setURI(uri);
                     if (verbose) {
                         System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
                     }
