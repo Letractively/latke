@@ -108,19 +108,19 @@ public final class LatkeClient {
             password = cmd.getOptionValue("password");
 
             final HttpGet request = new HttpGet();
-            request.getParams().setParameter("userName", userName).setParameter("password", password);
 
             if (verbose) {
                 System.out.println("Requesting server[" + serverAddress + "]");
             }
 
             final HttpClient httpClient = new DefaultHttpClient();
+            
+            final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+            qparams.add(new BasicNameValuePair("userName", userName));
+            qparams.add(new BasicNameValuePair("password", password));
 
             if (cmd.hasOption("rn")) {
                 try {
-                    final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
-                    qparams.add(new BasicNameValuePair("userName", userName));
-                    qparams.add(new BasicNameValuePair("password", password));
                     final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
                                                        URLEncodedUtils.format(qparams, "UTF-8"), null);
                     request.setURI(uri);
@@ -133,9 +133,7 @@ public final class LatkeClient {
                     final String content = IOUtils.toString(contentStream).trim();
 
                     if (verbose) {
-                        System.out.println("Response[");
-                        System.out.println("    " + content);
-                        System.out.println("]");
+                        printResponse(content);
                     }
 
 
@@ -149,6 +147,17 @@ public final class LatkeClient {
             System.err.println("Parsing args failed, caused by: " + e.getMessage());
             printHelp(options);
         }
+    }
+
+    /**
+     * Prints the specified content as response.
+     * 
+     * @param content the specified content
+     */
+    private static void printResponse(final String content) {
+        System.out.println("Response[");
+        System.out.println("    " + content);
+        System.out.println("]");
     }
 
     /**
