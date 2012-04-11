@@ -15,6 +15,8 @@
  */
 package org.b3log.latke.client;
 
+import java.io.InputStream;
+import java.net.URI;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.CommandLine;
@@ -22,6 +24,11 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
  * Latke client.
@@ -32,13 +39,25 @@ import org.apache.commons.cli.HelpFormatter;
 public final class LatkeClient {
 
     /**
-     * Repository APIs URI prefix.
+     * Gets repository names.
      */
-    private static String repositoryAPI = "/latke/remote/repositories/";
+    private static final String GET_REPOSITORY_NAMES = "/latke/remote/repository/names";
     /**
      * Server address, starts with http://.
      */
     private static String serverAddress = "http://";
+    /**
+     * User name.
+     */
+    private static String userName = "";
+    /**
+     * Password.
+     */
+    private static String password = "";
+    /**
+     * Verbose.
+     */
+    private static boolean verbose;
 
     /**
      * Main entry.
@@ -48,25 +67,87 @@ public final class LatkeClient {
     public static void main(final String[] args) {
         final Options options = getOptions();
 
-        final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("latke-client", options);
-
         final CommandLineParser parser = new PosixParser();
 
         try {
             final CommandLine cmd = parser.parse(options, args);
 
-            if (cmd.hasOption("server_address")) {
-                serverAddress += cmd.getOptionValue("server_address");
-                System.out.println(serverAddress);
-            } else {
-                System.out.println("Expected [server_address]");
+            if (!cmd.hasOption("s")) {
+                System.out.println("Expected [server]");
+                printHelp(options);
+                return;
             }
-            
-            
+
+            serverAddress += cmd.getOptionValue("server");
+
+            if (!cmd.hasOption("user_name")) {
+                System.out.println("Expected [user_name]");
+                printHelp(options);
+                return;
+            }
+
+            userName = cmd.getOptionValue("user_name");
+
+            if (!cmd.hasOption("password")) {
+                System.out.println("Expected [password]");
+                printHelp(options);
+                return;
+
+            }
+
+            if (cmd.hasOption("verbose")) {
+                verbose = true;
+            }
+
+            password = cmd.getOptionValue("password");
+
+            final HttpGet request = new HttpGet();
+            request.getParams().setParameter("userName", userName).setParameter("password", password);
+
+            if (verbose) {
+                System.out.println("Requesting server[" + serverAddress + "]");
+            }
+
+            final HttpClient httpClient = new DefaultHttpClient();
+
+            if (cmd.hasOption("rn")) {
+                try {
+                    request.setURI(new URI(serverAddress + GET_REPOSITORY_NAMES));
+                    if (verbose) {
+                        System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
+                    }
+
+                    final HttpResponse httpResponse = httpClient.execute(request);
+                    final InputStream contentStream = httpResponse.getEntity().getContent();
+                    final String content = IOUtils.toString(contentStream).trim();
+
+                    if (verbose) {
+                        System.out.println("Response[");
+                        System.out.println("    " + content);
+                        System.out.println("]");
+                    }
+
+
+                } catch (final Exception e) {
+                    System.err.println("Requests server error: " + e.getMessage());
+                }
+            }
+
+
         } catch (final ParseException e) {
             System.err.println("Parsing args failed, caused by: " + e.getMessage());
+            printHelp(options);
         }
+    }
+
+    /**
+     * Prints help with the specified options.
+     * 
+     * @param options the specified options
+     */
+    private static void printHelp(final Options options) {
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("latke-client", options);
     }
 
     /**
@@ -74,19 +155,34 @@ public final class LatkeClient {
      * 
      * @return options
      */
-    public static Options getOptions() {
+    private static Options getOptions() {
         final Options ret = new Options();
 
-        final Option srvAddress = new Option("server_address", "sa", true, "Uses SERVER_ADDRESS");
-        srvAddress.setArgName("SERVER_ADDRESS");
+        final Option srvAddress = new Option("server", "s", true, "Uses SERVER");
+        srvAddress.setArgName("SERVER");
         ret.addOption(srvAddress);
 
-        final Option repositoryStatus = new Option("repository_status", "rs", false, "Prints repositories status");
+        final Option userNameOpt = new Option("user_name", true, "Uses USER_NAME");
+        userNameOpt.setArgName("USER_NAME");
+        ret.addOption(userNameOpt);
+
+        final Option passwordOpt = new Option("password", true, "Uses PASSWORD");
+        passwordOpt.setArgName("PASSWORD");
+        ret.addOption(passwordOpt);
+
+
+        final Option repositoryNames = new Option("repository_names", "rn", false, "Prints repositories names");
+        ret.addOption(repositoryNames);
+
+        final Option verboseOpt = new Option("verbose", false, "Runs with extra verbose");
+        ret.addOption(verboseOpt);
 
         final Option help = new Option("help", "h", false, "Prints this message");
-        final Option version = new Option("version", "v", false, "Prints the cient version information and exit");
+        ret.addOption(help);
 
-        ret.addOption(help).addOption(repositoryStatus).addOption(version);
+        final Option version = new Option("version", "v", false, "Prints the cient version information and exit");
+        ret.addOption(version);
+
 
         return ret;
     }
