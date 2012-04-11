@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.util.Strings;
+import org.b3log.latke.util.Callstacks;
 
 /**
  * JDBC connection utilities.
@@ -33,7 +33,7 @@ import org.b3log.latke.util.Strings;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Apr 4, 2012
+ * @version 1.0.0.4, Apr 11, 2012
  */
 public final class Connections {
 
@@ -76,26 +76,7 @@ public final class Connections {
      */
     public static Connection getConnection() throws SQLException {
         if (LOGGER.isLoggable(Level.FINEST)) {
-            // TODO: D, Call stack utilities
-            final Throwable throwable = new Throwable();
-            final StackTraceElement[] stackElements = throwable.getStackTrace();
-
-            if (null != stackElements) {
-                final StringBuilder stackBuilder = new StringBuilder("CallStack (org.b3lg.*)[").append(Strings.LINE_SEPARATOR);
-                
-                for (int i = 0; i < stackElements.length; i++) {
-                    if (!stackElements[i].getClassName().startsWith("org.b3log")) {
-                        continue;
-                    }
-
-                    stackBuilder.append("    [className=").append(stackElements[i].getClassName()).append(", fileName=").
-                            append(stackElements[i].getFileName()).append(", lineNumber=").append(stackElements[i].getLineNumber()).
-                            append(", methodName=").append(stackElements[i].getMethodName()).append(']').append(Strings.LINE_SEPARATOR);
-                }
-                stackBuilder.append("], fullDepth=[").append(stackElements.length).append("]");
-                
-                LOGGER.log(Level.FINEST, stackBuilder.toString());
-            }
+            Callstacks.printCallstack(Level.FINEST, new String[]{"org.b3log"}, null);
         }
 
         LOGGER.log(Level.FINEST, "Connection pool[createdConns={0}, freeConns={1}, leasedConns={2}]",
