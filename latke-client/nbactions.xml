@@ -7,7 +7,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath org.b3log.latke.client.LatkeClient --sa=localhost:8080</exec.args>
+                <exec.args>-classpath %classpath org.b3log.latke.client.LatkeClient -server localhost:8080 -user_name test -password 2 -repository_names -verbose</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.classpathScope>runtime</exec.classpathScope>
             </properties>
@@ -19,7 +19,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath org.b3log.latke.client.LatkeClient --sa=localhost:8080</exec.args>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath org.b3log.latke.client.LatkeClient -server localhost:8080 -user_name test -password 2 -repository_names -verbose</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.classpathScope>runtime</exec.classpathScope>
                 <jpda.listen>true</jpda.listen>
@@ -32,7 +32,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.2:exec</goal>
             </goals>
             <properties>
-                <exec.args>${profiler.args} -classpath %classpath org.b3log.latke.client.LatkeClient --sa=localhost:8080</exec.args>
+                <exec.args>${profiler.args} -classpath %classpath org.b3log.latke.client.LatkeClient -server localhost:8080 -user_name test -password 2 -repository_names -verbose</exec.args>
                 <exec.executable>${profiler.java}</exec.executable>
                 <profiler.action>profile</profiler.action>
             </properties>
