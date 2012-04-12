@@ -30,8 +30,7 @@ public final class EventManagerTestCase {
     /**
      * Logger.
      */
-    private static final Logger LOGGER =
-            Logger.getLogger(EventManagerTestCase.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EventManagerTestCase.class.getName());
 
     /**
      *
@@ -42,23 +41,18 @@ public final class EventManagerTestCase {
         final EventManager eventManager = EventManager.getInstance();
         final TestEventListener1 testEventListener1 = new TestEventListener1();
         eventManager.registerListener(testEventListener1);
-        final TestEventListener2 testEventListener2 =
-                new TestEventListener2();
+        final TestEventListener2 testEventListener2 = new TestEventListener2();
         eventManager.registerListener(testEventListener2);
-        final TestEventAsyncListener1 testEventAsyncListener1 =
-                new TestEventAsyncListener1();
+        final TestEventAsyncListener1 testEventAsyncListener1 = new TestEventAsyncListener1();
         eventManager.registerListener(testEventAsyncListener1);
 
         final JSONObject eventData = new JSONObject();
         eventData.put("prop1", 1);
 
-        eventManager.fireEventSynchronously(
-                new Event<JSONObject>("Test sync listener1", eventData));
-        eventManager.fireEventSynchronously(
-                new Event<JSONObject>("Test sync listener2", eventData));
+        eventManager.fireEventSynchronously(new Event<JSONObject>("Test sync listener1", eventData));
+        eventManager.fireEventSynchronously(new Event<JSONObject>("Test sync listener2", eventData));
 
-        eventManager.<String>fireEventAsynchronously(
-                new Event<JSONObject>("Test async listener1", eventData));
+        eventManager.<String>fireEventAsynchronously(new Event<JSONObject>("Test async listener1", eventData));
         System.out.println("Doing somthing in main thread....");
         final long sleepTime = 101;
         final long loopCnt = 40;
@@ -79,14 +73,11 @@ public final class EventManagerTestCase {
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
      * @version 1.0.0.1, Aug 27, 2010
      */
-    private final class TestEventListener1
-            extends AbstractEventListener<JSONObject> {
+    private final class TestEventListener1 extends AbstractEventListener<JSONObject> {
 
         @Override
         public void action(final Event<JSONObject> event) {
-            System.out.println("Listener1 is processing a event[type="
-                               + event.getType() + ", data=" + event.getData()
-                               + "]");
+            System.out.println("Listener1 is processing a event[type=" + event.getType() + ", data=" + event.getData() + "]");
         }
 
         @Override
@@ -101,14 +92,11 @@ public final class EventManagerTestCase {
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
      * @version 1.0.0.1, Jun 23, 2011
      */
-    private final class TestEventListener2
-            extends AbstractEventListener<JSONObject> {
+    private final class TestEventListener2 extends AbstractEventListener<JSONObject> {
 
         @Override
         public void action(final Event<JSONObject> event) {
-            System.out.println("Listener2 is processing a event[type="
-                               + event.getType() + ", data=" + event.getData()
-                               + "]");
+            System.out.println("Listener2 is processing a event[type=" + event.getType() + ", data=" + event.getData() + "]");
         }
 
         @Override
@@ -123,14 +111,11 @@ public final class EventManagerTestCase {
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
      * @version 1.0.0.2, Jun 23, 2011
      */
-    private final class TestEventAsyncListener1
-            extends AbstractEventListener<JSONObject> {
+    private final class TestEventAsyncListener1 extends AbstractEventListener<JSONObject> {
 
         @Override
         public void action(final Event<JSONObject> event) throws EventException {
-            System.out.println("Asynchonous listener1 is processing a event[type="
-                               + event.getType() + ", data=" + event.getData()
-                               + "]");
+            System.out.println("Asynchonous listener1 is processing a event[type=" + event.getType() + ", data=" + event.getData() + "]");
             final long sleepTime = 100;
             final long loopCnt = 40;
             try {
