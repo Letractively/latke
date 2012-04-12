@@ -20,14 +20,6 @@ import java.util.logging.Logger;
 
 /**
  * Abstract event listener(Observer).
- * 
- * <p>
- *   <b>Note</b>: The subclass implementation of this abstract class MUST 
- *   has a static method named {@code getInstance} to obtain an instance of 
- *   this listener. See 
- *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
- *   Singleton Pattern</a> for more implementation details.
- * </p>
  *
  * @param <T> the type of event data
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
