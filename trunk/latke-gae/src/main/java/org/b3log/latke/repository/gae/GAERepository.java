@@ -87,7 +87,7 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.5.0, Apr 13, 2012
+ * @version 1.0.5.1, Apr 13, 2012
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -582,7 +582,7 @@ public final class GAERepository implements Repository {
         // Asssumes the application call need to ccount page
         int pageCount = -1;
         // If the application caller need not to count page, gets the page count the caller specified 
-        if (!query.needCountPage()) {
+        if (null != query.getPageCount()) {
             pageCount = query.getPageCount();
         }
 
