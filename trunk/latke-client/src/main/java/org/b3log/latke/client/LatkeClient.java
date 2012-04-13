@@ -89,8 +89,8 @@ public final class LatkeClient {
      */
     public static void main(String[] args) {
         args = new String[]{
-            "-backup -repository_names -verbose -s localhost:8080 -u test -p 1 "
-            + "-backup_dir C:/b3log_backup -w true"};
+            "-backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
+            "C:/b3log_backup", "-w", "true"};
 
         final Options options = getOptions();
 
@@ -99,45 +99,20 @@ public final class LatkeClient {
         try {
             final CommandLine cmd = parser.parse(options, args);
 
-            if (!cmd.hasOption("server")) {
-                System.out.println("Expected [server]");
-                printHelp(options);
-                return;
-            }
-
-            serverAddress = cmd.getOptionValue("server");
-
-            if (!cmd.hasOption("backup_dir")) {
-                System.out.println("Expected [backup_dir]");
-                printHelp(options);
-                return;
-            }
+            serverAddress = cmd.getOptionValue("s");
 
             backupDir = new File(cmd.getOptionValue("backup_dir"));
             if (!backupDir.exists()) {
                 backupDir.mkdir();
             }
 
-            if (!cmd.hasOption("username")) {
-                System.out.println("Expected [username]");
-                printHelp(options);
-                return;
-            }
-
-            userName = cmd.getOptionValue("username");
-
-            if (!cmd.hasOption("password")) {
-                System.out.println("Expected [password]");
-                printHelp(options);
-                return;
-
-            }
+            userName = cmd.getOptionValue("u");
 
             if (cmd.hasOption("verbose")) {
                 verbose = true;
             }
 
-            password = cmd.getOptionValue("password");
+            password = cmd.getOptionValue("p");
 
             if (verbose) {
                 System.out.println("Requesting server[" + serverAddress + "]");
@@ -186,9 +161,9 @@ public final class LatkeClient {
                 }
             }
 
-            if (cmd.hasOption("writable")) {
+            if (cmd.hasOption("w")) {
                 try {
-                    final String writable = cmd.getOptionValue("writable");
+                    final String writable = cmd.getOptionValue("w");
                     qparams.add(new BasicNameValuePair("writable", writable));
                     final URI uri = URIUtils.createURI("http", serverAddress, -1, SET_REPOSITORIES_WRITABLE,
                                                        URLEncodedUtils.format(qparams, "UTF-8"), null);
@@ -214,11 +189,15 @@ public final class LatkeClient {
             }
 
             if (cmd.hasOption("backup")) {
-                System.out.println("Make sure you have disabled repository writes with [-writable false]");
+                System.out.println("Make sure you have disabled repository writes with [-w false], continue?(y)");
                 final Scanner scanner = new Scanner(System.in);
                 final String input = scanner.next();
 
-                System.out.println(input);
+                if ("y".equals(input)) {
+                    if (verbose) {
+                        System.out.println("Starting backup data");
+                    }
+                }
 
                 scanner.close();
             }
