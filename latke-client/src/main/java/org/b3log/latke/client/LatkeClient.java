@@ -222,6 +222,7 @@ public final class LatkeClient {
                     final HttpResponse httpResponse = httpClient.execute(request);
                     final InputStream contentStream = httpResponse.getEntity().getContent();
                     final String content = IOUtils.toString(contentStream).trim();
+                    contentStream.close();
 
                     if (verbose) {
                         printResponse(content);
