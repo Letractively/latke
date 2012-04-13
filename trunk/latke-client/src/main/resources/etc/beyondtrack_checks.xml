@@ -37,7 +37,7 @@
     Most Checks are configurable, be sure to consult the documentation.
     To completely disable a check, just comment it out or delete it from the file.
     Finally, it is worth reading the documentation.
-    Version: 1.0.1.5, Jul 20, 2010
+    Version: 1.0.1.6, Apr 13, 2012
     Author: Liang Ding
 -->
 <!DOCTYPE module PUBLIC
