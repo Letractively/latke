@@ -135,35 +135,7 @@ public final class LatkeClient {
             qparams.add(new BasicNameValuePair("password", password));
 
             if (cmd.hasOption("repository_names")) {
-                final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
-                                                   URLEncodedUtils.format(qparams, "UTF-8"), null);
-                final HttpGet request = new HttpGet();
-                request.setURI(uri);
-
-                if (verbose) {
-                    System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
-                }
-
-                final HttpResponse httpResponse = httpClient.execute(request);
-                final InputStream contentStream = httpResponse.getEntity().getContent();
-                final String content = IOUtils.toString(contentStream).trim();
-
-                if (verbose) {
-                    printResponse(content);
-                }
-
-                final JSONObject result = new JSONObject(content);
-                final JSONArray repositoryNames = result.getJSONArray("repositoryNames");
-
-                for (int i = 0; i < repositoryNames.length(); i++) {
-                    final String repositoryName = repositoryNames.getString(i);
-                    final File dir = new File(backupDir.getPath() + File.separatorChar + repositoryName);
-                    if (!dir.exists() && verbose) {
-                        dir.mkdir();
-                        System.out.println("Created a directory[name=" + dir.getName() + "] under backup directory[path="
-                                           + backupDir.getPath() + "]");
-                    }
-                }
+                getRepositoryNames();
             }
 
             if (cmd.hasOption("w")) {
@@ -201,47 +173,51 @@ public final class LatkeClient {
                     System.out.println("Starting backup data");
                 }
 
-                final String repositoryName = "article";
+                final JSONArray repositoryNames = getRepositoryNames();
+                for (int i = 0; i < repositoryNames.length(); i++) {
+                    final String repositoryName = repositoryNames.getString(i);
 
-                int totalPageCount = 2;
-                for (int pageNum = 1; pageNum < totalPageCount; pageNum++) {
-                    final List<NameValuePair> params = new ArrayList<NameValuePair>();
-                    params.add(new BasicNameValuePair("userName", userName));
-                    params.add(new BasicNameValuePair("password", password));
-                    params.add(new BasicNameValuePair("repositoryName", repositoryName));
-                    params.add(new BasicNameValuePair("pageNum", String.valueOf(pageNum)));
-                    params.add(new BasicNameValuePair("pageSize", PAGE_SIZE));
-                    final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(params, "UTF-8"), null);
-                    final HttpGet request = new HttpGet(uri);
+                    int totalPageCount = 2;
+                    for (int pageNum = 1; pageNum < totalPageCount; pageNum++) {
+                        final List<NameValuePair> params = new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("userName", userName));
+                        params.add(new BasicNameValuePair("password", password));
+                        params.add(new BasicNameValuePair("repositoryName", repositoryName));
+                        params.add(new BasicNameValuePair("pageNum", String.valueOf(pageNum)));
+                        params.add(new BasicNameValuePair("pageSize", PAGE_SIZE));
+                        final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(params, "UTF-8"),
+                                                           null);
+                        final HttpGet request = new HttpGet(uri);
 
-                    if (verbose) {
-                        System.out.println("Getting data from repository [" + repositoryName + "] with pagination[pageNum=" + pageNum
-                                           + ", pageSize=" + PAGE_SIZE + "]");
-                    }
+                        if (verbose) {
+                            System.out.println("Getting data from repository [" + repositoryName + "] with pagination[pageNum=" + pageNum
+                                               + ", pageSize=" + PAGE_SIZE + "]");
+                        }
 
-                    final HttpResponse httpResponse = httpClient.execute(request);
-                    final InputStream contentStream = httpResponse.getEntity().getContent();
-                    final String content = IOUtils.toString(contentStream).trim();
-                    contentStream.close();
+                        final HttpResponse httpResponse = httpClient.execute(request);
+                        final InputStream contentStream = httpResponse.getEntity().getContent();
+                        final String content = IOUtils.toString(contentStream).trim();
+                        contentStream.close();
 
-                    if (verbose) {
-                        printResponse(content);
-                    }
+                        if (verbose) {
+                            printResponse(content);
+                        }
 
-                    final JSONObject resp = new JSONObject(content);
-                    final JSONObject pagination = resp.getJSONObject("pagination");
-                    totalPageCount = pagination.getInt("paginationPageCount");
-                    final JSONArray results = resp.getJSONArray("rslts");
+                        final JSONObject resp = new JSONObject(content);
+                        final JSONObject pagination = resp.getJSONObject("pagination");
+                        totalPageCount = pagination.getInt("paginationPageCount");
+                        final JSONArray results = resp.getJSONArray("rslts");
 
-                    final String backupPath = backupDir.getPath() + File.separatorChar + repositoryName + File.separatorChar
-                                              + pageNum + '_' + PAGE_SIZE + '_' + System.currentTimeMillis() + ".json";
-                    final File backup = new File(backupPath);
-                    final FileWriter fileWriter = new FileWriter(backup);
-                    IOUtils.write(results.toString(), fileWriter);
-                    fileWriter.close();
+                        final String backupPath = backupDir.getPath() + File.separatorChar + repositoryName + File.separatorChar
+                                                  + pageNum + '_' + PAGE_SIZE + '_' + System.currentTimeMillis() + ".json";
+                        final File backup = new File(backupPath);
+                        final FileWriter fileWriter = new FileWriter(backup);
+                        IOUtils.write(results.toString(), fileWriter);
+                        fileWriter.close();
 
-                    if (verbose) {
-                        System.out.println("Backup file[path=" + backupPath + "]");
+                        if (verbose) {
+                            System.out.println("Backup file[path=" + backupPath + "]");
+                        }
                     }
                 }
             }
@@ -263,6 +239,52 @@ public final class LatkeClient {
             System.err.println("Parsing args failed, caused by: " + e.getMessage());
             printHelp(options);
         }
+    }
+
+    /**
+     * Gets repository names.
+     * 
+     * @return repository names
+     * @throws Exception exception
+     */
+    private static JSONArray getRepositoryNames() throws Exception {
+        final HttpClient httpClient = new DefaultHttpClient();
+
+        final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
+        qparams.add(new BasicNameValuePair("userName", userName));
+        qparams.add(new BasicNameValuePair("password", password));
+
+        final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
+                                           URLEncodedUtils.format(qparams, "UTF-8"), null);
+        final HttpGet request = new HttpGet();
+        request.setURI(uri);
+
+        if (verbose) {
+            System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
+        }
+
+        final HttpResponse httpResponse = httpClient.execute(request);
+        final InputStream contentStream = httpResponse.getEntity().getContent();
+        final String content = IOUtils.toString(contentStream).trim();
+
+        if (verbose) {
+            printResponse(content);
+        }
+
+        final JSONObject result = new JSONObject(content);
+        final JSONArray ret = result.getJSONArray("repositoryNames");
+
+        for (int i = 0; i < ret.length(); i++) {
+            final String repositoryName = ret.getString(i);
+            final File dir = new File(backupDir.getPath() + File.separatorChar + repositoryName);
+            if (!dir.exists() && verbose) {
+                dir.mkdir();
+                System.out.println("Created a directory[name=" + dir.getName() + "] under backup directory[path="
+                                   + backupDir.getPath() + "]");
+            }
+        }
+
+        return ret;
     }
 
     /**
