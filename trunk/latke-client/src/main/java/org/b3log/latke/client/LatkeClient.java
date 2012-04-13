@@ -185,9 +185,6 @@ public final class LatkeClient {
                 if (verbose) {
                     printResponse(content);
                 }
-
-
-
             }
 
             if (cmd.hasOption("backup")) {
