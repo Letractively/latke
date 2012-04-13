@@ -53,7 +53,7 @@ import org.json.JSONObject;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Apr 9, 2012
+ * @version 1.0.0.4, Apr 13, 2012
  */
 @SuppressWarnings("unchecked")
 public final class JdbcRepository implements Repository {
@@ -460,7 +460,12 @@ public final class JdbcRepository implements Repository {
         final List<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
         final Map<String, SortDirection> sorts = query.getSorts();
-        final int pageCount = query.getPageCount();
+        // Asssumes the application call need to ccount page
+        int pageCount = -1;
+        // If the application caller need not to count page, gets the page count the caller specified 
+        if (!query.needCountPage()) {
+            pageCount = query.getPageCount();
+        }
 
         final StringBuilder sql = new StringBuilder();
         final Connection connection = getConnection();
@@ -575,7 +580,7 @@ public final class JdbcRepository implements Repository {
      */
     private int get(final int currentPageNum, final int pageSize, final int pageCount, final Map<String, SortDirection> sorts,
                     final List<Filter> filters, final StringBuilder sql, final List<Object> paramList) throws RepositoryException {
-        int pageCnt = pageCount;
+        int ret = pageCount;
 
         final StringBuilder filterSql = new StringBuilder();
         final StringBuilder orderBySql = new StringBuilder();
@@ -590,20 +595,20 @@ public final class JdbcRepository implements Repository {
             }
 
             final long count = count(countSql, paramList);
-            pageCnt = (int) Math.ceil((double) count / (double) pageSize);
+            ret = (int) Math.ceil((double) count / (double) pageSize);
+
+            if (ret == 0) {
+                return 0;
+            }
         }
 
-        if (pageCnt == 0) {
-            return 0;
-        }
-
-        if (currentPageNum > pageCnt) {
-            LOGGER.severe("currentPageNum > pageCount ");
-            throw new RepositoryException("currentPageNum > pageCount");
+        if (currentPageNum > ret) {
+            LOGGER.log(Level.WARNING, "Current page num[" + currentPageNum + "] > page count[" + ret + "]");
         }
 
         getQuerySql(currentPageNum, pageSize, filterSql, orderBySql, sql);
-        return pageCnt;
+        
+        return ret;
     }
 
     /**
