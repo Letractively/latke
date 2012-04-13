@@ -53,7 +53,7 @@ import org.json.JSONObject;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.4, Apr 13, 2012
+ * @version 1.0.0.5, Apr 13, 2012
  */
 @SuppressWarnings("unchecked")
 public final class JdbcRepository implements Repository {
@@ -463,7 +463,7 @@ public final class JdbcRepository implements Repository {
         // Asssumes the application call need to ccount page
         int pageCount = -1;
         // If the application caller need not to count page, gets the page count the caller specified 
-        if (!query.needCountPage()) {
+        if (null != query.getPageCount()) {
             pageCount = query.getPageCount();
         }
 
@@ -607,7 +607,7 @@ public final class JdbcRepository implements Repository {
         }
 
         getQuerySql(currentPageNum, pageSize, filterSql, orderBySql, sql);
-        
+
         return ret;
     }
 
