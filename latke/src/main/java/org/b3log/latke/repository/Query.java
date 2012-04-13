@@ -28,9 +28,9 @@ import org.b3log.latke.util.Strings;
 
 /**
  * Query.
- *
+ * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Nov 17, 2011
+ * @version 1.0.0.7, Apr 13, 2012
  */
 public final class Query {
 
@@ -42,6 +42,10 @@ public final class Query {
      * Page count.
      */
     private int pageCount = -1;
+    /**
+     * Dose whether count page? Disables page count by default.
+     */
+    private boolean needCountPage;
     /**
      * Page size.
      */
@@ -248,6 +252,37 @@ public final class Query {
         this.pageCount = pageCount;
 
         return this;
+    }
+
+    /**
+     * Enables page count.
+     * 
+     * @return the current query object
+     */
+    public Query enablePageCount() {
+        needCountPage = true;
+        
+        return this;
+    }
+
+    /**
+     * Disables page count.
+     * 
+     * @return the current query object
+     */
+    public Query disablePageCount() {
+        needCountPage = false;
+        
+        return this;
+    }
+    
+    /**
+     * Dose whether need to count page?
+     * 
+     * @return {@code true} to count page, return {@code false} otherwise
+     */
+    public boolean needCountPage() {
+        return needCountPage;
     }
 
     @Override
