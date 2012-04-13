@@ -16,6 +16,7 @@
 package org.b3log.latke.client;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -62,6 +63,10 @@ public final class LatkeClient {
      */
     private static final String SET_REPOSITORIES_WRITABLE = "/latke/remote/repositories/writable";
     /**
+     * Gets data.
+     */
+    private static final String GET_DATA = "/latke/remote/repository/data";
+    /**
      * Server address, starts with http://.
      */
     private static String serverAddress = "";
@@ -81,13 +86,18 @@ public final class LatkeClient {
      * Verbose.
      */
     private static boolean verbose;
+    /**
+     * Backup page size.
+     */
+    private static final String PAGE_SIZE = "5";
 
     /**
      * Main entry.
      * 
      * @param args the specified command line arguments
+     * @throws Exception exception 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         args = new String[]{
             "-backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
             "C:/b3log_backup", "-w", "true"};
@@ -125,53 +135,88 @@ public final class LatkeClient {
             qparams.add(new BasicNameValuePair("password", password));
 
             if (cmd.hasOption("repository_names")) {
-                try {
-                    final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
-                                                       URLEncodedUtils.format(qparams, "UTF-8"), null);
-                    final HttpGet request = new HttpGet();
-                    request.setURI(uri);
+                final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
+                                                   URLEncodedUtils.format(qparams, "UTF-8"), null);
+                final HttpGet request = new HttpGet();
+                request.setURI(uri);
 
-                    if (verbose) {
-                        System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
+                if (verbose) {
+                    System.out.println("Getting repository names[" + GET_REPOSITORY_NAMES + "]");
+                }
+
+                final HttpResponse httpResponse = httpClient.execute(request);
+                final InputStream contentStream = httpResponse.getEntity().getContent();
+                final String content = IOUtils.toString(contentStream).trim();
+
+                if (verbose) {
+                    printResponse(content);
+                }
+
+                final JSONObject result = new JSONObject(content);
+                final JSONArray repositoryNames = result.getJSONArray("repositoryNames");
+
+                for (int i = 0; i < repositoryNames.length(); i++) {
+                    final String repositoryName = repositoryNames.getString(i);
+                    final File dir = new File(backupDir.getPath() + File.separatorChar + repositoryName);
+                    if (!dir.exists() && verbose) {
+                        dir.mkdir();
+                        System.out.println("Created a directory[name=" + dir.getName() + "] under backup directory[path="
+                                           + backupDir.getPath() + "]");
                     }
-
-                    final HttpResponse httpResponse = httpClient.execute(request);
-                    final InputStream contentStream = httpResponse.getEntity().getContent();
-                    final String content = IOUtils.toString(contentStream).trim();
-
-                    if (verbose) {
-                        printResponse(content);
-                    }
-
-                    final JSONObject result = new JSONObject(content);
-                    final JSONArray repositoryNames = result.getJSONArray("repositoryNames");
-
-                    for (int i = 0; i < repositoryNames.length(); i++) {
-                        final String repositoryName = repositoryNames.getString(i);
-                        final File dir = new File(backupDir.getPath() + File.separatorChar + repositoryName);
-                        if (!dir.exists() && verbose) {
-                            dir.mkdir();
-                            System.out.println("Created a directory[name=" + dir.getName() + "] under backup directory[path="
-                                               + backupDir.getPath() + "]");
-                        }
-                    }
-
-                } catch (final Exception e) {
-                    System.err.println("Requests server error: " + e.getMessage());
                 }
             }
 
             if (cmd.hasOption("w")) {
-                try {
-                    final String writable = cmd.getOptionValue("w");
-                    qparams.add(new BasicNameValuePair("writable", writable));
-                    final URI uri = URIUtils.createURI("http", serverAddress, -1, SET_REPOSITORIES_WRITABLE,
-                                                       URLEncodedUtils.format(qparams, "UTF-8"), null);
-                    final HttpPut request = new HttpPut();
-                    request.setURI(uri);
+                final String writable = cmd.getOptionValue("w");
+                qparams.add(new BasicNameValuePair("writable", writable));
+                final URI uri = URIUtils.createURI("http", serverAddress, -1, SET_REPOSITORIES_WRITABLE,
+                                                   URLEncodedUtils.format(qparams, "UTF-8"), null);
+                final HttpPut request = new HttpPut();
+                request.setURI(uri);
+
+                if (verbose) {
+                    System.out.println("Setting repository writable[" + writable + "]");
+                }
+
+                final HttpResponse httpResponse = httpClient.execute(request);
+                final InputStream contentStream = httpResponse.getEntity().getContent();
+                final String content = IOUtils.toString(contentStream).trim();
+
+                if (verbose) {
+                    printResponse(content);
+                }
+
+
+
+            }
+
+            if (cmd.hasOption("backup")) {
+                System.out.println("Make sure you have disabled repository writes with [-w false], continue? (y)");
+                final Scanner scanner = new Scanner(System.in);
+                final String input = scanner.next();
+                scanner.close();
+
+                if (!"y".equals(input)) {
+                    return;
+                }
+
+                if (verbose) {
+                    System.out.println("Starting backup data");
+                }
+
+                final String repositoryName = "article";
+
+                int totalPageCount = 2;
+                for (int pageNum = 1; pageNum < totalPageCount; pageNum++) {
+                    qparams.add(new BasicNameValuePair("repositoryName", repositoryName));
+                    qparams.add(new BasicNameValuePair("pageNum", String.valueOf(pageNum)));
+                    qparams.add(new BasicNameValuePair("pageSize", PAGE_SIZE));
+                    final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(qparams, "UTF-8"), null);
+                    final HttpGet request = new HttpGet(uri);
 
                     if (verbose) {
-                        System.out.println("Setting repository writable[" + writable + "]");
+                        System.out.println("Getting data from repository [" + repositoryName + "] with pagination[pageNum=" + pageNum
+                                           + ", pageSize=" + PAGE_SIZE + "]");
                     }
 
                     final HttpResponse httpResponse = httpClient.execute(request);
@@ -182,24 +227,22 @@ public final class LatkeClient {
                         printResponse(content);
                     }
 
+                    final JSONObject resp = new JSONObject(content);
+                    final JSONObject pagination = resp.getJSONObject("pagination");
+                    totalPageCount = pagination.getInt("paginationPageCount");
+                    final JSONArray results = resp.getJSONArray("rslts");
 
-                } catch (final Exception e) {
-                    System.err.println("Requests server error: " + e.getMessage());
-                }
-            }
+                    final String backupPath = backupDir.getPath() + File.separatorChar + repositoryName + File.separatorChar
+                                              + pageNum + '_' + PAGE_SIZE + '_' + System.currentTimeMillis() + ".json";
+                    final File backup = new File(backupPath);
+                    final FileWriter fileWriter = new FileWriter(backup);
+                    IOUtils.write(results.toString(), fileWriter);
+                    fileWriter.close();
 
-            if (cmd.hasOption("backup")) {
-                System.out.println("Make sure you have disabled repository writes with [-w false], continue?(y)");
-                final Scanner scanner = new Scanner(System.in);
-                final String input = scanner.next();
-
-                if ("y".equals(input)) {
                     if (verbose) {
-                        System.out.println("Starting backup data");
+                        System.out.println("Backup file[path=" + backupPath + "]");
                     }
                 }
-
-                scanner.close();
             }
 
             if (cmd.hasOption("v")) {
@@ -211,6 +254,10 @@ public final class LatkeClient {
             }
 
 
+//                final File backup = new File(backupDir.getPath() + File.separatorChar + repositoryName + pageNum + '_' + pageSize + '_'
+//                                             + System.currentTimeMillis() + ".json");
+//                final FileEntity fileEntity = new FileEntity(backup, "application/json; charset=\"UTF-8\"");
+
         } catch (final ParseException e) {
             System.err.println("Parsing args failed, caused by: " + e.getMessage());
             printHelp(options);
@@ -221,11 +268,11 @@ public final class LatkeClient {
      * Prints the specified content as response.
      * 
      * @param content the specified content
+     * @throws Exception exception 
      */
-    private static void printResponse(final String content) {
-        System.out.println("Response[");
-        System.out.println("    " + content);
-        System.out.println("]");
+    private static void printResponse(final String content) throws Exception {
+        System.out.println("Response:");
+        System.out.println(new JSONObject(content).toString(4));
     }
 
     /**
