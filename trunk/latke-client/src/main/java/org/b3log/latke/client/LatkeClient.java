@@ -208,10 +208,13 @@ public final class LatkeClient {
 
                 int totalPageCount = 2;
                 for (int pageNum = 1; pageNum < totalPageCount; pageNum++) {
-                    qparams.add(new BasicNameValuePair("repositoryName", repositoryName));
-                    qparams.add(new BasicNameValuePair("pageNum", String.valueOf(pageNum)));
-                    qparams.add(new BasicNameValuePair("pageSize", PAGE_SIZE));
-                    final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(qparams, "UTF-8"), null);
+                    final List<NameValuePair> params = new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair("userName", userName));
+                    params.add(new BasicNameValuePair("password", password));
+                    params.add(new BasicNameValuePair("repositoryName", repositoryName));
+                    params.add(new BasicNameValuePair("pageNum", String.valueOf(pageNum)));
+                    params.add(new BasicNameValuePair("pageSize", PAGE_SIZE));
+                    final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(params, "UTF-8"), null);
                     final HttpGet request = new HttpGet(uri);
 
                     if (verbose) {
