@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
+
 import org.b3log.latke.urlfetch.HTTPHeader;
 import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
@@ -108,7 +109,14 @@ class UrlFetchCommonHandler {
 
         ret.setResponseCode(httpURLConnection.getResponseCode());
         ret.setFinalURL(httpURLConnection.getURL());
-        ret.setContent(inputStreamToByte(httpURLConnection.getInputStream()));
+
+        InputStream retStream;
+        if (200 == ret.getResponseCode()) {
+            retStream = httpURLConnection.getInputStream();
+        } else {
+            retStream = httpURLConnection.getErrorStream();
+        }
+        ret.setContent(inputStreamToByte(retStream));
 
         fillHttpResponseHeader(ret, httpURLConnection.getHeaderFields());
 
