@@ -20,8 +20,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.PosixParser;
@@ -37,6 +38,8 @@ import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Latke client.
@@ -84,7 +87,11 @@ public final class LatkeClient {
      * 
      * @param args the specified command line arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
+        args = new String[]{
+            "-backup -repository_names -verbose -s localhost:8080 -u test -p 1 "
+            + "-backup_dir C:/b3log_backup -w true"};
+
         final Options options = getOptions();
 
         final CommandLineParser parser = new PosixParser();
@@ -92,7 +99,7 @@ public final class LatkeClient {
         try {
             final CommandLine cmd = parser.parse(options, args);
 
-            if (!cmd.hasOption("s")) {
+            if (!cmd.hasOption("server")) {
                 System.out.println("Expected [server]");
                 printHelp(options);
                 return;
@@ -111,13 +118,13 @@ public final class LatkeClient {
                 backupDir.mkdir();
             }
 
-            if (!cmd.hasOption("user_name")) {
-                System.out.println("Expected [user_name]");
+            if (!cmd.hasOption("username")) {
+                System.out.println("Expected [username]");
                 printHelp(options);
                 return;
             }
 
-            userName = cmd.getOptionValue("user_name");
+            userName = cmd.getOptionValue("username");
 
             if (!cmd.hasOption("password")) {
                 System.out.println("Expected [password]");
@@ -142,7 +149,7 @@ public final class LatkeClient {
             qparams.add(new BasicNameValuePair("userName", userName));
             qparams.add(new BasicNameValuePair("password", password));
 
-            if (cmd.hasOption("rn")) {
+            if (cmd.hasOption("repository_names")) {
                 try {
                     final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_REPOSITORY_NAMES,
                                                        URLEncodedUtils.format(qparams, "UTF-8"), null);
@@ -161,6 +168,18 @@ public final class LatkeClient {
                         printResponse(content);
                     }
 
+                    final JSONObject result = new JSONObject(content);
+                    final JSONArray repositoryNames = result.getJSONArray("repositoryNames");
+
+                    for (int i = 0; i < repositoryNames.length(); i++) {
+                        final String repositoryName = repositoryNames.getString(i);
+                        final File dir = new File(backupDir.getPath() + File.separatorChar + repositoryName);
+                        if (!dir.exists() && verbose) {
+                            dir.mkdir();
+                            System.out.println("Created a directory[name=" + dir.getName() + "] under backup directory[path="
+                                               + backupDir.getPath() + "]");
+                        }
+                    }
 
                 } catch (final Exception e) {
                     System.err.println("Requests server error: " + e.getMessage());
@@ -192,6 +211,24 @@ public final class LatkeClient {
                 } catch (final Exception e) {
                     System.err.println("Requests server error: " + e.getMessage());
                 }
+            }
+
+            if (cmd.hasOption("backup")) {
+                System.out.println("Make sure you have disabled repository writes with [-writable false]");
+                final Scanner scanner = new Scanner(System.in);
+                final String input = scanner.next();
+
+                System.out.println(input);
+
+                scanner.close();
+            }
+
+            if (cmd.hasOption("v")) {
+                System.out.println(VERSION);
+            }
+
+            if (cmd.hasOption("h")) {
+                printHelp(options);
             }
 
 
@@ -230,37 +267,19 @@ public final class LatkeClient {
     private static Options getOptions() {
         final Options ret = new Options();
 
-        final Option srvAddressOpt = new Option("server", "s", true, "Uses SERVER");
-        srvAddressOpt.setArgName("SERVER");
-        ret.addOption(srvAddressOpt);
-
-        final Option userNameOpt = new Option("user_name", true, "Uses USER_NAME");
-        userNameOpt.setArgName("USER_NAME");
-        ret.addOption(userNameOpt);
-
-        final Option passwordOpt = new Option("password", true, "Uses PASSWORD");
-        passwordOpt.setArgName("PASSWORD");
-        ret.addOption(passwordOpt);
-
-        final Option backupDirOpt = new Option("backup_dir", true, "Uses BACKUP_DIR");
-        backupDirOpt.setArgName("BACKUP_DIR");
-        ret.addOption(backupDirOpt);
-
-        final Option writableOpt = new Option("writable", true, "Uses WRITABLE");
-        writableOpt.setArgName("WRITABLE");
-        ret.addOption(writableOpt);
-
-        final Option repositoryNamesOpt = new Option("repository_names", "rn", false, "Prints repositories names");
-        ret.addOption(repositoryNamesOpt);
-
-        final Option verboseOpt = new Option("verbose", false, "Runs with extra verbose");
-        ret.addOption(verboseOpt);
-
-        final Option helpOpt = new Option("help", "h", false, "Prints this message");
-        ret.addOption(helpOpt);
-
-        final Option versionOpt = new Option("version", "v", false, "Prints the cient version information and exit");
-        ret.addOption(versionOpt);
+        ret.addOption(OptionBuilder.withArgName("server").hasArg().withDescription(
+                "For server address. For example, localhost:8080").isRequired().create('s'));
+        ret.addOption(OptionBuilder.withArgName("username").hasArg().withDescription("Username").isRequired().create('u'));
+        ret.addOption(OptionBuilder.withArgName("password").hasArg().withDescription("Password").isRequired().create('p'));
+        ret.addOption(OptionBuilder.withArgName("backup_dir").hasArg().withDescription("Backup directory").isRequired().
+                create("backup_dir"));
+        ret.addOption(OptionBuilder.withDescription("Backup data").create("backup"));
+        ret.addOption(OptionBuilder.withArgName("writable").hasArg().
+                withDescription("Disable/Enable repository writes. For example, -w true").create('w'));
+        ret.addOption(OptionBuilder.withDescription("Prints repository names").create("repository_names"));
+        ret.addOption(OptionBuilder.withDescription("Extras verbose").create("verbose"));
+        ret.addOption(OptionBuilder.withDescription("Prints help").create('h'));
+        ret.addOption(OptionBuilder.withDescription("Prints this client version").create('v'));
 
         return ret;
     }
