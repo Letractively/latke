@@ -118,7 +118,6 @@
         <module name="LineLength">
             <property name="max" value="140"/>
         </module>
-        <module name="MethodLength"/>
         <module name="ParameterNumber"/>
 
         <!-- Checks for whitespace                               -->
@@ -165,7 +164,6 @@
         <module name="IllegalInstantiation"/>
         <module name="IllegalThrows"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
         <module name="MissingSwitchDefault"/>
         <module name="RedundantThrows"/>
         <module name="SimplifyBooleanExpression"/>
