@@ -87,7 +87,7 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.4.9, Apr 9, 2012
+ * @version 1.0.5.0, Apr 13, 2012
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -579,7 +579,12 @@ public final class GAERepository implements Repository {
         final List<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
         final Map<String, SortDirection> sorts = query.getSorts();
-        final int pageCount = query.getPageCount();
+        // Asssumes the application call need to ccount page
+        int pageCount = -1;
+        // If the application caller need not to count page, gets the page count the caller specified 
+        if (!query.needCountPage()) {
+            pageCount = query.getPageCount();
+        }
 
         ret = get(currentPageNum, pageSize, pageCount, sorts, filters, cacheKey);
 
@@ -612,12 +617,8 @@ public final class GAERepository implements Repository {
      * {@linkplain #get(org.b3log.latke.repository.Query)} for details
      * @throws RepositoryException repository exception
      */
-    private JSONObject get(final int currentPageNum,
-                           final int pageSize,
-                           final int pageCount,
-                           final Map<String, SortDirection> sorts,
-                           final List<Filter> filters,
-                           final String cacheKey)
+    private JSONObject get(final int currentPageNum, final int pageSize, final int pageCount,
+                           final Map<String, SortDirection> sorts, final List<Filter> filters, final String cacheKey)
             throws RepositoryException {
         final Query query = new Query(getName());
         for (final Filter filter : filters) {
@@ -823,8 +824,7 @@ public final class GAERepository implements Repository {
      * page size, page count and cache key.
      * 
      * <p>
-     * If the specified page count equals to {@code -1}, this method will
-     * calculate the page count.  
+     * If the specified page count equals to {@code -1}, this method will calculate the page count.  
      * </p>
      *
      * @param query the specified query
@@ -845,11 +845,8 @@ public final class GAERepository implements Repository {
      * </pre>
      * @throws RepositoryException repository exception
      */
-    private JSONObject get(final Query query,
-                           final int currentPageNum,
-                           final int pageSize,
-                           final int pageCount,
-                           final String cacheKey) throws RepositoryException {
+    private JSONObject get(final Query query, final int currentPageNum, final int pageSize, final int pageCount, final String cacheKey)
+            throws RepositoryException {
         final PreparedQuery preparedQuery = datastoreService.prepare(query);
 
         int pageCnt = pageCount;
