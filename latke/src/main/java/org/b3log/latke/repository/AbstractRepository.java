@@ -95,7 +95,7 @@ public abstract class AbstractRepository implements Repository {
         }
 
         Repositories.addRepository(repository);
-        LOGGER.log(Level.INFO, "Constructed repository[name=" + name + "]");
+        LOGGER.log(Level.INFO, "Constructed repository[name={0}]", name);
     }
 
     @Override
