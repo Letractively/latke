@@ -474,19 +474,19 @@ public final class JdbcRepository implements Repository {
         try {
             final int pageCnt = get(currentPageNum, pageSize, pageCount, sorts, filters, sql, paramList);
 
+            // page
+            final JSONObject pagination = new JSONObject();
+            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCnt);
+            ret.put(Pagination.PAGINATION, pagination);
+
+            // result
             if (pageCnt == 0) {
                 ret.put(Keys.RESULTS, new JSONArray());
                 return ret;
             }
 
-            // result
             final JSONArray jsonResults = JdbcUtil.queryJsonArray(sql.toString(), paramList, connection, getName());
             ret.put(Keys.RESULTS, jsonResults);
-
-            // page
-            final JSONObject pagination = new JSONObject();
-            pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCnt);
-            ret.put(Pagination.PAGINATION, pagination);
 
             if (cacheEnabled) {
                 CACHE.putAsync(cacheKey, ret);
