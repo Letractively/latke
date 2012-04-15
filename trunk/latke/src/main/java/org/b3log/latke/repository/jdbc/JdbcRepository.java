@@ -603,7 +603,7 @@ public final class JdbcRepository implements Repository {
         }
 
         if (currentPageNum > ret) {
-            LOGGER.log(Level.WARNING, "Current page num[" + currentPageNum + "] > page count[" + ret + "]");
+            LOGGER.log(Level.WARNING, "Current page num[{0}] > page count[{1}]", new Object[]{currentPageNum, ret});
         }
 
         getQuerySql(currentPageNum, pageSize, filterSql, orderBySql, sql);
