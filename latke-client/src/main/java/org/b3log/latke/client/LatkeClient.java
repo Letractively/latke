@@ -196,7 +196,7 @@ public final class LatkeClient {
 
                         final HttpResponse httpResponse = httpClient.execute(request);
                         final InputStream contentStream = httpResponse.getEntity().getContent();
-                        final String content = IOUtils.toString(contentStream).trim();
+                        final String content = IOUtils.toString(contentStream, "UTF-8").trim();
                         contentStream.close();
 
                         if (verbose) {
@@ -295,6 +295,7 @@ public final class LatkeClient {
      */
     private static void printResponse(final String content) throws Exception {
         System.out.println("Response:");
+        System.out.println(content);
         System.out.println(new JSONObject(content).toString(4));
     }
 
