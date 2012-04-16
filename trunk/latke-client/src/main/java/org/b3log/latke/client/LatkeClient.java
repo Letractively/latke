@@ -295,7 +295,6 @@ public final class LatkeClient {
      */
     private static void printResponse(final String content) throws Exception {
         System.out.println("Response:");
-        System.out.println(content);
         System.out.println(new JSONObject(content).toString(4));
     }
 
