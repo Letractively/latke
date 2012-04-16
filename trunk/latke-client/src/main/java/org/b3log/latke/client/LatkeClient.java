@@ -99,7 +99,7 @@ public final class LatkeClient {
      */
     public static void main(String[] args) throws Exception {
         args = new String[]{
-            "-backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
+            "-h -backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
             "C:/b3log_backup", "-w", "true"};
 
         final Options options = getOptions();
@@ -325,7 +325,8 @@ public final class LatkeClient {
         ret.addOption(OptionBuilder.withDescription("Backup data").create("backup"));
         ret.addOption(OptionBuilder.withArgName("writable").hasArg().
                 withDescription("Disable/Enable repository writes. For example, -w true").create('w'));
-        ret.addOption(OptionBuilder.withDescription("Prints repository names").create("repository_names"));
+        ret.addOption(OptionBuilder.withDescription("Prints repository names and creates directories with the repository names under"
+                                                    + " back_dir").create("repository_names"));
         ret.addOption(OptionBuilder.withDescription("Extras verbose").create("verbose"));
         ret.addOption(OptionBuilder.withDescription("Prints help").create('h'));
         ret.addOption(OptionBuilder.withDescription("Prints this client version").create('v'));
