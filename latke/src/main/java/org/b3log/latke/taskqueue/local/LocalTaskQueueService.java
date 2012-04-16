@@ -75,7 +75,7 @@ public final class LocalTaskQueueService implements TaskQueueService {
                 final Element queueNode = (Element) queueRoot.item(i);
                 final String queueName = queueNode.getElementsByTagName("name").item(0).getTextContent();
                 final Element rparamNode =
-                        (Element) ((NodeList) queueNode.getElementsByTagName("retry-parameters")).item(0);
+                        (Element) queueNode.getElementsByTagName("retry-parameters").item(0);
                 final String retryLimit = rparamNode.getElementsByTagName("task-retry-limit").item(0).getTextContent();
 
                 queueMap.put(queueName, new LocalTaskQueue(Integer.valueOf(retryLimit)));

@@ -114,9 +114,9 @@ public final class CronService {
             LOGGER.log(Level.CONFIG, "Reading cron jobs: ");
             for (int i = 0; i < crons.getLength(); i++) {
                 final Element cronElement = (Element) crons.item(i);
-                final Element urlElement = (Element) ((NodeList) cronElement.getElementsByTagName("url")).item(0);
-                final Element descriptionElement = (Element) ((NodeList) cronElement.getElementsByTagName("description")).item(0);
-                final Element scheduleElement = (Element) ((NodeList) cronElement.getElementsByTagName("schedule")).item(0);
+                final Element urlElement = (Element) cronElement.getElementsByTagName("url").item(0);
+                final Element descriptionElement = (Element) cronElement.getElementsByTagName("description").item(0);
+                final Element scheduleElement = (Element) cronElement.getElementsByTagName("schedule").item(0);
 
                 final String url = urlElement.getTextContent();
                 final String description = descriptionElement.getTextContent();
