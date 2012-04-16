@@ -99,7 +99,7 @@ public final class LatkeClient {
      */
     public static void main(String[] args) throws Exception {
         args = new String[]{
-            "-h -backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
+            "-h", "-backup", "-repository_names", "-verbose", "-s", "demo.b3log.org", "-u", "Admin", "-p", "b3logsolo", "-backup_dir",
             "C:/b3log_backup", "-w", "true"};
 
         final Options options = getOptions();
