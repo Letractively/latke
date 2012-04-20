@@ -46,7 +46,7 @@ import org.json.JSONObject;
  * Latke client.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Apr 11, 2012
+ * @version 1.0.0.1, Apr 20, 2012
  */
 public final class LatkeClient {
 
@@ -99,7 +99,7 @@ public final class LatkeClient {
      */
     public static void main(String[] args) throws Exception {
         args = new String[]{
-            "-h", "-backup", "-repository_names", "-verbose", "-s", "demo.b3log.org", "-u", "Admin", "-p", "b3logsolo", "-backup_dir",
+            "-h", "-backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
             "C:/b3log_backup", "-w", "true"};
 
         final Options options = getOptions();
@@ -178,7 +178,7 @@ public final class LatkeClient {
                     final String repositoryName = repositoryNames.getString(i);
 
                     int totalPageCount = 2;
-                    for (int pageNum = 1; pageNum < totalPageCount; pageNum++) {
+                    for (int pageNum = 1; pageNum <= totalPageCount; pageNum++) {
                         final List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("userName", userName));
                         params.add(new BasicNameValuePair("password", password));
@@ -209,7 +209,7 @@ public final class LatkeClient {
                         final JSONArray results = resp.getJSONArray("rslts");
 
                         final String backupPath = backupDir.getPath() + File.separatorChar + repositoryName + File.separatorChar
-                                                  + pageNum + '_' + PAGE_SIZE + '_' + System.currentTimeMillis() + ".json";
+                                                  + pageNum + '_' + results.length() + '_' + System.currentTimeMillis() + ".json";
                         final File backup = new File(backupPath);
                         final FileWriter fileWriter = new FileWriter(backup);
                         IOUtils.write(results.toString(), fileWriter);
