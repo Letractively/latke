@@ -21,19 +21,19 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
-
+import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.urlfetch.HTTPHeader;
 import org.b3log.latke.urlfetch.HTTPRequest;
 import org.b3log.latke.urlfetch.HTTPResponse;
 
 /**
- * commonHandler for urlfetch.
+ * Common handler for URL fetch.
  *
  * match {@link org.b3log.latke.servlet.HTTPRequestMethod}<br>GET, HEAD</br>
  * the core method is {@link #doFetch(HTTPRequest)}
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 0.0.0.2, Aug 15, 2011
+ * @version 1.0.0.3, Aug 15, 2011
  * 
  */
 class UrlFetchCommonHandler {
@@ -111,7 +111,7 @@ class UrlFetchCommonHandler {
         ret.setFinalURL(httpURLConnection.getURL());
 
         InputStream retStream;
-        if (200 == ret.getResponseCode()) {
+        if (HttpServletResponse.SC_OK == ret.getResponseCode()) {
             retStream = httpURLConnection.getInputStream();
         } else {
             retStream = httpURLConnection.getErrorStream();
