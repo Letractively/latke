@@ -16,10 +16,16 @@
 package org.b3log.latke.client;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import org.apache.commons.cli.Options;
@@ -33,7 +39,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -67,6 +75,10 @@ public final class LatkeClient {
      */
     private static final String GET_DATA = "/latke/remote/repository/data";
     /**
+     * Puts data.
+     */
+    private static final String PUT_DATA = "/latke/remote/repository/data";
+    /**
      * Server address, starts with http://.
      */
     private static String serverAddress = "";
@@ -98,8 +110,13 @@ public final class LatkeClient {
      * @throws Exception exception 
      */
     public static void main(String[] args) throws Exception {
+// Backup Test:      
+//        args = new String[]{
+//            "-h", "-backup", "-repository_names", "-verbose", "-s", "demo.b3log.org", "-u", "Admin", "-p", "b3logsolo", "-backup_dir",
+//            "C:/b3log_backup", "-w", "true"};
+// Restore Test:
         args = new String[]{
-            "-h", "-backup", "-repository_names", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
+            "-h", "-restore", "-verbose", "-s", "localhost:8080", "-u", "test", "-p", "1", "-backup_dir",
             "C:/b3log_backup", "-w", "true"};
 
         final Options options = getOptions();
@@ -173,10 +190,8 @@ public final class LatkeClient {
                     System.out.println("Starting backup data");
                 }
 
-                final JSONArray repositoryNames = getRepositoryNames();
-                for (int i = 0; i < repositoryNames.length(); i++) {
-                    final String repositoryName = repositoryNames.getString(i);
-
+                final Set<String> repositoryNames = getRepositoryNames();
+                for (final String repositoryName : repositoryNames) {
                     int totalPageCount = 2;
                     for (int pageNum = 1; pageNum <= totalPageCount; pageNum++) {
                         final List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -185,8 +200,8 @@ public final class LatkeClient {
                         params.add(new BasicNameValuePair("repositoryName", repositoryName));
                         params.add(new BasicNameValuePair("pageNum", String.valueOf(pageNum)));
                         params.add(new BasicNameValuePair("pageSize", PAGE_SIZE));
-                        final URI uri = URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(params, "UTF-8"),
-                                                           null);
+                        final URI uri =
+                                URIUtils.createURI("http", serverAddress, -1, GET_DATA, URLEncodedUtils.format(params, "UTF-8"), null);
                         final HttpGet request = new HttpGet(uri);
 
                         if (verbose) {
@@ -222,6 +237,76 @@ public final class LatkeClient {
                 }
             }
 
+            if (cmd.hasOption("restore")) {
+                System.out.println("Make sure you have enabled repository writes with [-w true], continue? (y)");
+                final Scanner scanner = new Scanner(System.in);
+                final String input = scanner.next();
+                scanner.close();
+
+                if (!"y".equals(input)) {
+                    return;
+                }
+
+                if (verbose) {
+                    System.out.println("Starting restore data");
+                }
+
+                final Set<String> repositoryNames = getRepositoryNamesFromBackupDir();
+                for (final String repositoryName : repositoryNames) {
+                    final Set<File> backupFiles = getBackupFiles(repositoryName);
+
+                    if (verbose) {
+                        System.out.println("Restoring repository[" + repositoryName);
+                    }
+
+                    for (final File backupFile : backupFiles) {
+                        final FileReader backupFileReader = new FileReader(backupFile);
+                        final String dataContent = IOUtils.toString(backupFileReader);
+                        backupFileReader.close();
+
+                        final List<NameValuePair> params = new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("userName", userName));
+                        params.add(new BasicNameValuePair("password", password));
+                        params.add(new BasicNameValuePair("repositoryName", repositoryName));
+                        final URI uri =
+                                URIUtils.createURI("http", serverAddress, -1, PUT_DATA, URLEncodedUtils.format(params, "UTF-8"), null);
+                        final HttpPost request = new HttpPost(uri);
+
+                        final List<NameValuePair> data = new ArrayList<NameValuePair>();
+                        data.add(new BasicNameValuePair("data", dataContent));
+                        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(data, "UTF-8");
+                        request.setEntity(entity);
+
+                        if (verbose) {
+                            System.out.println("Data[" + dataContent + "]");
+                        }
+
+                        final HttpResponse httpResponse = httpClient.execute(request);
+                        final InputStream contentStream = httpResponse.getEntity().getContent();
+                        final String content = IOUtils.toString(contentStream, "UTF-8").trim();
+                        contentStream.close();
+
+                        if (verbose) {
+                            printResponse(content);
+                        }
+
+                        final String pageNum = getBackupFileNameField(backupFile.getName(), "${pageNum}");
+                        final String pageSize = getBackupFileNameField(backupFile.getName(), "${pageSize}");
+                        final String backupTime = getBackupFileNameField(backupFile.getName(), "${backupTime}");
+
+                        final String restoredPath = backupDir.getPath() + File.separatorChar + repositoryName + File.separatorChar
+                                                    + pageNum + '_' + pageSize + '_' + backupTime + '_' + System.currentTimeMillis()
+                                                    + ".json";
+                        final File restoredFile = new File(restoredPath);
+                        backupFile.renameTo(restoredFile);
+
+                        if (verbose) {
+                            System.out.println("Backup file[path=" + restoredPath + "]");
+                        }
+                    }
+                }
+            }
+
             if (cmd.hasOption("v")) {
                 System.out.println(VERSION);
             }
@@ -238,7 +323,98 @@ public final class LatkeClient {
         } catch (final ParseException e) {
             System.err.println("Parsing args failed, caused by: " + e.getMessage());
             printHelp(options);
+        } catch (final ConnectException e) {
+            System.err.println("Connection refused");
         }
+    }
+
+    /**
+     * Gets the backup file name filed value with the specified repository backup file name and field name.
+     * 
+     * <p>
+     * A repository backup file (not restored yet) name: "1_5_1334889225650.json", ${pageNum}_${pageSize}_${backupTime}.json
+     * </p>
+     * 
+     * <p>
+     * A repository backup file (restored) name: "1_5_1334889225470_1334889225650.json", 
+     * ${pageNum}_${pageSize}_${backupTime}_${restoreTime}.json
+     * </p> 
+     *
+     * @param repositoryBackupFileName the specified repository backup file name
+     * @param field the specified, for example ${pageNum}
+     * @return backup file name filed value, returns {@code null} if not found
+     */
+    private static String getBackupFileNameField(final String repositoryBackupFileName, final String field) {
+        final String[] fields = repositoryBackupFileName.split("_");
+
+        if ("${pageNum}".equals(field) && fields.length > 0) {
+            return fields[0];
+        }
+
+        if ("${pageSize}".equals(field) && fields.length > 1) {
+            return fields[1];
+        }
+
+        if ("${backupTime}".equals(field) && fields.length > 2) {
+            return fields[2];
+        }
+
+        if ("${restoreTime}".equals(field) && fields.length > 3) {
+            return fields[3];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the backup files under a backup specified directory by the given repository name.
+     * 
+     * @param repositoryName the given repository name
+     * @return backup files, returns an empty set if not found
+     */
+    private static Set<File> getBackupFiles(final String repositoryName) {
+        final String backupRepositoryPath = backupDir.getPath() + File.separatorChar + repositoryName + File.separatorChar;
+        final File[] repositoryDataFiles = new File(backupRepositoryPath).listFiles(new FilenameFilter() {
+
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".json");
+            }
+        });
+
+        final Set<File> ret = new HashSet<File>();
+        for (int i = 0; i < repositoryDataFiles.length; i++) {
+            ret.add(repositoryDataFiles[i]);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Gets repository names from backup directory.
+     * 
+     * <p>
+     * The returned repository names is the sub-directory names of the backup directory.
+     * </p>
+     * 
+     * @return repository backup directory name
+     */
+    private static Set<String> getRepositoryNamesFromBackupDir() {
+        final File[] repositoryBackupDirs = backupDir.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(final File file) {
+                return file.isDirectory();
+            }
+        });
+
+        final Set<String> ret = new HashSet<String>();
+        for (int i = 0; i < repositoryBackupDirs.length; i++) {
+            final File file = repositoryBackupDirs[i];
+            ret.add(file.getName());
+        }
+
+        return ret;
     }
 
     /**
@@ -247,7 +423,7 @@ public final class LatkeClient {
      * @return repository names
      * @throws Exception exception
      */
-    private static JSONArray getRepositoryNames() throws Exception {
+    private static Set<String> getRepositoryNames() throws Exception {
         final HttpClient httpClient = new DefaultHttpClient();
 
         final List<NameValuePair> qparams = new ArrayList<NameValuePair>();
@@ -272,10 +448,13 @@ public final class LatkeClient {
         }
 
         final JSONObject result = new JSONObject(content);
-        final JSONArray ret = result.getJSONArray("repositoryNames");
+        final JSONArray repositoryNames = result.getJSONArray("repositoryNames");
 
-        for (int i = 0; i < ret.length(); i++) {
-            final String repositoryName = ret.getString(i);
+        final Set<String> ret = new HashSet<String>();
+        for (int i = 0; i < repositoryNames.length(); i++) {
+            final String repositoryName = repositoryNames.getString(i);
+            ret.add(repositoryName);
+
             final File dir = new File(backupDir.getPath() + File.separatorChar + repositoryName);
             if (!dir.exists() && verbose) {
                 dir.mkdir();
@@ -323,6 +502,7 @@ public final class LatkeClient {
         ret.addOption(OptionBuilder.withArgName("backup_dir").hasArg().withDescription("Backup directory").isRequired().
                 create("backup_dir"));
         ret.addOption(OptionBuilder.withDescription("Backup data").create("backup"));
+        ret.addOption(OptionBuilder.withDescription("Restore data").create("restore"));
         ret.addOption(OptionBuilder.withArgName("writable").hasArg().
                 withDescription("Disable/Enable repository writes. For example, -w true").create('w'));
         ret.addOption(OptionBuilder.withDescription("Prints repository names and creates directories with the repository names under"
