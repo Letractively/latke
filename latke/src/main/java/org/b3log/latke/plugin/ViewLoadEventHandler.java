@@ -43,8 +43,7 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
     }
 
     @Override
-    public void action(final Event<ViewLoadEventData> event)
-            throws EventException {
+    public void action(final Event<ViewLoadEventData> event) throws EventException {
         final ViewLoadEventData data = event.getData();
         final String viewName = data.getViewName();
         final Map<String, Object> dataModel = data.getDataModel();
