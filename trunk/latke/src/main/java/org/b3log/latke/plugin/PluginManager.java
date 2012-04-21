@@ -144,8 +144,7 @@ public final class PluginManager {
      * @return a plugin, returns an empty list if not found
      */
     public Set<AbstractPlugin> getPlugins(final String viewName) {
-        Map<String, HashSet<AbstractPlugin>> holder =
-                pluginCache.get(PLUGIN_CACHE_NAME);
+        Map<String, HashSet<AbstractPlugin>> holder = pluginCache.get(PLUGIN_CACHE_NAME);
         if (null == holder) {
             LOGGER.info("Plugin cache miss, reload");
             load();
@@ -216,17 +215,14 @@ public final class PluginManager {
      * @return loaded plugin
      * @throws Exception exception
      */
-    private AbstractPlugin load(final File pluginDir, final HashMap<String, HashSet<AbstractPlugin>> holder)
-            throws Exception {
+    private AbstractPlugin load(final File pluginDir, final HashMap<String, HashSet<AbstractPlugin>> holder) throws Exception {
         final Properties props = new Properties();
         props.load(new FileInputStream(pluginDir.getPath() + File.separator + "plugin.properties"));
 
         final File defaultClassesFileDir = new File(pluginDir.getPath() + File.separator + "classes");
-        final URL defaultClassesFileDirURL =
-                defaultClassesFileDir.toURI().toURL();
+        final URL defaultClassesFileDirURL = defaultClassesFileDir.toURI().toURL();
 
-        final String webRoot =
-                StringUtils.substringBeforeLast(AbstractServletListener.getWebRoot(), File.separator);
+        final String webRoot = StringUtils.substringBeforeLast(AbstractServletListener.getWebRoot(), File.separator);
         final String classesFileDirPath = webRoot + props.getProperty("classesDirPath");
         final File classesFileDir = new File(classesFileDirPath);
         final URL classesFileDirURL = classesFileDir.toURI().toURL();
@@ -267,8 +263,7 @@ public final class PluginManager {
 
         set.add(plugin);
 
-        LOGGER.log(Level.FINER,
-                   "Registered plugin[name={0}, version={1}] for view[name={2}], [{3}] plugins totally",
+        LOGGER.log(Level.FINER, "Registered plugin[name={0}, version={1}] for view[name={2}], [{3}] plugins totally",
                    new Object[]{plugin.getName(), plugin.getVersion(), viewName, holder.size()});
     }
 
@@ -281,8 +276,7 @@ public final class PluginManager {
      * @param props the specified properties file
      * @throws Exception exception
      */
-    private static void setPluginProps(final File pluginDir, final AbstractPlugin plugin, final Properties props)
-            throws Exception {
+    private static void setPluginProps(final File pluginDir, final AbstractPlugin plugin, final Properties props) throws Exception {
         final String author = props.getProperty(Plugin.PLUGIN_AUTHOR);
         final String name = props.getProperty(Plugin.PLUGIN_NAME);
         final String version = props.getProperty(Plugin.PLUGIN_VERSION);
@@ -323,8 +317,7 @@ public final class PluginManager {
                                                final URLClassLoader classLoader,
                                                final AbstractPlugin plugin)
             throws Exception {
-        final String eventListenerClasses =
-                props.getProperty(Plugin.PLUGIN_EVENT_LISTENER_CLASSES);
+        final String eventListenerClasses = props.getProperty(Plugin.PLUGIN_EVENT_LISTENER_CLASSES);
         final String[] eventListenerClassArray = eventListenerClasses.split(",");
         for (int i = 0; i < eventListenerClassArray.length; i++) {
             final String eventListenerClassName = eventListenerClassArray[i];
@@ -342,8 +335,7 @@ public final class PluginManager {
 
             final EventManager eventManager = EventManager.getInstance();
             eventManager.registerListener(eventListener);
-            LOGGER.log(Level.FINER,
-                       "Registered event listener[class={0}, eventType={1}] for plugin[name={2}]",
+            LOGGER.log(Level.FINER, "Registered event listener[class={0}, eventType={1}] for plugin[name={2}]",
                        new Object[]{eventListener.getClass(), eventListener.getEventType(), plugin.getName()});
         }
     }
