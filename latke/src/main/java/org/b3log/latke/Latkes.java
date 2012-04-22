@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.repository.jdbc.util.Connections;
 import org.b3log.latke.util.Strings;
@@ -35,7 +34,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.3, Apr 5, 2012
+ * @version 1.0.1.4, Apr 22, 2012
  * @see #initRuntimeEnv()
  */
 public final class Latkes {
@@ -76,25 +75,46 @@ public final class Latkes {
      * Latke configurations (latke.properties).
      */
     private static final Properties LATKE_PROPS = new Properties();
+    /**
+     * Latke remote interfaces configurations (remote.properties).
+     */
+    private static final Properties REMOTE_PROPS = new Properties();
 
     static {
-        try {
-            final InputStream resourceAsStream = Latkes.class.getResourceAsStream("/local.properties");
-            if (null != resourceAsStream) {
-                LOCAL_PROPS.load(resourceAsStream);
-            }
-        } catch (final Exception e) {
-            LOGGER.log(Level.CONFIG, "Not found local configuration file");
-            // Ignores....
-        }
-
+        LOGGER.config("Loading latke.properties");
         try {
             final InputStream resourceAsStream = Latkes.class.getResourceAsStream("/latke.properties");
             if (null != resourceAsStream) {
                 LATKE_PROPS.load(resourceAsStream);
+                LOGGER.config("Loaded latke.properties");
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.CONFIG, "Not found Latke configuration file");
+            LOGGER.log(Level.SEVERE, "Not found latke.properties");
+            throw new RuntimeException("Not found latke.properties");
+        }
+
+        LOGGER.config("Loading local.properties");
+        try {
+            final InputStream resourceAsStream = Latkes.class.getResourceAsStream("/local.properties");
+            if (null != resourceAsStream) {
+                LOCAL_PROPS.load(resourceAsStream);
+                LOGGER.config("Loaded local.properties");
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.CONFIG, "Not found local.properties");
+            // Ignores....
+        }
+
+        LOGGER.config("Loading remote.properties");
+        try {
+            final InputStream resourceAsStream = Latkes.class.getResourceAsStream("/remote.properties");
+            if (null != resourceAsStream) {
+                REMOTE_PROPS.load(resourceAsStream);
+                LOGGER.config("Loaded remote.properties");
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.CONFIG, "Not found Latke remote.properties");
+            // Ignores....
         }
     }
 
@@ -393,6 +413,25 @@ public final class Latkes {
      */
     public static String getLocalProperty(final String key) {
         return LOCAL_PROPS.getProperty(key);
+    }
+
+    /**
+     * Checks whether the remote interfaces are enabled.
+     * 
+     * @return {@code true} if the remote interfaces enabled, returns {@code false} otherwise
+     */
+    public static boolean isRemoteEnabled() {
+        return !REMOTE_PROPS.isEmpty();
+    }
+
+    /**
+     * Gets a property specified by the given key from file "remote.properties".
+     * 
+     * @param key the given key
+     * @return the value, returns {@code null} if not found
+     */
+    public static String getRemoteProperty(final String key) {
+        return REMOTE_PROPS.getProperty(key);
     }
 
     /**
