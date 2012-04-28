@@ -44,7 +44,7 @@ public final class Connections {
     /**
      * Connection pool.
      */
-    private static final BoneCP CONN_POOL;
+    private static BoneCP connectionPool;
 
     static {
         try {
@@ -60,11 +60,11 @@ public final class Connections {
             config.setMaxConnectionsPerPartition(Integer.valueOf(Latkes.getLocalProperty("jdbc.maxConnCnt")));
             config.setPartitionCount(1);
 
-            CONN_POOL = new BoneCP(config);
+            connectionPool = new BoneCP(config);
 
             LOGGER.info("Initialized connection pool");
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            LOGGER.log(Level.SEVERE, "Can not initialize database connection", e);
         }
     }
 
@@ -80,15 +80,18 @@ public final class Connections {
         }
 
         LOGGER.log(Level.FINEST, "Connection pool[createdConns={0}, freeConns={1}, leasedConns={2}]",
-                   new Object[]{CONN_POOL.getTotalCreatedConnections(), CONN_POOL.getTotalFree(), CONN_POOL.getTotalLeased()});
-        return CONN_POOL.getConnection();
+                   new Object[]{connectionPool.getTotalCreatedConnections(),
+                                connectionPool.getTotalFree(),
+                                connectionPool.getTotalLeased()});
+
+        return connectionPool.getConnection();
     }
 
     /**
      * Shutdowns the connection pool.
      */
     public static void shutdownConnectionPool() {
-        CONN_POOL.shutdown();
+        connectionPool.shutdown();
         LOGGER.info("Shutdowns connection pool sucessfully");
     }
 
