@@ -228,7 +228,11 @@ public final class Latkes {
      * @return server, ${serverScheme}://${serverHost}:${serverPort}
      */
     public static String getServer() {
-        return getServerScheme() + "://" + getServerHost() + ':' + getServerPort();
+        if (null == server) {
+            server = getServerScheme() + "://" + getServerHost() + ':' + getServerPort();
+        }
+
+        return server;
     }
 
     /**
@@ -288,7 +292,11 @@ public final class Latkes {
      * @return static server, ${staticServerScheme}://${staticServerHost}:${staticServerPort}
      */
     public static String getStaticServer() {
-        return getStaticServerScheme() + "://" + getStaticServerHost() + ':' + getStaticServerPort();
+        if (null == staticServer) {
+            staticServer = getStaticServerScheme() + "://" + getStaticServerHost() + ':' + getStaticServerPort();
+        }
+
+        return staticServer;
     }
 
     /**
