@@ -18,6 +18,7 @@ package org.b3log.latke.taskqueue.local;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.b3log.latke.Latkes;
@@ -38,14 +39,11 @@ public class LocalTaskRunner extends Thread {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(LocalTaskRunner.class
-            .getName());
-
+    private static final Logger LOGGER = Logger.getLogger(LocalTaskRunner.class.getName());
     /**
      * the task need to do .
      */
     private Task task;
-
     /**
      * the retry time of a task.
      */
@@ -61,7 +59,6 @@ public class LocalTaskRunner extends Thread {
         this.task = task;
         this.retryLimit = retryLimit;
     }
-
     /**
      * using urlFetchService to do the TASK.
      */
@@ -74,8 +71,7 @@ public class LocalTaskRunner extends Thread {
 
         final HTTPRequest httpRequest = new HTTPRequest();
         try {
-            httpRequest.setURL(new URL("http://" + Latkes.getServerAddress()
-                    + task.getURL()));
+            httpRequest.setURL(new URL("http://" + Latkes.getServerAddress() + task.getURL()));
         } catch (final MalformedURLException e) {
             e.printStackTrace();
         }
@@ -110,8 +106,7 @@ public class LocalTaskRunner extends Thread {
         try {
             httpResponse = urlFetchService.fetch(httpRequest);
         } catch (final IOException e) {
-            LOGGER.info("the task[" + task.getURL() + "] throw exception "
-                    + e.getMessage());
+            LOGGER.log(Level.INFO, "The task[{0}] throw exception {1}", new Object[]{task.getURL(), e.getMessage()});
             return false;
         }
 
@@ -122,19 +117,15 @@ public class LocalTaskRunner extends Thread {
          * If the task returns a status code outside of this range" 
          *</p>
          */
-
         final Integer beginCode = 200;
         final Integer endCode = 299;
 
-        if (httpResponse.getResponseCode() >= beginCode
-                && httpResponse.getResponseCode() <= endCode) {
+        if (httpResponse.getResponseCode() >= beginCode && httpResponse.getResponseCode() <= endCode) {
             return true;
         }
-        LOGGER.info("the task[" + task.getURL()
-                + "] not success ,the returnCode is "
-                + httpResponse.getResponseCode());
+        LOGGER.log(Level.INFO, "The task[{0}] not success ,the return code is [{1}]",
+                   new Object[]{task.getURL(), httpResponse.getResponseCode()});
 
         return false;
     }
-
 }
