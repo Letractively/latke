@@ -48,7 +48,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     /**
      * Context path.
      */
-    private String contextPath = "/";
+    private String contextPath = "";
     /**
      * Attributes.
      */

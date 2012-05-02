@@ -50,7 +50,7 @@ public abstract class AbstractServletListener implements ServletContextListener,
     /**
      * Context path.
      */
-    private static String contextPath;
+    private static String contextPath = "";
 
     static {
         final URL resource = ClassLoader.class.getResource("/");
