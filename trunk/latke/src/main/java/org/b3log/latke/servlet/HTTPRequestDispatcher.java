@@ -33,7 +33,6 @@ import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
-import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.StaticResources;
 import org.b3log.latke.util.Stopwatchs;
 
@@ -200,7 +199,8 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]", new Object[]{requestURI, method});
 
         try {
-            final Object processorMethodRet = RequestProcessors.invoke(requestURI, AbstractServletListener.getContextPath(), method, context);
+            final Object processorMethodRet = 
+                    RequestProcessors.invoke(requestURI, AbstractServletListener.getContextPath(), method, context);
         } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,
