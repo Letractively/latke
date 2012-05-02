@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.servlet.AbstractServletListener;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -119,7 +120,7 @@ public final class StaticResources {
         final String requestURI = request.getRequestURI();
         
         for (final String pattern : STATIC_RESOURCE_PATHS) {
-            if (AntPathMatcher.match(AbstractServletListener.getContextPath() + pattern, requestURI)) {
+            if (AntPathMatcher.match(Latkes.getContextPath() + pattern, requestURI)) {
                 request.setAttribute(IS_REQUEST_STATIC_RESOURCE, true);
                 return true;
             }

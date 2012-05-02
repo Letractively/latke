@@ -67,8 +67,8 @@ public final class CronService {
                     loadCronXML();
 
                     for (final Cron cron : CRONS) {
-                        cron.setURL("http://" + Latkes.getServerAddress() + cron.getUrl());
-                        
+                        cron.setURL(Latkes.getServer() + Latkes.getContextPath() + cron.getUrl());
+
                         final Timer timer = new Timer();
                         timer.scheduleAtFixedRate(cron, Cron.SIXTY * Cron.THOUSAND, cron.getPeriod());
 
@@ -118,7 +118,7 @@ public final class CronService {
                 final Element descriptionElement = (Element) cronElement.getElementsByTagName("description").item(0);
                 final Element scheduleElement = (Element) cronElement.getElementsByTagName("schedule").item(0);
 
-                final String url = AbstractServletListener.getContextPath() + urlElement.getTextContent();
+                final String url = Latkes.getContextPath() + urlElement.getTextContent();
                 final String description = descriptionElement.getTextContent();
                 final String schedule = scheduleElement.getTextContent();
                 LOGGER.log(Level.CONFIG, "Cron[url={0}, description={1}, schedule={2}]", new Object[]{url, description, schedule});

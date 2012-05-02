@@ -16,6 +16,7 @@
 package org.b3log.latke.util;
 
 import javax.servlet.http.HttpServletRequest;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.mock.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -27,6 +28,10 @@ import org.testng.annotations.Test;
  * @version 1.0.0.1, Mar 31, 2012
  */
 public class StaticResourcesTestCase {
+
+    static {
+        Latkes.initRuntimeEnv();
+    }
 
     /**
      * Tests method {@link StaticResources#isStatic(java.lang.String)}.

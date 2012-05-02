@@ -71,7 +71,7 @@ public class LocalTaskRunner extends Thread {
 
         final HTTPRequest httpRequest = new HTTPRequest();
         try {
-            httpRequest.setURL(new URL("http://" + Latkes.getServerAddress() + task.getURL()));
+            httpRequest.setURL(new URL(Latkes.getServer() + Latkes.getContextPath() + task.getURL()));
         } catch (final MalformedURLException e) {
             e.printStackTrace();
         }
