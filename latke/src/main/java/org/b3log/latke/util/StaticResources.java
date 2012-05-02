@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
  * Static resource utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Mar 31, 2012
+ * @version 1.0.0.2, May 2, 2012
  */
 public final class StaticResources {
 
@@ -117,10 +117,9 @@ public final class StaticResources {
         request.setAttribute(IS_REQUEST_STATIC_RESOURCE, false);
 
         final String requestURI = request.getRequestURI();
-        final String contextPath = Requests.getContextPath(request);
         
         for (final String pattern : STATIC_RESOURCE_PATHS) {
-            if (AntPathMatcher.match(contextPath + pattern, requestURI)) {
+            if (AntPathMatcher.match(AbstractServletListener.getContextPath() + pattern, requestURI)) {
                 request.setAttribute(IS_REQUEST_STATIC_RESOURCE, true);
                 return true;
             }

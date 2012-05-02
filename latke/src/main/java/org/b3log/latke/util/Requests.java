@@ -28,7 +28,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @author <a href="mailto:dongxv.vang@gmail.com">Dongxu Wang</a>
- * @version 1.0.1.1, May 1, 2011
+ * @version 1.0.1.2, May 2, 2011
  * @see #PAGINATION_PATH_PATTERN
  */
 public final class Requests {
@@ -77,25 +77,6 @@ public final class Requests {
     private static final Pattern SEARCH_ENGINE_BOT_USER_AGENT_PATTERN =
             Pattern.compile("Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot",
                             Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Gets context path with the specified HTTP servlet request.
-     * 
-     * <p>
-     * Scheme://ServerName:ServerPort + ContextPath<br/>
-     * For example, http://88250.b3log.org:80/blog, the context path is /blog
-     * </p>
-     * 
-     * @param httpServletRequest the specified HTTP servlet request
-     * @return context path, returns {@code null} if the specified HTTP servlet request is {@code null}
-     */
-    public static String getContextPath(final HttpServletRequest httpServletRequest) {
-        if (null == httpServletRequest) {
-            return null;
-        }
-
-        return httpServletRequest.getContextPath();
-    }
 
     /**
      * Mobile and normal skin toggle.

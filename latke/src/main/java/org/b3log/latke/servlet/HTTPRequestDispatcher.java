@@ -41,7 +41,7 @@ import org.b3log.latke.util.Stopwatchs;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, May 1, 2012
+ * @version 1.0.1.7, May 2, 2012
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -200,7 +200,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]", new Object[]{requestURI, method});
 
         try {
-            final Object processorMethodRet = RequestProcessors.invoke(requestURI, Requests.getContextPath(request), method, context);
+            final Object processorMethodRet = RequestProcessors.invoke(requestURI, AbstractServletListener.getContextPath(), method, context);
         } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,
