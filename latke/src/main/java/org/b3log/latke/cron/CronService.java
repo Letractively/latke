@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Apr 5, 2012
+ * @version 1.0.0.1, May 2, 2012
  */
 public final class CronService {
 
@@ -118,7 +118,7 @@ public final class CronService {
                 final Element descriptionElement = (Element) cronElement.getElementsByTagName("description").item(0);
                 final Element scheduleElement = (Element) cronElement.getElementsByTagName("schedule").item(0);
 
-                final String url = urlElement.getTextContent();
+                final String url = AbstractServletListener.getContextPath() + urlElement.getTextContent();
                 final String description = descriptionElement.getTextContent();
                 final String schedule = scheduleElement.getTextContent();
                 LOGGER.log(Level.CONFIG, "Cron[url={0}, description={1}, schedule={2}]", new Object[]{url, description, schedule});
