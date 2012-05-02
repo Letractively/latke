@@ -358,14 +358,14 @@ public final class Latkes {
      * Gets context path.
      * 
      * <p>
-     * If Latke runs on GAE, returns "" always, returns the value of "contextPath" property in latke.properties otherwise.
+     * If Latke runs on GAE, returns "/" always, returns the value of "contextPath" property in latke.properties otherwise.
      * </p>
      * 
      * @return context path
      */
     public static String getContextPath() {
         if (RuntimeEnv.GAE == getRuntimeEnv()) {
-            return "";
+            return "/";
         }
 
         if (null == contextPath) {
@@ -379,14 +379,14 @@ public final class Latkes {
      * Gets static path.
      * 
      * <p>
-     * If Latke runs on GAE, returns "" always, returns the value of "staticPath" property in latke.properties otherwise.
+     * If Latke runs on GAE, returns "/" always, returns the value of "staticPath" property in latke.properties otherwise.
      * </p>
      * 
      * @return static path
      */
     public static String getStaticPath() {
         if (RuntimeEnv.GAE == getRuntimeEnv()) {
-            return "";
+            return "/";
         }
 
         if (null == staticPath) {
