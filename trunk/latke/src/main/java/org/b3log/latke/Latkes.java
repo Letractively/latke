@@ -34,8 +34,10 @@ import org.b3log.latke.util.Strings;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.5, May 2, 2012
+ * @version 1.0.1.6, May 2, 2012
  * @see #initRuntimeEnv()
+ * @see #getServePath()
+ * @see #getStaticServePath()
  */
 public final class Latkes {
 
@@ -100,13 +102,25 @@ public final class Latkes {
      */
     private static String server;
     /**
+     * Serve path. (${server}${contextPath})
+     */
+    private static String servePath;
+    /**
      * Static server. (${staticServerScheme}://${staticServerHost}:${staticServerPort})
      */
     private static String staticServer;
     /**
+     * Static serve path. (${staticServer}${staticPath})
+     */
+    private static String staticServePath;
+    /**
      * Context path.
      */
     private static String contextPath;
+    /**
+     * Static path.
+     */
+    private static String staticPath;
     /**
      * Latke configurations (latke.properties).
      */
@@ -236,6 +250,19 @@ public final class Latkes {
     }
 
     /**
+     * Gets serve path.
+     * 
+     * @return serve path, ${server}${serverPath}
+     */
+    public static String getServePath() {
+        if (null == servePath) {
+            servePath = getServer() + getServePath();
+        }
+
+        return servePath;
+    }
+
+    /**
      * Gets static server scheme.
      * 
      * <p>
@@ -300,6 +327,19 @@ public final class Latkes {
     }
 
     /**
+     * Gets static serve path.
+     * 
+     * @return static serve path, ${staticServer}${staticPath}
+     */
+    public static String getStaticServePath() {
+        if (null == staticServePath) {
+            staticServePath = getStaticServer() + getStaticServePath();
+        }
+
+        return staticServePath;
+    }
+
+    /**
      * Gets context path.
      * 
      * <p>
@@ -318,6 +358,27 @@ public final class Latkes {
         }
 
         return contextPath;
+    }
+
+    /**
+     * Gets static path.
+     * 
+     * <p>
+     * If Latke runs on GAE, returns "" always, returns the value of "staticPath" property in latke.properties otherwise.
+     * </p>
+     * 
+     * @return static path
+     */
+    public static String getStaticPath() {
+        if (RuntimeEnv.GAE == getRuntimeEnv()) {
+            return "";
+        }
+
+        if (null == staticPath) {
+            staticPath = LATKE_PROPS.getProperty("staticPath");
+        }
+
+        return staticPath;
     }
 
     /**
