@@ -216,7 +216,7 @@ public final class Latkes {
      */
     public static String getServerPort() {
         if (null == serverPort) {
-            serverHost = LATKE_PROPS.getProperty("serverPort");
+            serverPort = LATKE_PROPS.getProperty("serverPort");
         }
 
         return serverPort;
