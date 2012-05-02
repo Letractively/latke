@@ -24,12 +24,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.b3log.latke.Latkes;
+import org.b3log.latke.RuntimeEnv;
 
 /**
  * Cache factory.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.7, Apr 6, 2012
+ * @version 1.0.0.8, May 3, 2012
  */
 public final class CacheFactory {
 
@@ -46,7 +47,13 @@ public final class CacheFactory {
      * Removes all caches.
      */
     public static synchronized void removeAll() {
-         switch (Latkes.getRuntime("cache")) {
+        RuntimeEnv runtime = Latkes.getRuntime("cache");
+        
+        if (RuntimeEnv.LOCAL == Latkes.getRuntimeEnv()) { // Always LOCAL cache if runs on a standard servlet container
+            runtime = RuntimeEnv.LOCAL;
+        }
+        
+         switch (runtime) {
             case GAE:
                 final Iterator<Cache<String, ?>> iterator = CACHES.values().iterator();
                 if (iterator.hasNext()) {
