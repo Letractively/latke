@@ -243,7 +243,14 @@ public final class Latkes {
      */
     public static String getServer() {
         if (null == server) {
-            server = getServerScheme() + "://" + getServerHost() + ':' + getServerPort();
+            final StringBuilder serverBuilder = new StringBuilder(getServerScheme()).append("://").append(getServerHost());
+            final String port = getServerPort();
+
+            if (!Strings.isEmptyOrNull(port)) {
+                serverBuilder.append(':').append(port);
+            }
+
+            server = serverBuilder.toString();
         }
 
         return server;
@@ -320,7 +327,15 @@ public final class Latkes {
      */
     public static String getStaticServer() {
         if (null == staticServer) {
-            staticServer = getStaticServerScheme() + "://" + getStaticServerHost() + ':' + getStaticServerPort();
+            final StringBuilder staticServerBuilder = new StringBuilder(getStaticServerScheme()).append("://").
+                    append(getStaticServerHost());
+
+            final String port = getStaticServerPort();
+            if (!Strings.isEmptyOrNull(port)) {
+                staticServerBuilder.append(':').append(port);
+            }
+
+            staticServer = staticServerBuilder.toString();
         }
 
         return staticServer;
