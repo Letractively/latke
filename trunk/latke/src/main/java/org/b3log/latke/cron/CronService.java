@@ -118,7 +118,7 @@ public final class CronService {
                 final Element descriptionElement = (Element) cronElement.getElementsByTagName("description").item(0);
                 final Element scheduleElement = (Element) cronElement.getElementsByTagName("schedule").item(0);
 
-                final String url = Latkes.getContextPath() + urlElement.getTextContent();
+                final String url = urlElement.getTextContent();
                 final String description = descriptionElement.getTextContent();
                 final String schedule = scheduleElement.getTextContent();
                 LOGGER.log(Level.CONFIG, "Cron[url={0}, description={1}, schedule={2}]", new Object[]{url, description, schedule});
