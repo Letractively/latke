@@ -27,7 +27,7 @@ import org.b3log.latke.servlet.URIPatternMode;
  * Indicates that an annotated method for HTTP servlet request processing.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Oct 31, 2011
+ * @version 1.0.0.4, May 1, 2012
  * @see RequestProcessor
  */
 @Target(ElementType.METHOD)
@@ -56,4 +56,21 @@ public @interface RequestProcessing {
      * The HTTP request methods the annotated method should process.
      */
     HTTPRequestMethod[] method() default {HTTPRequestMethod.GET};
+
+    /**
+     * Checks dose whether the URI patterns with context path.
+     * 
+     * <p>
+     * For example, the context path is /blog, and the annotation
+     * <pre>{@code @RequestProcessing(value = "/index")}</pre>
+     * means to serve /blog/index.
+     * </p>
+     * 
+     * <p>
+     * If the annotation 
+     * <pre>{@code @RequestProcessing(value = "/index", isWithContextPath=false)}</pre>
+     * means to serve /index.
+     * </p>
+     */
+    boolean isWithContextPath() default true;
 }
