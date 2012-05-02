@@ -199,7 +199,7 @@ public final class Latkes {
      */
     public static String getServerHost() {
         if (null == serverHost) {
-            serverHost = LATKE_PROPS.getProperty("serverScheme");
+            serverHost = LATKE_PROPS.getProperty("serverHost");
         }
 
         return serverHost;
@@ -259,7 +259,7 @@ public final class Latkes {
      */
     public static String getStaticServerHost() {
         if (null == staticServerHost) {
-            staticServerHost = LATKE_PROPS.getProperty("staticServerScheme");
+            staticServerHost = LATKE_PROPS.getProperty("staticServerHost");
         }
 
         return staticServerHost;
