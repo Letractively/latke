@@ -308,11 +308,15 @@ public final class Latkes {
     /**
      * Gets server address.
      * 
+     * <p>
+     * <b>Note</b>: The method can be invoked while Latke runs on Local environment only.
+     * </p>
+     * 
      * @return server address
      */
     public static String getServerAddress() {
         if (RuntimeEnv.LOCAL != getRuntimeEnv()) {
-            throw new RuntimeException("Underlying database can be specified when Latke runs on Local environment only");
+            throw new RuntimeException("The method can be invoked while Latke runs on Local environment only");
         }
 
         final String ret = LOCAL_PROPS.getProperty("server.address");
