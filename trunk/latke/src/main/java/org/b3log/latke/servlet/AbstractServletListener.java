@@ -47,6 +47,10 @@ public abstract class AbstractServletListener implements ServletContextListener,
      * Web root.
      */
     private static String webRoot;
+    /**
+     * Context path.
+     */
+    private static String contextPath;
 
     static {
         final URL resource = ClassLoader.class.getResource("/");
@@ -56,14 +60,14 @@ public abstract class AbstractServletListener implements ServletContextListener,
     }
 
     /**
-     * Initializes context, {@linkplain #webRoot web root}, locale and runtime
-     * environment.
+     * Initializes context, {@linkplain #webRoot web root}, locale and runtime environment.
      * 
-     * @param servletContextEvent
-     *            servlet context event
+     * @param servletContextEvent servlet context event
      */
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
+        contextPath = servletContextEvent.getServletContext().getContextPath();
+
         Latkes.initRuntimeEnv();
         LOGGER.info("Initializing the context....");
 
@@ -72,7 +76,7 @@ public abstract class AbstractServletListener implements ServletContextListener,
 
         final ServletContext servletContext = servletContextEvent.getServletContext();
         webRoot = servletContext.getRealPath("") + File.separator;
-        LOGGER.log(Level.INFO, "Web root[path={0}]", webRoot);
+        LOGGER.log(Level.INFO, "Server[webRoot={0}, contextPath={1}]", new Object[]{webRoot, contextPath});
 
 //        final String catalinaBase = System.getProperty("catalina.base");
 //        if (!Strings.isEmptyOrNull(catalinaBase)) {
@@ -112,12 +116,20 @@ public abstract class AbstractServletListener implements ServletContextListener,
     public abstract void sessionDestroyed(final HttpSessionEvent httpSessionEvent);
 
     /**
-     * Gets the absolute file path of web root directory on the server's file
-     * system.
+     * Gets the absolute file path of web root directory on the server's file system.
      * 
      * @return the directory file path(tailing with {@link File#separator}).
      */
     public static String getWebRoot() {
         return webRoot;
+    }
+    
+    /**
+     * Gets the context path.
+     * 
+     * @return context path ("/xxx" or "")
+     */
+    public static String getContextPath() {
+        return contextPath;
     }
 }
