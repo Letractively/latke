@@ -252,11 +252,11 @@ public final class Latkes {
     /**
      * Gets serve path.
      * 
-     * @return serve path, ${server}${serverPath}
+     * @return serve path, ${server}${contextPath}
      */
     public static String getServePath() {
         if (null == servePath) {
-            servePath = getServer() + getServePath();
+            servePath = getServer() + getContextPath();
         }
 
         return servePath;
@@ -333,7 +333,7 @@ public final class Latkes {
      */
     public static String getStaticServePath() {
         if (null == staticServePath) {
-            staticServePath = getStaticServer() + getStaticServePath();
+            staticServePath = getStaticServer() + getStaticPath();
         }
 
         return staticServePath;
