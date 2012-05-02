@@ -34,7 +34,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.4, Apr 22, 2012
+ * @version 1.0.1.5, May 2, 2012
  * @see #initRuntimeEnv()
  */
 public final class Latkes {
@@ -71,6 +71,42 @@ public final class Latkes {
      * Static resource version.
      */
     private static String staticResourceVersion;
+    /**
+     * Server scheme.
+     */
+    private static String serverScheme = "http";
+    /**
+     * Static server scheme.
+     */
+    private static String staticServerScheme = "http";
+    /**
+     * Server host.
+     */
+    private static String serverHost;
+    /**
+     * Static server host.
+     */
+    private static String staticServerHost;
+    /**
+     * Server port.
+     */
+    private static String serverPort;
+    /**
+     * Static server port.
+     */
+    private static String staticServerPort;
+    /**
+     * Server. (${serverScheme}://${serverHost}:${serverPort})
+     */
+    private static String server;
+    /**
+     * Static server. (${staticServerScheme}://${staticServerHost}:${staticServerPort})
+     */
+    private static String staticServer;
+    /**
+     * Context path.
+     */
+    private static String contextPath;
     /**
      * Latke configurations (latke.properties).
      */
@@ -122,49 +158,168 @@ public final class Latkes {
      * Gets static resource (JS, CSS files) version.
      * 
      * <p>
-     * For different {@link #getRuntimeEnv() runtime environment}s:
-     * <ul>
-     * <li>{@link RuntimeEnv#GAE GAE}</li>
-     * Returns GAE system property <a
-     * href="https://code.google.com/appengine/docs/java/javadoc/
-     * com/google/appengine/api/utils/SystemProperty.html#applicationVersion">
-     * application version</a>.
-     * <li>{@link RuntimeEnv#LOCAL LOCAL}</li>
-     * Returns the value of "staticResourceVersion" property in
-     * {@link #getLocalProps() local configurations}.
-     * </ul>
+     * Returns the value of "staticResourceVersion" property in local.properties.
      * </p>
      * 
      * @return static resource version
      */
     public static String getStaticResourceVersion() {
         if (null == staticResourceVersion) {
-
-            switch (Latkes.getRuntimeEnv()) {
-                case GAE:
-                    staticResourceVersion = System.getProperty("com.google.appengine.application.version");
-                    break;
-                case LOCAL:
-                    staticResourceVersion = LOCAL_PROPS.getProperty("staticResourceVersion");
-                    break;
-                default:
-                    throw new RuntimeException("Runtime enviornment has not been initialized!");
-            }
+            staticResourceVersion = LATKE_PROPS.getProperty("staticResourceVersion");
         }
 
         return staticResourceVersion;
     }
 
     /**
-     * Gets runtime configuration of a service specified by the given service
-     * name.
+     * Gets server scheme.
+     * 
+     * <p>
+     * Returns the value of "serverScheme" property in latke.properties.
+     * </p>
+     * 
+     * @return server scheme
+     */
+    public static String getServerScheme() {
+        if (null == serverScheme) {
+            serverScheme = LATKE_PROPS.getProperty("serverScheme");
+        }
+
+        return serverScheme;
+    }
+
+    /**
+     * Gets server host.
+     * 
+     * <p>
+     * Returns the value of "serverHost" property in latke.properties.
+     * </p>
+     * 
+     * @return server host
+     */
+    public static String getServerHost() {
+        if (null == serverHost) {
+            serverHost = LATKE_PROPS.getProperty("serverScheme");
+        }
+
+        return serverHost;
+    }
+
+    /**
+     * Gets server port.
+     * 
+     * <p>
+     * Returns the value of "serverPort" property in latke.properties.
+     * </p>
+     * 
+     * @return server port
+     */
+    public static String getServerPort() {
+        if (null == serverPort) {
+            serverHost = LATKE_PROPS.getProperty("serverPort");
+        }
+
+        return serverPort;
+    }
+
+    /**
+     * Gets server.
+     * 
+     * @return server, ${serverScheme}://${serverHost}:${serverPort}
+     */
+    public static String getServer() {
+        return getServerScheme() + "://" + getServerHost() + ':' + getServerPort();
+    }
+
+    /**
+     * Gets static server scheme.
+     * 
+     * <p>
+     * Returns the value of "staticServerScheme" property in latke.properties.
+     * </p>
+     * 
+     * @return static server scheme
+     */
+    public static String getStaticServerScheme() {
+        if (null == staticServerScheme) {
+            staticServerScheme = LATKE_PROPS.getProperty("staticServerScheme");
+        }
+
+        return staticServerScheme;
+    }
+
+    /**
+     * Gets static server host.
+     * 
+     * <p>
+     * Returns the value of "staticServerHost" property in latke.properties.
+     * </p>
+     * 
+     * @return static server host
+     */
+    public static String getStaticServerHost() {
+        if (null == staticServerHost) {
+            staticServerHost = LATKE_PROPS.getProperty("staticServerScheme");
+        }
+
+        return staticServerHost;
+    }
+
+    /**
+     * Gets static server port.
+     * 
+     * <p>
+     * Returns the value of "staticServerPort" property in latke.properties.
+     * </p>
+     * 
+     * @return static server port
+     */
+    public static String getStaticServerPort() {
+        if (null == staticServerPort) {
+            staticServerPort = LATKE_PROPS.getProperty("staticServerPort");
+        }
+
+        return staticServerPort;
+    }
+
+    /**
+     * Gets static server.
+     * 
+     * @return static server, ${staticServerScheme}://${staticServerHost}:${staticServerPort}
+     */
+    public static String getStaticServer() {
+        return getStaticServerScheme() + "://" + getStaticServerHost() + ':' + getStaticServerPort();
+    }
+
+    /**
+     * Gets context path.
+     * 
+     * <p>
+     * If Latke runs on GAE, returns "" always, returns the value of "contextPath" property in latke.properties otherwise.
+     * </p>
+     * 
+     * @return context path
+     */
+    public static String getContextPath() {
+        if (RuntimeEnv.GAE == getRuntimeEnv()) {
+            return "";
+        }
+
+        if (null == contextPath) {
+            contextPath = LATKE_PROPS.getProperty("contextPath");
+        }
+
+        return contextPath;
+    }
+
+    /**
+     * Gets runtime configuration of a service specified by the given service name.
      * 
      * <p>
      * If current runtime environment is local, returns local in any case.
      * </p>
      * 
-     * @param serviceName
-     *            the given service name
+     * @param serviceName the given service name
      * @return runtime configuration, returns {@code null} if not found
      */
     public static RuntimeEnv getRuntime(final String serviceName) {
@@ -175,8 +330,7 @@ public final class Latkes {
         final String value = LATKE_PROPS.getProperty(serviceName);
 
         if (null == value) {
-            LOGGER.log(Level.WARNING, "Rutnime service[name={0}" + "] is undefined, " + "please configure it in latkes.properties",
-                       serviceName);
+            LOGGER.log(Level.WARNING, "Rutnime service[name={0}] is undefined, please configure it in latkes.properties", serviceName);
             return null;
         }
 
@@ -303,28 +457,6 @@ public final class Latkes {
         }
 
         return Latkes.runtimeMode;
-    }
-
-    /**
-     * Gets server address.
-     * 
-     * <p>
-     * <b>Note</b>: The method can be invoked while Latke runs on Local environment only.
-     * </p>
-     * 
-     * @return server address
-     */
-    public static String getServerAddress() {
-        if (RuntimeEnv.LOCAL != getRuntimeEnv()) {
-            throw new RuntimeException("The method can be invoked while Latke runs on Local environment only");
-        }
-
-        final String ret = LOCAL_PROPS.getProperty("server.address");
-        if (Strings.isEmptyOrNull(ret)) {
-            throw new RuntimeException("Please configures server address in local.properties!");
-        }
-
-        return ret;
     }
 
     /**

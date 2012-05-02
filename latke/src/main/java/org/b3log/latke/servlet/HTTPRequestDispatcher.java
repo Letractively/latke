@@ -200,7 +200,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         try {
             final Object processorMethodRet = 
-                    RequestProcessors.invoke(requestURI, AbstractServletListener.getContextPath(), method, context);
+                    RequestProcessors.invoke(requestURI, Latkes.getContextPath(), method, context);
         } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,

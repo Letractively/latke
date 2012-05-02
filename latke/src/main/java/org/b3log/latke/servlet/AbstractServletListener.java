@@ -47,10 +47,6 @@ public abstract class AbstractServletListener implements ServletContextListener,
      * Web root.
      */
     private static String webRoot;
-    /**
-     * Context path.
-     */
-    private static String contextPath = "";
 
     static {
         final URL resource = ClassLoader.class.getResource("/");
@@ -66,8 +62,6 @@ public abstract class AbstractServletListener implements ServletContextListener,
      */
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
-        contextPath = servletContextEvent.getServletContext().getContextPath();
-
         Latkes.initRuntimeEnv();
         LOGGER.info("Initializing the context....");
 
@@ -76,7 +70,8 @@ public abstract class AbstractServletListener implements ServletContextListener,
 
         final ServletContext servletContext = servletContextEvent.getServletContext();
         webRoot = servletContext.getRealPath("") + File.separator;
-        LOGGER.log(Level.INFO, "Server[webRoot={0}, contextPath={1}]", new Object[]{webRoot, contextPath});
+        LOGGER.log(Level.INFO, "Server[webRoot={0}, contextPath={1}]",
+                   new Object[]{webRoot, servletContextEvent.getServletContext().getContextPath()});
 
 //        final String catalinaBase = System.getProperty("catalina.base");
 //        if (!Strings.isEmptyOrNull(catalinaBase)) {
@@ -122,14 +117,5 @@ public abstract class AbstractServletListener implements ServletContextListener,
      */
     public static String getWebRoot() {
         return webRoot;
-    }
-    
-    /**
-     * Gets the context path.
-     * 
-     * @return context path ("/xxx" or "")
-     */
-    public static String getContextPath() {
-        return contextPath;
     }
 }
