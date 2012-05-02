@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
  * Mock HTTP servlet request.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Mar 31, 2012
+ * @version 1.0.0.2, May 1, 2012
  */
 public class MockHttpServletRequest implements HttpServletRequest {
 
@@ -45,6 +45,10 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * Request URI.
      */
     private String requestURI = "/";
+    /**
+     * Context path.
+     */
+    private String contextPath = "/";
     /**
      * Attributes.
      */
@@ -112,7 +116,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getContextPath() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return contextPath;
     }
 
     @Override

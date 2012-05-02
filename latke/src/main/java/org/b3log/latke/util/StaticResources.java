@@ -117,8 +117,10 @@ public final class StaticResources {
         request.setAttribute(IS_REQUEST_STATIC_RESOURCE, false);
 
         final String requestURI = request.getRequestURI();
+        final String contextPath = Requests.getContextPath(request);
+        
         for (final String pattern : STATIC_RESOURCE_PATHS) {
-            if (AntPathMatcher.match(pattern, requestURI)) {
+            if (AntPathMatcher.match(contextPath + pattern, requestURI)) {
                 request.setAttribute(IS_REQUEST_STATIC_RESOURCE, true);
                 return true;
             }
