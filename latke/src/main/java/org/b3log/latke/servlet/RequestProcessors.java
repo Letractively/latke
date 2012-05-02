@@ -258,6 +258,7 @@ public final class RequestProcessors {
         final List<ProcessorMethod> matches = new ArrayList<ProcessorMethod>();
         int i = 0;
         for (final ProcessorMethod processorMethod : processorMethods) {
+            // TODO: 88250, sort, binary-search
             if (method.equals(processorMethod.getMethod())) {
                 String uriPattern = processorMethod.getURIPattern();
                 
