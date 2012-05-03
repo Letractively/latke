@@ -40,7 +40,7 @@ import org.b3log.latke.util.Stopwatchs;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.7, May 2, 2012
+ * @version 1.0.1.8, May 3, 2012
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -81,7 +81,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
      * Initializes this servlet.
      * 
      * <p>
-     * Scans classpath for discovering request processors.
+     * Scans classpath for discovering request processors, configured the 'default' servlet for static resource processing.
      * </p>
      * 
      * @throws ServletException servlet exception
