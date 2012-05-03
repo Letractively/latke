@@ -174,16 +174,14 @@ public final class Requests {
     /**
      * Gets the request page number from the specified path.
      * 
-     * @param path the specified path, see {@link #PAGINATION_PATH_PATTERN} 
-     * for the details
-     * @return page number, returns {@code 1} if the 
-     * specified request URI can not convert to an number
+     * @param path the specified path, see {@link #PAGINATION_PATH_PATTERN} for the details
+     * @return page number, returns {@code 1} if the specified request URI can not convert to an number
      * @see #PAGINATION_PATH_PATTERN
      */
     public static int getCurrentPageNum(final String path) {
-        LOGGER.log(Level.FINEST, "Page number[string={0}]", path);
+        LOGGER.log(Level.FINEST, "Getting current page number[path={0}]", path);
 
-        if (Strings.isEmptyOrNull(path)) {
+        if (Strings.isEmptyOrNull(path) || path.equals("/")) {
             return 1;
         }
 
