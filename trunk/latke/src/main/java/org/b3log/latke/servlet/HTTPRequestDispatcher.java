@@ -21,6 +21,7 @@ import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.util.Strings;
 import java.util.logging.Level;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
@@ -199,7 +199,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]", new Object[]{requestURI, method});
 
         try {
-            final Object processorMethodRet = 
+            final Object processorMethodRet =
                     RequestProcessors.invoke(requestURI, Latkes.getContextPath(), method, context);
         } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
@@ -223,12 +223,19 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
             throw e;
         }
-        // XXX: processor method ret?
 
-        AbstractHTTPResponseRenderer renderer = context.getRenderer();
-        if (null == renderer) {
-            renderer = new HTTP404Renderer();
+        // XXX: processor method ret?
+        
+        final HttpServletResponse response = context.getResponse();
+        if (response.isCommitted()) { // Sends rdirect or send error
+            final PrintWriter writer = response.getWriter();
+            writer.flush();
+            writer.close();
+
+            return;
         }
+
+        final AbstractHTTPResponseRenderer renderer = context.getRenderer();
 
         renderer.render(context);
     }
