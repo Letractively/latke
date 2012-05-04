@@ -15,6 +15,10 @@
  */
 package org.b3log.latke.user.local;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
@@ -33,6 +37,11 @@ import org.json.JSONObject;
  * @version 1.0.0.1, May 4, 2012
  */
 public final class LocalUserService implements UserService {
+
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LocalUserService.class.getName());
 
     @Override
     public GeneralUser getCurrentUser(final HttpServletRequest request) {
@@ -67,11 +76,27 @@ public final class LocalUserService implements UserService {
 
     @Override
     public String createLoginURL(final String destinationURL) {
-        return Latkes.getContextPath() + "/login?goto=" + destinationURL;
+        String to = Latkes.getServePath();
+
+        try {
+            to = URLEncoder.encode(to + destinationURL, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            LOGGER.log(Level.SEVERE, "URL encode[string={0}]", destinationURL);
+        }
+
+        return Latkes.getContextPath() + "/login?goto=" + to;
     }
 
     @Override
     public String createLogoutURL(final String destinationURL) {
-        return Latkes.getContextPath() + "/logout?goto=" + destinationURL;
+        String to = Latkes.getServePath();
+
+        try {
+            to = URLEncoder.encode(to + destinationURL, "UTF-8");
+        } catch (final UnsupportedEncodingException e) {
+            LOGGER.log(Level.SEVERE, "URL encode[string={0}]", destinationURL);
+        }
+
+        return Latkes.getContextPath() + "/logout?goto=" + to;
     }
 }
