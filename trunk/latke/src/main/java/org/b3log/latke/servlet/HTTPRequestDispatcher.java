@@ -33,6 +33,7 @@ import org.b3log.latke.Latkes;
 import org.json.JSONException;
 import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
+import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.b3log.latke.util.StaticResources;
 import org.b3log.latke.util.Stopwatchs;
 
@@ -225,7 +226,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         }
 
         // XXX: processor method ret?
-        
+
         final HttpServletResponse response = context.getResponse();
         if (response.isCommitted()) { // Sends rdirect or send error
             final PrintWriter writer = response.getWriter();
@@ -235,7 +236,11 @@ public final class HTTPRequestDispatcher extends HttpServlet {
             return;
         }
 
-        final AbstractHTTPResponseRenderer renderer = context.getRenderer();
+        AbstractHTTPResponseRenderer renderer = context.getRenderer();
+
+        if (null == renderer) {
+            renderer = new HTTP404Renderer();
+        }
 
         renderer.render(context);
     }
