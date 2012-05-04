@@ -43,22 +43,18 @@ import org.json.JSONObject;
  * Abstract plugin.
  * 
  * <p>
- * Id of a plugin is {@linkplain #name name}_{@linkplain #version version}.
- * See {@link PluginManager#setPluginProps} for more details. If the id of one 
- * plugin {@linkplain #equals(java.lang.Object) equals} to another's, 
- * considering they are the same.
+ * Id of a plugin is {@linkplain #name name}_{@linkplain #version version}. See {@link PluginManager#setPluginProps} for more details. 
+ * If the id of one plugin {@linkplain #equals(java.lang.Object) equals} to another's, considering they are the same.
  * </p>
  * 
  * <p>
- *   <b>Note</b>: The subclass extends from this abstract class MUST 
- *   has a static method named {@code getInstance} to obtain an instance of 
- *   this plugin. See 
- *   <a href="http://en.wikipedia.org/wiki/Singleton_pattern">
- *   Singleton Pattern</a> for more implementation details.
+ *   <b>Note</b>: The subclass extends from this abstract class MUST has a static method named {@code getInstance} to obtain an instance 
+ *   of this plugin. See <a href="http://en.wikipedia.org/wiki/Singleton_pattern"> Singleton Pattern</a> for more implementation 
+ *   details.
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Aug 5, 2011
+ * @version 1.0.1.2, May 4, 2012
  * @see PluginManager
  * @see PluginStatus
  * @see PluginType
@@ -208,7 +204,10 @@ public abstract class AbstractPlugin implements Serializable {
         if (null == content) {
             dataModel.put(Plugin.PLUGINS, "");
         }
+
         handleLangs(dataModel);
+        fillDefault(dataModel);
+
 
         content = (String) dataModel.get(Plugin.PLUGINS);
         final StringBuilder contentBuilder = new StringBuilder(content);
@@ -222,8 +221,7 @@ public abstract class AbstractPlugin implements Serializable {
     }
 
     /**
-     * Processes languages. Retrieves language labels with default locale, then 
-     * sets them into the specified data model.
+     * Processes languages. Retrieves language labels with default locale, then sets them into the specified data model.
      * 
      * @param dataModel the specified data model
      */
@@ -247,6 +245,23 @@ public abstract class AbstractPlugin implements Serializable {
         for (final Object key : keySet) {
             dataModel.put((String) key, props.getProperty((String) key));
         }
+    }
+
+    /**
+     * Fills default values into the specified data model.
+     * 
+     * <p>
+     * The default data model variable values includes: 
+     *   <ul>
+     *     <li>{@code Keys.SERVER.*}</li>
+     *   </ul>
+     * </p>
+     * 
+     * @param dataModel the specified data model
+     * @see Keys#fillServer(java.util.Map) 
+     */
+    private void fillDefault(final Map<String, Object> dataModel) {
+        Keys.fillServer(dataModel);
     }
 
     /**
