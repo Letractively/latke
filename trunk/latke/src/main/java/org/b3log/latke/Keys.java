@@ -17,12 +17,13 @@ package org.b3log.latke;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
- * This class defines framework(non-functional) keys.
+ * This class defines framework (non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Dec 6, 2011
+ * @version 1.0.2.1, May 4, 2012
  */
 public final class Keys {
 
@@ -79,6 +80,108 @@ public final class Keys {
      * Key of template directory name.
      */
     public static final String TEMAPLTE_DIR_NAME = "templateDirName";
+
+    /**
+     * Fills the server info into the specified data model.
+     * 
+     * <p>
+     *   <ul>
+     *     <li>{@value #SERVER_SCHEME}</li>
+     *     <li>{@value #SERVER_HOST}</li>
+     *     <li>{@value #SERVER_PORT}</li>
+     *     <li>{@value #SERVER}</li>
+     *     <li>{@value #CONTEXT_PATH}</li>
+     *     <li>{@value #SERVE_PATH}</li>
+     *     <li>{@value #STATIC_SERVER_SCHEME}</li>
+     *     <li>{@value #STATIC_SERVER_HOST}</li>
+     *     <li>{@value #STATIC_SERVER_PORT}</li>
+     *     <li>{@value #STATIC_SERVER}</li>
+     *     <li>{@value #STATIC_PATH}</li>
+     *     <li>{@value #STATIC_SERVE_PATH}</li>
+     *   </ul>
+     * </p>
+     * 
+     * @param dataModel the specified data model
+     */
+    public static void fillServer(final Map<String, Object> dataModel) {
+        dataModel.put(Server.SERVER_SCHEME, Latkes.getServerScheme());
+        dataModel.put(Server.SERVER_HOST, Latkes.getServerHost());
+        dataModel.put(Server.SERVER_PORT, Latkes.getServerPort());
+        dataModel.put(Server.SERVER, Latkes.getServer());
+        dataModel.put(Server.CONTEXT_PATH, Latkes.getContextPath());
+        dataModel.put(Server.SERVE_PATH, Latkes.getServePath());
+
+        dataModel.put(Server.STATIC_SERVER_SCHEME, Latkes.getStaticServerScheme());
+        dataModel.put(Server.STATIC_SERVER_HOST, Latkes.getStaticServerHost());
+        dataModel.put(Server.STATIC_SERVER_PORT, Latkes.getStaticServerPort());
+        dataModel.put(Server.STATIC_SERVER, Latkes.getStaticServer());
+        dataModel.put(Server.STATIC_PATH, Latkes.getStaticPath());
+        dataModel.put(Server.STATIC_SERVE_PATH, Latkes.getStaticServePath());
+    }
+
+    /**
+     * This class defines server keys.
+     *
+     * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+     * @version 1.0.0.0, May 4, 2012
+     */
+    public static final class Server {
+
+        /**
+         * Key of server scheme.
+         */
+        public static final String SERVER_SCHEME = "serverScheme";
+        /**
+         * Key of server host.
+         */
+        public static final String SERVER_HOST = "serverHost";
+        /**
+         * Key of server port.
+         */
+        public static final String SERVER_PORT = "serverPort";
+        /**
+         * Key of server.
+         */
+        public static final String SERVER = "server";
+        /**
+         * Key of static server scheme.
+         */
+        public static final String STATIC_SERVER_SCHEME = "staticServerScheme";
+        /**
+         * Key of static server host.
+         */
+        public static final String STATIC_SERVER_HOST = "staticServerHost";
+        /**
+         * Key of static server port.
+         */
+        public static final String STATIC_SERVER_PORT = "staticServerPort";
+        /**
+         * Key of static server.
+         */
+        public static final String STATIC_SERVER = "staticServer";
+        /**
+         * Key of context path.
+         */
+        public static final String CONTEXT_PATH = "contextPath";
+        /**
+         * Key of static path.
+         */
+        public static final String STATIC_PATH = "staticPath";
+        /**
+         * Key of serve path.
+         */
+        public static final String SERVE_PATH = "servePath";
+        /**
+         * Key of static serve path.
+         */
+        public static final String STATIC_SERVE_PATH = "staticServePath";
+
+        /**
+         * Private constructor.
+         */
+        private Server() {
+        }
+    }
 
     /**
      * Private constructor.
