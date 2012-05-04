@@ -86,18 +86,18 @@ public final class Keys {
      * 
      * <p>
      *   <ul>
-     *     <li>{@value #SERVER_SCHEME}</li>
-     *     <li>{@value #SERVER_HOST}</li>
-     *     <li>{@value #SERVER_PORT}</li>
-     *     <li>{@value #SERVER}</li>
-     *     <li>{@value #CONTEXT_PATH}</li>
-     *     <li>{@value #SERVE_PATH}</li>
-     *     <li>{@value #STATIC_SERVER_SCHEME}</li>
-     *     <li>{@value #STATIC_SERVER_HOST}</li>
-     *     <li>{@value #STATIC_SERVER_PORT}</li>
-     *     <li>{@value #STATIC_SERVER}</li>
-     *     <li>{@value #STATIC_PATH}</li>
-     *     <li>{@value #STATIC_SERVE_PATH}</li>
+     *     <li>{@value Server#SERVER_SCHEME}</li>
+     *     <li>{@value Server#SERVER_HOST}</li>
+     *     <li>{@value Server#SERVER_PORT}</li>
+     *     <li>{@value Server#SERVER}</li>
+     *     <li>{@value Server#CONTEXT_PATH}</li>
+     *     <li>{@value Server#SERVE_PATH}</li>
+     *     <li>{@value Server#STATIC_SERVER_SCHEME}</li>
+     *     <li>{@value Server#STATIC_SERVER_HOST}</li>
+     *     <li>{@value Server#STATIC_SERVER_PORT}</li>
+     *     <li>{@value Server#STATIC_SERVER}</li>
+     *     <li>{@value Server#STATIC_PATH}</li>
+     *     <li>{@value Server#STATIC_SERVE_PATH}</li>
      *   </ul>
      * </p>
      * 
