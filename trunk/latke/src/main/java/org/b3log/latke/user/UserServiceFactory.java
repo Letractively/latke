@@ -24,6 +24,7 @@ import org.b3log.latke.Latkes;
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.3, Dec 29, 2011
  */
+@SuppressWarnings("unchecked")
 public final class UserServiceFactory {
 
     /**
@@ -44,13 +45,11 @@ public final class UserServiceFactory {
 
             switch (Latkes.getRuntime("userService")) {
                 case GAE:
-                    serviceClass = (Class<UserService>) Class.forName(
-                            "org.b3log.latke.user.gae.GAEUserService");
+                    serviceClass = (Class<UserService>) Class.forName("org.b3log.latke.user.gae.GAEUserService");
                     USER_SERVICE = serviceClass.newInstance();
                     break;
                 case LOCAL:
-                    serviceClass = (Class<UserService>) Class.forName(
-                            "org.b3log.latke.user.local.LocalUserService");
+                    serviceClass = (Class<UserService>) Class.forName("org.b3log.latke.user.local.LocalUserService");
                     USER_SERVICE = serviceClass.newInstance();
                     break;
                 default:
