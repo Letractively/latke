@@ -17,6 +17,7 @@ package org.b3log.latke.user.local;
 
 import javax.servlet.http.HttpServletRequest;
 import org.b3log.latke.Keys;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.model.Role;
 import org.b3log.latke.model.User;
 import org.b3log.latke.user.GeneralUser;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 24, 2011
+ * @version 1.0.0.1, May 4, 2012
  */
 public final class LocalUserService implements UserService {
 
@@ -66,11 +67,11 @@ public final class LocalUserService implements UserService {
 
     @Override
     public String createLoginURL(final String destinationURL) {
-        return "/login?goto=" + destinationURL;
+        return Latkes.getContextPath() + "/login?goto=" + destinationURL;
     }
 
     @Override
     public String createLogoutURL(final String destinationURL) {
-        return "/logout?goto=" + destinationURL;
+        return Latkes.getContextPath() + "/logout?goto=" + destinationURL;
     }
 }
