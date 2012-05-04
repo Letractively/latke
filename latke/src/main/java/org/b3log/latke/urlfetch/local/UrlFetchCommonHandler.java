@@ -33,7 +33,8 @@ import org.b3log.latke.urlfetch.HTTPResponse;
  * the core method is {@link #doFetch(HTTPRequest)}
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.3, Aug 15, 2011
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.4, May 4, 2012
  * 
  */
 class UrlFetchCommonHandler {
@@ -55,7 +56,7 @@ class UrlFetchCommonHandler {
         configConnection(httpURLConnection, request);
         httpURLConnection.connect();
         final HTTPResponse ret = resultConnection(httpURLConnection);
-        // httpURLConnection.disconnect();
+        httpURLConnection.disconnect();
 
         return ret;
     }
