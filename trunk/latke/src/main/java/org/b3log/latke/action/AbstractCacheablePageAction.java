@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.7, Dec 3, 2011
+ * @version 1.0.1.8, May 5, 2012
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -70,6 +70,10 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     public static final String CACHED_LINK = "cachedLink";
     /**
+     * Key of cached password.
+     */
+    public static final String CACHED_PWD = "cachedPwd";
+    /**
      * Key of start time millis.
      */
     public static final String START_TIME_MILLIS = "startTimeMillis";
@@ -95,8 +99,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * @throws ActionException action exception
      */
     @Override
-    protected abstract Map<?, ?> doFreeMarkerAction(
-            final HttpServletRequest request, final HttpServletResponse response)
+    protected abstract Map<?, ?> doFreeMarkerAction(final HttpServletRequest request, final HttpServletResponse response)
             throws ActionException;
 
     /**
@@ -113,8 +116,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected void processFreemarkRequest(final HttpServletRequest request,
-                                          final HttpServletResponse response)
+    protected void processFreemarkRequest(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         LOGGER.log(Level.FINER, "Action[{0}]", getClass());
 
@@ -124,11 +126,9 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
             final String requestURI = request.getRequestURI();
             final String queryString = request.getQueryString();
-            String pageCacheKey =
-                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            String pageCacheKey = (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
             if (Strings.isEmptyOrNull(pageCacheKey)) {
-                pageCacheKey = PageCaches.getPageCacheKey(requestURI,
-                                                          queryString);
+                pageCacheKey = PageCaches.getPageCacheKey(requestURI, queryString);
                 request.setAttribute(Keys.PAGE_CACHE_KEY, pageCacheKey);
             }
 
@@ -146,18 +146,13 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             }
 
             beforeDoFreeMarkerAction(request, response);
-            final Map<String, Object> dataModel =
-                    (Map<String, Object>) doFreeMarkerAction(request, response);
+            final Map<String, Object> dataModel = (Map<String, Object>) doFreeMarkerAction(request, response);
 
             fireFreeMarkerActionEvent(template.getName(), dataModel);
 
-            afterDoFreeMarkerTemplateAction(request, response, dataModel,
-                                            template);
+            afterDoFreeMarkerTemplateAction(request, response, dataModel, template);
         } catch (final ActionException e) {
-            LOGGER.log(Level.WARNING,
-                       "Process cacheable FreeMarker request failed", e);
-
-            return;
+            LOGGER.log(Level.WARNING, "Process cacheable FreeMarker request failed", e);
         }
     }
 
@@ -169,12 +164,10 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * @param pageCacheKey the specified page cache key
      * @return {@code true} if wrote, otherwise return {@code false}
      */
-    private boolean writeResponseFromCache(final HttpServletRequest request,
-                                           final HttpServletResponse response,
+    private boolean writeResponseFromCache(final HttpServletRequest request, final HttpServletResponse response,
                                            final String pageCacheKey) {
         LOGGER.log(Level.FINER, "Request[pageCacheKey={0}]", pageCacheKey);
-        final JSONObject cachedPageContentObject = PageCaches.get(pageCacheKey,
-                                                                  request);
+        final JSONObject cachedPageContentObject = PageCaches.get(pageCacheKey, request);
 
         if (null == cachedPageContentObject) { // Miss
             LOGGER.log(Level.FINER, "Page cache miss");
@@ -183,33 +176,22 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
         // Process page cache hit
         try {
-            LOGGER.log(Level.FINEST,
-                       "Writes resposne for page[pageCacheKey={0}] from cache",
-                       pageCacheKey);
+            LOGGER.log(Level.FINEST, "Writes resposne for page[pageCacheKey={0}] from cache", pageCacheKey);
             response.setContentType("text/html");
             response.setCharacterEncoding("UTF-8");
             final PrintWriter writer = response.getWriter();
-            String cachedPageContent =
-                    cachedPageContentObject.getString(
-                    AbstractCacheablePageAction.CACHED_CONTENT);
-            final String cachedType = cachedPageContentObject.optString(
-                    AbstractCacheablePageAction.CACHED_TYPE);
-            final String cachedTitle = cachedPageContentObject.getString(
-                    AbstractCacheablePageAction.CACHED_TITLE);
-            LOGGER.log(Level.FINEST,
-                       "Cached value[key={0}, type={1}, title={2}]",
+            String cachedPageContent = cachedPageContentObject.getString(AbstractCacheablePageAction.CACHED_CONTENT);
+            final String cachedType = cachedPageContentObject.optString(AbstractCacheablePageAction.CACHED_TYPE);
+            final String cachedTitle = cachedPageContentObject.getString(AbstractCacheablePageAction.CACHED_TITLE);
+            LOGGER.log(Level.FINEST, "Cached value[key={0}, type={1}, title={2}]",
                        new Object[]{pageCacheKey, cachedType, cachedTitle});
 
             processPageCacheHit(cachedPageContentObject);
 
             final long endimeMillis = System.currentTimeMillis();
-            final String dateString = DateFormatUtils.format(
-                    endimeMillis, "yyyy/MM/dd HH:mm:ss");
-            final long startTimeMillis =
-                    (Long) request.getAttribute(START_TIME_MILLIS);
-            final String msg = String.format(
-                    "<!-- Cached by B3log Solo(%1$d ms), %2$s -->",
-                    endimeMillis - startTimeMillis, dateString);
+            final String dateString = DateFormatUtils.format(endimeMillis, "yyyy/MM/dd HH:mm:ss");
+            final long startTimeMillis = (Long) request.getAttribute(START_TIME_MILLIS);
+            final String msg = String.format("<!-- Cached by B3log Solo(%1$d ms), %2$s -->", endimeMillis - startTimeMillis, dateString);
             LOGGER.finer(msg);
             cachedPageContent += "\r\n" + msg;
             writer.write(cachedPageContent);
@@ -252,7 +234,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             final Map<?, ?> dataModel, final Template template)
             throws ActionException {
         try {
-            PrintWriter writer = null;
+            PrintWriter writer;
             try {
                 writer = response.getWriter();
             } catch (final Exception e) {
@@ -270,24 +252,18 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
             template.setOutputEncoding("UTF-8");
             template.process(dataModel, stringWriter);
 
-            final String cachedPageKey =
-                    (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
+            final String cachedPageKey = (String) request.getAttribute(Keys.PAGE_CACHE_KEY);
 
-            LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]",
-                       cachedPageKey);
+            LOGGER.log(Level.FINEST, "Caching page[cachedPageKey={0}]", cachedPageKey);
 
             final JSONObject cachedValue = new JSONObject();
-            final StringBuilder pageContentBuilder =
-                    new StringBuilder(stringWriter.toString());
+            final StringBuilder pageContentBuilder = new StringBuilder(stringWriter.toString());
 
             final long endimeMillis = System.currentTimeMillis();
-            final String dateString = DateFormatUtils.format(
-                    endimeMillis, "yyyy/MM/dd HH:mm:ss");
-            final long startTimeMillis =
-                    (Long) request.getAttribute(START_TIME_MILLIS);
-            final String msg = String.format(
-                    "<!-- Generated by B3log Solo(%1$d ms), %2$s -->",
-                    endimeMillis - startTimeMillis, dateString);
+            final String dateString = DateFormatUtils.format(endimeMillis, "yyyy/MM/dd HH:mm:ss");
+            final long startTimeMillis = (Long) request.getAttribute(START_TIME_MILLIS);
+            final String msg = String.format("<!-- Generated by B3log Solo(%1$d ms), %2$s -->",
+                                             endimeMillis - startTimeMillis, dateString);
             pageContentBuilder.append(msg);
 
             final String pageContent = pageContentBuilder.toString();
@@ -305,8 +281,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
 
             if (Latkes.isPageCacheEnabled()) {
                 PageCaches.put(cachedPageKey, cachedValue, request);
-                LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]",
-                           cachedPageKey);
+                LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]", cachedPageKey);
             }
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -339,15 +314,13 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
      * @param request the specified request
      * @param content the specified content
      */
-    public static void check(final HttpServletRequest request,
-                             final String content) {
+    public static void check(final HttpServletRequest request, final String content) {
         if (Strings.isEmptyOrNull(content)
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_TYPE))
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_OID))
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_TITLE))
             || Strings.isEmptyOrNull((String) request.getAttribute(CACHED_LINK))) {
-            throw new IllegalArgumentException("Illegal arguments for caching page, "
-                                               + "resolve this bug first!");
+            throw new IllegalArgumentException("Illegal arguments for caching page, " + "resolve this bug first!");
         }
     }
 }

@@ -27,15 +27,14 @@ import org.json.JSONObject;
 import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 
 /**
- * <a href="http://freemarker.org">FreeMarker</a> HTTP response 
- * renderer.
+ * <a href="http://freemarker.org">FreeMarker</a> HTTP response renderer.
  * 
  * <p>
  * This renderer will put page content into cache.
  * <p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.3, Dec 14, 2011
+ * @version 1.0.0.4, May 5, 2012
  */
 public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
 
@@ -80,6 +79,9 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
             cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
             cachedValue.put(CACHED_TITLE, request.getAttribute(CACHED_TITLE));
             cachedValue.put(CACHED_LINK, request.getAttribute(CACHED_LINK));
+            if (null != request.getAttribute(CACHED_PWD)) {
+                cachedValue.put(CACHED_PWD, request.getAttribute(CACHED_PWD));
+            }
 
             PageCaches.put(cachedPageKey, cachedValue, request);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]", cachedPageKey);
