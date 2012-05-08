@@ -77,14 +77,14 @@ public class JdbcRepositoryTestCase {
         jsonObject.put("col3", "1.4");
         jsonObject.put("col4", false);
 
-        final Object[][] ret = new Object[][]{{jsonObject}};
+        final Object[][] ret = new Object[][] {{jsonObject } };
         return ret;
     }
 
     /**
      * createTestTable.
      */
-    @BeforeGroups(groups = {"jdbc"})
+    @BeforeGroups(groups = {"jdbc" })
     public void createTestTable() {
         final StringBuffer createTableSql = new StringBuffer();
 
@@ -154,7 +154,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
     public void add(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -173,7 +173,7 @@ public class JdbcRepositoryTestCase {
      * 
      * @param jsonObject jsonObject
      */
-    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
     public void update(final JSONObject jsonObject) {
         if (!ifRun) {
             return;
@@ -200,7 +200,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
     public void remove(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -223,7 +223,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
     public void hasAndCount(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -245,7 +245,7 @@ public class JdbcRepositoryTestCase {
     /**
      * base query test.
      */
-    @Test(groups = {"jdbc"})
+    @Test(groups = {"jdbc" })
     public void queryTest() {
         if (!ifRun) {
             return;
@@ -278,7 +278,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
     public void queryPageTest(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -294,6 +294,8 @@ public class JdbcRepositoryTestCase {
 
         final Query query = new Query();
         query.addFilter("col1", FilterOperator.EQUAL, new Integer("100"));
+        query.addProjection("col1", String.class);
+        query.addProjection("col2", String.class);
         query.addSort("oId", SortDirection.ASCENDING);
         query.setPageSize(new Integer("4"));
         query.setCurrentPageNum(2);
