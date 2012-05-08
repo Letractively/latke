@@ -113,12 +113,13 @@ public final class Filter {
 
     @Override
     public int hashCode() {
-        int hash = INIT_HASH;
-        hash = BASE * hash + (this.key != null ? this.key.hashCode() : 0);
-        hash = BASE * hash + (this.operator != null ? this.operator.hashCode() : 0);
-        hash = BASE * hash + (this.value != null ? this.value.hashCode() : 0);
+        int ret = INIT_HASH;
+        
+        ret = BASE * ret + (this.key != null ? this.key.hashCode() : 0);
+        ret = BASE * ret + (this.operator != null ? this.operator.hashCode() : 0);
+        ret = BASE * ret + (this.value != null ? this.value.hashCode() : 0);
 
-        return hash;
+        return ret;
     }
 
     @Override
