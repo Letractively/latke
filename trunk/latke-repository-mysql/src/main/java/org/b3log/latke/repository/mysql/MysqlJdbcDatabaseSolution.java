@@ -34,7 +34,7 @@ import org.b3log.latke.repository.jdbc.util.FieldDefinition;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Feb 29, 2012
+ * @version 1.0.0.2, May 8, 2012
  */
 public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
@@ -51,38 +51,34 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    public String queryPage(final int start, final int end,final String selectSql,
-            final String filterSql, final String orderBySql,
-            final String tableName) {
+    public String queryPage(final int start, final int end, final String selectSql,
+                            final String filterSql, final String orderBySql,
+                            final String tableName) {
         final StringBuilder sql = new StringBuilder();
         sql.append(selectSql).append(" from ").append(tableName);
         if (StringUtils.isNotBlank(filterSql)) {
             sql.append(" where ").append(filterSql);
         }
         sql.append(orderBySql);
-        sql.append(" limit ").append(start).append(",").append(end
-                - start);
+        sql.append(" limit ").append(start).append(",").append(end - start);
         return sql.toString();
     }
 
     @Override
     public String getRandomlySql(final String tableName, final int fetchSize) {
-
         final StringBuilder sql = new StringBuilder();
         sql.append(" SELECT * FROM ").append(tableName).append(" ORDER BY RAND() LIMIT ").append(fetchSize);
         return sql.toString();
     }
 
     @Override
-    protected void createDropTableSql(final StringBuilder dropTableSql,
-            final String tableName) {
+    protected void createDropTableSql(final StringBuilder dropTableSql, final String tableName) {
         dropTableSql.append("DROP TABLE  IF EXISTS ").append(tableName).append(";");
 
     }
 
     @Override
-    protected void createTableHead(final StringBuilder createTableSql,
-            final String tableName) {
+    protected void createTableHead(final StringBuilder createTableSql, final String tableName) {
         // createTableSql.append("DROP TABLE  IF EXISTS ").append(tableName)
         // .append(";");
         createTableSql.append("CREATE TABLE  IF NOT EXISTS ").append(tableName).append("(");
@@ -106,8 +102,7 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
                     keyDefinitionList.add(fieldDefinition);
                 }
             } else {
-                throw new RuntimeException("the type["
-                        + fieldDefinition.getType() + "] is not register for mapping ");
+                throw new RuntimeException("the type[" + fieldDefinition.getType() + "] is not register for mapping ");
             }
 
         }
@@ -121,15 +116,12 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     /**
-     * 
      * the keyDefinitionList tableSql.
-     * 
      * 
      * @param keyDefinitionList keyDefinitionList
      * @return createKeyDefinitionsql
      */
-    private String createKeyDefinition(
-            final List<FieldDefinition> keyDefinitionList) {
+    private String createKeyDefinition(final List<FieldDefinition> keyDefinitionList) {
 
         final StringBuilder sql = new StringBuilder();
         sql.append(" PRIMARY KEY");
@@ -156,12 +148,10 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
 
     @Override
     public void clearTableSql(final StringBuilder clearTableSq, final String tableName, final boolean ifdrop) {
-
         if (ifdrop) {
             clearTableSq.append("DROP TABLE IF EXISTS ").append(tableName);
         } else {
             clearTableSq.append("TRUNCATE TABLE ").append(tableName);
         }
     }
-
 }
