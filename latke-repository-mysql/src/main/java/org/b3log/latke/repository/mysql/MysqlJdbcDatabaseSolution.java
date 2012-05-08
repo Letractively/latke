@@ -51,11 +51,11 @@ public class MysqlJdbcDatabaseSolution extends AbstractJdbcDatabaseSolution {
     }
 
     @Override
-    public String queryPage(final int start, final int end,
+    public String queryPage(final int start, final int end,final String selectSql,
             final String filterSql, final String orderBySql,
             final String tableName) {
         final StringBuilder sql = new StringBuilder();
-        sql.append("select * from ").append(tableName);
+        sql.append(selectSql).append(" from ").append(tableName);
         if (StringUtils.isNotBlank(filterSql)) {
             sql.append(" where ").append(filterSql);
         }

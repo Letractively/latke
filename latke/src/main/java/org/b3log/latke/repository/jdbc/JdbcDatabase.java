@@ -57,12 +57,13 @@ public interface JdbcDatabase {
      * 
      * @param start start
      * @param end end
+     * @param selectSql selectSql
      * @param filterSql filterSql
      * @param orderBySql orderBySql
      * @param tableName tableName
      * @return sql 
      */
-    String queryPage(int start, int end, String filterSql,
+    String queryPage(int start, int end, String selectSql, String filterSql,
             String orderBySql, String tableName);
 
     /**
