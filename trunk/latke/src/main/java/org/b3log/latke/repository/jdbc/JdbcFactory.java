@@ -105,10 +105,10 @@ public final class JdbcFactory implements JdbcDatabase {
 
     @Override
     public String queryPage(final int start, final int end,
-            final String filterSql, final String orderBySql,
+            final String selectSql, final String filterSql, final String orderBySql,
             final String tableName) {
 
-        return databaseSolution.queryPage(start, end, filterSql, orderBySql,
+        return databaseSolution.queryPage(start, end, selectSql, filterSql, orderBySql,
                 tableName);
     }
 
