@@ -642,7 +642,7 @@ public final class JdbcRepository implements Repository {
 
         if (projections == null
                 || projections.size() < 1) {
-            selectSql.append(" select count(*) ");
+            selectSql.append(" select * ");
             return;
         }
 
