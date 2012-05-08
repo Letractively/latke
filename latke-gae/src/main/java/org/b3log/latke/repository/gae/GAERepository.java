@@ -24,6 +24,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -87,7 +88,8 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.5.1, Apr 13, 2012
+ * @version 1.0.5.2, May 8, 2012
+ * @see Query
  * @see GAETransaction
  */
 @SuppressWarnings("unchecked")
@@ -568,7 +570,7 @@ public final class GAERepository implements Repository {
             pageCount = query.getPageCount();
         }
 
-        ret = get(currentPageNum, pageSize, pageCount, sorts, filters, cacheKey);
+        ret = get(currentPageNum, pageSize, pageCount, projections, sorts, filters, cacheKey);
 
         if (cacheEnabled) {
             CACHE.putAsync(cacheKey, ret);
@@ -591,6 +593,7 @@ public final class GAERepository implements Repository {
      * @param currentPageNum the specified current page number
      * @param pageSize the specified page size
      * @param pageCount the specified page count
+     * @param projections the specified projections
      * @param sorts the specified sorts
      * @param filters the specified filters
      * @param cacheKey the specified cache key of a query
@@ -598,7 +601,7 @@ public final class GAERepository implements Repository {
      * {@linkplain #get(org.b3log.latke.repository.Query)} for details
      * @throws RepositoryException repository exception
      */
-    private JSONObject get(final int currentPageNum, final int pageSize, final int pageCount,
+    private JSONObject get(final int currentPageNum, final int pageSize, final int pageCount, final Set<Projection> projections,
                            final Map<String, SortDirection> sorts, final List<Filter> filters, final String cacheKey)
             throws RepositoryException {
         final Query query = new Query(getName());
@@ -662,6 +665,10 @@ public final class GAERepository implements Repository {
             }
 
             query.addSort(sort.getKey(), querySortDirection);
+        }
+
+        for (final Projection projection : projections) {
+            query.addProjection(new PropertyProjection(projection.getKey(), projection.getType()));
         }
 
         return get(query, currentPageNum, pageSize, pageCount, cacheKey);
@@ -876,6 +883,7 @@ public final class GAERepository implements Repository {
                 queryResultList = preparedQuery.asQueryResultList(withLimit(pageSize).chunkSize(QUERY_CHUNK_SIZE));
             }
 
+            // Converts entities to json objects
             final JSONArray results = new JSONArray();
             ret.put(Keys.RESULTS, results);
             for (final Entity entity : queryResultList) {
