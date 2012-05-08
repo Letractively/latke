@@ -30,7 +30,10 @@ import org.b3log.latke.util.Strings;
  * Query.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.8, Apr 13, 2012
+ * @version 1.0.0.9, May 8, 2012
+ * @see Projection
+ * @see Filter
+ * @see SortDirection
  */
 public final class Query {
 
@@ -50,9 +53,8 @@ public final class Query {
      * Cache key.
      * 
      * <p>
-     * If the repository executes this query {@link Repository#isCacheEnabled() enabled}
-     * query results caching, this field will be used as the key of the cached 
-     * results.
+     * If the repository executes this query {@link Repository#isCacheEnabled() enabled} results caching, this field will be used as the 
+     * key of the cached results.
      * </p>
      */
     private String cacheKey;
@@ -65,6 +67,10 @@ public final class Query {
      */
     private List<Filter> filters = new ArrayList<Filter>();
     /**
+     * Projections.
+     */
+    private Set<Projection> projections = new HashSet<Projection>();
+    /**
      * Indices.
      */
     private Set<String[]> indexes = new HashSet<String[]>();
@@ -76,6 +82,28 @@ public final class Query {
      * Base for hashing.
      */
     private static final int BASE = 83;
+
+    /**
+     * Adds a projection with the specified property name and value type.
+     * 
+     * @param propertyName the specified property name
+     * @param valueType the specified value type
+     * @return the current query object
+     */
+    public Query addProjection(final String propertyName, final Class<?> valueType) {
+        projections.add(new Projection(propertyName, valueType));
+
+        return this;
+    }
+
+    /**
+     * Gets the projections.
+     * 
+     * @return projections
+     */
+    public Set<Projection> getProjections() {
+        return Collections.unmodifiableSet(projections);
+    }
 
     /**
      * Indexes the specified properties for future queries.
@@ -116,8 +144,7 @@ public final class Query {
     }
 
     /**
-     * Adds a filter for the specified property with the specified operator and
-     * property value.
+     * Adds a filter for the specified property with the specified operator and property value.
      *
      * @param propertyName the specified property name to sort
      * @param filterOperator th specified operator
@@ -128,6 +155,15 @@ public final class Query {
         filters.add(new Filter(propertyName, filterOperator, value));
 
         return this;
+    }
+
+    /**
+     * Gets the filters.
+     *
+     * @return filters
+     */
+    public List<Filter> getFilters() {
+        return Collections.unmodifiableList(filters);
     }
 
     /**
@@ -154,15 +190,6 @@ public final class Query {
         this.currentPageNum = currentPageNum;
 
         return this;
-    }
-
-    /**
-     * Gets the filters.
-     *
-     * @return filters
-     */
-    public List<Filter> getFilters() {
-        return Collections.unmodifiableList(filters);
     }
 
     /**
@@ -215,8 +242,7 @@ public final class Query {
      * Gets the cache key.
      * 
      * <p>
-     * If no application specified cache key, uses {@link #hashCode() the hash 
-     * code} of this query.
+     * If no application specified cache key, uses {@link #hashCode() the hash code} of this query.
      * </p>
      * 
      * @return cache key
@@ -274,8 +300,11 @@ public final class Query {
             return false;
         }
 
-        if (this.filters != other.filters
-            && (this.filters == null || !this.filters.equals(other.filters))) {
+        if (this.filters != other.filters && (this.filters == null || !this.filters.equals(other.filters))) {
+            return false;
+        }
+
+        if (this.projections != other.projections && (this.projections == null || !this.projections.equals(other.projections))) {
             return false;
         }
 
@@ -289,6 +318,7 @@ public final class Query {
         hash = BASE * hash + this.pageSize;
         hash = BASE * hash + (this.sorts != null ? this.sorts.hashCode() : 0);
         hash = BASE * hash + (this.filters != null ? this.filters.hashCode() : 0);
+        hash = BASE * hash + (this.projections != null ? this.projections.hashCode() : 0);
 
         return hash;
     }
@@ -299,19 +329,36 @@ public final class Query {
                 append(", pageSize=").append(pageSize).append(", pageCount=").append(pageCount).append(", sorts=[");
 
         final Set<Entry<String, SortDirection>> entrySet = sorts.entrySet();
-        final Iterator<Entry<String, SortDirection>> iterator = entrySet.iterator();
-        while (iterator.hasNext()) {
-            final Entry<String, SortDirection> sort = iterator.next();
+        final Iterator<Entry<String, SortDirection>> sortsIterator = entrySet.iterator();
+        while (sortsIterator.hasNext()) {
+            final Entry<String, SortDirection> sort = sortsIterator.next();
             stringBuilder.append("[key=").append(sort.getKey()).append(", direction=").append(sort.getValue().name()).append("]");
 
-            if (iterator.hasNext()) {
+            if (sortsIterator.hasNext()) {
                 stringBuilder.append(", ");
             }
         }
 
         stringBuilder.append("], filters=[");
-        for (final Filter filter : filters) {
-            stringBuilder.append(filter.toString());
+        final Iterator<Filter> filtersIterator = filters.iterator();
+        while (filtersIterator.hasNext()) {
+            final Filter filter = filtersIterator.next();
+            stringBuilder.append('[').append(filter.toString()).append(']');
+
+            if (filtersIterator.hasNext()) {
+                stringBuilder.append(", ");
+            }
+        }
+
+        stringBuilder.append("], projections=[");
+        final Iterator<Projection> projectionsIterator = projections.iterator();
+        while (projectionsIterator.hasNext()) {
+            final Projection projection = projectionsIterator.next();
+            stringBuilder.append('[').append(projection.toString()).append(']');
+
+            if (projectionsIterator.hasNext()) {
+                stringBuilder.append(", ");
+            }
         }
         stringBuilder.append("]");
 
