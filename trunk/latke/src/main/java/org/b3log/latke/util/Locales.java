@@ -29,7 +29,7 @@ import org.b3log.latke.Latkes;
  * Locale utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.1, Sep 28, 2010
+ * @version 1.0.1.2, May 11, 2012
  */
 public final class Locales {
 
@@ -74,11 +74,16 @@ public final class Locales {
      * @return locale
      */
     public static Locale getLocale(final HttpServletRequest request) {
-        // get from session
-        final HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Keys.LOCALE);
+        Locale locale = null;
+
+        // Gets from session
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            locale = (Locale) session.getAttribute(Keys.LOCALE);
+        }
+
         if (null == locale) {
-            // get from request header
+            // Gets from request header
             final String languageHeader = request.getHeader("Accept-Language");
             LOGGER.log(Level.FINER, "[Accept-Language={0}]", languageHeader);
 
@@ -92,7 +97,7 @@ public final class Locales {
             locale = new Locale(language, country);
 
             if (!hasLocale(locale)) {
-                // using default
+                // Uses default
                 locale = Latkes.getLocale();
                 LOGGER.log(Level.FINER, "Using the default locale[{0}]", locale.toString());
             } else {
@@ -106,8 +111,7 @@ public final class Locales {
     }
 
     /**
-     * Determines whether the server has the specified locale configuration or
-     * not.
+     * Determines whether the server has the specified locale configuration or not.
      *
      * @param locale the specified locale
      * @return {@code true} if the server has the specified locale,
@@ -124,16 +128,26 @@ public final class Locales {
     }
 
     /**
-     * Sets the locale.
+     * Sets the specified locale into session of the specified request.
+     * 
+     * <p>
+     * If no session of the specified request, do nothing.
+     * </p>
      *
      * @param request the specified request
      * @param locale a new locale
      */
     public static void setLocale(final HttpServletRequest request, final Locale locale) {
         final HttpSession session = request.getSession();
+
+        if (null == session) {
+            LOGGER.warning("Ignores set locale caused by no session");
+
+            return;
+        }
+
         session.setAttribute(Keys.LOCALE, locale);
-        LOGGER.log(Level.FINER, "Client[sessionId={0}] sets locale to [{1}]",
-                   new Object[]{session.getId(), locale.toString()});
+        LOGGER.log(Level.FINER, "Client[sessionId={0}] sets locale to [{1}]", new Object[]{session.getId(), locale.toString()});
     }
 
     /**
