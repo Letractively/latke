@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Latkes;
 import org.json.JSONException;
 import org.json.JSONObject;
-import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 import org.b3log.latke.servlet.renderer.HTTP404Renderer;
 import org.b3log.latke.util.StaticResources;
 import org.b3log.latke.util.Stopwatchs;
@@ -41,7 +40,7 @@ import org.b3log.latke.util.Stopwatchs;
  * Front controller for HTTP request dispatching.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.8, May 3, 2012
+ * @version 1.0.1.9, May 11, 2012
  */
 public final class HTTPRequestDispatcher extends HttpServlet {
 
@@ -150,7 +149,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         }
 
         final long startTimeMillis = System.currentTimeMillis();
-        request.setAttribute(START_TIME_MILLIS, startTimeMillis);
+        request.setAttribute(Keys.HttpRequest.START_TIME_MILLIS, startTimeMillis);
 
         if (Latkes.isPageCacheEnabled()) {
             final String queryString = request.getQueryString();
@@ -184,7 +183,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
 
         final Integer sc = (Integer) request.getAttribute("javax.servlet.error.status_code");
         if (null != sc) {
-            request.setAttribute("requestURI", "/error.do");
+            request.setAttribute(Keys.HttpRequest.REQUEST_URI, "/error.do");
         }
 
         String requestURI = (String) request.getAttribute("requestURI");
