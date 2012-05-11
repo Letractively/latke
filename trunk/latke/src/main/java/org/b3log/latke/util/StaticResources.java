@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.servlet.AbstractServletListener;
 import org.w3c.dom.Document;
@@ -34,7 +35,7 @@ import org.w3c.dom.NodeList;
  * Static resource utilities.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, May 2, 2012
+ * @version 1.0.0.3, May 11, 2012
  */
 public final class StaticResources {
 
@@ -50,14 +51,6 @@ public final class StaticResources {
      * </p>
      */
     private static final Set<String> STATIC_RESOURCE_PATHS = new TreeSet<String>();
-    /**
-     * Key of static resource checked.
-     */
-    public static final String REQUEST_STATIC_RESOURCE_CHECKED = "requestStaticResourceChecked";
-    /**
-     * Key of static resource requesting.
-     */
-    public static final String IS_REQUEST_STATIC_RESOURCE = "isRequestStaticResource";
 
     static {
         final String webRoot = AbstractServletListener.getWebRoot();
@@ -108,20 +101,20 @@ public final class StaticResources {
      */
     public static boolean isStatic(final HttpServletRequest request) {
         final boolean requestStaticResourceChecked =
-                      null == request.getAttribute(REQUEST_STATIC_RESOURCE_CHECKED)
-                      ? false : (Boolean) request.getAttribute(REQUEST_STATIC_RESOURCE_CHECKED);
+                      null == request.getAttribute(Keys.HttpRequest.REQUEST_STATIC_RESOURCE_CHECKED)
+                      ? false : (Boolean) request.getAttribute(Keys.HttpRequest.REQUEST_STATIC_RESOURCE_CHECKED);
         if (requestStaticResourceChecked) {
-            return (Boolean) request.getAttribute(IS_REQUEST_STATIC_RESOURCE);
+            return (Boolean) request.getAttribute(Keys.HttpRequest.IS_REQUEST_STATIC_RESOURCE);
         }
 
-        request.setAttribute(REQUEST_STATIC_RESOURCE_CHECKED, true);
-        request.setAttribute(IS_REQUEST_STATIC_RESOURCE, false);
+        request.setAttribute(Keys.HttpRequest.REQUEST_STATIC_RESOURCE_CHECKED, true);
+        request.setAttribute(Keys.HttpRequest.IS_REQUEST_STATIC_RESOURCE, false);
 
         final String requestURI = request.getRequestURI();
         
         for (final String pattern : STATIC_RESOURCE_PATHS) {
             if (AntPathMatcher.match(Latkes.getContextPath() + pattern, requestURI)) {
-                request.setAttribute(IS_REQUEST_STATIC_RESOURCE, true);
+                request.setAttribute(Keys.HttpRequest.IS_REQUEST_STATIC_RESOURCE, true);
                 return true;
             }
         }

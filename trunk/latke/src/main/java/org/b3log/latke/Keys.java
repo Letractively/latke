@@ -23,7 +23,7 @@ import java.util.Map;
  * This class defines framework (non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, May 4, 2012
+ * @version 1.0.2.2, May 11, 2012
  */
 public final class Keys {
 
@@ -117,6 +117,42 @@ public final class Keys {
         dataModel.put(Server.STATIC_SERVER, Latkes.getStaticServer());
         dataModel.put(Server.STATIC_PATH, Latkes.getStaticPath());
         dataModel.put(Server.STATIC_SERVE_PATH, Latkes.getStaticServePath());
+    }
+
+    /**
+     * This class defines HTTP request keys.
+     *
+     * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+     * @version 1.0.0.0, May 11, 2012
+     */
+    public static final class HttpRequest {
+
+        /**
+         * Key of is search engine bot.
+         */
+        public static final String IS_SEARCH_ENGINE_BOT = "isSearchEngineBot";
+        /**
+         * Key of static resource checked.
+         */
+        public static final String REQUEST_STATIC_RESOURCE_CHECKED = "requestStaticResourceChecked";
+        /**
+         * Key of static resource requesting.
+         */
+        public static final String IS_REQUEST_STATIC_RESOURCE = "isRequestStaticResource";
+        /**
+         * Key of start time millis.
+         */
+        public static final String START_TIME_MILLIS = "startTimeMillis";
+        /**
+         * Key of request URI.
+         */
+        public static final String REQUEST_URI = "requestURI";
+
+        /**
+         * Privates constructor.
+         */
+        private HttpRequest() {
+        }
     }
 
     /**
