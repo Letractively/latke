@@ -22,11 +22,10 @@ import org.testng.annotations.Test;
  * {@link AntPathMatcher} test case.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Feb 29, 2012
+ * @version 1.0.0.1, May 15, 2012
  */
-// 
 public final class AntPathMatcherTestCase {
-    
+
     /**
      * Tests method {@link AntPathMatcher#match(java.lang.String, java.lang.String)}.
      */
@@ -34,7 +33,11 @@ public final class AntPathMatcherTestCase {
     public void match() {
         Assert.assertTrue(AntPathMatcher.match("/js/**/*.js", "/js/lib/jquery/jquery.min.js"));
         Assert.assertTrue(AntPathMatcher.match("/js/**/**.js", "/js/lib/jquery/jquery.min.js"));
-        
+
+        Assert.assertTrue(AntPathMatcher.match("/css/*.css", "/css/default.css"));
+        Assert.assertTrue(AntPathMatcher.match("/css/**/*.css", "/css/default.css"));
+        Assert.assertTrue(AntPathMatcher.match("/css/**.css", "/css/default.css"));
+
         Assert.assertFalse(AntPathMatcher.match("/js/**.js", "/js/lib/jquery/jquery.min.js"));
     }
 }
