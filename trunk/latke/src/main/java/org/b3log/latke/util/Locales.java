@@ -138,7 +138,7 @@ public final class Locales {
      * @param locale a new locale
      */
     public static void setLocale(final HttpServletRequest request, final Locale locale) {
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
 
         if (null == session) {
             LOGGER.warning("Ignores set locale caused by no session");
