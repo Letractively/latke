@@ -28,7 +28,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @author <a href="mailto:dongxv.vang@gmail.com">Dongxu Wang</a>
- * @version 1.0.1.2, May 2, 2011
+ * @version 1.0.1.3, May 16, 2011
  * @see #PAGINATION_PATH_PATTERN
  */
 public final class Requests {
@@ -75,7 +75,8 @@ public final class Requests {
      * HTTP header "User-Agent" pattern for search engine bot requests.
      */
     private static final Pattern SEARCH_ENGINE_BOT_USER_AGENT_PATTERN =
-            Pattern.compile("Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot",
+            Pattern.compile(
+            "Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot|AppEngine-Google",
                             Pattern.CASE_INSENSITIVE);
 
     /**
