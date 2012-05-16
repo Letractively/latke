@@ -49,13 +49,22 @@ public final class Sessions {
 
     /**
      * Logins the specified user from the specified request.
+     * 
+     * <p>
+     * If no session of the specified request, do nothing.
+     * </p>
      *
      * @param request the specified request
      * @param response the specified response
      * @param user the specified user
      */
     public static void login(final HttpServletRequest request, final HttpServletResponse response, final JSONObject user) {
-        final HttpSession session = request.getSession();
+        final HttpSession session = request.getSession(false);
+
+        if (null == session) {
+            LOGGER.warning("The session is null");
+            return;
+        }
 
         session.setAttribute(User.USER, user);
 
