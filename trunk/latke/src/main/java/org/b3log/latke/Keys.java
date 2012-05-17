@@ -126,7 +126,7 @@ public final class Keys {
      * This class defines HTTP request keys.
      *
      * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
-     * @version 1.0.0.0, May 11, 2012
+     * @version 1.0.0.1, May 17, 2012
      */
     public static final class HttpRequest {
 
@@ -150,6 +150,10 @@ public final class Keys {
          * Key of request URI.
          */
         public static final String REQUEST_URI = "requestURI";
+        /**
+         * Key of request method.
+         */
+        public static final String REQUEST_METHOD = "requestMethod";
 
         /**
          * Privates constructor.
