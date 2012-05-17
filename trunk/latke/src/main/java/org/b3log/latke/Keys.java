@@ -23,7 +23,7 @@ import java.util.Map;
  * This class defines framework (non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.2, May 11, 2012
+ * @version 1.0.2.3, May 17, 2012
  */
 public final class Keys {
 
@@ -70,8 +70,7 @@ public final class Keys {
     /**
      * Simple date format. (yyyy-MM-dd HH:mm:ss)
      */
-    public static final DateFormat SIMPLE_DATE_FORMAT1 =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final DateFormat SIMPLE_DATE_FORMAT1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
      * Key of page cache key.
      */
@@ -80,6 +79,10 @@ public final class Keys {
      * Key of template directory name.
      */
     public static final String TEMAPLTE_DIR_NAME = "templateDirName";
+    /**
+     * Key of exclusion.
+     */
+    public static final String EXCLUDES = "excludes";
 
     /**
      * Fills the server info into the specified data model.
