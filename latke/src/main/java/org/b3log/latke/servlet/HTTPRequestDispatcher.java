@@ -181,17 +181,12 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     public static void dispatch(final HTTPRequestContext context) throws ServletException, IOException {
         final HttpServletRequest request = context.getRequest();
 
-        final Integer sc = (Integer) request.getAttribute("javax.servlet.error.status_code");
-        if (null != sc) {
-            request.setAttribute(Keys.HttpRequest.REQUEST_URI, "/error.do");
-        }
-
-        String requestURI = (String) request.getAttribute("requestURI");
+        String requestURI = (String) request.getAttribute(Keys.HttpRequest.REQUEST_URI);
         if (Strings.isEmptyOrNull(requestURI)) {
             requestURI = request.getRequestURI();
         }
 
-        String method = (String) request.getAttribute("method");
+        String method = (String) request.getAttribute(Keys.HttpRequest.REQUEST_METHOD);
         if (Strings.isEmptyOrNull(method)) {
             method = request.getMethod();
         }
@@ -199,8 +194,7 @@ public final class HTTPRequestDispatcher extends HttpServlet {
         LOGGER.log(Level.FINER, "Request[requestURI={0}, method={1}]", new Object[]{requestURI, method});
 
         try {
-            final Object processorMethodRet =
-                    RequestProcessors.invoke(requestURI, Latkes.getContextPath(), method, context);
+            final Object processorMethodRet = RequestProcessors.invoke(requestURI, Latkes.getContextPath(), method, context);
         } catch (final Exception e) {
             final String exceptionTypeName = e.getClass().getName();
             LOGGER.log(Level.FINER,
