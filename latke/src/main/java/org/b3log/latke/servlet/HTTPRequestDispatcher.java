@@ -131,6 +131,18 @@ public final class HTTPRequestDispatcher extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        final Integer sc = (Integer) request.getAttribute("javax.servlet.error.status_code");
+        if (null != sc) { // Occurs an error
+            final RequestDispatcher requestDispatcher = getServletContext().getNamedDispatcher(defaultServletName);
+            if (null == requestDispatcher) {
+                throw new IllegalStateException("A RequestDispatcher could not be located for the default servlet ["
+                                                + this.defaultServletName + "]");
+            }
+            
+            requestDispatcher.forward(request, response);
+            return;
+        }
+
         final String resourcePath = request.getPathTranslated();
         final String requestURI = request.getRequestURI();
 
