@@ -90,7 +90,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
-        PrintWriter writer = null;
+        PrintWriter writer;
         try {
             writer = response.getWriter();
         } catch (final Exception e) {
@@ -115,8 +115,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
 
             beforeRender(context);
 
-            final String html =
-                    genHTML(context.getRequest(), dataModel, template);
+            final String html = genHTML(context.getRequest(), dataModel, template);
             doRender(html, context.getRequest(), response);
 
             afterRender(context);
@@ -125,7 +124,6 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
 
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
             } catch (final IOException ex) {
                 LOGGER.log(Level.SEVERE, "Can not send error 500!", ex);
             }
@@ -185,7 +183,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
     @SuppressWarnings("unchecked")
     protected void doRender(final String html, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        PrintWriter writer = null;
+        PrintWriter writer;
         try {
             writer = response.getWriter();
         } catch (final Exception e) {
