@@ -28,7 +28,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @author <a href="mailto:dongxv.vang@gmail.com">Dongxu Wang</a>
- * @version 1.0.1.3, May 16, 2011
+ * @version 1.0.1.4, May 21, 2012
  * @see #PAGINATION_PATH_PATTERN
  */
 public final class Requests {
@@ -69,7 +69,7 @@ public final class Requests {
             Pattern.compile("android.+mobile|avantgo|bada|blackberry|blazer|compal|elaine|fennec"
                             + "|hiptop|iemobile|ip(hone|od)|iris|kindle|lge|maemo|midp|mmp|opera m(ob|in)i"
                             + "|palm( os)?|phone|p(ixi|re)|plucker|pocket|psp|symbian|treo|up.(browser"
-                            + "|link)|ucweb|vodafone|wap|webos|windows (ce|phone)|xda|xiino|htc",
+                            + "|link)|ucweb|vodafone|wap|webos|windows (ce|phone)|xda|xiino|htc|MQQBrowser",
                             Pattern.CASE_INSENSITIVE);
     /**
      * HTTP header "User-Agent" pattern for search engine bot requests.
