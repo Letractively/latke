@@ -168,7 +168,7 @@ public final class Templates {
 
             return ret;
         } catch (final IOException e) {
-            LOGGER.log(Level.WARNING, "Gets template[name=" + templateName + "] failed", e);
+            LOGGER.log(Level.WARNING, "Gets template[name={0}] failed: [{1}]", new Object[]{templateName, e.getMessage()});
             return null;
         }
     }
