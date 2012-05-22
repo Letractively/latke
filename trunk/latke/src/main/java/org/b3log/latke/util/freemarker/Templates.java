@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * template engine.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.2, Jan 7, 2012
+ * @version 1.0.1.3, May 22, 2012
  */
 public final class Templates {
 
@@ -136,8 +136,7 @@ public final class Templates {
      * @param templateName the specified template name
      * @return a template, returns {@code null} if not found
      */
-    public static Template getTemplate(final String templateDirName,
-                                       final String templateName) {
+    public static Template getTemplate(final String templateDirName, final String templateName) {
         Template ret = null;
 
         try {
@@ -169,7 +168,7 @@ public final class Templates {
 
             return ret;
         } catch (final IOException e) {
-            LOGGER.log(Level.SEVERE, "Gets template[name=" + templateName + "] failed", e);
+            LOGGER.log(Level.WARNING, "Gets template[name=" + templateName + "] failed", e);
             return null;
         }
     }
