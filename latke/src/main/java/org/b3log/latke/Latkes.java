@@ -16,7 +16,6 @@
 package org.b3log.latke;
 
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
