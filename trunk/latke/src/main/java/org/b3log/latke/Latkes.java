@@ -34,7 +34,7 @@ import org.b3log.latke.util.Strings;
  * </p>
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.6, May 2, 2012
+ * @version 1.0.1.7, May 29, 2012
  * @see #initRuntimeEnv()
  * @see #getServePath()
  * @see #getStaticServePath()
@@ -49,10 +49,6 @@ public final class Latkes {
      * Locale. Initializes this by {@link #setLocale(java.util.Locale)}.
      */
     private static Locale locale;
-    /**
-     * Local repository path.
-     */
-    private static String repositoryPath;
     /**
      * Where Latke runs on?.
      */
@@ -567,35 +563,9 @@ public final class Latkes {
     }
 
     /**
-     * Sets the repository path with the specified repository path.
-     * 
-     * @param repositoryPath
-     *            the specified repository path
-     */
-    public static void setRepositoryPath(final String repositoryPath) {
-        Latkes.repositoryPath = repositoryPath;
-    }
-
-    /**
-     * Gets the repository path.
-     * 
-     * @return repository path
-     */
-    public static String getRepositoryPath() {
-        if (RuntimeDatabase.SLEEPYCAT == getRuntimeDatabase()) {
-            if (Strings.isEmptyOrNull(repositoryPath)) {
-                throw new RuntimeException("Repository path has not been initialized!");
-            }
-        }
-
-        return repositoryPath;
-    }
-
-    /**
      * Sets the locale with the specified locale.
      * 
-     * @param locale
-     *            the specified locale
+     * @param locale the specified locale
      */
     public static void setLocale(final Locale locale) {
         Latkes.locale = locale;
@@ -618,11 +588,10 @@ public final class Latkes {
     /**
      * Determines whether Latkes runs with a JDBC database.
      * 
-     * @return {@code true} if Latkes runs with a JDBC database, returns
-     *         {@code false} otherwise
+     * @return {@code true} if Latkes runs with a JDBC database, returns {@code false} otherwise
      */
     public static boolean runsWithJDBCDatabase() {
-        return RuntimeEnv.LOCAL == Latkes.getRuntimeEnv() && RuntimeDatabase.SLEEPYCAT != Latkes.getRuntimeDatabase();
+        return RuntimeEnv.LOCAL == Latkes.getRuntimeEnv();
     }
 
     /**
@@ -665,12 +634,6 @@ public final class Latkes {
 
             final RuntimeDatabase runtimeDatabase = getRuntimeDatabase();
             switch (runtimeDatabase) {
-                case SLEEPYCAT:
-                    final Class<?> sleepycat = Class.forName("org.b3log.latke.repository.sleepycat.Sleepycat");
-                    final Method shutdown = sleepycat.getMethod("shutdown");
-                    shutdown.invoke(sleepycat);
-
-                    break;
                 default:
                     Connections.shutdownConnectionPool();
             }

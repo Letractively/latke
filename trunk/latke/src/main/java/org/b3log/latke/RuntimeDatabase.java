@@ -25,15 +25,11 @@ package org.b3log.latke;
  *  
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.1, Dec 21, 2011
+ * @version 1.0.0.2, May 29, 2012
  * @see Latkes#getRuntimeDatabase() 
  */
 public enum RuntimeDatabase {
 
-    /**
-     * Sleepycat (Berkeley DB Java Edition).
-     */
-    SLEEPYCAT,
     /**
      * Oracle.
      */
