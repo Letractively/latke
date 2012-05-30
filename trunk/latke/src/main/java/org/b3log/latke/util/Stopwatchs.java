@@ -101,7 +101,7 @@ import java.util.List;
  * <p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.2, Oct 15, 2011
+ * @version 1.0.0.3, May 30, 2012
  * @see Stopwatch
  * @see #getTimingStat() 
  */
@@ -182,7 +182,7 @@ public final class Stopwatchs {
 
         final StringBuilder stringBuilder = new StringBuilder();
 
-        root.appendTimingStat("  ", stringBuilder);
+        root.appendTimingStat(1, stringBuilder);
 
         return stringBuilder.toString();
     }
@@ -456,18 +456,33 @@ public final class Stopwatchs {
         /**
          * Appends the timing statistics with the specified string builder.
          * 
-         * @param prefix the specified prefix
+         * @param level the current level of the task tree 
          * @param stringBuilder the specified string builder
          */
-        public void appendTimingStat(final String prefix, final StringBuilder stringBuilder) {
+        private void appendTimingStat(final int level, final StringBuilder stringBuilder) {
             stringBuilder.append(toString());
 
-            if (!leaves.isEmpty()) {
-                for (final Stopwatch leaf : leaves) {
-                    stringBuilder.append(prefix);
-                    leaf.appendTimingStat(prefix + prefix, stringBuilder);
-                }
+            for (int i = 0; i < leaves.size(); i++) {
+                final Stopwatch leaf = leaves.get(i);
+                stringBuilder.append(getIndentBlanks(level * 2));
+                leaf.appendTimingStat(level + 1, stringBuilder);
             }
+        }
+
+        /**
+         * Gets the specified number of blanks.
+         * 
+         * @param num the specified number
+         * @return the specified number of blanks
+         */
+        private String getIndentBlanks(final int num) {
+            final StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < num; i++) {
+                builder.append(' ');
+            }
+
+            return builder.toString();
         }
 
         @Override
