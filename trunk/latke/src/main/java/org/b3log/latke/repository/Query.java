@@ -15,12 +15,10 @@
  */
 package org.b3log.latke.repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,7 +28,7 @@ import org.b3log.latke.util.Strings;
  * Query.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.9, May 8, 2012
+ * @version 1.0.1.0, Jun 27, 2012
  * @see Projection
  * @see Filter
  * @see SortDirection
@@ -63,9 +61,9 @@ public final class Query {
      */
     private Map<String, SortDirection> sorts = new LinkedHashMap<String, SortDirection>();
     /**
-     * Filters.
+     * Filter.
      */
-    private List<Filter> filters = new ArrayList<Filter>();
+    private Filter filter;
     /**
      * Projections.
      */
@@ -144,26 +142,24 @@ public final class Query {
     }
 
     /**
-     * Adds a filter for the specified property with the specified operator and property value.
-     *
-     * @param propertyName the specified property name to sort
-     * @param filterOperator th specified operator
-     * @param value the specified property value
-     * @return the current query object
+     * Sets the filter with the specified filter.
+     * 
+     * @param filter the specified filter
+     * @return the current query object 
      */
-    public Query addFilter(final String propertyName, final FilterOperator filterOperator, final Object value) {
-        filters.add(new Filter(propertyName, filterOperator, value));
+    public Query setFilter(final Filter filter) {
+        this.filter = filter;
 
         return this;
     }
 
     /**
-     * Gets the filters.
-     *
-     * @return filters
+     * Gets the filter.
+     * 
+     * @return filter
      */
-    public List<Filter> getFilters() {
-        return Collections.unmodifiableList(filters);
+    public Filter getFilter() {
+        return filter;
     }
 
     /**
@@ -300,7 +296,7 @@ public final class Query {
             return false;
         }
 
-        if (this.filters != other.filters && (this.filters == null || !this.filters.equals(other.filters))) {
+        if (this.filter != other.filter && (this.filter == null || !this.filter.equals(other.filter))) {
             return false;
         }
 
@@ -317,7 +313,7 @@ public final class Query {
         hash = BASE * hash + this.currentPageNum;
         hash = BASE * hash + this.pageSize;
         hash = BASE * hash + (this.sorts != null ? this.sorts.hashCode() : 0);
-        hash = BASE * hash + (this.filters != null ? this.filters.hashCode() : 0);
+        hash = BASE * hash + (this.filter != null ? this.filter.hashCode() : 0);
         hash = BASE * hash + (this.projections != null ? this.projections.hashCode() : 0);
 
         return hash;
@@ -339,18 +335,12 @@ public final class Query {
             }
         }
 
-        stringBuilder.append("], filters=[");
-        final Iterator<Filter> filtersIterator = filters.iterator();
-        while (filtersIterator.hasNext()) {
-            final Filter filter = filtersIterator.next();
-            stringBuilder.append('[').append(filter.toString()).append(']');
-
-            if (filtersIterator.hasNext()) {
-                stringBuilder.append(", ");
-            }
+        stringBuilder.append("]");
+        if (null != filter) {
+            stringBuilder.append(", filter=[").append(filter.toString()).append("]");
         }
+        stringBuilder.append(", projections=[");
 
-        stringBuilder.append("], projections=[");
         final Iterator<Projection> projectionsIterator = projections.iterator();
         while (projectionsIterator.hasNext()) {
             final Projection projection = projectionsIterator.next();
