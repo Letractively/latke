@@ -22,13 +22,18 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
+import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.FilterOperator;
+import org.b3log.latke.repository.PropertyFilter;
+import org.b3log.latke.repository.CompositeFilter;
+import org.b3log.latke.repository.CompositeFilterOperator;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
@@ -46,7 +51,8 @@ import org.testng.annotations.Test;
  * JdbcRepositoryTestCase,now using mysql5.5.9 for test.
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
- * @version 1.0.0.0, Jan 7, 2012
+ * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
+ * @version 1.0.0.1, Jun 27, 2012
  */
 public class JdbcRepositoryTestCase {
 
@@ -77,14 +83,14 @@ public class JdbcRepositoryTestCase {
         jsonObject.put("col3", "1.4");
         jsonObject.put("col4", false);
 
-        final Object[][] ret = new Object[][] {{jsonObject } };
+        final Object[][] ret = new Object[][]{{jsonObject}};
         return ret;
     }
 
     /**
      * createTestTable.
      */
-    @BeforeGroups(groups = {"jdbc" })
+    @BeforeGroups(groups = {"jdbc"})
     public void createTestTable() {
         final StringBuffer createTableSql = new StringBuffer();
 
@@ -154,7 +160,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void add(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -173,7 +179,7 @@ public class JdbcRepositoryTestCase {
      * 
      * @param jsonObject jsonObject
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void update(final JSONObject jsonObject) {
         if (!ifRun) {
             return;
@@ -200,7 +206,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void remove(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -223,7 +229,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void hasAndCount(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -244,32 +250,35 @@ public class JdbcRepositoryTestCase {
 
     /**
      * base query test.
+     * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" })
-    public void queryTest() {
+    @Test(groups = {"jdbc"})
+    public void queryTest() throws Exception {
         if (!ifRun) {
             return;
         }
 
         final Query query = new Query();
-        query.addFilter("col1", FilterOperator.EQUAL, new Integer("1"));
-        query.addFilter("col1", FilterOperator.GREATER_THAN, new Integer("1"));
-        query.addFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL, new Integer("1"));
-        query.addFilter("col1", FilterOperator.LESS_THAN, new Integer("1"));
-        query.addFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer("1"));
-        query.addFilter("col1", FilterOperator.NOT_EQUAL, new Integer("1"));
 
         final ArrayList<Integer> inList = new ArrayList<Integer>();
         inList.add(new Integer("1"));
         inList.add(new Integer("2"));
         inList.add(new Integer("3"));
-        query.addFilter("col1", FilterOperator.IN, inList);
 
-        try {
-            jdbcRepository.get(query);
-        } catch (final RepositoryException e) {
-            e.printStackTrace();
-        }
+        query.setFilter(CompositeFilterOperator.and(
+                new PropertyFilter("col1", FilterOperator.EQUAL, new Integer("1")),
+                new PropertyFilter("col1", FilterOperator.GREATER_THAN, new Integer("1")),
+                new PropertyFilter("col1", FilterOperator.GREATER_THAN_OR_EQUAL, new Integer("1")),
+                new PropertyFilter("col1", FilterOperator.LESS_THAN, new Integer("1")),
+                new PropertyFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer("1")),
+                new PropertyFilter("col1", FilterOperator.NOT_EQUAL, new Integer("1")),
+                new PropertyFilter("col1", FilterOperator.IN, inList),
+                new CompositeFilter(
+                CompositeFilterOperator.OR,
+                Arrays.<Filter>asList(new PropertyFilter("col1", FilterOperator.EQUAL, new Integer("1")),
+                                      new PropertyFilter("col1", FilterOperator.LESS_THAN_OR_EQUAL, new Integer("1"))))));
+
+        jdbcRepository.get(query);
     }
 
     /**
@@ -278,7 +287,7 @@ public class JdbcRepositoryTestCase {
      * @param jsonObject jsonObject
      * @throws Exception Exception
      */
-    @Test(groups = {"jdbc" }, dataProvider = "createJsonData")
+    @Test(groups = {"jdbc"}, dataProvider = "createJsonData")
     public void queryPageTest(final JSONObject jsonObject) throws Exception {
         if (!ifRun) {
             return;
@@ -293,7 +302,7 @@ public class JdbcRepositoryTestCase {
         transaction.commit();
 
         final Query query = new Query();
-        query.addFilter("col1", FilterOperator.EQUAL, new Integer("100"));
+        query.setFilter(new PropertyFilter("col1", FilterOperator.EQUAL, new Integer("100")));
         query.addProjection("col1", String.class);
         query.addProjection("col2", String.class);
         query.addSort("oId", SortDirection.ASCENDING);
@@ -304,6 +313,5 @@ public class JdbcRepositoryTestCase {
 
         final int eCount = 4;
         assertEquals(eCount, ret.getJSONArray(Keys.RESULTS).length());
-
     }
 }
