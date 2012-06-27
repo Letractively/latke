@@ -20,6 +20,7 @@ package org.b3log.latke.repository;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @version 1.0.0.1, Oct 18, 2011
+ * @see Filter
  */
 public enum FilterOperator {
 

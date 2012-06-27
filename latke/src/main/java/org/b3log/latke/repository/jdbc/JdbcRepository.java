@@ -35,6 +35,8 @@ import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.FilterOperator;
+import org.b3log.latke.repository.CompositeFilter;
+import org.b3log.latke.repository.PropertyFilter;
 import org.b3log.latke.repository.Projection;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.Repository;
@@ -55,7 +57,7 @@ import org.json.JSONObject;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.5, Apr 13, 2012
+ * @version 1.0.0.6, Jun 27, 2012
  */
 @SuppressWarnings("unchecked")
 public final class JdbcRepository implements Repository {
@@ -121,11 +123,11 @@ public final class JdbcRepository implements Repository {
             JdbcUtil.executeSql(sql.toString(), paramList, connection);
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "add:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "add:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         }
 
@@ -164,8 +166,7 @@ public final class JdbcRepository implements Repository {
      * @param sql sql
      * @throws Exception exception 
      */
-    private void setProperties(final JSONObject jsonObject, final List<Object> paramlist, final StringBuilder sql)
-            throws Exception {
+    private void setProperties(final JSONObject jsonObject, final List<Object> paramlist, final StringBuilder sql) throws Exception {
         final Iterator<String> keys = jsonObject.keys();
 
         final StringBuilder insertString = new StringBuilder();
@@ -230,11 +231,11 @@ public final class JdbcRepository implements Repository {
             JdbcUtil.executeSql(sql, paramList, connection);
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         }
     }
@@ -251,12 +252,12 @@ public final class JdbcRepository implements Repository {
      * @throws JSONException JSONException
      */
     private void update(final String id, final JSONObject oldJsonObject,
-            final JSONObject jsonObject, final List<Object> paramList,
-            final StringBuilder sql) throws JSONException {
+                        final JSONObject jsonObject, final List<Object> paramList,
+                        final StringBuilder sql) throws JSONException {
         final JSONObject needUpdateJsonObject = getNeedUpdateJsonObject(oldJsonObject, jsonObject);
 
         if (needUpdateJsonObject.length() == 0) {
-            LOGGER.log(Level.INFO, "nothing to update [{0}] for repository[{1}]", new Object[] {id, getName() });
+            LOGGER.log(Level.INFO, "nothing to update [{0}] for repository[{1}]", new Object[]{id, getName()});
             return;
         }
 
@@ -272,11 +273,8 @@ public final class JdbcRepository implements Repository {
      * @param sql sql
      * @throws JSONException JSONException
      */
-    private void setUpdateProperties(final String id,
-            final JSONObject needUpdateJsonObject,
-            final List<Object> paramList, final StringBuilder sql)
-            throws JSONException {
-        @SuppressWarnings("unchecked")
+    private void setUpdateProperties(final String id, final JSONObject needUpdateJsonObject,
+                                     final List<Object> paramList, final StringBuilder sql) throws JSONException {
         final Iterator<String> keys = needUpdateJsonObject.keys();
         String key;
 
@@ -310,8 +308,7 @@ public final class JdbcRepository implements Repository {
      * @return JSONObject
      * @throws JSONException jsonObject
      */
-    private JSONObject getNeedUpdateJsonObject(final JSONObject oldJsonObject, final JSONObject jsonObject)
-            throws JSONException {
+    private JSONObject getNeedUpdateJsonObject(final JSONObject oldJsonObject, final JSONObject jsonObject) throws JSONException {
         final JSONObject needUpdateJsonObject = new JSONObject();
 
         final Iterator<String> keys = jsonObject.keys();
@@ -321,7 +318,7 @@ public final class JdbcRepository implements Repository {
             key = keys.next();
 
             if (jsonObject.get(key) == null
-                    && oldJsonObject.get(key) == null) {
+                && oldJsonObject.get(key) == null) {
                 // ???????????????????????????
                 needUpdateJsonObject.put(key, jsonObject.get(key));
             } else if (!jsonObject.getString(key).equals(
@@ -353,11 +350,11 @@ public final class JdbcRepository implements Repository {
             JdbcUtil.executeSql(sql.toString(), connection);
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "remove:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         }
     }
@@ -379,10 +376,10 @@ public final class JdbcRepository implements Repository {
 
         if (cacheEnabled) {
             final String cacheKey = CACHE_KEY_PREFIX
-                    + id;
+                                    + id;
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
-                LOGGER.log(Level.FINER, "Got an object[cacheKey={0}] from repository cache[name={1}]", new Object[] {cacheKey, getName() });
+                LOGGER.log(Level.FINER, "Got an object[cacheKey={0}] from repository cache[name={1}]", new Object[]{cacheKey, getName()});
                 return ret;
             }
         }
@@ -398,16 +395,16 @@ public final class JdbcRepository implements Repository {
 
             if (cacheEnabled) {
                 final String cacheKey = CACHE_KEY_PREFIX
-                        + id;
+                                        + id;
                 CACHE.putAsync(cacheKey, ret);
-                LOGGER.log(Level.FINER, "Added an object[cacheKey={0}] in repository cache[{1}]", new Object[] {cacheKey, getName() });
+                LOGGER.log(Level.FINER, "Added an object[cacheKey={0}] in repository cache[{1}]", new Object[]{cacheKey, getName()});
             }
 
         } catch (final SQLException e) {
             throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "get:"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -457,12 +454,12 @@ public final class JdbcRepository implements Repository {
         JSONObject ret = new JSONObject();
 
         final String cacheKey = CACHE_KEY_PREFIX
-                + query.getCacheKey() + "_" + getName();
+                                + query.getCacheKey() + "_" + getName();
         if (cacheEnabled) {
             ret = (JSONObject) CACHE.get(cacheKey);
             if (null != ret) {
                 LOGGER.log(Level.FINER, "Got query result[cacheKey={0}] from repository cache[name={1}]",
-                        new Object[] {cacheKey, getName() });
+                           new Object[]{cacheKey, getName()});
                 return ret;
             }
 
@@ -470,7 +467,6 @@ public final class JdbcRepository implements Repository {
         }
 
         final int currentPageNum = query.getCurrentPageNum();
-        // final List<Filter> filters = query.getFilters();
         final int pageSize = query.getPageSize();
         // final Map<String, SortDirection> sorts = query.getSorts();
         // final Set<Projection> projections = query.getProjections();
@@ -506,7 +502,7 @@ public final class JdbcRepository implements Repository {
             if (cacheEnabled) {
                 CACHE.putAsync(cacheKey, ret);
                 LOGGER.log(Level.FINER, "Added query result[cacheKey={0}] in repository cache[{1}]",
-                        new Object[] {cacheKey, getName() });
+                           new Object[]{cacheKey, getName()});
                 try {
                     cacheQueryResults(ret.optJSONArray(Keys.RESULTS), query);
                 } catch (final JSONException e) {
@@ -518,7 +514,7 @@ public final class JdbcRepository implements Repository {
             throw new JDBCRepositoryException(e);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "query: "
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -541,11 +537,10 @@ public final class JdbcRepository implements Repository {
             final JSONObject jsonObject = results.optJSONObject(i);
 
             // 1. Caching for get by id.
-            cacheKey = CACHE_KEY_PREFIX
-                    + jsonObject.optString(Keys.OBJECT_ID);
+            cacheKey = CACHE_KEY_PREFIX + jsonObject.optString(Keys.OBJECT_ID);
             CACHE.putAsync(cacheKey, jsonObject);
             LOGGER.log(Level.FINER, "Added an object[cacheKey={0}] in repository cache[{1}] for default index[oId]",
-                    new Object[] {cacheKey, getName() });
+                       new Object[]{cacheKey, getName()});
 
             // 2. Caching for get by query with filters (EQUAL operator) only
             final Set<String[]> indexes = query.getIndexes();
@@ -554,16 +549,13 @@ public final class JdbcRepository implements Repository {
                 final org.b3log.latke.repository.Query futureQuery = new org.b3log.latke.repository.Query().setPageCount(1);
                 for (int j = 0; j < index.length; j++) {
                     final String propertyName = index[j];
-                    futureQuery.addFilter(propertyName, FilterOperator.EQUAL, jsonObject.opt(propertyName));
+
+                    futureQuery.setFilter(new PropertyFilter(propertyName, FilterOperator.EQUAL, jsonObject.opt(propertyName)));
                     logMsgBuilder.append(propertyName).append(",");
                 }
-                logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1); // Removes
-                // the
-                // last
-                // comma
+                logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
 
-                cacheKey = CACHE_KEY_PREFIX
-                        + futureQuery.getCacheKey() + "_" + getName();
+                cacheKey = CACHE_KEY_PREFIX + futureQuery.getCacheKey() + "_" + getName();
 
                 final JSONObject futureQueryRet = new JSONObject();
                 final JSONObject pagination = new JSONObject();
@@ -576,7 +568,7 @@ public final class JdbcRepository implements Repository {
 
                 CACHE.putAsync(cacheKey, futureQueryRet);
                 LOGGER.log(Level.FINER, "Added an object[cacheKey={0}] in repository cache[{1}] for index[{2}] for future query[{3}]",
-                        new Object[] {cacheKey, getName(), logMsgBuilder, futureQuery.toString() });
+                           new Object[]{cacheKey, getName(), logMsgBuilder, futureQuery.toString()});
             }
         }
     }
@@ -595,7 +587,7 @@ public final class JdbcRepository implements Repository {
      * @throws RepositoryException  RepositoryException
      */
     private int get(final int currentPageNum, final int pageSize, final int pageCount, final Query query, final StringBuilder sql,
-            final List<Object> paramList)
+                    final List<Object> paramList)
             throws RepositoryException {
         int ret = pageCount;
 
@@ -603,20 +595,18 @@ public final class JdbcRepository implements Repository {
         final StringBuilder filterSql = new StringBuilder();
         final StringBuilder orderBySql = new StringBuilder();
         getSelectSql(selectSql, query.getProjections());
-        getFilterSql(filterSql, paramList, query.getFilters());
+        getFilterSql(filterSql, paramList, query.getFilter());
         getOrderBySql(orderBySql, query.getSorts());
 
         if (-1 == pageCount) {
-            final StringBuilder countSql = new StringBuilder("select count("
-                    + JdbcRepositories.OID + ") from ").append(getName());
+            final StringBuilder countSql = new StringBuilder("select count(" + JdbcRepositories.OID + ") from ").append(getName());
 
             if (StringUtils.isNotBlank(filterSql.toString())) {
                 countSql.append(" where ").append(filterSql);
             }
 
             final long count = count(countSql, paramList);
-            ret = (int) Math.ceil((double) count
-                    / (double) pageSize);
+            ret = (int) Math.ceil((double) count / (double) pageSize);
 
             if (ret == 0) {
                 return 0;
@@ -624,7 +614,7 @@ public final class JdbcRepository implements Repository {
         }
 
         if (currentPageNum > ret) {
-            LOGGER.log(Level.WARNING, "Current page num[{0}] > page count[{1}]", new Object[] {currentPageNum, ret });
+            LOGGER.log(Level.WARNING, "Current page num[{0}] > page count[{1}]", new Object[]{currentPageNum, ret});
         }
 
         getQuerySql(currentPageNum, pageSize, selectSql, filterSql, orderBySql, sql);
@@ -639,9 +629,7 @@ public final class JdbcRepository implements Repository {
      * @param projections projections
      */
     private void getSelectSql(final StringBuilder selectSql, final Set<Projection> projections) {
-
-        if (projections == null
-                || projections.size() < 1) {
+        if (projections == null || projections.isEmpty()) {
             selectSql.append(" select * ");
             return;
         }
@@ -655,13 +643,10 @@ public final class JdbcRepository implements Repository {
             } else {
                 selectSql.append(",").append(projection.getKey());
             }
-
         }
-
     }
 
     /**
-     * 
      * getQuerySql.
      * 
      * @param currentPageNum currentPageNum
@@ -670,17 +655,14 @@ public final class JdbcRepository implements Repository {
      * @param filterSql filterSql
      * @param orderBySql orderBySql
      * @param sql sql
-     * @param sql2 
      */
     private void getQuerySql(final int currentPageNum, final int pageSize, final StringBuilder selectSql,
-            final StringBuilder filterSql, final StringBuilder orderBySql, final StringBuilder sql) {
-        final int start = (currentPageNum - 1)
-                * pageSize;
-        final int end = start
-                + pageSize;
+                             final StringBuilder filterSql, final StringBuilder orderBySql, final StringBuilder sql) {
+        final int start = (currentPageNum - 1) * pageSize;
+        final int end = start + pageSize;
 
         sql.append(JdbcFactory.createJdbcFactory().queryPage(start, end, selectSql.toString(), filterSql.toString(), orderBySql.toString(),
-                getName()));
+                                                             getName()));
     }
 
     /**
@@ -689,78 +671,19 @@ public final class JdbcRepository implements Repository {
      * 
      * @param filterSql filterSql
      * @param paramList paramList
-     * @param filters filters
+     * @param filter filter
      * @throws RepositoryException RepositoryException
      */
-    private void getFilterSql(final StringBuilder filterSql, final List<Object> paramList, final List<Filter> filters)
+    private void getFilterSql(final StringBuilder filterSql, final List<Object> paramList, final Filter filter)
             throws RepositoryException {
-        boolean isFirst = true;
-        String filterOperator = null;
+        if (null == filter) {
+            return;
+        }
 
-        for (Filter filter : filters) {
-
-            switch (filter.getOperator()) {
-            case EQUAL:
-                filterOperator = "=";
-                break;
-            case GREATER_THAN:
-                filterOperator = ">";
-                break;
-            case GREATER_THAN_OR_EQUAL:
-                filterOperator = ">=";
-                break;
-            case LESS_THAN:
-                filterOperator = "<";
-                break;
-            case LESS_THAN_OR_EQUAL:
-                filterOperator = "<=";
-                break;
-            case NOT_EQUAL:
-                filterOperator = "!=";
-                break;
-            case IN:
-                filterOperator = "in";
-                break;
-            default:
-                throw new RepositoryException("Unsupported filter operator["
-                        + filter.getOperator() + "]");
-            }
-
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                filterSql.append(" and ");
-            }
-
-            if (FilterOperator.IN != filter.getOperator()) {
-                filterSql.append(filter.getKey()).append(filterOperator).append("?");
-                paramList.add(filter.getValue());
-            } else {
-                @SuppressWarnings("unchecked")
-                final Collection<Object> objects = (Collection<Object>) filter.getValue();
-
-                boolean isSubFist = true;
-                if (objects != null
-                        && objects.size() > 0) {
-                    filterSql.append(filter.getKey()).append(" in ");
-
-                    final Iterator<Object> obs = objects.iterator();
-                    while (obs.hasNext()) {
-                        if (isSubFist) {
-                            filterSql.append("(");
-                            isSubFist = false;
-                        } else {
-                            filterSql.append(",");
-                        }
-                        filterSql.append("?");
-                        paramList.add(obs.next());
-
-                        if (!obs.hasNext()) {
-                            filterSql.append(") ");
-                        }
-                    }
-                }
-            }
+        if (filter instanceof PropertyFilter) {
+            processPropertyFilter(filterSql, paramList, (PropertyFilter) filter);
+        } else { // CompositeFiler
+            processCompositeFilter(filterSql, paramList, (CompositeFilter) filter);
         }
     }
 
@@ -808,12 +731,10 @@ public final class JdbcRepository implements Repository {
                 jsonObjects.add(jsonArray.getJSONObject(i));
             }
         } catch (final SQLException se) {
-            LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+            LOGGER.log(Level.SEVERE, "update:" + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
-            LOGGER.log(Level.SEVERE, "getRandomly :"
-                    + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, "getRandomly:" + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -834,13 +755,11 @@ public final class JdbcRepository implements Repository {
 
     @Override
     public long count() throws RepositoryException {
-
-        final String cacheKey = CACHE_KEY_PREFIX
-                + getName() + REPOSITORY_CACHE_COUNT;
+        final String cacheKey = CACHE_KEY_PREFIX + getName() + REPOSITORY_CACHE_COUNT;
         if (cacheEnabled) {
             final Object o = CACHE.get(cacheKey);
             if (null != o) {
-                LOGGER.log(Level.FINER, "Got an object[cacheKey={0}] from repository cache[name={1}]", new Object[] {cacheKey, getName() });
+                LOGGER.log(Level.FINER, "Got an object[cacheKey={0}] from repository cache[name={1}]", new Object[]{cacheKey, getName()});
                 try {
                     return (Long) o;
                 } catch (final Exception e) {
@@ -851,13 +770,12 @@ public final class JdbcRepository implements Repository {
             }
         }
 
-        final StringBuilder sql = new StringBuilder("select count("
-                + JdbcRepositories.OID + ") from ").append(getName());
+        final StringBuilder sql = new StringBuilder("select count(" + JdbcRepositories.OID + ") from ").append(getName());
         final long ret = count(sql, new ArrayList<Object>());
 
         if (cacheEnabled) {
             CACHE.putAsync(cacheKey, ret);
-            LOGGER.log(Level.FINER, "Added an object[cacheKey={0}] in repository cache[{1}]", new Object[] {cacheKey, getName() });
+            LOGGER.log(Level.FINER, "Added an object[cacheKey={0}] in repository cache[{1}]", new Object[]{cacheKey, getName()});
         }
 
         return ret;
@@ -881,11 +799,11 @@ public final class JdbcRepository implements Repository {
             count = jsonObject.getLong(jsonObject.keys().next().toString());
         } catch (final SQLException se) {
             LOGGER.log(Level.SEVERE, "update:"
-                    + se.getMessage(), se);
+                                     + se.getMessage(), se);
             throw new JDBCRepositoryException(se);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "count :"
-                    + e.getMessage(), e);
+                                     + e.getMessage(), e);
             throw new RepositoryException(e);
         } finally {
             closeQueryConnection(connection);
@@ -979,8 +897,7 @@ public final class JdbcRepository implements Repository {
      */
     private Connection getConnection() {
         final JdbcTransaction jdbcTransaction = TX.get();
-        if (jdbcTransaction == null
-                || !jdbcTransaction.isActive()) {
+        if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
             try {
                 return Connections.getConnection();
             } catch (final SQLException e) {
@@ -1001,8 +918,7 @@ public final class JdbcRepository implements Repository {
      */
     private void closeQueryConnection(final Connection connection) throws RepositoryException {
         final JdbcTransaction jdbcTransaction = TX.get();
-        if (jdbcTransaction == null
-                || !jdbcTransaction.isActive()) {
+        if (jdbcTransaction == null || !jdbcTransaction.isActive()) {
             try {
                 connection.close();
             } catch (final SQLException e) {
@@ -1012,5 +928,117 @@ public final class JdbcRepository implements Repository {
         } else {
             LOGGER.log(Level.FINEST, "Do not close query connection caused by in a transaction");
         }
+    }
+
+    /**
+     * Processes property filter.
+     * 
+     * @param filterSql the specified filter SQL to build
+     * @param paramList the specified parameter list
+     * @param propertyFilter the specified property filter
+     * @throws RepositoryException repository exception
+     */
+    private void processPropertyFilter(final StringBuilder filterSql, final List<Object> paramList, final PropertyFilter propertyFilter)
+            throws RepositoryException {
+        String filterOperator = null;
+
+        switch (propertyFilter.getOperator()) {
+            case EQUAL:
+                filterOperator = "=";
+                break;
+            case GREATER_THAN:
+                filterOperator = ">";
+                break;
+            case GREATER_THAN_OR_EQUAL:
+                filterOperator = ">=";
+                break;
+            case LESS_THAN:
+                filterOperator = "<";
+                break;
+            case LESS_THAN_OR_EQUAL:
+                filterOperator = "<=";
+                break;
+            case NOT_EQUAL:
+                filterOperator = "!=";
+                break;
+            case IN:
+                filterOperator = "in";
+                break;
+            default:
+                throw new RepositoryException("Unsupported filter operator[" + propertyFilter.getOperator() + "]");
+        }
+
+        if (FilterOperator.IN != propertyFilter.getOperator()) {
+            filterSql.append(propertyFilter.getKey()).append(filterOperator).append("?");
+            paramList.add(propertyFilter.getValue());
+        } else {
+            final Collection<Object> objects = (Collection<Object>) propertyFilter.getValue();
+
+            boolean isSubFist = true;
+            if (objects != null && objects.size() > 0) {
+                filterSql.append(propertyFilter.getKey()).append(" in ");
+
+                final Iterator<Object> obs = objects.iterator();
+                while (obs.hasNext()) {
+                    if (isSubFist) {
+                        filterSql.append("(");
+                        isSubFist = false;
+                    } else {
+                        filterSql.append(",");
+                    }
+                    filterSql.append("?");
+                    paramList.add(obs.next());
+
+                    if (!obs.hasNext()) {
+                        filterSql.append(") ");
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Processes composite filter.
+     * 
+     * @param filterSql the specified filter SQL to build
+     * @param paramList the specified parameter list
+     * @param compositeFilter the specified composite filter
+     * @throws RepositoryException repository exception
+     */
+    private void processCompositeFilter(final StringBuilder filterSql, final List<Object> paramList,
+                                        final CompositeFilter compositeFilter) throws RepositoryException {
+        final List<Filter> subFilters = compositeFilter.getSubFilters();
+
+        if (2 > subFilters.size()) {
+            throw new RepositoryException("At least two sub filters in a composite filter");
+        }
+
+        filterSql.append("(");
+
+        final Iterator<Filter> iterator = subFilters.iterator();
+        while (iterator.hasNext()) {
+            final Filter filter = iterator.next();
+
+            if (filter instanceof PropertyFilter) {
+                processPropertyFilter(filterSql, paramList, (PropertyFilter) filter);
+            } else { // CompositeFilter
+                processCompositeFilter(filterSql, paramList, (CompositeFilter) filter);
+            }
+
+            if (iterator.hasNext()) {
+                switch (compositeFilter.getOperator()) {
+                    case AND:
+                        filterSql.append(" and ");
+                        break;
+                    case OR:
+                        filterSql.append(" or ");
+                        break;
+                    default:
+                        throw new RepositoryException("Unsupported composite filter[operator=" + compositeFilter.getOperator() + "]");
+                }
+            }
+        }
+
+        filterSql.append(")");
     }
 }

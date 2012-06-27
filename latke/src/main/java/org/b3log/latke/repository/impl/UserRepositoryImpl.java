@@ -22,6 +22,7 @@ import org.b3log.latke.model.Role;
 import org.b3log.latke.model.User;
 import org.b3log.latke.repository.AbstractRepository;
 import org.b3log.latke.repository.FilterOperator;
+import org.b3log.latke.repository.PropertyFilter;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.RepositoryException;
 import org.json.JSONArray;
@@ -32,7 +33,7 @@ import org.json.JSONObject;
  * User repository implementation.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.0, Sep 27, 2011
+ * @version 1.0.0.1, Jun 27, 2012
  */
 public final class UserRepositoryImpl extends AbstractRepository {
 
@@ -49,7 +50,7 @@ public final class UserRepositoryImpl extends AbstractRepository {
      */
     public JSONObject getByEmail(final String email) {
         final Query query = new Query();
-        query.addFilter(User.USER_EMAIL, FilterOperator.EQUAL, email.toLowerCase().trim());
+        query.setFilter(new PropertyFilter(User.USER_EMAIL, FilterOperator.EQUAL, email.toLowerCase().trim()));
 
         try {
             final JSONObject result = get(query);
@@ -74,7 +75,8 @@ public final class UserRepositoryImpl extends AbstractRepository {
      */
     public JSONObject getAdmin() {
         final Query query = new Query();
-        query.addFilter(User.USER_ROLE, FilterOperator.EQUAL, Role.ADMIN_ROLE);
+        query.setFilter(new PropertyFilter(User.USER_ROLE, FilterOperator.EQUAL, Role.ADMIN_ROLE));
+
         try {
             final JSONObject result = get(query);
             final JSONArray array = result.getJSONArray(Keys.RESULTS);
