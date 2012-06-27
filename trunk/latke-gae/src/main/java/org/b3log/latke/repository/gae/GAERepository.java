@@ -28,6 +28,7 @@ import com.google.appengine.api.datastore.PropertyProjection;
 import com.google.appengine.api.datastore.Query;
 import static com.google.appengine.api.datastore.FetchOptions.Builder.*;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.api.utils.SystemProperty;
@@ -54,6 +55,8 @@ import org.b3log.latke.cache.CacheFactory;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.repository.Blob;
 import org.b3log.latke.repository.Filter;
+import org.b3log.latke.repository.PropertyFilter;
+import org.b3log.latke.repository.CompositeFilter;
 import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.Projection;
 import org.b3log.latke.repository.Repository;
@@ -88,7 +91,7 @@ import org.json.JSONObject;
  * {@link #cacheEnabled enabled} caching.
  * 
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.5.2, May 8, 2012
+ * @version 1.0.6.0, Jun 27, 2012
  * @see Query
  * @see GAETransaction
  */
@@ -324,7 +327,8 @@ public final class GAERepository implements Repository {
                 final org.b3log.latke.repository.Query futureQuery = new org.b3log.latke.repository.Query().setPageCount(1);
                 for (int j = 0; j < index.length; j++) {
                     final String propertyName = index[j];
-                    futureQuery.addFilter(propertyName, FilterOperator.EQUAL, jsonObject.opt(propertyName));
+
+                    futureQuery.setFilter(new PropertyFilter(propertyName, FilterOperator.EQUAL, jsonObject.opt(propertyName)));
                     logMsgBuilder.append(propertyName).append(",");
                 }
                 logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1); // Removes the last comma
@@ -560,17 +564,17 @@ public final class GAERepository implements Repository {
 
         final int currentPageNum = query.getCurrentPageNum();
         final Set<Projection> projections = query.getProjections();
-        final List<Filter> filters = query.getFilters();
+        final Filter filter = query.getFilter();
         final int pageSize = query.getPageSize();
         final Map<String, SortDirection> sorts = query.getSorts();
-        // Asssumes the application call need to ccount page
+        // Asssumes the application call need to count page
         int pageCount = -1;
         // If the application caller need not to count page, gets the page count the caller specified 
         if (null != query.getPageCount()) {
             pageCount = query.getPageCount();
         }
 
-        ret = get(currentPageNum, pageSize, pageCount, projections, sorts, filters, cacheKey);
+        ret = get(currentPageNum, pageSize, pageCount, projections, sorts, filter, cacheKey);
 
         if (cacheEnabled) {
             CACHE.putAsync(cacheKey, ret);
@@ -587,7 +591,7 @@ public final class GAERepository implements Repository {
     }
 
     /**
-     * Gets the result object by the specified current page number, page size, page count, sorts, filters and query cache 
+     * Gets the result object by the specified current page number, page size, page count, sorts, filter and query cache 
      * key.
      *
      * @param currentPageNum the specified current page number
@@ -595,67 +599,30 @@ public final class GAERepository implements Repository {
      * @param pageCount the specified page count
      * @param projections the specified projections
      * @param sorts the specified sorts
-     * @param filters the specified filters
+     * @param filter the specified filter
      * @param cacheKey the specified cache key of a query
      * @return the result object, see return of
      * {@linkplain #get(org.b3log.latke.repository.Query)} for details
      * @throws RepositoryException repository exception
      */
     private JSONObject get(final int currentPageNum, final int pageSize, final int pageCount, final Set<Projection> projections,
-                           final Map<String, SortDirection> sorts, final List<Filter> filters, final String cacheKey)
+                           final Map<String, SortDirection> sorts, final Filter filter, final String cacheKey)
             throws RepositoryException {
         final Query query = new Query(getName());
 
-        for (final Filter filter : filters) {
-            Query.FilterOperator filterOperator = null;
-            switch (filter.getOperator()) {
-                case EQUAL:
-                    filterOperator = Query.FilterOperator.EQUAL;
-                    break;
-                case GREATER_THAN:
-                    filterOperator = Query.FilterOperator.GREATER_THAN;
-                    break;
-                case GREATER_THAN_OR_EQUAL:
-                    filterOperator = Query.FilterOperator.GREATER_THAN_OR_EQUAL;
-                    break;
-                case LESS_THAN:
-                    filterOperator = Query.FilterOperator.LESS_THAN;
-                    break;
-                case LESS_THAN_OR_EQUAL:
-                    filterOperator = Query.FilterOperator.LESS_THAN_OR_EQUAL;
-                    break;
-                case NOT_EQUAL:
-                    filterOperator = Query.FilterOperator.NOT_EQUAL;
-                    break;
-                case IN:
-                    filterOperator = Query.FilterOperator.IN;
-                    break;
-                default:
-                    throw new RepositoryException("Unsupported filter operator[" + filter.getOperator() + "]");
-            }
-
-            if (FilterOperator.IN != filter.getOperator()) {
-                query.addFilter(filter.getKey(), filterOperator, filter.getValue());
-            } else {
-                final StringBuilder logMsgBuilder = new StringBuilder();
-                logMsgBuilder.append("In operation[");
-                @SuppressWarnings("unchecked")
-                final Collection<?> inValues = (Collection<?>) filter.getValue();
-
-                final Set<Object> values = new HashSet<Object>();
-                for (final Object inValue : inValues) {
-                    values.add(inValue);
-                    logMsgBuilder.append(inValue).append(",");
-                }
-                logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
-
-                logMsgBuilder.append("]");
-                LOGGER.log(Level.FINEST, logMsgBuilder.toString());
-
-                query.addFilter(filter.getKey(), Query.FilterOperator.IN, values);
+        // 1. Filters
+        if (null != filter) {
+            if (filter instanceof PropertyFilter) {
+                final FilterPredicate filterPredicate = processPropertyFiler((PropertyFilter) filter);
+                query.setFilter(filterPredicate);
+            } else { // CompositeFiler
+                final CompositeFilter compositeFilter = (CompositeFilter) filter;
+                final Query.CompositeFilter queryCompositeFilter = processCompositeFilter(compositeFilter);
+                query.setFilter(queryCompositeFilter);
             }
         }
 
+        // 2. Sorts
         for (final Map.Entry<String, SortDirection> sort : sorts.entrySet()) {
             Query.SortDirection querySortDirection;
             if (sort.getValue().equals(SortDirection.ASCENDING)) {
@@ -667,11 +634,110 @@ public final class GAERepository implements Repository {
             query.addSort(sort.getKey(), querySortDirection);
         }
 
+        // 3. Projections
         for (final Projection projection : projections) {
             query.addProjection(new PropertyProjection(projection.getKey(), projection.getType()));
         }
 
         return get(query, currentPageNum, pageSize, pageCount, cacheKey);
+    }
+
+    /**
+     * Converts the specified composite filter to a GAE composite filter.
+     * 
+     * @param compositeFilter the specified composite filter
+     * @return GAE composite filter
+     * @throws RepositoryException repository exception
+     */
+    private Query.CompositeFilter processCompositeFilter(final CompositeFilter compositeFilter) throws RepositoryException {
+        Query.CompositeFilter ret;
+
+        final Collection<Query.Filter> filters = new ArrayList<Query.Filter>();
+        final List<Filter> subFilters = compositeFilter.getSubFilters();
+        for (final Filter subFilter : subFilters) {
+            if (subFilter instanceof PropertyFilter) {
+                final FilterPredicate filterPredicate = processPropertyFiler((PropertyFilter) subFilter);
+                filters.add(filterPredicate);
+            } else { // CompositeFilter
+                final Query.CompositeFilter queryCompositeFilter = processCompositeFilter((CompositeFilter) subFilter);
+                filters.add(queryCompositeFilter);
+            }
+        }
+
+        switch (compositeFilter.getOperator()) {
+            case AND:
+                ret = new Query.CompositeFilter(Query.CompositeFilterOperator.AND, filters);
+                break;
+            case OR:
+                ret = new Query.CompositeFilter(Query.CompositeFilterOperator.OR, filters);
+                break;
+            default:
+                throw new RepositoryException("Unsupported composite filter[operator=" + compositeFilter.getOperator() + "]");
+        }
+
+        return ret;
+    }
+
+    /**
+     * Converts the specified property filter to a GAE filter predicate.
+     * 
+     * @param propertyFilter the specified property filter
+     * @return GAE filter predicate
+     * @throws RepositoryException repository exception
+     */
+    private Query.FilterPredicate processPropertyFiler(final PropertyFilter propertyFilter) throws RepositoryException {
+        Query.FilterPredicate ret;
+
+        Query.FilterOperator filterOperator = null;
+        switch (propertyFilter.getOperator()) {
+            case EQUAL:
+                filterOperator = Query.FilterOperator.EQUAL;
+                break;
+            case GREATER_THAN:
+                filterOperator = Query.FilterOperator.GREATER_THAN;
+                break;
+            case GREATER_THAN_OR_EQUAL:
+                filterOperator = Query.FilterOperator.GREATER_THAN_OR_EQUAL;
+                break;
+            case LESS_THAN:
+                filterOperator = Query.FilterOperator.LESS_THAN;
+                break;
+            case LESS_THAN_OR_EQUAL:
+                filterOperator = Query.FilterOperator.LESS_THAN_OR_EQUAL;
+                break;
+            case NOT_EQUAL:
+                filterOperator = Query.FilterOperator.NOT_EQUAL;
+                break;
+            case IN:
+                filterOperator = Query.FilterOperator.IN;
+                break;
+            default:
+                throw new RepositoryException("Unsupported filter operator[" + propertyFilter.getOperator() + "]");
+        }
+
+        if (FilterOperator.IN != propertyFilter.getOperator()) {
+            ret = new Query.FilterPredicate(propertyFilter.getKey(), filterOperator, propertyFilter.getValue());
+        } else {
+            final Set<Object> values = new HashSet<Object>();
+
+            final StringBuilder logMsgBuilder = new StringBuilder();
+            logMsgBuilder.append("In operation[");
+            @SuppressWarnings("unchecked")
+            final Collection<?> inValues = (Collection<?>) propertyFilter.getValue();
+
+            for (final Object inValue : inValues) {
+                values.add(inValue);
+                logMsgBuilder.append(inValue).append(",");
+            }
+            logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
+
+            logMsgBuilder.append("]");
+            LOGGER.log(Level.FINEST, logMsgBuilder.toString());
+
+            ret = new Query.FilterPredicate(propertyFilter.getKey(), Query.FilterOperator.IN, values);
+        }
+
+        return ret;
     }
 
     @Override // XXX: performance issue
