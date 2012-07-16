@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * Abstract cacheable page action.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.1.8, May 5, 2012
+ * @version 1.0.1.9, Jul 16, 2012
  */
 public abstract class AbstractCacheablePageAction extends AbstractAction {
 
@@ -163,7 +163,7 @@ public abstract class AbstractCacheablePageAction extends AbstractAction {
     private boolean writeResponseFromCache(final HttpServletRequest request, final HttpServletResponse response,
                                            final String pageCacheKey) {
         LOGGER.log(Level.FINER, "Request[pageCacheKey={0}]", pageCacheKey);
-        final JSONObject cachedPageContentObject = PageCaches.get(pageCacheKey, request);
+        final JSONObject cachedPageContentObject = PageCaches.get(pageCacheKey, request, response);
 
         if (null == cachedPageContentObject) { // Miss
             LOGGER.log(Level.FINER, "Page cache miss");

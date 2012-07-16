@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
 import org.b3log.latke.action.AbstractCacheablePageAction;
@@ -57,7 +58,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.0, Mar 22, 2012
+ * @version 1.0.2.1, Jul 16, 2012
  * @since 0.3.1
  */
 @SuppressWarnings("unchecked")
@@ -216,6 +217,7 @@ public final class PageCaches {
      *
      * @param pageCacheKey the specified page cache key
      * @param request the specified request
+     * @param response the specified response
      * @return for example,
      * <pre>
      * {
@@ -229,9 +231,10 @@ public final class PageCaches {
      * }
      * </pre>
      * @see Requests#searchEngineBotRequest(javax.servlet.http.HttpServletRequest) 
+     * @see Requests#hasBeenServed(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse) 
      * @see #get(java.lang.String) 
      */
-    public static JSONObject get(final String pageCacheKey, final HttpServletRequest request) {
+    public static JSONObject get(final String pageCacheKey, final HttpServletRequest request, final HttpServletResponse response) {
         final JSONObject ret = (JSONObject) CACHE.get(pageCacheKey);
 
         if (null == ret) {
@@ -239,7 +242,7 @@ public final class PageCaches {
         }
 
         try {
-            if (!Requests.searchEngineBotRequest(request)) {
+            if (!Requests.searchEngineBotRequest(request) && !Requests.hasBeenServed(request, response)) {
                 final long hitCount = ret.getLong(CACHED_HIT_COUNT);
                 ret.put(CACHED_HIT_COUNT, hitCount + 1);
             }

@@ -20,7 +20,9 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.model.Pagination;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -28,7 +30,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @author <a href="mailto:dongxv.vang@gmail.com">Dongxu Wang</a>
- * @version 1.0.1.4, May 21, 2012
+ * @version 1.0.1.5, Jul 16, 2012
  * @see #PAGINATION_PATH_PATTERN
  */
 public final class Requests {
@@ -77,7 +79,12 @@ public final class Requests {
     private static final Pattern SEARCH_ENGINE_BOT_USER_AGENT_PATTERN =
             Pattern.compile(
             "Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot|AppEngine-Google",
-                            Pattern.CASE_INSENSITIVE);
+            Pattern.CASE_INSENSITIVE);
+    
+    /**
+     * Cookie expiry of "visited".
+     */
+    private static final int COOKIE_EXPIRY = 60 * 60 * 24; // 24 hours;
 
     /**
      * Mobile and normal skin toggle.
@@ -124,6 +131,90 @@ public final class Requests {
         }
 
         return SEARCH_ENGINE_BOT_USER_AGENT_PATTERN.matcher(userAgent).find();
+    }
+
+    /**
+     * Determines whether the specified request has been served.
+     * 
+     * <p>
+     * A "served request" is a request a URI as former one. For example, if a client is request "/test", all requests from the client 
+     * subsequent in 24 hours will be treated as served requests, requested URIs save in client cookie (name: "visited").
+     * </p>
+     * 
+     * <p>
+     * If the specified request has not been served, appends the request URI in client cookie. 
+     * </p>
+     * 
+     * <p>
+     * Sees this issue (https://github.com/b3log/b3log-solo/issues/44) for more details.
+     * </p>
+     * 
+     * @param request the specified request
+     * @param response the specified response
+     * @return {@code true} if the specified request has been served, returns {@code false} otherwise
+     */
+    public static boolean hasBeenServed(final HttpServletRequest request, final HttpServletResponse response) {
+        final Cookie[] cookies = request.getCookies();
+        if (null == cookies || 0 == cookies.length) {
+            return false;
+        }
+
+        Cookie cookie;
+        boolean needToCreate = true;
+        boolean needToAppend = true;
+        JSONArray cookieJSONArray = null;
+
+        try {
+            for (int i = 0; i < cookies.length; i++) {
+                cookie = cookies[i];
+
+                if (!"visited".equals(cookie.getName())) {
+                    continue;
+                }
+
+                cookieJSONArray = new JSONArray(cookie.getValue());
+                if (null == cookieJSONArray || 0 == cookieJSONArray.length()) {
+                    return false;
+                }
+
+                needToCreate = false;
+
+                for (int j = 0; j < cookieJSONArray.length(); j++) {
+                    final String visitedURL = cookieJSONArray.optString(j);
+
+                    if (request.getRequestURI().equals(visitedURL)) {
+                        needToAppend = false;
+                        return true;
+                    }
+                }
+            }
+
+            if (needToCreate) {
+                final StringBuilder builder = new StringBuilder("[").append("\"").append(request.getRequestURI()).append("\"]");
+
+                final Cookie c = new Cookie("visited", builder.toString());
+                c.setMaxAge(COOKIE_EXPIRY);
+                c.setPath("/");
+                response.addCookie(c);
+            } else if (needToAppend) {
+                cookieJSONArray.put(request.getRequestURI());
+
+                final Cookie c = new Cookie("visited", cookieJSONArray.toString());
+                c.setMaxAge(COOKIE_EXPIRY);
+                c.setPath("/");
+                response.addCookie(c);
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.WARNING, "Parses cookie failed, clears the cookie[name=visited]", e);
+
+            final Cookie c = new Cookie("visited", null);
+            c.setMaxAge(0);
+            c.setPath("/");
+
+            response.addCookie(c);
+        }
+
+        return false;
     }
 
     /**
