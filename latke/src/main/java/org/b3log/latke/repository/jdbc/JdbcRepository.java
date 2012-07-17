@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.cache.Cache;
@@ -57,7 +56,7 @@ import org.json.JSONObject;
  * 
  * @author <a href="mailto:wmainlove@gmail.com">Love Yao</a>
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.0.6, Jun 27, 2012
+ * @version 1.0.0.7, Jul 17, 2012
  */
 @SuppressWarnings("unchecked")
 public final class JdbcRepository implements Repository {
@@ -553,7 +552,10 @@ public final class JdbcRepository implements Repository {
                     futureQuery.setFilter(new PropertyFilter(propertyName, FilterOperator.EQUAL, jsonObject.opt(propertyName)));
                     logMsgBuilder.append(propertyName).append(",");
                 }
-                logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
+
+                if (logMsgBuilder.length() > 0) {
+                    logMsgBuilder.deleteCharAt(logMsgBuilder.length() - 1);
+                }
 
                 cacheKey = CACHE_KEY_PREFIX + futureQuery.getCacheKey() + "_" + getName();
 
