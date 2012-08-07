@@ -23,7 +23,7 @@ import java.util.Map;
  * This class defines framework (non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.3, May 17, 2012
+ * @version 1.0.2.4, Aug 7, 2012
  */
 public final class Keys {
 
@@ -83,6 +83,10 @@ public final class Keys {
      * Key of exclusion.
      */
     public static final String EXCLUDES = "excludes";
+    /**
+     * Key of request.
+     */
+    public static final String REQUEST = "request";
 
     /**
      * Fills the server info into the specified data model.
