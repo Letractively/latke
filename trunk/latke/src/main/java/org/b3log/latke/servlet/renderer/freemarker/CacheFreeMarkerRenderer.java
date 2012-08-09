@@ -24,7 +24,6 @@ import org.b3log.latke.cache.PageCaches;
 import org.b3log.latke.servlet.HTTPRequestContext;
 import org.b3log.latke.util.Strings;
 import org.json.JSONObject;
-import static org.b3log.latke.action.AbstractCacheablePageAction.*;
 
 /**
  * <a href="http://freemarker.org">FreeMarker</a> HTTP response renderer.
@@ -57,7 +56,7 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
     @Override
     protected void afterRender(final HTTPRequestContext context) throws Exception {
         final HttpServletRequest request = context.getRequest();
-        final String pageContent = (String) request.getAttribute(CACHED_CONTENT);
+        final String pageContent = (String) request.getAttribute(PageCaches.CACHED_CONTENT);
 
         if (null == pageContent) {
             return;
@@ -74,17 +73,34 @@ public class CacheFreeMarkerRenderer extends AbstractFreeMarkerRenderer {
             check(request, pageContent);
 
             final JSONObject cachedValue = new JSONObject();
-            cachedValue.put(CACHED_CONTENT, pageContent);
-            cachedValue.put(CACHED_TYPE, request.getAttribute(CACHED_TYPE));
-            cachedValue.put(CACHED_OID, request.getAttribute(CACHED_OID));
-            cachedValue.put(CACHED_TITLE, request.getAttribute(CACHED_TITLE));
-            cachedValue.put(CACHED_LINK, request.getAttribute(CACHED_LINK));
-            if (null != request.getAttribute(CACHED_PWD)) {
-                cachedValue.put(CACHED_PWD, request.getAttribute(CACHED_PWD));
+            cachedValue.put(PageCaches.CACHED_CONTENT, pageContent);
+            cachedValue.put(PageCaches.CACHED_TYPE, request.getAttribute(PageCaches.CACHED_TYPE));
+            cachedValue.put(PageCaches.CACHED_OID, request.getAttribute(PageCaches.CACHED_OID));
+            cachedValue.put(PageCaches.CACHED_TITLE, request.getAttribute(PageCaches.CACHED_TITLE));
+            cachedValue.put(PageCaches.CACHED_LINK, request.getAttribute(PageCaches.CACHED_LINK));
+            if (null != request.getAttribute(PageCaches.CACHED_PWD)) {
+                cachedValue.put(PageCaches.CACHED_PWD, request.getAttribute(PageCaches.CACHED_PWD));
             }
 
             PageCaches.put(cachedPageKey, cachedValue, request);
             LOGGER.log(Level.FINEST, "Cached page[cachedPageKey={0}]", cachedPageKey);
+        }
+    }
+
+    /**
+     * Checks if all conditions for caching page are ready by the specified 
+     * request and content.
+     * 
+     * @param request the specified request
+     * @param content the specified content
+     */
+    public static void check(final HttpServletRequest request, final String content) {
+        if (Strings.isEmptyOrNull(content)
+            || Strings.isEmptyOrNull((String) request.getAttribute(PageCaches.CACHED_TYPE))
+            || Strings.isEmptyOrNull((String) request.getAttribute(PageCaches.CACHED_OID))
+            || Strings.isEmptyOrNull((String) request.getAttribute(PageCaches.CACHED_TITLE))
+            || Strings.isEmptyOrNull((String) request.getAttribute(PageCaches.CACHED_LINK))) {
+            throw new IllegalArgumentException("Illegal arguments for caching page, " + "resolve this bug first!");
         }
     }
 }

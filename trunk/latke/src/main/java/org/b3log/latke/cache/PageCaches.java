@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.RuntimeEnv;
-import org.b3log.latke.action.AbstractCacheablePageAction;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.Serializer;
 import org.b3log.latke.util.Strings;
@@ -58,7 +57,7 @@ import org.json.JSONObject;
  * </p>
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.1, Jul 16, 2012
+ * @version 1.0.2.2, Aug 9, 2012
  * @since 0.3.1
  */
 @SuppressWarnings("unchecked")
@@ -103,6 +102,30 @@ public final class PageCaches {
      * Maximum count of the most recent used cache.
      */
     private static final int MOST_RECENT_USED_MAX_COUNT = Integer.MAX_VALUE;
+    /**
+     * Key of cached title.
+     */
+    public static final String CACHED_TITLE = "cachedTitle";
+    /**
+     * Key of cached object id.
+     */
+    public static final String CACHED_OID = "cachedOid";
+    /**
+     * Key of cached HTML content.
+     */
+    public static final String CACHED_CONTENT = "cachedContent";
+    /**
+     * Key of cached password.
+     */
+    public static final String CACHED_PWD = "cachedPwd";
+    /**
+     * Key of cached type.
+     */
+    public static final String CACHED_TYPE = "cachedType";
+    /**
+     * Key of cached link.
+     */
+    public static final String CACHED_LINK = "cachedLink";
 
     /**
      * Initializes the cache.
@@ -284,7 +307,7 @@ public final class PageCaches {
         check(cachedValue);
 
         try {
-            final String content = cachedValue.getString(AbstractCacheablePageAction.CACHED_CONTENT);
+            final String content = cachedValue.getString(CACHED_CONTENT);
             final byte[] bytes = Serializer.serialize(content);
 
             if (Requests.searchEngineBotRequest(request)) {
@@ -366,11 +389,11 @@ public final class PageCaches {
      * @param cachedPage the specified cached page
      */
     private static void check(final JSONObject cachedPage) {
-        if (!cachedPage.has(AbstractCacheablePageAction.CACHED_CONTENT)
-            || !cachedPage.has(AbstractCacheablePageAction.CACHED_OID)
-            || !cachedPage.has(AbstractCacheablePageAction.CACHED_TITLE)
-            || !cachedPage.has(AbstractCacheablePageAction.CACHED_TYPE)
-            || !cachedPage.has(AbstractCacheablePageAction.CACHED_LINK)) {
+        if (!cachedPage.has(CACHED_CONTENT)
+            || !cachedPage.has(CACHED_OID)
+            || !cachedPage.has(CACHED_TITLE)
+            || !cachedPage.has(CACHED_TYPE)
+            || !cachedPage.has(CACHED_LINK)) {
             throw new IllegalArgumentException("Illegal arguments for caching page, resolve this bug first!");
         }
     }
