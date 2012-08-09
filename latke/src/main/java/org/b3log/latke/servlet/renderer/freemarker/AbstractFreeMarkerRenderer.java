@@ -30,7 +30,7 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.servlet.HTTPRequestContext;
 import org.b3log.latke.servlet.renderer.AbstractHTTPResponseRenderer;
 import org.b3log.latke.util.freemarker.Templates;
-import static org.b3log.latke.action.AbstractCacheablePageAction.*;
+import org.b3log.latke.cache.PageCaches;
 
 /**
  * Abstract <a href="http://freemarker.org">FreeMarker</a> HTTP response 
@@ -160,7 +160,7 @@ public abstract class AbstractFreeMarkerRenderer extends AbstractHTTPResponseRen
 
         final String ret = pageContentBuilder.toString();
 
-        request.setAttribute(CACHED_CONTENT, ret);
+        request.setAttribute(PageCaches.CACHED_CONTENT, ret);
 
         return ret;
     }
