@@ -15,9 +15,13 @@
  */
 package org.b3log.latke.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +34,7 @@ import org.json.JSONObject;
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
  * @author <a href="mailto:dongxv.vang@gmail.com">Dongxu Wang</a>
- * @version 1.0.1.5, Jul 16, 2012
+ * @version 1.0.1.6, Aug 9, 2012
  * @see #PAGINATION_PATH_PATTERN
  */
 public final class Requests {
@@ -80,7 +84,6 @@ public final class Requests {
             Pattern.compile(
             "Baiduspider|Googlebot|Feedfetcher-Google|Yahoo|YodaoBot|Sosospider|Sogou|bingbot|adidxbot|msnbot|AppEngine-Google",
             Pattern.CASE_INSENSITIVE);
-    
     /**
      * Cookie expiry of "visited".
      */
@@ -344,6 +347,51 @@ public final class Requests {
         }
 
         return Integer.valueOf(windowSize);
+    }
+
+    /**
+     * Gets the request json object with the specified request.
+     *
+     * @param request the specified request
+     * @param response the specified response, sets its content type with "application/json"
+     * @return a json object
+     * @throws ServletException servlet exception
+     * @throws IOException io exception
+     */
+    public static JSONObject parseRequestJSONObject(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+
+        final StringBuilder sb = new StringBuilder();
+        BufferedReader reader = null;
+
+        final String errMsg = "Can not parse request[requestURI=" + request.getRequestURI() + ", method=" + request.getMethod()
+                              + "], returns an empty json object";
+        try {
+            try {
+                reader = request.getReader();
+            } catch (final IllegalStateException illegalStateException) {
+                reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+            }
+
+            String line = reader.readLine();
+            while (null != line) {
+                sb.append(line);
+                line = reader.readLine();
+            }
+            reader.close();
+
+            String tmp = sb.toString();
+            if (Strings.isEmptyOrNull(tmp)) {
+                tmp = "{}";
+            }
+
+            return new JSONObject(tmp);
+        } catch (final Exception ex) {
+            LOGGER.log(Level.SEVERE, errMsg, ex);
+
+            return new JSONObject();
+        }
     }
 
     /**

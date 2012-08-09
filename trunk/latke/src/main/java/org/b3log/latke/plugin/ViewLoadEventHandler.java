@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.b3log.latke.action.AbstractAction;
+import org.b3log.latke.Keys;
 import org.b3log.latke.event.AbstractEventListener;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventException;
@@ -39,7 +39,7 @@ public final class ViewLoadEventHandler extends AbstractEventListener<ViewLoadEv
 
     @Override
     public String getEventType() {
-        return AbstractAction.FREEMARKER_ACTION;
+        return Keys.FREEMARKER_ACTION;
     }
 
     @Override
