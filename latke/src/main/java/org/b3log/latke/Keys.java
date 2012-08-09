@@ -23,7 +23,7 @@ import java.util.Map;
  * This class defines framework (non-functional) keys.
  *
  * @author <a href="mailto:DL88250@gmail.com">Liang Ding</a>
- * @version 1.0.2.4, Aug 7, 2012
+ * @version 1.0.2.5, Aug 9, 2012
  */
 public final class Keys {
 
@@ -87,6 +87,10 @@ public final class Keys {
      * Key of request.
      */
     public static final String REQUEST = "request";
+    /**
+     * Key of FreeMarker render.
+     */
+    public static final String FREEMARKER_ACTION = "FreeMarkerAction";
 
     /**
      * Fills the server info into the specified data model.
